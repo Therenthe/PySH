@@ -25,12 +25,13 @@ Existing local application migrated and published to private GitHub repository h
 - Wired SSH password authentication succeeded on 2026-10-02. Pi 4 / Debian 13.4 ARM64 confirmed, about 6 GiB disk space available. Both wired and wireless interfaces are up.
 - Pi source checkout created at ~/PySH from verified GitHub history; Git integrity and repository checks passed. Origin points to Therenthe/PySH. Private GitHub authentication on Pi is not configured; source updates can be transferred as verified Git bundles over SSH.
 - Legacy package 32d75c593e83 matches all 33 runtime manifest hashes. No current/previous links or installed launcher; hub/preview services inactive and no app process observed. No application deployment or autostart activation was performed.
-- Browser E2E suite absent. Wi-Fi list has nested button markup and at least two untranslated English labels; fix before claiming UI acceptance.
+- Saved Wi-Fi nested buttons and untranslated security labels corrected. Four browser regression tests cover EN/RO and both themes at 800×480; the full browser/product matrix and physical touch acceptance remain incomplete.
+- Representative Home/Radio screenshots reveal additional pre-existing issues: untranslated headings, raw idle state, and radio controls partly clipped. These remain UX/I18N acceptance work.
 - Bluetooth audio, real touch, DRM/streaming accounts, cold boots, 8-hour stability, performance and clean install/rollback remain acceptance work.
 
 ## Next
 
-1. Fix known UI issues and add real EN/RO browser flows.
-2. Build and test a candidate, then stage it separately on Pi for physical acceptance using the preserved runtime environment.
+1. Build and stage the network UI candidate separately on Pi; inspect the real panel and integrations.
+2. Continue vertical product acceptance, beginning with setup and audio/Bluetooth recovery flows.
 3. Keep PC/Pi source checkouts synchronized with verified GitHub commits; protect legacy releases and persistent data during deployment.
 4. Follow docs/ROADMAP.md and accepted ADRs for appliance transition.
