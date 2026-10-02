@@ -4,31 +4,16 @@ Updated: 2026-10-03 (Europe/Bucharest). GitHub is canonical: https://github.com/
 
 ## Current candidate
 
-Main `b3a56b69d758d4b9fac0785658ebfcae394efdbc` includes verified radio replay (PR #10). Isolated preview `4049721e2f4b` runs on the original Pi desktop/card, with the previous release and a private 52 MB backup retained. All 33 runtime hashes were verified before launch. SSH, NetworkManager, Bluetooth, PipeWire and WirePlumber remain active; no storage has been flashed and no appliance autostart activated on the existing card.
+Main `4d28e523e87bb71b83614c53903d629f0e48757b` includes radio replay and media handoff/search/pairing-prompt repairs (PRs #10/#11). Original-desktop preview `df9d3777bdec` is deployed with all 33 runtime hashes verified; previous release and private backup retained. TypeScript/Vite/repository/package checks pass; 72 browser regressions pass with zero skips/failures/flaky tests; Windows Python 53 passed, five Linux-only skips. GitHub frontend/Python 3.12/3.13 run37064480391 passed.
 
-Successor candidate `df9d3777bdec` adds confirmed, serialized audio-to-video handoff, Bluetooth pairing prompts that wake/suspend the screensaver, city-search loading/empty states with stale-response protection, and radio URL-title fallback repair preserving genuine metadata. TypeScript/Vite/repository/package checks pass; 72 browser regressions pass with zero skips/failures/flaky tests (71.847s); Windows Python: 53 passed, five Linux-only skips. Successor hardware revalidation is pending. Full product acceptance remains OPEN.
-
-## Observed device checks
-
-On `4049721e2f4b`, two real radio streams passed Pause/Resume without position reset and Stop→Play in EN/RO × E-Ink/Night, plus invalid-stream recovery in all four combinations. Five selected video encodings and 48px touch controls/invalid-file recovery passed again with no JavaScript errors. Preferences/audio were restored and the auxiliary browser stopped. These muted transport tests do not certify acoustic quality or actual network-disconnection recovery. See [radio evidence](docs/evidence/radio-replay-2026-10-02.md).
-
-Earlier `41a17d9b69e8` passed local audio touch transport/EOF replay, eight selected audio encodings, saved output/volume/mute restoration, API/kiosk recovery with unchanged preferences and zero owned zombies, and administrative restart-cause logs. Historical evidence is retained; a changed candidate requires affected revalidation. User previously confirmed physical setup/Bluetooth touch and audible WAV output. Full hardware flow matrix and resource/stability acceptance remain incomplete.
+Actual Pi revalidation passed eight media handoffs, four city-empty states, 48-screen EN/RO/theme survey, selected audio/video encodings and media error recovery with no JavaScript errors. API/kiosk recovery took 2.425s/0.979s with unchanged preferences and zero owned zombies; saved audio restored in 3.235s. REL-02 passes for this preview. See [UI evidence](docs/evidence/ui-handoff-2026-10-03.md). Original SD/desktop unchanged; no appliance autostart enabled there.
 
 ## Experimental PySH OS
 
-PR #3 contains the experimental ARM64 image builder, UUID boot/root addressing, dedicated labwc/greetd session and public-key-only administrative recovery. Image source `e19b48c29ff2ea703b6f4365d5ebd9e0aa05acfe` built successfully in run `37059900737`; the complete PC copy was joined/decompressed and its raw SHA256 verified as `e98791fc99bcae5ab34def71c5f7f0bbbce47c9cb88b0f4c85a7f8de134b2c69` (4,571,791,360 bytes). CI inspected partition/UUID/runtime/recovery content. New application changes must be incorporated in a successor OS image.
+Draft PR #3 integrates main above. Image source `59fcd319fadf133295cabd0443b13c5060430c12`, successful run37066609253, Linux runtime `1e2918ca798f`. Complete image verified on PC: raw SHA256 `4c99dc0b6f9b812fec4d291b3e34347642289211dc65b8b77fa00fead870e6c4`, 4,571,791,360 bytes. Includes UUID addressing, dedicated labwc/greetd session, key-only administrative recovery and guarded first-boot root expansion. Sixteen disposable Linux growth checks passed, including actually mounted online growth. [Image evidence](docs/evidence/os-image-2026-10-03.md), [growth evidence](docs/evidence/root-expansion-2026-10-03.md).
 
-A reviewed Windows flash wrapper passed inspection-only against the intended USB inventory. Explicit erase-target confirmation is still pending; no flash performed. Original SD is retained. Physical boot, recovery login, root expansion, five cold boots, eight-hour stability, clean installation and rollback are still OPEN. Detailed current OS evidence lives on PR #3; an image build is not physical acceptance.
+Windows wrapper passed inspection-only for the intended USB inventory. Explicit erase-target approval remains pending; no flash performed and original SD preserved. This is an experimental image, not physical product acceptance.
 
 ## Remaining delivery work
 
-1. Publish/deploy the successor and repeat affected real-device media/UI/recovery checks.
-2. Integrate verified app changes into PySH OS, inspect the resulting artifact, then perform authorized experimental installation and physical boot/recovery.
-3. Complete Bluetooth pair/forget/reconnect, real offline recovery, all EN/RO/theme hardware flows, exact resource/performance measurements, cold boots and stability.
-4. Validate external services with authorized accounts and target playback support; shortcuts are not proof of streaming or DRM playback.
-
-## OS integration follow-up
-
-The OS branch now integrates main `4d28e523e87bb71b83614c53903d629f0e48757b`. Preview `df9d3777bdec` passed eight actual media handoffs plus four real empty-city states, no JavaScript errors; recovery returned API/kiosk in 2.425s/0.979s with unchanged preferences, one live mpv and zero owned zombies. Audio restoration passed in 3.235s and administrative logs recorded restart exit codes. These accept the preview recovery criterion, not a physically unbooted OS runtime.
-
-Guarded first-boot root expansion is being integrated for the exact UUID-backed two-partition image: installed code discovers the mounted root/boot, rejects foreign disks/layouts and only records success after verified filesystem growth. A throwaway Linux loop-image test gates the image build; its result is still pending. Mounted online growth and physical boot remain OPEN. Earlier complete verified image e19 remains experimental and predates these app changes; a successor build is required.
+Physical boot/recovery login/root growth on actual storage; five cold boots and eight-hour stability; complete Bluetooth pair/forget/reconnect and real network-disconnection recovery; native resource/performance acceptance; external-account playback and DRM support; clean installation/rollback. Known paired-speaker appearance and a previously heard WAV are evidence of those observations only. Full product acceptance remains OPEN and the project is not complete.
