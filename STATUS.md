@@ -19,21 +19,21 @@ Existing local application migrated and published to private GitHub repository h
 
 ## Acceptance and limitations
 
-- 30 product criteria remain OPEN. Candidate 568c2b0c43de is running as an isolated preview, not accepted for release.
+- 30 product criteria remain OPEN. Candidate 1cc15fa4e625 is running as an isolated preview, not accepted for release.
 - Historical preparation: 7 PASS in legacy ledger, preserved in docs/history. Active preparation entries are OPEN because private historical evidence was not imported.
 - Existing runtime uses a graphical desktop session. Direct appliance boot, Lite base and image builder are not implemented.
 - Wired SSH password authentication succeeded on 2026-10-02. Pi 4 / Debian 13.4 ARM64 confirmed, about 6 GiB disk space available. Both wired and wireless interfaces are up.
 - Pi source checkout created at ~/PySH from verified GitHub history; Git integrity and repository checks passed. Origin points to Therenthe/PySH. Private GitHub authentication on Pi is not configured; source updates can be transferred as verified Git bundles over SSH.
 - Legacy package 32d75c593e83 matches all 33 runtime manifest hashes. No current/previous links or installed launcher; hub/preview services inactive and no app process observed. These are the pre-preview observations; the isolated preview is now running, with no autostart activation.
 - Saved Wi-Fi nested buttons and untranslated security labels corrected. Four browser regression tests cover EN/RO and both themes at 800×480; the full browser/product matrix and physical touch acceptance remain incomplete.
-- Representative Home/Radio screenshots reveal additional pre-existing issues: untranslated headings, raw idle state, and radio controls partly clipped. These remain UX/I18N acceptance work.
+- Home/Radio translations, idle/end states and clipped radio controls corrected on the full-touch-ui branch. Twenty browser tests now cover EN/RO, both themes, all pages/settings, setup, dialogs, keyboard, pairing and failure/recovery. Newly found filter, shortcut and accessible-control defects corrected. See docs/evidence/ui-audit-2026-10-02.md; Pi candidate 1cc15fa4e625 is running; real Home capture, Bluetooth disconnect/reconnect and radio streaming checked. Full physical matrix remains pending.
 - Real panel capture confirms the Romanian setup screen at 800×480. A generated local WAV played through mpv/PipeWire to the existing Bluetooth speaker; user confirmed audible output at 25% sink volume. See docs/evidence/pi-preview-2026-10-02.md.
 - User confirmed first-run setup and Settings / Bluetooth via physical touch; real panel capture shows the connected speaker.
 - Complete touch, Bluetooth pairing/reconnect/radio/recovery, DRM/streaming accounts, cold boots, 8-hour stability, performance and clean install/rollback remain acceptance work.
 
 ## Next
 
-1. Complete the physical setup/touch tour on the running preview and fix the remaining Home/Radio translation and clipping issues.
+1. Publish and verify the expanded UI candidate on Pi, then complete real radio and Bluetooth recovery checks.
 2. Continue vertical product acceptance, beginning with setup and audio/Bluetooth recovery flows.
 3. Keep PC/Pi source checkouts synchronized with verified GitHub commits; protect legacy releases and persistent data during deployment.
 4. Follow docs/ROADMAP.md and accepted ADRs for appliance transition.

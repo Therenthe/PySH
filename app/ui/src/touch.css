@@ -1,0 +1,86 @@
+/* Native panel layout: reserve space for playback and recovery controls. */
+.app .rail{padding:8px 9px}
+.app .rail-brand{height:48px;min-height:48px;border:0;background:transparent;flex-shrink:0}
+.app .main-nav{margin-top:4px;gap:3px}
+.app .main-nav button{min-height:56px}
+.app .rail-bottom{padding-top:4px;gap:0}
+.app .status-button{flex-direction:column;gap:2px;height:48px;flex-shrink:0;white-space:normal}
+.app .status-label{max-width:100%;text-align:center;line-height:16px;overflow:visible;text-overflow:clip}
+.app .home-layout{padding:12px 18px;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);grid-template-rows:minmax(0,1fr) minmax(112px,.6fr);gap:10px}
+.app .home-weather,.app .home-focus{min-width:0;min-height:0;overflow:auto}
+.app .home-focus{display:flex;flex-direction:column;padding:12px 16px}
+.app .focus-top h1{font-size:20px}
+.app .focus-clock{font-size:56px;line-height:1.1;margin:auto 0}
+.app .focus-footer{flex-shrink:0}
+.app .home-shortcuts{padding:8px 12px}
+.app .section-head h2{display:none}
+.app .shortcut-row{margin-top:5px}
+.app .shortcut{padding:7px 9px;min-height:60px}
+.app .page-content.with-player{padding-bottom:50px}
+.app .now-bar{height:50px;padding:0 18px;gap:8px}
+.app .now-bar button{width:48px;height:48px}
+.app .radio-page,.app .media-page,.app .settings-page{padding:10px 18px}
+.app .page-intro{min-height:48px;margin-bottom:8px;gap:10px}
+.app .page-intro>.muted{max-width:290px;font-size:14px}
+.app .radio-toolbar{flex-shrink:0;min-height:48px;margin-bottom:8px;gap:6px}
+.app .radio-toolbar .search-field{min-width:0;flex:1}
+.app .radio-toolbar .search-field span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app .radio-toolbar .filter-button{max-width:125px;padding:0 9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app .radio-columns{grid-template-columns:minmax(0,1.6fr) minmax(205px,1fr);gap:10px}
+.app .radio-side{padding:10px;gap:0}
+.app .radio-side>h2{margin:3px 0 6px}
+.app .radio-favorites{min-height:0;flex:1;overflow:auto}
+.app .favorites-empty{padding:0;min-height:0}
+.app .favorites-empty .heart{display:none}
+.app .favorites-empty p{font-size:14px;line-height:1.3;margin:5px 0}
+.app .mini-player{margin-top:8px;padding:8px;flex-shrink:0;gap:3px}
+.app .player-controls{gap:8px;margin-top:3px}
+.app .player-controls button{width:48px;height:48px}
+.app .settings-tabs{overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+.app .settings-tabs button{flex-shrink:0;min-height:48px}
+.app .settings-layout{grid-template-columns:158px minmax(0,1fr)}
+.app .setting-row{font-size:16px;flex-wrap:wrap;padding:5px 0;gap:6px}
+.app .setting-row>span{max-width:100%}
+.app .setting-row>div{max-width:100%;flex-wrap:wrap;gap:6px}
+.app .switch{height:48px;width:58px;flex-shrink:0;padding:9px 5px}
+.app .switch i{width:26px;height:26px;flex-shrink:0}
+.app .switch.on i{transform:translateX(20px)}
+.app .accent-options{gap:3px}
+.app .accent-choice{padding:0 7px}
+.app .output-row>span{min-width:0}
+.app .output-row b,.app .output-row small{overflow-wrap:anywhere}
+.app .output-row b,.app .network-row b,.app .station-txt b,.app .media-item b{font-size:16px}
+.app small,.app .setting-readout,.app .network-footnote,.app .library-path,.app .mini-player small,.app .now-state{font-size:14px}
+.app button,.app select,.app .download-link{font-size:16px}
+.app .main-nav button,.app .status-button{font-size:14px}
+.app button:not(.switch),.app select{border-color:var(--line-dark)}
+.app{--line-dark:#797d70}
+.app[data-theme=night]{--line-dark:#8b998e}
+.app .segmented,.app .theme-options,.app .accent-options{flex-wrap:wrap}
+.app .volume-settings input{width:130px}
+.app .modal-volume{flex-wrap:wrap}
+.app .modal-volume .icon-button{min-width:120px}
+.app .keyboard-card{max-height:460px;overflow:hidden}
+.app .keyboard-card header{height:48px}
+.app .keyboard-card header .icon-button{width:48px;height:48px}
+.app .keyboard-value{margin:3px 0;height:40px}
+.app .keys{gap:3px}
+.app .key-row button{height:48px;flex-shrink:0}
+.app .error-strip{flex-shrink:0;padding:4px 12px;gap:6px}
+.app .error-strip>span:not(.error-dot){flex:1;line-height:1.25}
+.app .device-row>div{flex-wrap:wrap;justify-content:flex-end}
+.app .download-link{min-height:48px;max-width:100%;white-space:normal}
+.app .error-strip button:not(.icon-button),.app .network-summary .outline,.app .panel-subhead .outline,.app .setup-status .outline{min-height:48px}
+.app .service-panel{overflow-y:auto;overscroll-behavior:contain;padding:10px}
+.app .service-panel>.muted{font-size:14px;line-height:1.3;margin-bottom:8px}
+.app .service-row{flex-shrink:0}
+.app .forecast-line{display:flex;gap:12px;margin-top:5px}
+.app .forecast-line>span{display:flex;gap:5px}
+.app .weather-place{font-size:14px;margin-top:5px}
+.app .home-weather{padding:10px 12px}
+.app .temp{font-size:48px}
+.app .temp-row{margin-top:4px}
+.app .weather-range{margin-top:5px;padding-top:5px}
+.app .shortcut small{white-space:normal;font-size:14px;line-height:1.25}
+.app .shortcut-row{align-items:stretch}
+.app .shortcut-icon{display:none}
