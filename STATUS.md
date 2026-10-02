@@ -4,7 +4,7 @@ Updated: 2026-10-02.
 
 ## Current milestone
 
-Existing local application migrated and published to private GitHub repository https://github.com/Therenthe/PySH. GitHub is now the canonical source. Import commit: 6ff604b7ebb9c80b11765ea59917971071afba78; local main and origin/main are synchronized. No device deployment or OS changes performed.
+Existing local application migrated and published to private GitHub repository https://github.com/Therenthe/PySH. GitHub is now the canonical source. Import commit: 6ff604b7ebb9c80b11765ea59917971071afba78; local main and origin/main are synchronized. A separate runtime preview is now staged and running on Pi; no OS or autostart changes performed.
 
 ## Verified locally
 
@@ -19,19 +19,20 @@ Existing local application migrated and published to private GitHub repository h
 
 ## Acceptance and limitations
 
-- 30 product criteria remain OPEN. No current Raspberry Pi candidate accepted.
+- 30 product criteria remain OPEN. Candidate 568c2b0c43de is running as an isolated preview, not accepted for release.
 - Historical preparation: 7 PASS in legacy ledger, preserved in docs/history. Active preparation entries are OPEN because private historical evidence was not imported.
 - Existing runtime uses a graphical desktop session. Direct appliance boot, Lite base and image builder are not implemented.
 - Wired SSH password authentication succeeded on 2026-10-02. Pi 4 / Debian 13.4 ARM64 confirmed, about 6 GiB disk space available. Both wired and wireless interfaces are up.
 - Pi source checkout created at ~/PySH from verified GitHub history; Git integrity and repository checks passed. Origin points to Therenthe/PySH. Private GitHub authentication on Pi is not configured; source updates can be transferred as verified Git bundles over SSH.
-- Legacy package 32d75c593e83 matches all 33 runtime manifest hashes. No current/previous links or installed launcher; hub/preview services inactive and no app process observed. No application deployment or autostart activation was performed.
+- Legacy package 32d75c593e83 matches all 33 runtime manifest hashes. No current/previous links or installed launcher; hub/preview services inactive and no app process observed. These are the pre-preview observations; the isolated preview is now running, with no autostart activation.
 - Saved Wi-Fi nested buttons and untranslated security labels corrected. Four browser regression tests cover EN/RO and both themes at 800×480; the full browser/product matrix and physical touch acceptance remain incomplete.
 - Representative Home/Radio screenshots reveal additional pre-existing issues: untranslated headings, raw idle state, and radio controls partly clipped. These remain UX/I18N acceptance work.
-- Bluetooth audio, real touch, DRM/streaming accounts, cold boots, 8-hour stability, performance and clean install/rollback remain acceptance work.
+- Real panel capture confirms the Romanian setup screen at 800×480. A generated local WAV played through mpv/PipeWire to the existing Bluetooth speaker; user confirmed audible output at 25% sink volume. See docs/evidence/pi-preview-2026-10-02.md.
+- Complete touch, Bluetooth pairing/reconnect/radio/recovery, DRM/streaming accounts, cold boots, 8-hour stability, performance and clean install/rollback remain acceptance work.
 
 ## Next
 
-1. Build and stage the network UI candidate separately on Pi; inspect the real panel and integrations.
+1. Complete the physical setup/touch tour on the running preview and fix the remaining Home/Radio translation and clipping issues.
 2. Continue vertical product acceptance, beginning with setup and audio/Bluetooth recovery flows.
 3. Keep PC/Pi source checkouts synchronized with verified GitHub commits; protect legacy releases and persistent data during deployment.
 4. Follow docs/ROADMAP.md and accepted ADRs for appliance transition.
