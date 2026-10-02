@@ -48,4 +48,4 @@ install -d "$target/etc/systemd/system/ssh.service.d"
 printf '[Unit]\nWants=pysh-recovery.service\nAfter=pysh-recovery.service\nConditionPathExists=/home/pysh-admin/.ssh/authorized_keys\n' > "$target/etc/systemd/system/ssh.service.d/pysh-key-required.conf"
 printf 'AllowUsers pysh-admin\nAuthenticationMethods publickey\nPasswordAuthentication no\nPermitRootLogin no\n' > "$target/etc/ssh/sshd_config.d/pysh-recovery.conf"
 chroot "$target" visudo -c
-chroot "$target" sh -c 'test -x /usr/bin/agreety && test -x /usr/bin/labwc && test -x /usr/bin/chromium && test -x /usr/bin/mpv'
+chroot "$target" sh -c 'test -x /usr/sbin/agreety && test -x /usr/bin/labwc && test -x /usr/bin/chromium && test -x /usr/bin/mpv'
