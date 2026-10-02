@@ -16,6 +16,28 @@ def enable_child_reaping():
         raise OSError(ctypes.get_errno(), "Cannot enable child subreaping")
 
 
+def reap_adopted_children(*leaders):
+    """Reap exited adoptees, even when they detached from their worker's group.
+
+    Direct Popen leaders keep ownership of their exit status. Reading our Linux
+    child list avoids waitpid(-1), which could steal one of those return codes.
+    This helper never signals a process and never waits for a running child.
+    """
+    protected = {child.pid for child in leaders if child is not None}
+    child_list = Path(f"/proc/self/task/{os.getpid()}/children")
+    reaped = 0
+    for value in child_list.read_text(encoding="ascii").split():
+        pid = int(value)
+        if pid in protected:
+            continue
+        try:
+            waited, _ = os.waitpid(pid, os.WNOHANG)
+            reaped += bool(waited)
+        except ChildProcessError:
+            pass  # Already reaped or no longer our child.
+    return reaped
+
+
 def start_owned(*args, **kwargs):
     child = subprocess.Popen(*args, **kwargs, start_new_session=True)
     child._pysh_owned_pgid = child.pid
@@ -103,6 +125,7 @@ def main():
     browser = None
     try:
         while not stopping and not exit_request.exists():
+            reap_adopted_children(api, browser)
             if api is None or api.poll() is not None:
                 terminate(browser)
                 browser = None
@@ -128,6 +151,7 @@ def main():
             except Exception as error:
                 failures.append(error)
                 print(f"Owned process cleanup failed: {error}", file=sys.stderr, flush=True)
+        reap_adopted_children(api, browser)
         exit_request.unlink(missing_ok=True)
         if failures:
             raise failures[0]

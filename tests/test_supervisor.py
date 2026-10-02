@@ -107,3 +107,59 @@ def test_already_cleaned_handle_cannot_signal_a_reused_group(supervisor, monkeyp
         raise AssertionError("An already cleaned group must never be signalled again")
     monkeypatch.setattr(os, "killpg", forbidden)
     supervisor.terminate(worker)
+
+
+def wait_for_zombie(pid, *, parent=None):
+    deadline = time.monotonic() + 5
+    while True:
+        state = Path(f"/proc/{pid}/stat").read_text().rpartition(")")[2].split()
+        if state[0] == "Z" and (parent is None or int(state[1]) == parent):
+            return
+        assert time.monotonic() < deadline, "process did not become an adopted zombie"
+        time.sleep(.02)
+
+
+def test_detached_adopted_zombie_reaped_without_stealing_leader_exit(supervisor, tmp_path):
+    ready = tmp_path / "detached.pid"
+    release = tmp_path / "release-detached"
+    detached_code = (
+        "import os,time; from pathlib import Path; "
+        f"Path({str(ready)!r}).write_text(str(os.getpid())); "
+        f"release=Path({str(release)!r}); "
+        "exec('while not release.exists(): time.sleep(.01)'); os._exit(17)"
+    )
+    parent_code = (
+        "import subprocess,sys,time,os; from pathlib import Path; "
+        f"subprocess.Popen([sys.executable,'-c',{detached_code!r}], start_new_session=True); "
+        f"ready=Path({str(ready)!r}); "
+        "exec('while not ready.exists(): time.sleep(.01)'); os._exit(23)"
+    )
+    parent = supervisor.start_owned([sys.executable, "-c", parent_code])
+    leader = supervisor.start_owned([sys.executable, "-c", "import os; os._exit(31)"])
+    detached = None
+    try:
+        detached = wait_for_file(ready)
+        assert parent.wait(timeout=5) == 23
+        assert os.getpgid(detached) == detached  # Outside its original worker's group.
+        release.touch()
+        wait_for_zombie(detached, parent=os.getpid())
+        wait_for_zombie(leader.pid, parent=os.getpid())
+        assert leader.returncode is None  # Popen has not collected the exit status yet.
+        assert supervisor.reap_adopted_children(parent, leader) >= 1
+        assert_gone(detached)
+        assert leader.returncode is None
+        assert leader.wait(timeout=1) == 31
+        assert parent.returncode == 23
+    finally:
+        release.touch()
+        supervisor.terminate(parent, grace=.15)
+        supervisor.terminate(leader, grace=.15)
+        if detached is not None:
+            try:
+                os.kill(detached, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            try:
+                os.waitpid(detached, 0)
+            except ChildProcessError:
+                pass
