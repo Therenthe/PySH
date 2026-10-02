@@ -1,5 +1,5 @@
 {
-  "candidate": "ee58b51f45bd",
+  "candidate": "24f207c79081",
   "preparation": [
     {
       "id": "PREP-01",
@@ -74,20 +74,22 @@
     {
       "id": "UX-02",
       "status": "OPEN",
-      "candidate": "1cc15fa4e625",
+      "candidate": "24f207c79081",
       "evidence": [
-        "docs/evidence/ui-audit-2026-10-02.md"
+        "docs/evidence/ui-audit-2026-10-02.md",
+        "docs/evidence/content-recovery-2026-10-02.md"
       ],
-      "reason": "20 browser regressions across pages/states/locales/themes pass; real Pi Home capture inspected. Full physical screen matrix incomplete."
+      "reason": "48 real Pi EN/RO/theme screen samples inspected; newly repaired content error overlays need repeat on device and full physical matrix."
     },
     {
       "id": "UX-03",
-      "status": "FAIL",
-      "candidate": "ee58b51f45bd",
+      "status": "OPEN",
+      "candidate": "24f207c79081",
       "evidence": [
-        "docs/evidence/pi-legibility-2026-10-02.md"
+        "docs/evidence/pi-legibility-2026-10-02.md",
+        "docs/evidence/content-recovery-2026-10-02.md"
       ],
-      "reason": "Real Pi audit found 10–13px text and 2.31:1 night confirmation contrast. Repair passes browser regression; repaired hardware candidate pending."
+      "reason": "48 real Pi screen samples now have no small text or textual contrast failures; complete control contrast and physical day/night acceptance remain pending."
     },
     {
       "id": "I18N-01",
@@ -165,12 +167,13 @@
     },
     {
       "id": "MEDIA-02",
-      "status": "OPEN",
-      "candidate": "568c2b0c43de",
+      "status": "FAIL",
+      "candidate": "24f207c79081",
       "evidence": [
-        "docs/evidence/pi-preview-2026-10-02.md"
+        "docs/evidence/pi-preview-2026-10-02.md",
+        "docs/evidence/content-recovery-2026-10-02.md"
       ],
-      "reason": "Generated local WAV played with real mpv/PipeWire/Bluetooth output, confirmed audible by user; remaining formats, browsing and failures untested."
+      "reason": "Eight real audio encodings decoded and missing-file rejection passed; corrupt MP3 lost its error. Repair regression passes; real repaired candidate revalidation pending."
     },
     {
       "id": "MEDIA-03",
@@ -255,11 +258,12 @@
     {
       "id": "PERF-01",
       "status": "OPEN",
-      "candidate": "ee58b51f45bd",
+      "candidate": "24f207c79081",
       "evidence": [
-        "docs/evidence/pi-legibility-2026-10-02.md"
+        "docs/evidence/pi-legibility-2026-10-02.md",
+        "docs/evidence/content-recovery-2026-10-02.md"
       ],
-      "reason": "Partial real Pi evidence recorded; final OS candidate, full criterion and physical acceptance remain pending."
+      "reason": "120 real navigation samples aggregate p95 163.5 ms; first-feedback and five launches remain unmeasured."
     },
     {
       "id": "PERF-02",
