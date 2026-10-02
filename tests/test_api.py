@@ -101,3 +101,84 @@ def test_unsupervised_desktop_exit_retains_existing_boundary(client, monkeypatch
     app.state.hub.appliance = False
     response = client.post('/api/exit', headers={'X-Hub-Token': app.state.hub.token})
     assert response.json() == {'error': 'desktop_exit_unavailable'}
+
+
+def test_late_weather_cannot_replace_new_location(tmp_path):
+    import asyncio
+    async def scenario():
+        hub = Hub(tmp_path)
+        first_started, release_first = asyncio.Event(), asyncio.Event()
+        async def weather(location):
+            if location['name'] == 'Old':
+                first_started.set()
+                await release_first.wait()
+            return {'city': location['name'], 'stale': False}
+        hub.content.weather = weather
+        hub.store.update({'location': {'name': 'Old', 'latitude': 1, 'longitude': 1}})
+        old = asyncio.create_task(hub.refresh_weather())
+        await first_started.wait()
+        hub.store.update({'location': {'name': 'New', 'latitude': 2, 'longitude': 2}})
+        await hub.refresh_weather()
+        release_first.set()
+        await old
+        assert hub.weather['city'] == 'New'
+        # Removing the location also invalidates an in-flight result.
+        first_started.clear()
+        release_first.clear()
+        hub.store.update({'location': {'name': 'Old', 'latitude': 1, 'longitude': 1}})
+        old = asyncio.create_task(hub.refresh_weather())
+        await first_started.wait()
+        hub.store.update({'location': None})
+        await hub.refresh_weather()
+        release_first.set()
+        await old
+        assert hub.weather is None
+    asyncio.run(scenario())
+
+
+def test_saved_audio_restores_once_and_after_reconnection(tmp_path):
+    import asyncio
+    async def scenario():
+        hub = Hub(tmp_path)
+        hub.store.update({'audioOutput': 'speaker', 'volume': 23, 'mute': True})
+        outputs = [{'id': 'other', 'bluetooth': False}, {'id': 'speaker', 'bluetooth': True}]
+        current = {'available': True, 'output': 'other', 'outputs': outputs, 'volume': 70, 'mute': False}
+        async def audio_status(): return dict(current)
+        async def audio_set(**values):
+            current.update(output=values['output'], volume=values['volume'], mute=values['mute'])
+            return dict(current)
+        hub.device = SimpleNamespace(network_status=AsyncMock(return_value={}), bluetooth_status=AsyncMock(return_value={}), audio_status=audio_status, audio_set=AsyncMock(side_effect=audio_set))
+        hub.player = SimpleNamespace(command=AsyncMock())
+        await hub.refresh_device()
+        assert hub.snapshots['audio']['volume'] == 23
+        assert hub.snapshots['audio']['mute'] is True
+        assert hub.snapshots['audio']['output'] == 'speaker'
+        assert hub.audio_selected is True
+        await hub.refresh_device()
+        assert hub.device.audio_set.await_count == 1
+        current.update(output='other', outputs=outputs[:1])
+        await hub.refresh_device()
+        hub.player.command.assert_awaited_once_with('pause')
+        current.update(outputs=outputs)
+        await hub.refresh_device()
+        assert hub.device.audio_set.await_count == 2
+        # The same persisted preferences restore through a new Hub instance.
+        restarted = Hub(tmp_path)
+        assert restarted.store.value.mute is True
+        assert restarted.store.value.volume == 23
+    asyncio.run(scenario())
+
+
+def test_local_queue_boundaries_exposed_without_enabling_radio_queue(client):
+    hub = app.state.hub
+    hub.queue = [{'path': 'a'}, {'path': 'b'}]
+    hub.queue_index = 0
+    hub.player.status = AsyncMock(return_value={'kind': 'audio', 'url': '/a', 'state': 'playing'})
+    status = client.get('/api/state').json()['player']
+    assert status['canNext'] is True and status['canPrevious'] is False
+    hub.queue_index = 1
+    status = client.get('/api/state').json()['player']
+    assert status['canPrevious'] is True and status['canNext'] is False
+    hub.player.status = AsyncMock(return_value={'kind': 'radio', 'url': 'https://radio.example', 'state': 'playing'})
+    status = client.get('/api/state').json()['player']
+    assert status['canPrevious'] is False and status['canNext'] is False

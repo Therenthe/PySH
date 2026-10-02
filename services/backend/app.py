@@ -113,6 +113,9 @@ class Hub:
         self.snapshots = {"network": {"available": False, "state": "initializing"}, "bluetooth": {"available": False, "devices": [], "prompts": []}, "audio": {"available": False, "outputs": []}}
         self.last_output = None
         self.audio_selected = False
+        self._audio_restored = None
+        self._device_lock = asyncio.Lock()
+        self._weather_generation = 0
         self.queue = []
         self.queue_index = -1
         self.started = datetime.now(timezone.utc).isoformat()
@@ -124,11 +127,29 @@ class Hub:
             return {"available": False, "error": name + "_unavailable"}
 
     async def refresh_device(self):
+        async with self._device_lock:
+            await self._refresh_device()
+
+    async def _refresh_device(self):
         results = await asyncio.gather(self.safe("network", self.device.network_status), self.safe("bluetooth", self.device.bluetooth_status), self.safe("audio", self.device.audio_status))
         self.snapshots = dict(zip(("network", "bluetooth", "audio"), results))
         audio = self.snapshots["audio"]
         output = audio.get("output")
         outputs = audio.get("outputs", [])
+        saved = self.store.value.audioOutput
+        preferred = next((item for item in outputs if str(item.get("id")) == saved), None)
+        restore_target = preferred or next((item for item in outputs if str(item.get("id")) == str(output) and item.get("bluetooth")), None)
+        if restore_target and self._audio_restored != str(restore_target["id"]):
+            try:
+                restored = await asyncio.wait_for(self.device.audio_set(output=restore_target["id"], volume=self.store.value.volume, mute=self.store.value.mute), timeout=8)
+                if restored.get("available") and not restored.get("error"):
+                    audio = self.snapshots["audio"] = restored
+                    output, outputs = audio.get("output"), audio.get("outputs", [])
+                    self._audio_restored = str(restore_target["id"])
+            except Exception:
+                log.info("Saved audio settings unavailable")
+        elif not restore_target:
+            self._audio_restored = None
         active = next((item for item in outputs if str(item.get("id")) == str(output)), None)
         # An analog endpoint is not evidence of speakers. It must be selected explicitly.
         self.audio_selected = bool(active and (active.get("bluetooth") or str(active.get("id")) == self.store.value.audioOutput))
@@ -144,14 +165,20 @@ class Hub:
             await asyncio.sleep(2)
 
     async def refresh_weather(self):
+        self._weather_generation += 1
+        generation = self._weather_generation
         location = self.store.value.location
+        identity = location.model_dump() if location else None
         if location:
             try:
-                self.weather = await self.content.weather(location.model_dump())
+                result = await self.content.weather(identity)
             except Exception:
-                self.weather = {**(self.weather or {}), "stale": True, "error": "weather_unavailable"}
+                result = {**(self.weather or {}), "stale": True, "error": "weather_unavailable"}
         else:
-            self.weather = None
+            result = None
+        current = self.store.value.location
+        if generation == self._weather_generation and identity == (current.model_dump() if current else None):
+            self.weather = result
         return self.weather
 
     async def weather_loop(self):
@@ -266,7 +293,10 @@ async def session(request: Request):
 @app.get("/api/state")
 async def state(request: Request):
     hub = request.app.state.hub
-    return {"version": VERSION, "preferences": hub.store.export(), **hub.snapshots, "player": await hub.player.status(), "weather": hub.weather, "recovered": hub.store.recovered, "appliance": hub.appliance, "serviceMode": hub.service_mode}
+    playback = await hub.player.status()
+    local = playback.get("kind") == "audio" and bool(playback.get("url"))
+    playback.update(canPrevious=local and hub.queue_index > 0, canNext=local and 0 <= hub.queue_index < len(hub.queue) - 1)
+    return {"version": VERSION, "preferences": hub.store.export(), **hub.snapshots, "player": playback, "weather": hub.weather, "recovered": hub.store.recovered, "appliance": hub.appliance, "serviceMode": hub.service_mode}
 
 
 @app.patch("/api/preferences")
@@ -330,6 +360,8 @@ async def audio(request: Request, body: Audio):
         patch = {}
         if body.volume is not None:
             patch["volume"] = body.volume
+        if body.mute is not None:
+            patch["mute"] = body.mute
         if body.output is not None:
             patch["audioOutput"] = body.output
         if patch:
