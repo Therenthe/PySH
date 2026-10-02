@@ -48,6 +48,7 @@ class Preferences(BaseModel):
     favorites: list[Station] = Field(default_factory=list, max_length=200)
     shortcuts: list[Literal["radio", "media", "bluetooth", "weather"]] = Field(default_factory=lambda: ["radio", "media"], max_length=3)
     volume: int = Field(default=40, ge=0, le=100)
+    mute: bool = False
     audioOutput: str | None = None
     lastStation: Station | None = None
 

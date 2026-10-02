@@ -30,7 +30,7 @@ async function fixture(page: Page, language: 'en'|'ro', theme: 'ink'|'night', se
     else if(['/api/play','/api/player','/api/audio','/api/bluetooth/power','/api/bluetooth/scan','/api/bluetooth/action','/api/bluetooth/reply','/api/weather/refresh','/api/network/connect','/api/external','/api/exit','/api/service/return','/api/favorites'].includes(path) && method==='POST') {
       f.actions.push({path,body});
       if(path==='/api/play')state.player={state:'playing',title:body.title,kind:body.source==='radio'?'radio':'audio',url:body.url||body.path};
-      if(path==='/api/player')state.player.state=body.action==='stop'?'idle':body.action==='pause'?'paused':'playing';
+      if(path==='/api/player'){if(body.action==='seek')state.player.position=body.value;else state.player.state=body.action==='stop'?'idle':body.action==='pause'?'paused':'playing';}
       if(path==='/api/favorites')state.preferences.favorites=body.remove?[]:[body.station];
       if(path==='/api/audio')Object.assign(state.audio,body);
       if(path==='/api/bluetooth/reply')state.bluetooth.prompts=[];
@@ -67,6 +67,38 @@ async function capture(page:Page, info:TestInfo, name:string, defects:string[]) 
 async function closeModal(page:Page, ro:boolean){await page.locator('.modal-card header').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();}
 
 for(const theme of ['ink','night'] as const) {
+  test(`local audio transport uses queue availability and touch seek ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
+    f.state.player={state:'playing',kind:'audio',title:'Test local track',url:'/test/audio.mp3',duration:120,position:30,canPrevious:false,canNext:true};
+    await page.goto('/');await page.locator('.main-nav button').nth(2).tap();const bar=page.locator('.local-audio-bar');await expect(bar).toBeVisible();
+    const previous=bar.getByRole('button',{name:ro?'Anterior':'Previous',exact:true}),next=bar.getByRole('button',{name:ro?'Următor':'Next',exact:true});
+    await expect(previous).toBeDisabled();await expect(next).toBeEnabled();await expect(bar.locator('.audio-time')).toHaveText('0:30 / 2:00');
+    await bar.getByRole('button',{name:ro?'Pauză':'Pause',exact:true}).tap();await expect(bar.getByRole('button',{name:ro?'Redă':'Play',exact:true})).toBeVisible();
+    const slider=bar.getByRole('slider',{name:ro?'Progres':'Progress',exact:true}),rect=await slider.boundingBox();await slider.tap({position:{x:rect!.width*.5,y:rect!.height*.5}});
+    await expect.poll(()=>f.actions.filter(a=>a.path==='/api/player'&&a.body.action==='seek').at(-1)?.body.value).toBeGreaterThan(55);expect(f.state.player.position).toBeLessThan(65);await expect(bar.locator('.audio-time')).toContainText('/ 2:00');
+    await bar.getByRole('button',{name:ro?'Redă':'Play',exact:true}).tap();await next.tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('next');
+    f.state.player.canPrevious=true;f.state.player.canNext=false;await page.reload();await expect(previous).toBeEnabled();await expect(next).toBeDisabled();await previous.tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('previous');
+    await capture(page,info,'local-audio-transport',defects);await bar.getByRole('button',{name:ro?'Oprește':'Stop',exact:true}).tap();await expect(bar).toHaveCount(0);expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
+  });
+  test(`ended or failed local audio retains replay and queue controls ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
+    for(const state of ['ended','error']){
+      f.state.player={state,kind:'audio',title:'Completed local track',url:'/test/audio.mp3',duration:120,position:120,canPrevious:true,canNext:true};
+      await page.goto('/');const bar=page.locator('.local-audio-bar');await expect(bar).toBeVisible();await expect(page.locator('.home-focus .player-state')).toHaveText(ro?'Pregătit':'Ready');
+      await expect(bar.locator('.audio-time')).toHaveText(state==='error'?(ro?'Problemă de redare':'Playback problem'):(ro?'Redare încheiată':'Playback finished'));await expect(bar.getByRole('slider')).toBeDisabled();
+      await expect(bar.getByRole('button',{name:ro?'Următor':'Next',exact:true})).toBeEnabled();await capture(page,info,`local-audio-${state}`,defects);
+      await bar.getByRole('button',{name:ro?'Redă':'Play',exact:true}).tap();expect(f.actions.filter(a=>a.path==='/api/play').at(-1)?.body).toEqual({source:'local',path:'/test/audio.mp3',title:'Completed local track'});await expect(bar.getByRole('button',{name:ro?'Pauză':'Pause',exact:true})).toBeVisible();
+      f.state.player={state,kind:'audio',title:'Completed local track',url:'/test/audio.mp3',canPrevious:true,canNext:true};await page.reload();await bar.getByRole('button',{name:ro?'Următor':'Next',exact:true}).tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('next');
+    }
+    expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
+  });
+  test(`active radio station pauses and resumes without reload ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
+    await page.goto('/');await page.locator('.main-nav button').nth(1).tap();const station=page.locator('.station-main');await station.tap();await expect(page.locator('.radio-side .state-text')).toHaveText(ro?'Se redă':'Playing');
+    await expect(station).toHaveAccessibleName(`${ro?'Pauză':'Pause'} · Test station`);await station.tap();await expect(station).toHaveAccessibleName(`${ro?'Redă':'Play'} · Test station`);await expect(page.locator('.radio-side .state-text')).toHaveText(ro?'În pauză':'Paused');expect(f.actions.filter(a=>a.path==='/api/play')).toHaveLength(1);expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('pause');
+    await station.tap();await expect(page.locator('.radio-side .state-text')).toHaveText(ro?'Se redă':'Playing');expect(f.actions.filter(a=>a.path==='/api/play')).toHaveLength(1);expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('resume');f.state.player.url='https://example.com/other.mp3';await page.reload();await page.locator('.main-nav button').nth(1).tap();await expect(station).toHaveAccessibleName(`${ro?'Redă':'Play'} · Test station`);await station.tap();expect(f.actions.filter(a=>a.path==='/api/play')).toHaveLength(2);expect(f.unexpected).toEqual([]);
+  });
+
   test(`local video owns persistent touch playback controls ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
     await page.goto('/');

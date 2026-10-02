@@ -127,6 +127,8 @@ def main():
         while not stopping and not exit_request.exists():
             reap_adopted_children(api, browser)
             if api is None or api.poll() is not None:
+                if api is not None:
+                    print(f"API exited code={api.returncode}; restarting API and kiosk", file=sys.stderr, flush=True)
                 terminate(browser)
                 browser = None
                 terminate(api)
@@ -140,6 +142,8 @@ def main():
                     except Exception:
                         time.sleep(.25)
             if not stopping and not exit_request.exists() and api.poll() is None and (browser is None or browser.poll() is not None):
+                if browser is not None:
+                    print(f"Kiosk exited code={browser.returncode}; restarting kiosk", file=sys.stderr, flush=True)
                 terminate(browser)
                 browser = start_owned(["chromium", "--ozone-platform=wayland", "--no-first-run", "--noerrdialogs", "--disable-session-crashed-bubble", "--password-store=basic", "--kiosk", "--user-data-dir=" + str(DATA / "hub-browser"), "--app=http://127.0.0.1:8765"], env=environment, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             time.sleep(1)
