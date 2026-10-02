@@ -3,6 +3,7 @@ import { expect, test, type Page, type TestInfo } from '@playwright/test';
 // Strict browser-only fixtures: no production adapter returns these states.
 async function fixture(page: Page, language: 'en'|'ro', theme: 'ink'|'night', setupComplete = true) {
   const state: any = {
+    appliance:false, serviceMode:false,
     preferences: { language, theme, setupComplete, nightEnabled: false, screensaverMinutes: 0, location: { name: 'București', latitude: 44.4, longitude: 26.1 }, favorites: [], shortcuts: ['radio','media'] },
     network: { available: true, state: 'connected', connection: 'Ethernet', devices: [{type:'ethernet', state:'connected', ip:'192.0.2.1'}], saved: [] },
     bluetooth: { available: true, powered: true, devices: [{address:'00:00:00:00:00:01', name:'Test speaker', paired:true, connected:true}], prompts: [] },
@@ -25,13 +26,15 @@ async function fixture(page: Page, language: 'en'|'ro', theme: 'ink'|'night', se
       else json={path:'Test library',parent:'',items:f.media==='empty'?[]:[{name:'Test audio.mp3',path:'/test/audio.mp3',kind:'audio',size_human:'1 MB'},{name:'Test folder',path:'/test/folder',is_dir:true}]};
     } else if(path==='/api/geocode' && method==='GET') json={results:[{name:'București',latitude:44.4,longitude:26.1,country:'Romania'}]};
     else if(path==='/api/network/scan' && method==='POST') json={networks:[{ssid:'Protected test Wi-Fi',security:'secured',signal:80}]};
-    else if(['/api/play','/api/player','/api/audio','/api/bluetooth/power','/api/bluetooth/scan','/api/bluetooth/action','/api/bluetooth/reply','/api/weather/refresh','/api/network/connect','/api/external','/api/exit','/api/favorites'].includes(path) && method==='POST') {
+    else if(['/api/play','/api/player','/api/audio','/api/bluetooth/power','/api/bluetooth/scan','/api/bluetooth/action','/api/bluetooth/reply','/api/weather/refresh','/api/network/connect','/api/external','/api/exit','/api/service/return','/api/favorites'].includes(path) && method==='POST') {
       f.actions.push({path,body});
       if(path==='/api/play')state.player={state:'playing',title:body.title,kind:body.source==='radio'?'radio':'audio',url:body.url||body.path};
       if(path==='/api/player')state.player.state=body.action==='stop'?'idle':body.action==='pause'?'paused':'playing';
       if(path==='/api/favorites')state.preferences.favorites=body.remove?[]:[body.station];
       if(path==='/api/audio')Object.assign(state.audio,body);
       if(path==='/api/bluetooth/reply')state.bluetooth.prompts=[];
+      if(path==='/api/exit'&&state.appliance){state.serviceMode=true;state.player={state:'idle'};}
+      if(path==='/api/service/return')state.serviceMode=false;
       json={ok:true};
     } else {f.unexpected.push(`${method} ${path}`);status=500;json={error:'unexpected_test_request'};}
     await route.fulfill({status,json});
@@ -62,6 +65,24 @@ async function capture(page:Page, info:TestInfo, name:string, defects:string[]) 
 async function closeModal(page:Page, ro:boolean){await page.locator('.modal-card header').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();}
 
 for(const theme of ['ink','night'] as const) {
+  test(`appliance service recovery ${theme}`,async({page},info)=> {
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
+    f.state.appliance=true;const prefs=JSON.stringify(f.state.preferences);
+    await page.goto('/');await expect(page.locator('.home-layout')).toBeVisible();
+    await page.locator('.main-nav button').nth(3).tap();
+    await page.locator('.settings-tabs button').nth(7).tap();
+    await expect(page.getByRole('dialog')).toContainText(ro?'Deschizi modul de service?':'Open service mode?');
+    await capture(page,info,'service-confirmation',defects);
+    await page.locator('.dialog-actions button').first().tap();expect(f.actions.some(a=>a.path==='/api/exit')).toBeFalsy();
+    await page.locator('.settings-tabs button').nth(7).tap();await page.locator('.dialog-actions button').last().tap();
+    await expect(page.locator('.service-screen')).toBeVisible();await expect(page.locator('.main-nav')).toHaveCount(0);
+    await capture(page,info,'service-mode',defects);
+    f.backendDown=true;await expect(page.locator('.error-strip')).toBeVisible({timeout:6000});await capture(page,info,'service-backend-error',defects);
+    f.backendDown=false;await page.locator('.error-strip button').tap();await expect(page.locator('.error-strip')).toHaveCount(0);
+    await page.getByRole('button',{name:ro?'Revino în hub':'Return to hub',exact:true}).tap();
+    await expect(page.locator('.service-screen')).toHaveCount(0);await expect(page.locator('.main-nav')).toBeVisible();
+    expect(JSON.stringify(f.state.preferences)).toBe(prefs);expect(f.unexpected).toEqual([]);expect(defects).toEqual([]);
+  });
   test(`filters, cancellation and shortcuts ${theme}`,async({page},info)=> {
     const ro=info.project.name==='touch-ro', f=await fixture(page,ro?'ro':'en',theme);
     await page.goto('/');await expect(page.locator('.home-layout')).toBeVisible();

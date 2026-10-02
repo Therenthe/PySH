@@ -108,6 +108,8 @@ class Hub:
         self.weather = None
         self.tasks = []
         self.external = None
+        self.appliance = os.environ.get("PI_HUB_APPLIANCE") == "1"
+        self.service_mode = False
         self.snapshots = {"network": {"available": False, "state": "initializing"}, "bluetooth": {"available": False, "devices": [], "prompts": []}, "audio": {"available": False, "outputs": []}}
         self.last_output = None
         self.audio_selected = False
@@ -264,7 +266,7 @@ async def session(request: Request):
 @app.get("/api/state")
 async def state(request: Request):
     hub = request.app.state.hub
-    return {"version": VERSION, "preferences": hub.store.export(), **hub.snapshots, "player": await hub.player.status(), "weather": hub.weather, "recovered": hub.store.recovered}
+    return {"version": VERSION, "preferences": hub.store.export(), **hub.snapshots, "player": await hub.player.status(), "weather": hub.weather, "recovered": hub.store.recovered, "appliance": hub.appliance, "serviceMode": hub.service_mode}
 
 
 @app.patch("/api/preferences")
@@ -428,10 +430,35 @@ async def external(request: Request, body: External):
 
 @app.post("/api/exit")
 async def exit_hub(request: Request):
+    hub = request.app.state.hub
+    if hub.appliance:
+        # Do not leave media playing behind the recovery screen. If stopping a
+        # running player fails, retain the normal UI so its controls stay usable.
+        playback = await hub.player.status()
+        if playback.get("state") not in {"idle", "ended", "error"}:
+            await hub.player.command("stop")
+        if hub.external and hub.external.returncode is None:
+            hub.external.terminate()
+            try:
+                await asyncio.wait_for(hub.external.wait(), timeout=3)
+            except asyncio.TimeoutError:
+                hub.external.kill()
+                await hub.external.wait()
+        hub.service_mode = True
+        return {"exiting": False, "mode": "service"}
     if not os.environ.get("PI_HUB_SUPERVISED"):
         return JSONResponse({"error": "desktop_exit_unavailable"}, status_code=409)
     (DATA / "exit-request").write_text("exit", encoding="utf-8")
     return {"exiting": True}
+
+
+@app.post("/api/service/return")
+async def return_from_service(request: Request):
+    hub = request.app.state.hub
+    if not hub.appliance:
+        return JSONResponse({"error": "unavailable"}, status_code=409)
+    hub.service_mode = False
+    return {"mode": "hub"}
 
 
 @app.get("/api/diagnostics")

@@ -29,6 +29,8 @@ Existing local application migrated and published to private GitHub repository h
 - Home/Radio translations, idle/end states and clipped radio controls corrected on the full-touch-ui branch. Twenty browser tests now cover EN/RO, both themes, all pages/settings, setup, dialogs, keyboard, pairing and failure/recovery. Newly found filter, shortcut and accessible-control defects corrected. See docs/evidence/ui-audit-2026-10-02.md; Pi candidate 1cc15fa4e625 is running; real Home capture, Bluetooth disconnect/reconnect and radio streaming checked. Full physical matrix remains pending.
 - Real panel capture confirms the Romanian setup screen at 800×480. A generated local WAV played through mpv/PipeWire to the existing Bluetooth speaker; user confirmed audible output at 25% sink volume. See docs/evidence/pi-preview-2026-10-02.md.
 - User confirmed first-run setup and Settings / Bluetooth via physical touch; real panel capture shows the connected speaker.
+- Appliance service mode implemented behind an explicit launch flag, preserving desktop behavior. 43 Python and 24 browser tests pass, including EN/RO/themes and backend reconnection; device acceptance remains OPEN. See docs/evidence/service-mode-2026-10-02.md and ADR-0007.
+- A separate experimental OS branch has produced an ARM64 image successfully in GitHub Actions (run 37040841447). Recovery provisioning, image inspection and real boot remain pending; it is NOT FLASH-READY.
 - Complete touch, Bluetooth pairing/reconnect/radio/recovery, DRM/streaming accounts, cold boots, 8-hour stability, performance and clean install/rollback remain acceptance work.
 
 ## Next
