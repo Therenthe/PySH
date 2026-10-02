@@ -19,10 +19,14 @@ bash /tmp/pysh-image-gen/rpi-image-gen build -S /workspace/os/image \
 find /workspace/.runtime/os-build -type f -name 'pysh-pi4-candidate.img' -print -quit > /workspace/.runtime/os-build/image-path.txt
 image="$(cat /workspace/.runtime/os-build/image-path.txt)"
 test -n "$image" && test -s "$image"
+python3 os/image/inspect-image.py "$image"
 mkdir -p /workspace/.runtime/os-artifact
 gzip -1 -c "$image" > /workspace/.runtime/os-artifact/pysh-pi4-candidate.img.gz
 cp os/image/payload/source.json /workspace/.runtime/os-artifact/source.json
 cp os/image/payload/manifest.json /workspace/.runtime/os-artifact/runtime-manifest.json
 cd /workspace/.runtime/os-artifact
 sha256sum pysh-pi4-candidate.img.gz > SHA256SUMS
+split -b 300M -d pysh-pi4-candidate.img.gz pysh-pi4-candidate.img.gz.part-
+sha256sum pysh-pi4-candidate.img.gz.part-* > PART-SHA256SUMS
+cp /workspace/.runtime/os-build/image-inspection.json image-inspection.json
 printf '%s\n' 'EXPERIMENTAL: do not flash. Recovery provisioning, real boot and full product acceptance are pending.' > NOT-FLASH-READY.txt

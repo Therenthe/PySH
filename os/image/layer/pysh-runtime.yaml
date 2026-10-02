@@ -24,3 +24,4 @@ mmdebstrap:
     - fonts-dejavu-core
     - grim
     - wlr-randr
+    - sudo

@@ -22,7 +22,10 @@ jobs:
       - run: pnpm install --frozen-lockfile && pnpm build
       - run: python3 os/image/prepare-payload.py
       - name: Check shell syntax
-        run: bash -n os/image/ci-build.sh os/image/bdebstrap/customize90-pysh os/image/assets/pysh-session os/image/assets/labwc-autostart
+        run: |
+          for script in os/image/ci-build.sh os/image/bdebstrap/customize90-pysh os/image/assets/pysh-session os/image/assets/labwc-autostart os/image/assets/pysh-provision-recovery; do
+            bash -n "$script"
+          done
       - name: Build in ephemeral Debian ARM64 environment
         run: |
           docker pull debian:trixie
@@ -35,10 +38,34 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: pysh-pi4-experimental-${{ github.sha }}
-          path: .runtime/os-artifact/
+          path: |
+            .runtime/os-artifact/*.json
+            .runtime/os-artifact/*SUMS
+            .runtime/os-artifact/*.txt
           retention-days: 7
           compression-level: 0
           if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pysh-image-part-00-${{ github.sha }}
+          path: .runtime/os-artifact/*.part-00
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pysh-image-part-01-${{ github.sha }}
+          path: .runtime/os-artifact/*.part-01
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pysh-image-part-02-${{ github.sha }}
+          path: .runtime/os-artifact/*.part-02
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -47,4 +74,6 @@ jobs:
             .runtime/os-build/build.log
             .runtime/os-build/host-image.json
             os/image/payload/source.json
+            .runtime/os-build/image-inspection.json
+            .runtime/os-build/packages.txt
           retention-days: 7

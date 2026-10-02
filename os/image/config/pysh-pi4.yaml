@@ -3,7 +3,8 @@ device:
   hostname: pysh
   user1: pysh
   user1uid: 1000
-  user1sudo: none
+  # Retain the sudo package for recovery; customization removes hub privileges.
+  user1sudo: passwd
 
 image:
   layer: image-rpios

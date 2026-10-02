@@ -38,7 +38,7 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 - Setări rapide și pagină dedicată pentru limbă, rețea, audio, teme, mod de noapte, screensaver, sursa/vizualizarea vremii și comportament la pornire.
 - Teme: temă întunecată pentru utilizare nocturnă și temă vizuală inspirată de E-Ink pe LCD (paletă predominant alb-negru cu accente limitate; ecranul rămâne LCD). Temele schimbă o paletă și tokenuri comune, nu fragmentează comportamentul UI.
 - Preferințele supraviețuiesc repornirii. Datele sensibile de rețea și credențialele de servicii nu sunt afișate în jurnale sau în interfață după salvare.
-- Utilizatorul poate părăsi aplicația și reveni la desktop printr-o acțiune vizibilă, protejată de atingere accidentală.
+- În runtime-ul cu desktop, utilizatorul poate părăsi aplicația și reveni la desktop printr-o acțiune vizibilă, protejată de atingere accidentală. În sesiunea dedicată PySH OS, aceeași zonă oferă explicit „Mod de service”: oprește redarea, păstrează diagnosticul accesibil și permite revenirea în hub fără pierderea setărilor. Recuperarea administrativă se validează separat înainte de instalarea OS (ADR-0004 și ADR-0007).
 
 ### Pornire, stare și recuperare
 
