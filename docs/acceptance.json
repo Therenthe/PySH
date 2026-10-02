@@ -65,11 +65,12 @@
     {
       "id": "UX-01",
       "status": "OPEN",
-      "candidate": "568c2b0c43de",
+      "candidate": "bfb3cdd16723",
       "evidence": [
-        "docs/evidence/pi-preview-2026-10-02.md"
+        "docs/evidence/pi-preview-2026-10-02.md",
+        "docs/evidence/video-process-recovery-2026-10-02.md"
       ],
-      "reason": "User completed setup and opened Bluetooth settings by touch; real 800x480 capture shows connected speaker. Full tactile checklist and target sizing remain incomplete."
+      "reason": "Native local-video controls too small/hidden on real Pi capture; persistent 48px controls pass browser regression. Full physical tactile checklist remains pending."
     },
     {
       "id": "UX-02",
@@ -89,7 +90,7 @@
         "docs/evidence/pi-legibility-2026-10-02.md",
         "docs/evidence/content-recovery-2026-10-02.md"
       ],
-      "reason": "48 real Pi screen samples now have no small text or textual contrast failures; complete control contrast and physical day/night acceptance remain pending."
+      "reason": "48 real Pi screen samples have no small text or text contrast failures; complete control contrast and physical day/night acceptance remain pending."
     },
     {
       "id": "I18N-01",
@@ -171,9 +172,10 @@
       "candidate": "bfb3cdd16723",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
-        "docs/evidence/content-recovery-2026-10-02.md"
+        "docs/evidence/content-recovery-2026-10-02.md",
+        "docs/evidence/video-process-recovery-2026-10-02.md"
       ],
-      "reason": "Real repaired runtime repeats eight audio encodings, missing/corrupt file error, recovery and natural end successfully. Library touch controls/video/complete format matrix remain pending."
+      "reason": "Real audio decode, corrupt-file recovery and five selected video encodings pass on bfb3cdd16723. New persistent controls and repaired candidate need real revalidation; full media matrix remains pending."
     },
     {
       "id": "MEDIA-03",
@@ -250,10 +252,12 @@
     },
     {
       "id": "REL-02",
-      "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "status": "FAIL",
+      "candidate": "bfb3cdd16723",
+      "evidence": [
+        "docs/evidence/video-process-recovery-2026-10-02.md"
+      ],
+      "reason": "Real API SIGKILL exposed orphan mpv descendants. Owned-group/subreaper repair prepared, Linux CI and real repeat pending."
     },
     {
       "id": "PERF-01",

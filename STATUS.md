@@ -19,9 +19,9 @@ Existing local application migrated and published to private GitHub repository h
 
 ## Acceptance and limitations
 
-- All 30 product criteria remain OPEN. The repaired corrupt-file/recovery probe passes on candidate bfb3cdd16723; full product acceptance remains pending. The candidate runs as an isolated preview, not accepted for release.
+- 29 product criteria remain OPEN and MEDIA-02 is FAIL on candidate 24f207c79081. Corrupt-file repair passes regression; real revalidation is pending. The candidate runs as an isolated preview, not accepted for release.
 - Historical preparation: 7 PASS in legacy ledger, preserved in docs/history. Active preparation entries are OPEN because private historical evidence was not imported.
-- Existing runtime uses a graphical desktop session. The dedicated-session image builder is implemented on the experimental branch; actual appliance boot has not passed hardware acceptance.
+- Existing runtime uses a graphical desktop session. Direct appliance boot, Lite base and image builder are not implemented.
 - Wired SSH password authentication succeeded on 2026-10-02. Pi 4 / Debian 13.4 ARM64 confirmed, about 6 GiB disk space available. Both wired and wireless interfaces are up.
 - Pi source checkout created at ~/PySH from verified GitHub history; Git integrity and repository checks passed. Origin points to Therenthe/PySH. Private GitHub authentication on Pi is not configured; source updates can be transferred as verified Git bundles over SSH.
 - Legacy package 32d75c593e83 matches all 33 runtime manifest hashes. No current/previous links or installed launcher; hub/preview services inactive and no app process observed. These are the pre-preview observations; the isolated preview is now running, with no autostart activation.
@@ -40,9 +40,6 @@ Existing local application migrated and published to private GitHub repository h
 3. Keep PC/Pi source checkouts synchronized with verified GitHub commits; protect legacy releases and persistent data during deployment.
 4. Follow docs/ROADMAP.md and accepted ADRs for appliance transition.
 
-## Appliance build in progress
-
-User requested autonomous full delivery and PySH OS flashing after verification. Experimental rpi-image-gen v2.8.0/Pi4/Trixie configuration and ARM64 CI build are prepared on feat/pysh-os-image. ADR-0006 records the build-only container exception and known gates. No image is accepted or flash-ready; no live OS changes. Recovery key provisioning, service-mode UX, target package provenance, actual boot and backup/restoration remain required.
 ## Real device audit and OS progress
 
 48 real Pi screens inspected across EN/RO/themes, with 120 navigation samples. Service-mode media stop/return and preference preservation passed. Font/night contrast defects recorded as UX-03 FAIL; fixes and permanent browser checks prepared. See docs/evidence/pi-legibility-2026-10-02.md. An application backup is verified independently on PC; original card/desktop retained. Updated OS build and actual boot remain next.
@@ -51,4 +48,10 @@ User requested autonomous full delivery and PySH OS flashing after verification.
 
 Active isolated Pi preview: `24f207c79081`, from main `b853a5e`. Its 48-screen real audit no longer reproduces the font/night text contrast defects. Eight synthetic audio encodings decode on the real player; a corrupt MP3 incorrectly reports idle. A coherent repair covers mpv events and radio/weather/library/video retry, with 46 Python and 36 browser tests passing. See [content recovery evidence](docs/evidence/content-recovery-2026-10-02.md). The experimental OS branch has built and inspected a recovery-capable image; USB boot addressing and physical recovery/boot still require verification. No storage has been flashed.
 
-Active preview advanced to `bfb3cdd16723`: corrupt file → visible error → valid WAV recovery → natural end passes on Pi. Main is `607496a`. The image branch incorporates this runtime and ADR-0008 UUID partition references, with actual filesystem inspection before packaging. Physical boot, recovery provisioning, target storage choice and complete DoD remain OPEN.
+## Video controls and crash recovery
+
+Real preview `bfb3cdd16723` passes five selected video encodings and invalid-video retry/back in EN/RO/themes, but native controls are too small/hidden. API crash restarts the UI but leaves orphan mpv processes (REL-02 FAIL). Persistent video controls and owned-process cleanup repairs pass 40 browser tests; 46 backend tests pass and four Linux-only cases await CI. See [evidence](docs/evidence/video-process-recovery-2026-10-02.md). OS UUID build `a9fdf3d` passed run `37050691172`; it must be updated with these final repairs before physical test. No flash has occurred.
+
+## Experimental PySH OS build
+
+UUID image source `a9fdf3deaac08466009f677773c82935f12667e7` passed GitHub run `37050691172`. Metadata ZIP digest independently matched on PC; inspector verified 33 runtime files, firmware, MBR and actual ext4/VFAT UUIDs against fstab/cmdline. Experimental runtime in that image is `1a63da4ade45`; it is distinct from the desktop preview. ADR-0008 preserves USB-independent partition references. Physical boot/recovery, full product acceptance and chosen write destination remain OPEN. Integrating main `9c2b66f` for the next image, including persistent video controls and worker cleanup. No flash performed.
