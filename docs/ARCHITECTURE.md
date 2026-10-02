@@ -8,6 +8,6 @@ Chromium kiosk → assets React în `dist/` → API FastAPI pe `127.0.0.1:8765` 
 
 ## Direcție appliance
 
-Ținta este pornirea direct în PySH fără desktop expus utilizatorului obișnuit. Baza Lite și rpi-image-gen rămân propuneri de validat; `os/` nu conține încă un builder. Nu se confundă pornirea kiosk după login cu imaginea appliance. ADR-0001–0004 consemnează această diferență.
+Ținta este pornirea direct în PySH fără desktop expus utilizatorului obișnuit. Ramura experimentală OS implementează baza Lite cu rpi-image-gen 2.8, sesiunea labwc/greetd, mod de service și recuperare SSH prin cheie publică. Builderul și inspectorul sunt în `os/image/`; probele de boot și recuperare fizică rămân deschise. ADR-0006–0008 descriu detaliile. Nu se confundă pornirea kiosk după login cu imaginea appliance. ADR-0001–0004 consemnează această diferență.
 
 Pentru migrare păstrăm recuperarea prin desktop a runtime-ului existent. Proiectarea unei sesiuni kiosk minimale și a unui mod de service precedă eliminarea desktopului. Nu schimbăm controlerele audio/rețea doar pentru noua structură de directoare.
