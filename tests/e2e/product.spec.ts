@@ -67,6 +67,51 @@ async function capture(page:Page, info:TestInfo, name:string, defects:string[]) 
 async function closeModal(page:Page, ro:boolean){await page.locator('.modal-card header').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();}
 
 for(const theme of ['ink','night'] as const) {
+  test(`video handoff queues behind an in-flight radio play ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
+    await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Video test folder',items:[{name:'Test video.mp4',path:'/test/video.mp4',kind:'video'}]}}));
+    await page.route('**/api/media/file?**',route=>route.fulfill({contentType:'video/mp4',body:'invalid decoder input'}));
+    let release!:()=>void,playStarted=false,stopStarted=false;const gate=new Promise<void>(resolve=>release=resolve);
+    await page.route('**/api/play',async route=>{playStarted=true;await gate;f.state.player={state:'playing',kind:'radio',url:'https://example.com/test.mp3',title:'Test station'};await route.fulfill({json:f.state.player});});
+    await page.route('**/api/player',async route=>{expect(route.request().postDataJSON()).toEqual({action:'stop'});stopStarted=true;f.state.player={state:'idle',url:'',title:''};await route.fulfill({json:f.state.player});});
+    await page.goto('/');await page.locator('.main-nav button').nth(1).tap();await page.locator('.station-row').first().getByRole('button').first().tap();await expect.poll(()=>playStarted).toBe(true);
+    await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).tap();await page.waitForTimeout(300);expect(stopStarted).toBe(false);await expect(page.locator('.video-overlay')).toHaveCount(0);
+    release();await expect(page.locator('.video-overlay')).toBeVisible();expect(stopStarted).toBe(true);expect(f.state.player.state).toBe('idle');expect(f.unexpected).toEqual([]);
+  });
+  test(`local video waits for successful stop of other playback ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
+    await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Video test folder',items:[{name:'Test video.mp4',path:'/test/video.mp4',kind:'video'}]}}));
+    await page.route('**/api/media/file?**',route=>route.fulfill({contentType:'video/mp4',body:'invalid decoder input'}));
+    for(const kind of ['radio','audio','stale-idle']){
+      // Idle can be the last polled snapshot while actual playback has already started.
+      const originalState=kind==='stale-idle'?'idle':'playing';
+      f.state.player={state:originalState,kind:kind==='stale-idle'?'radio':kind,url:kind==='stale-idle'?'':kind==='radio'?'https://example.com/radio':'/test/audio.mp3',title:'Existing playback'};
+      await page.route('**/api/player',route=>route.fulfill({status:503,json:{error:'player_timeout'}}));
+      await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).tap();
+      await expect(page.locator('.error-strip')).toBeVisible();await expect(page.locator('.video-overlay')).toHaveCount(0);expect(f.state.player.state).toBe(originalState);
+      let release!:()=>void,requested=false;const gate=new Promise<void>(resolve=>release=resolve);
+      await page.route('**/api/player',async route=>{expect(route.request().postDataJSON()).toEqual({action:'stop'});requested=true;await gate;Object.assign(f.state.player,{state:'idle',url:'',title:''});await route.fulfill({json:{ok:true}});});
+      await page.getByRole('button',{name:'Test video.mp4',exact:false}).tap();await expect.poll(()=>requested).toBe(true);await expect(page.locator('.video-overlay')).toHaveCount(0);
+      release();await expect(page.locator('.video-overlay')).toBeVisible();expect(f.state.player.state).toBe('idle');await page.locator('.video-back').tap();
+    }
+    expect(f.unexpected).toEqual([]);
+  });
+  test(`pairing prompt wakes and suspends idle screensaver ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);f.state.preferences.screensaverMinutes=1;await page.clock.install();
+    await page.goto('/');await expect(page.locator('.home-layout')).toBeVisible();await page.clock.fastForward(61000);await expect(page.locator('.screensaver')).toBeVisible();
+    f.state.bluetooth.prompts=[{id:'wake-prompt',name:'Test speaker',kind:'confirmation',value:'123456'}];await page.clock.runFor(2600);
+    await expect(page.locator('.pair-code')).toBeVisible();await expect(page.locator('.screensaver')).toHaveCount(0);await page.clock.fastForward(120000);await expect(page.locator('.screensaver')).toHaveCount(0);
+    await page.locator('.dialog-actions button').first().tap();await expect(page.locator('.pair-code')).toHaveCount(0);await page.clock.fastForward(61000);await expect(page.locator('.screensaver')).toBeVisible();expect(f.unexpected).toEqual([]);
+  });
+  test(`city search explains empty results and ignores late old results ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);let release!:()=>void,oldDone=false;const gate=new Promise<void>(resolve=>release=resolve);
+    await page.route('**/api/geocode?**',async route=>{const q=new URL(route.request().url()).searchParams.get('q');if(q==='a'){await gate;await route.fulfill({json:{results:[{name:'Old search city',latitude:1,longitude:2}]}});oldDone=true;}else await route.fulfill({json:{results:[]}});});
+    await page.goto('/');await page.locator('.main-nav button').nth(3).tap();await page.locator('.settings-tabs button').nth(1).tap();
+    const search=async(letter:string)=>{await page.locator('.settings-panel .setting-value').tap();for(let i=0;i<'București'.length;i++)await page.getByRole('button',{name:ro?'Șterge caracterul':'Delete character',exact:true}).tap();await page.locator('.keys').getByRole('button',{name:letter,exact:true}).tap();await page.locator('.final-row').getByRole('button',{name:ro?'Aplică':'Apply',exact:true}).tap();};
+    await search('a');await expect(page.locator('.settings-panel [role=status]')).toHaveText(ro?'Se încarcă…':'Loading…');await search('b');await expect(page.locator('.settings-panel [role=status]')).toHaveText(ro?'Nu s-au găsit orașe':'No matching cities');
+    release();await expect.poll(()=>oldDone).toBe(true);await expect(page.locator('.compact-geo')).toHaveCount(0);await expect(page.locator('.settings-panel [role=status]')).toHaveText(ro?'Nu s-au găsit orașe':'No matching cities');expect(f.state.preferences.location.name).toBe('București');expect(f.unexpected).toEqual([]);
+  });
+
   test(`local audio transport uses queue availability and touch seek ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
     f.state.player={state:'playing',kind:'audio',title:'Test local track',url:'/test/audio.mp3',duration:120,position:30,canPrevious:false,canNext:true};
