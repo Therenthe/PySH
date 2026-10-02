@@ -1,5 +1,5 @@
 {
-  "candidate": "1cc15fa4e625",
+  "candidate": "ee58b51f45bd",
   "preparation": [
     {
       "id": "PREP-01",
@@ -82,10 +82,12 @@
     },
     {
       "id": "UX-03",
-      "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "status": "FAIL",
+      "candidate": "ee58b51f45bd",
+      "evidence": [
+        "docs/evidence/pi-legibility-2026-10-02.md"
+      ],
+      "reason": "Real Pi audit found 10–13px text and 2.31:1 night confirmation contrast. Repair passes browser regression; repaired hardware candidate pending."
     },
     {
       "id": "I18N-01",
@@ -230,9 +232,11 @@
     {
       "id": "BOOT-02",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "ee58b51f45bd",
+      "evidence": [
+        "docs/evidence/pi-legibility-2026-10-02.md"
+      ],
+      "reason": "Partial real Pi evidence recorded; final OS candidate, full criterion and physical acceptance remain pending."
     },
     {
       "id": "REL-01",
@@ -251,9 +255,11 @@
     {
       "id": "PERF-01",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "ee58b51f45bd",
+      "evidence": [
+        "docs/evidence/pi-legibility-2026-10-02.md"
+      ],
+      "reason": "Partial real Pi evidence recorded; final OS candidate, full criterion and physical acceptance remain pending."
     },
     {
       "id": "PERF-02",

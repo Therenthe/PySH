@@ -93,3 +93,9 @@
 .app .service-status span{font-size:14px;color:var(--muted)}
 .app .service-actions{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:12px}
 .app .service-actions .download-link{margin:0}
+.app .main-footer,.app .player-state,.app .list-head,.app .switch-line,.app .volume-settings b,.app .volume-line b{font-size:14px}
+.app .weather-symbol span,.app .stale-mark,.app .favorites-empty,.app .favorite-row,.app .empty-state span,.app .modal-actions>span,.app .modal-label,.app .setup-brand,.app .setup-foot,.app .step b{font-size:14px}
+.app[data-theme=night] .danger-button{color:var(--bg)}
+.app .weather-range,.app .quick-modal>button small,.app .modal-actions h3{font-size:14px}
+.app .modal-volume .icon-button{font-size:16px}
+.app[data-theme=night] .error-dot{color:var(--bg)}
