@@ -51,3 +51,11 @@ Active isolated Pi preview: `24f207c79081`, from main `b853a5e`. Its 48-screen r
 ## Video controls and crash recovery
 
 Real preview `bfb3cdd16723` passes five selected video encodings and invalid-video retry/back in EN/RO/themes, but native controls are too small/hidden. API crash restarts the UI but leaves orphan mpv processes (REL-02 FAIL). Persistent video controls and owned-process cleanup repairs pass 40 browser tests; 46 backend tests pass and four Linux-only cases await CI. See [evidence](docs/evidence/video-process-recovery-2026-10-02.md). OS UUID build `a9fdf3d` passed run `37050691172`; it must be updated with these final repairs before physical test. No flash has occurred.
+
+## Detached child cleanup follow-up
+
+Active isolated preview `9648250fa63f`: API/kiosk crash recovery 1.909s/1.128s, identical preferences, one live mpv. Two exited detached crashpad children still need reaping; REL-02 remains FAIL until the follow-up is deployed/probed. Complete later idle descendant-tree sample 545.45 MiB; the earlier 258.26 MiB cgroup-only sample is incomplete. Persistent video controls pass 40 browser regressions but real control validation is pending.
+
+OS source `47a943c4b73b88de92f2f9e26a0430a5f6ac3f9c` passed image build run 37053903436 and two application validation runs. It contains the video/process-group repairs and UUID layout, but must incorporate detached-child cleanup before final physical test. No storage written. Windows flash wrapper, signed official Imager2.0.11.1 and a private local recovery key are prepared; chosen target, full artifact transfer/checksum, offline provisioning/physical boot and complete DoD remain pending.
+
+Automatic approval review blocked the new privileged local browser audit because the Codex usage limit was reached. This was an approval-review failure, not a safety decision; unaffected source/CI work continued. Resume the rejected device-control audit after review capacity is available. Keep the complete delivery goal active.

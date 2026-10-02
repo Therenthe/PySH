@@ -1,5 +1,5 @@
 {
-  "candidate": "bfb3cdd16723",
+  "candidate": "9648250fa63f",
   "preparation": [
     {
       "id": "PREP-01",
@@ -253,11 +253,11 @@
     {
       "id": "REL-02",
       "status": "FAIL",
-      "candidate": "bfb3cdd16723",
+      "candidate": "9648250fa63f",
       "evidence": [
         "docs/evidence/video-process-recovery-2026-10-02.md"
       ],
-      "reason": "Real API SIGKILL exposed orphan mpv descendants. Owned-group/subreaper repair prepared, Linux CI and real repeat pending."
+      "reason": "Real API/kiosk recovery preserves preferences and one live mpv, but two detached exited crashpad children remain zombies. Reaping follow-up awaits Linux CI and device repeat."
     },
     {
       "id": "PERF-01",
@@ -272,9 +272,11 @@
     {
       "id": "PERF-02",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "9648250fa63f",
+      "evidence": [
+        "docs/evidence/video-process-recovery-2026-10-02.md"
+      ],
+      "reason": "Incomplete cgroup-only probe rejected. Complete later descendant-tree idle sample 545.45 MiB; exact two-minute release measurement and media resource scenarios pending."
     },
     {
       "id": "DIAG-01",
