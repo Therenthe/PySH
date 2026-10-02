@@ -69,7 +69,7 @@
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md"
       ],
-      "reason": "Setup displayed on physical panel; full tactile checklist and target sizing remain incomplete."
+      "reason": "User completed setup and opened Bluetooth settings by touch; real 800x480 capture shows connected speaker. Full tactile checklist and target sizing remain incomplete."
     },
     {
       "id": "UX-02",

@@ -28,6 +28,7 @@ Existing local application migrated and published to private GitHub repository h
 - Saved Wi-Fi nested buttons and untranslated security labels corrected. Four browser regression tests cover EN/RO and both themes at 800×480; the full browser/product matrix and physical touch acceptance remain incomplete.
 - Representative Home/Radio screenshots reveal additional pre-existing issues: untranslated headings, raw idle state, and radio controls partly clipped. These remain UX/I18N acceptance work.
 - Real panel capture confirms the Romanian setup screen at 800×480. A generated local WAV played through mpv/PipeWire to the existing Bluetooth speaker; user confirmed audible output at 25% sink volume. See docs/evidence/pi-preview-2026-10-02.md.
+- User confirmed first-run setup and Settings / Bluetooth via physical touch; real panel capture shows the connected speaker.
 - Complete touch, Bluetooth pairing/reconnect/radio/recovery, DRM/streaming accounts, cold boots, 8-hour stability, performance and clean install/rollback remain acceptance work.
 
 ## Next
