@@ -1,6 +1,6 @@
 # 0009 — Guarded first-boot root expansion
 
-Status: Accepted for the experimental image; Linux integration and physical online growth acceptance pending.
+Status: Accepted for the experimental image; Initial Linux offline integration passed; extended mounted-loop integration and physical online growth acceptance pending.
 Date: 2026-10-03.
 
 The UUID image has a fixed 4GiB ext4 root, wasting remaining capacity on larger SD/USB/NVMe devices. Upstream's by-slot mount assumptions were replaced by ADR-0008; expansion must not guess device names or tolerate failed resize as success.
@@ -11,7 +11,7 @@ Grow only the verified final partition with growpart, synchronize udev/kernel si
 
 Order growth after local filesystems and recovery provisioning, before the graphical session. Failure must not become a Requires dependency of recovery SSH or greetd. A five-minute service timeout bounds first graphical startup. Recovery may start while growth proceeds. No existing Pi/card is modified by this source/build change.
 
-A required CI job creates only its own sparse loop images. It tests wrong UUID, foreign boot disk untouched, wrong partition, production loop rejection, growth errors, ambiguous NOCHANGE, failed resize without stamp, actual retry, idempotency and boot preservation. Its test-only internal loop exemption is never selected by the installed entrypoint. The image inspector compares installed script/unit bytes to source; the builder verifies systemd units.
+A required CI job creates only its own sparse loop images. It tests wrong UUID, foreign boot disk untouched, wrong partition, production loop rejection, growth errors, ambiguous NOCHANGE, failed resize without stamp, actual retry, idempotency and boot preservation. Extended cases reject extra/GPT layouts, resolve actually mounted root/boot, grow a private loop backing file 6→7GiB and resize mounted ext4 while preserving a file and UUIDs. Its test-only internal loop exemption is never selected by the installed entrypoint. The image inspector compares installed script/unit bytes to source; the builder verifies systemd units.
 
 The runner's unmounted ext4 growth does not prove mounted first-boot expansion or real mmc/sd/nvme kernel partition refresh. Those require the experimental physical boot, preserved original SD and administrative recovery. No product PASS is implied by implementation.
 

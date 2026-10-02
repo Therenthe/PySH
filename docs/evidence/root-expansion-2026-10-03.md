@@ -1,0 +1,7 @@
+# Experimental root expansion checks — 2026-10-03
+
+Source `f78f310426cfec8afaf8bca5c3e54e020cf3fd29`, workflow37065872367, root-expansion job111033399467: PASS on throwaway Ubuntu24.04 runner. Initial 6GiB sparse loop with 4GiB root grew ext4 to 6,165,606,400bytes. Actual resize failure left no success record; genuine NOCHANGE retry then completed filesystem growth. Repeated growth was idempotent; boot partition and both UUIDs preserved. Wrong UUID, foreign boot disk untouched, wrong partition, production-loop rejection, grow failure and ambiguous NOCHANGE all rejected. No Pi/card/storage used by this test.
+
+Successor test extends coverage to actual mounted root/boot resolution, owned sparse image 6→7GiB and mounted-online growth, file preservation and repeated NOCHANGE; rejects/restores extra/GPT layouts on the same disposable loop with filesystem signatures retained. Python syntax passes; extended Linux execution is pending. This test may write only its own newly allocated loop devices and exact private mountpoints; no broad loop detach or forced/lazy unmount is used.
+
+Physical SD/USB/NVMe first boot, online root growth on the target, recovery, five cold boots and eight-hour stability remain OPEN. The earlier runner result is evidence of utility/guard behavior, not product acceptance or a completed OS installation.
