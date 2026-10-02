@@ -19,9 +19,9 @@ Existing local application migrated and published to private GitHub repository h
 
 ## Acceptance and limitations
 
-- 30 product criteria remain OPEN. Candidate 1cc15fa4e625 is running as an isolated preview, not accepted for release.
+- 29 product criteria remain OPEN and UX-03 is FAIL on candidate ee58b51f45bd. Repairs pass automated regression; physical revalidation is pending. The candidate runs as an isolated preview, not accepted for release.
 - Historical preparation: 7 PASS in legacy ledger, preserved in docs/history. Active preparation entries are OPEN because private historical evidence was not imported.
-- Existing runtime uses a graphical desktop session. Direct appliance boot, Lite base and image builder are not implemented.
+- Existing runtime uses a graphical desktop session. The dedicated-session image builder is implemented on the experimental branch; actual appliance boot has not passed hardware acceptance.
 - Wired SSH password authentication succeeded on 2026-10-02. Pi 4 / Debian 13.4 ARM64 confirmed, about 6 GiB disk space available. Both wired and wireless interfaces are up.
 - Pi source checkout created at ~/PySH from verified GitHub history; Git integrity and repository checks passed. Origin points to Therenthe/PySH. Private GitHub authentication on Pi is not configured; source updates can be transferred as verified Git bundles over SSH.
 - Legacy package 32d75c593e83 matches all 33 runtime manifest hashes. No current/previous links or installed launcher; hub/preview services inactive and no app process observed. These are the pre-preview observations; the isolated preview is now running, with no autostart activation.
@@ -43,3 +43,6 @@ Existing local application migrated and published to private GitHub repository h
 ## Appliance build in progress
 
 User requested autonomous full delivery and PySH OS flashing after verification. Experimental rpi-image-gen v2.8.0/Pi4/Trixie configuration and ARM64 CI build are prepared on feat/pysh-os-image. ADR-0006 records the build-only container exception and known gates. No image is accepted or flash-ready; no live OS changes. Recovery key provisioning, service-mode UX, target package provenance, actual boot and backup/restoration remain required.
+## Real device audit and OS progress
+
+48 real Pi screens inspected across EN/RO/themes, with 120 navigation samples. Service-mode media stop/return and preference preservation passed. Font/night contrast defects recorded as UX-03 FAIL; fixes and permanent browser checks prepared. See docs/evidence/pi-legibility-2026-10-02.md. An application backup is verified independently on PC; original card/desktop retained. Updated OS build and actual boot remain next.

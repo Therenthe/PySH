@@ -2,7 +2,7 @@ name: Build experimental PySH OS
 on:
   push:
     branches: [feat/pysh-os-image]
-    paths: ['os/image/**', '.github/workflows/image.yml']
+    paths: ['os/image/**', '.github/workflows/image.yml', 'app/**', 'services/**', 'scripts/run-hub.py', 'requirements.lock', 'pnpm-lock.yaml', 'package.json']
   workflow_dispatch:
 permissions:
   contents: read
