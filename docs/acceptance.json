@@ -1,5 +1,5 @@
 {
-  "candidate": "568c2b0c43de",
+  "candidate": "1cc15fa4e625",
   "preparation": [
     {
       "id": "PREP-01",
@@ -74,9 +74,11 @@
     {
       "id": "UX-02",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "1cc15fa4e625",
+      "evidence": [
+        "docs/evidence/ui-audit-2026-10-02.md"
+      ],
+      "reason": "20 browser regressions across pages/states/locales/themes pass; real Pi Home capture inspected. Full physical screen matrix incomplete."
     },
     {
       "id": "UX-03",
@@ -88,9 +90,11 @@
     {
       "id": "I18N-01",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "1cc15fa4e625",
+      "evidence": [
+        "docs/evidence/ui-audit-2026-10-02.md"
+      ],
+      "reason": "Home/Radio headings and idle/error states translated; 20 browser tests passed. Complete error/integration locale inventory and Pi restart remain incomplete."
     },
     {
       "id": "I18N-02",
@@ -151,9 +155,11 @@
     {
       "id": "MEDIA-01",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "1cc15fa4e625",
+      "evidence": [
+        "docs/evidence/ui-audit-2026-10-02.md"
+      ],
+      "reason": "Real Radio Romania stream reported playing after 10 seconds and was stopped through API; favorites and filters covered in browser tests. Full Radio checklist incomplete."
     },
     {
       "id": "MEDIA-02",
@@ -176,20 +182,22 @@
     {
       "id": "BT-01",
       "status": "OPEN",
-      "candidate": "568c2b0c43de",
+      "candidate": "1cc15fa4e625",
       "evidence": [
-        "docs/evidence/pi-preview-2026-10-02.md"
+        "docs/evidence/pi-preview-2026-10-02.md",
+        "docs/evidence/ui-audit-2026-10-02.md"
       ],
-      "reason": "Existing speaker connected; scan/pair/forget, errors and reconnection remain untested."
+      "reason": "Known speaker disconnected and explicitly reconnected through real API; scan/pair/forget and all failures incomplete."
     },
     {
       "id": "BT-02",
       "status": "OPEN",
-      "candidate": "568c2b0c43de",
+      "candidate": "1cc15fa4e625",
       "evidence": [
-        "docs/evidence/pi-preview-2026-10-02.md"
+        "docs/evidence/pi-preview-2026-10-02.md",
+        "docs/evidence/ui-audit-2026-10-02.md"
       ],
-      "reason": "Local WAV audible on existing Bluetooth speaker confirmed by user; radio, disconnect and recovery remain untested."
+      "reason": "Real radio stream progressed with active Bluetooth sink; disconnect blocked local playback and reconnect restored ready. Audible checks and complete recovery matrix on this candidate incomplete."
     },
     {
       "id": "EXT-01",
