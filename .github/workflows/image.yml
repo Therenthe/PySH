@@ -23,7 +23,7 @@ jobs:
       - run: python3 os/image/prepare-payload.py
       - name: Check shell syntax
         run: |
-          for script in os/image/ci-build.sh os/image/bdebstrap/customize90-pysh os/image/assets/pysh-session os/image/assets/labwc-autostart os/image/assets/pysh-provision-recovery; do
+          for script in os/image/ci-build.sh os/image/bdebstrap/customize90-pysh os/image/assets/pysh-session os/image/assets/labwc-autostart os/image/assets/pysh-provision-recovery os/image/assets/image-setup.sh; do
             bash -n "$script"
           done
       - name: Build in ephemeral Debian ARM64 environment
@@ -75,5 +75,6 @@ jobs:
             .runtime/os-build/host-image.json
             os/image/payload/source.json
             .runtime/os-build/image-inspection.json
+            .runtime/os-build/image-layout.json
             .runtime/os-build/packages.txt
           retention-days: 7

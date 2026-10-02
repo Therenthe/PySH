@@ -67,9 +67,39 @@ async function capture(page:Page, info:TestInfo, name:string, defects:string[]) 
 async function closeModal(page:Page, ro:boolean){await page.locator('.modal-card header').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();}
 
 for(const theme of ['ink','night'] as const) {
+  test(`invalid local video keeps retry and return visible ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
+    f.state.audio.ready=false;let attempts=0;
+    await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Test video folder',items:[{name:'Broken video.mp4',path:'/test/broken.mp4',kind:'video'}]}}));
+    await page.route('**/api/media/file?**',route=>{attempts++;return route.fulfill({contentType:'video/mp4',body:'invalid video test content'});});
+    await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.locator('.media-item').tap();
+    await expect(page.locator('.video-error')).toBeVisible();await expect(page.locator('.video-audio-warning')).toBeVisible();await capture(page,info,'invalid-video',defects);
+    const before=attempts;await page.locator('.video-error button').tap();await expect.poll(()=>attempts).toBeGreaterThan(before);await expect(page.locator('.video-error')).toBeVisible();await page.locator('.video-back').tap();await expect(page.locator('.video-overlay')).toHaveCount(0);await expect(page.locator('.media-page')).toBeVisible();expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
+  });
+  test(`weather, radio and media retry target the failed operation ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
+    f.state.weather={available:false,error:'weather_unavailable'};
+    await page.goto('/');await expect(page.locator('.weather-empty')).toContainText(ro?'Meteo indisponibilă':'Weather is unavailable');await page.locator('.weather-empty').tap();expect(f.actions.some(a=>a.path==='/api/weather/refresh')).toBeTruthy();await expect(page.locator('.home-layout')).toBeVisible();
+    f.radio='error';await page.locator('.main-nav button').nth(1).tap();await expect(page.locator('.error-strip')).toBeVisible();f.radio='populated';await page.locator('.error-strip').getByRole('button',{name:ro?'Încearcă din nou':'Try again',exact:true}).tap();await expect(page.locator('.station-main')).toHaveCount(1);await expect(page.locator('.error-strip')).toHaveCount(0);
+    f.media='error';await page.locator('.main-nav button').nth(2).tap();await expect(page.locator('.error-strip')).toBeVisible();f.media='populated';await page.locator('.error-strip').getByRole('button',{name:ro?'Încearcă din nou':'Try again',exact:true}).tap();await expect(page.locator('.media-item')).toHaveCount(2);await expect(page.locator('.error-strip')).toHaveCount(0);expect(f.unexpected).toEqual([]);
+  });
+  test(`radio retains catalog and ignores superseded filters ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
+    let releaseOld!:()=>void;const oldGate=new Promise<void>(resolve=>releaseOld=resolve);let oldStarted=false,oldDone=false;
+    await page.route('**/api/radio?**',async route=>{
+      const country=new URL(route.request().url()).searchParams.get('country');f.radioQueries.push(route.request().url());
+      if(country==='old'){oldStarted=true;await oldGate;}
+      try{await route.fulfill({json:{stations:[{stationuuid:country||'initial',name:country==='new'?'Newest station':country==='old'?'Old station':'Initial station',url:'https://example.com/test.mp3'}]}});}catch{/* Superseded browser request may already be aborted. */}
+      if(country==='old')oldDone=true;
+    });
+    await page.goto('/');await page.locator('.main-nav button').nth(1).tap();await expect(page.locator('.station-main')).toContainText('Initial station');
+    const count=f.radioQueries.length;await page.locator('.main-nav button').first().tap();await page.locator('.main-nav button').nth(1).tap();await expect(page.locator('.station-main')).toContainText('Initial station');expect(f.radioQueries).toHaveLength(count);
+    let previous='';const filter=async(value:string)=>{await page.locator('.radio-toolbar .filter-button').first().tap();for(let i=0;i<previous.length;i++)await page.getByRole('button',{name:ro?'Șterge caracterul':'Delete character',exact:true}).tap();previous=value;for(const letter of value)await page.locator('.key-row').getByRole('button',{name:letter,exact:true}).tap();await page.locator('.final-row').getByRole('button',{name:ro?'Aplică':'Apply',exact:true}).tap();};
+    await filter('old');await expect.poll(()=>oldStarted).toBe(true);await filter('new');await expect(page.locator('.station-main')).toContainText('Newest station');releaseOld();await expect.poll(()=>oldDone).toBe(true);await expect(page.locator('.station-main')).toContainText('Newest station');expect(f.unexpected).toEqual([]);
+  });
   test(`appliance service recovery ${theme}`,async({page},info)=> {
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
-    f.state.appliance=true;const prefs=JSON.stringify(f.state.preferences);
+    f.state.appliance=true;f.state.preferences.screensaverMinutes=1;const prefs=JSON.stringify(f.state.preferences);await page.clock.install();
     await page.goto('/');await expect(page.locator('.home-layout')).toBeVisible();
     await page.locator('.main-nav button').nth(3).tap();
     await page.locator('.settings-tabs button').nth(7).tap();
@@ -81,7 +111,7 @@ for(const theme of ['ink','night'] as const) {
     await capture(page,info,'service-mode',defects);
     f.backendDown=true;await expect(page.locator('.error-strip')).toBeVisible({timeout:6000});await capture(page,info,'service-backend-error',defects);
     f.backendDown=false;await page.locator('.error-strip button').tap();await expect(page.locator('.error-strip')).toHaveCount(0);
-    await page.getByRole('button',{name:ro?'Revino în hub':'Return to hub',exact:true}).tap();
+    await page.clock.fastForward(120000);await expect(page.locator('.service-screen')).toBeVisible();await page.getByRole('button',{name:ro?'Revino în hub':'Return to hub',exact:true}).tap();await expect(page.locator('.screensaver')).toHaveCount(0);
     await expect(page.locator('.service-screen')).toHaveCount(0);await expect(page.locator('.main-nav')).toBeVisible();
     expect(JSON.stringify(f.state.preferences)).toBe(prefs);expect(f.unexpected).toEqual([]);expect(defects).toEqual([]);
   });

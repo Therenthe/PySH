@@ -41,6 +41,7 @@ class Player:
         self._connecting = False
         self._last_play_command = 0.0
         self._last_position: float | None = None
+        self._ended = False
 
     async def start(self) -> None:
         if self._process and self._process.returncode is None and self._writer:
@@ -140,6 +141,8 @@ class Player:
         self._kind = "audio" if kind == "local" else kind if kind in {"radio", "audio", "video"} else "radio"
         self._url, self._title, self._error = url, title, None
         self._connecting = True
+        self._ended = False
+        self._last_position = None
         self._last_play_command = time.monotonic()
         await self._command(["set_property", "pause", False])
         await self._command(["loadfile", url, "replace"])
@@ -179,6 +182,7 @@ class Player:
         await self.start()
         if action == "stop":
             self._connecting = False
+            self._ended = False
             self._url = ""
             self._title = ""
             self._error = None
@@ -199,6 +203,8 @@ class Player:
                 pass
         if self._error:
             state = "error"
+        elif self._ended and self._url:
+            state = "ended"
         elif not self._url or props.get("idle-active"):
             state = "idle"
             self._connecting = False
@@ -279,19 +285,23 @@ class Player:
 
     def _handle_event(self, event: dict[str, Any]) -> None:
         name = event.get("event")
-        data = event.get("data") or {}
+        # JSON IPC flattens event fields; older adapters may nest them in data.
+        data = event.get("data") if isinstance(event.get("data"), dict) else event
         if name == "file-loaded":
             self._connecting = False
             self._error = None
+            self._ended = False
         elif name == "end-file":
-            reason = data.get("reason") if isinstance(data, dict) else data
-            file_error = data.get("file_error") if isinstance(data, dict) else None
-            if reason == "error" or file_error:
+            reason = data.get("reason")
+            file_error = data.get("file_error")
+            if self._url and (reason == "error" or file_error):
                 self._error = "stream_failed"
                 self._connecting = False
-            elif reason == "stop":
-                self._url = ""
+            elif self._url and reason == "eof":
+                self._ended = True
                 self._connecting = False
+            # A replacement load emits stop for the previous file. Only the
+            # explicit stop command owns clearing the newly selected source.
 
 
 def _number_or_none(value: Any) -> float | None:

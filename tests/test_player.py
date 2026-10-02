@@ -138,3 +138,47 @@ def test_end_file_error_event_uses_mpv_nested_data_shape():
     player._handle_event({"event": "end-file", "data": {"reason": "error", "file_error": "network timeout"}})
     assert player._error == "stream_failed"
     assert player._connecting is False
+
+
+def test_flat_ipc_error_survives_idle_properties_until_a_new_file_loads():
+    async def scenario():
+        player = Player()
+        player._process = FakeProcess()
+        player._reader = asyncio.StreamReader()
+        player._writer = FakeWriter(player._reader, {"idle-active": True})
+        player._url = "file:///tmp/invalid.mp3"
+        player._reader.feed_data(b'{"event":"end-file","reason":"error","file_error":"unrecognized file format","playlist_entry_id":1}\n')
+        state = await player.status()
+        assert state["state"] == "error"
+        assert state["error"] == "stream_failed"
+        assert (await player.status())["state"] == "error"
+        player._handle_event({"event": "file-loaded"})
+        player._writer.values["idle-active"] = False
+        assert (await player.status())["state"] == "playing"
+        assert player._error is None
+
+    asyncio.run(scenario())
+
+
+def test_natural_end_is_visible_and_explicit_stop_clears_it():
+    async def scenario():
+        player = Player()
+        player._process = FakeProcess()
+        player._reader = asyncio.StreamReader()
+        player._writer = FakeWriter(player._reader, {"idle-active": True})
+        player._url = "file:///tmp/test.wav"
+        player._handle_event({"event": "end-file", "reason": "eof"})
+        assert (await player.status())["state"] == "ended"
+        assert (await player.command("stop"))["state"] == "idle"
+        assert player._url == ""
+
+    asyncio.run(scenario())
+
+
+def test_replacement_stop_event_does_not_clear_newly_selected_source():
+    player = Player()
+    player._url = "file:///tmp/new.wav"
+    player._connecting = True
+    player._handle_event({"event": "end-file", "reason": "stop", "playlist_entry_id":1})
+    assert player._url == "file:///tmp/new.wav"
+    assert player._connecting is True

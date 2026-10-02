@@ -15,3 +15,7 @@ After writing the candidate to a separately identified test card, copy exactly o
 The key file is renamed to `pysh-recovery.provisioned.pub` after provisioning; replacing it with a new `pysh-recovery.pub` on an offline test card rotates the authorized recovery key on the next boot. Invalid keys fail provisioning and require correcting the offline boot file. No keys are built into the generic image or committed.
 
 The CI checks the actual generated ext4/VFAT and MBR files: runtime hashes, session/service assets, firmware listing, recovery policy and package inventory. This is image inspection, not a physical boot test. Compressed image parts are separate artifacts under 300 MiB, with per-part and joined-image SHA256 checksums; join the numbered parts in order before writing. The connector has a 512 MiB artifact download limit, so a single archive cannot be used for this image.
+
+## Partition identity
+
+ADR-0008 replaces upstream by-slot mount references with the UUIDs used when creating each filesystem. CI probes ext4/vfat UUIDs and matches fstab and root cmdline before packaging. This prepares SD/USB-independent mount references; physical USB boot and EEPROM compatibility are still OPEN. Root remains 4096M; automatic USB expansion is not claimed.

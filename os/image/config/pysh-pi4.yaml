@@ -8,6 +8,8 @@ device:
 
 image:
   layer: image-rpios
+  # Generated from the pinned upstream layout by ci-build.sh before validation.
+  assetdir: ${@SRCROOT}/../../.runtime/pysh-image-layout
   name: pysh-pi4-candidate
   boot_part_size: 256M
   root_part_size: 4096M

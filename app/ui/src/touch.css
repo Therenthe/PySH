@@ -99,3 +99,8 @@
 .app .weather-range,.app .quick-modal>button small,.app .modal-actions h3{font-size:14px}
 .app .modal-volume .icon-button{font-size:16px}
 .app[data-theme=night] .error-dot{color:var(--bg)}
+.app .video-back{min-height:48px;font-size:16px}
+.app .video-title{font-size:16px}
+.app .video-error{position:absolute;inset:80px 24px 54px;background:var(--paper);color:var(--ink);border:1px solid var(--line-dark);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:12px;text-align:center}
+.app .video-error h2,.app .video-error p{margin:0}
+.app .video-audio-warning{position:absolute;top:14px;right:16px;max-width:370px;padding:10px 12px;border-radius:8px;background:var(--paper);color:var(--ink);font-size:14px}

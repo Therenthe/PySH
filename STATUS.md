@@ -19,7 +19,7 @@ Existing local application migrated and published to private GitHub repository h
 
 ## Acceptance and limitations
 
-- 29 product criteria remain OPEN and UX-03 is FAIL on candidate ee58b51f45bd. Repairs pass automated regression; physical revalidation is pending. The candidate runs as an isolated preview, not accepted for release.
+- All 30 product criteria remain OPEN. The repaired corrupt-file/recovery probe passes on candidate bfb3cdd16723; full product acceptance remains pending. The candidate runs as an isolated preview, not accepted for release.
 - Historical preparation: 7 PASS in legacy ledger, preserved in docs/history. Active preparation entries are OPEN because private historical evidence was not imported.
 - Existing runtime uses a graphical desktop session. The dedicated-session image builder is implemented on the experimental branch; actual appliance boot has not passed hardware acceptance.
 - Wired SSH password authentication succeeded on 2026-10-02. Pi 4 / Debian 13.4 ARM64 confirmed, about 6 GiB disk space available. Both wired and wireless interfaces are up.
@@ -46,3 +46,9 @@ User requested autonomous full delivery and PySH OS flashing after verification.
 ## Real device audit and OS progress
 
 48 real Pi screens inspected across EN/RO/themes, with 120 navigation samples. Service-mode media stop/return and preference preservation passed. Font/night contrast defects recorded as UX-03 FAIL; fixes and permanent browser checks prepared. See docs/evidence/pi-legibility-2026-10-02.md. An application backup is verified independently on PC; original card/desktop retained. Updated OS build and actual boot remain next.
+
+## Content recovery candidate
+
+Active isolated Pi preview: `24f207c79081`, from main `b853a5e`. Its 48-screen real audit no longer reproduces the font/night text contrast defects. Eight synthetic audio encodings decode on the real player; a corrupt MP3 incorrectly reports idle. A coherent repair covers mpv events and radio/weather/library/video retry, with 46 Python and 36 browser tests passing. See [content recovery evidence](docs/evidence/content-recovery-2026-10-02.md). The experimental OS branch has built and inspected a recovery-capable image; USB boot addressing and physical recovery/boot still require verification. No storage has been flashed.
+
+Active preview advanced to `bfb3cdd16723`: corrupt file → visible error → valid WAV recovery → natural end passes on Pi. Main is `607496a`. The image branch incorporates this runtime and ADR-0008 UUID partition references, with actual filesystem inspection before packaging. Physical boot, recovery provisioning, target storage choice and complete DoD remain OPEN.
