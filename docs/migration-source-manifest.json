@@ -1,0 +1,352 @@
+[
+  {
+    "source": "src/env.d.ts",
+    "destination": "app/ui/src/env.d.ts",
+    "source_sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5"
+  },
+  {
+    "source": "src/main.tsx",
+    "destination": "app/ui/src/main.tsx",
+    "source_sha256": "5d55b9afc0d7fd4d75b1e30f1fe44d87568a67c9a8d074889016538507f5af04"
+  },
+  {
+    "source": "src/style.css",
+    "destination": "app/ui/src/style.css",
+    "source_sha256": "afcc940fbd7fcf4c803e787ce2e129a2a404cf92bffb016be9c8e701195f1feb"
+  },
+  {
+    "source": "public/fonts/dmmono-LICENSE.txt",
+    "destination": "app/ui/public/fonts/dmmono-LICENSE.txt",
+    "source_sha256": "2bada5ea45c3c63b7f1ea1f88ce9672c9e4f0c42b2c3b7378949084fe55a3066"
+  },
+  {
+    "source": "public/fonts/dmsans-LICENSE.txt",
+    "destination": "app/ui/public/fonts/dmsans-LICENSE.txt",
+    "source_sha256": "9af36190332437f5ecd09974de43c1f7c77a310a996cdd8ceb25628b458840e1"
+  },
+  {
+    "source": "public/fonts/fonts.css",
+    "destination": "app/ui/public/fonts/fonts.css",
+    "source_sha256": "ba0ecd167fb042c1f3fb321e99f1c585742067aa6c05d3a997957aae34207bf1"
+  },
+  {
+    "source": "public/fonts/hub-font-0.ttf",
+    "destination": "app/ui/public/fonts/hub-font-0.ttf",
+    "source_sha256": "c97fcd822f825e9e731867b650a39ee678b609bead29385e320171b573ec0910"
+  },
+  {
+    "source": "public/fonts/hub-font-1.ttf",
+    "destination": "app/ui/public/fonts/hub-font-1.ttf",
+    "source_sha256": "dd60d0861a3efd540efc3f2f85e7a7fd69a7ece7eadf44aaffa5fc5c86adda0e"
+  },
+  {
+    "source": "public/fonts/hub-font-10.ttf",
+    "destination": "app/ui/public/fonts/hub-font-10.ttf",
+    "source_sha256": "b8f802f05b322a7345805f5b89f8bb976604cc719a91530918d5ce3c47160950"
+  },
+  {
+    "source": "public/fonts/hub-font-2.ttf",
+    "destination": "app/ui/public/fonts/hub-font-2.ttf",
+    "source_sha256": "b0ae3e89a7d3ef2b1838bb4b1ceb0b17cc3435af061eee809d76aa623ff116e9"
+  },
+  {
+    "source": "public/fonts/hub-font-3.ttf",
+    "destination": "app/ui/public/fonts/hub-font-3.ttf",
+    "source_sha256": "376427b5322148d8de1e03f263bcca4935a2d60ba71d9f94f4947ab664c711ae"
+  },
+  {
+    "source": "public/fonts/hub-font-4.ttf",
+    "destination": "app/ui/public/fonts/hub-font-4.ttf",
+    "source_sha256": "b79a2ea7a38f33fd96a282fadb9ce97626bb0724a44d21075859f0e50239993a"
+  },
+  {
+    "source": "public/fonts/hub-font-5.ttf",
+    "destination": "app/ui/public/fonts/hub-font-5.ttf",
+    "source_sha256": "2a8e7f713ee79fbccdef3cef5c787aff47580299f7da60144961e7db2ec08211"
+  },
+  {
+    "source": "public/fonts/hub-font-6.ttf",
+    "destination": "app/ui/public/fonts/hub-font-6.ttf",
+    "source_sha256": "a13d9b41b0a471ce58f0e46d377fa3cc76615e4632c3b15eb397caadf7a13f0a"
+  },
+  {
+    "source": "public/fonts/hub-font-7.ttf",
+    "destination": "app/ui/public/fonts/hub-font-7.ttf",
+    "source_sha256": "f433e5d333be1128d8ec8a28b8aadd0314d10e14e4105406076666bc830fc15d"
+  },
+  {
+    "source": "public/fonts/hub-font-8.ttf",
+    "destination": "app/ui/public/fonts/hub-font-8.ttf",
+    "source_sha256": "6bad1a774228464cc88b8b0271555b266f7a3c64a7bedf15e165fdab4f6ac0ce"
+  },
+  {
+    "source": "public/fonts/hub-font-9.ttf",
+    "destination": "app/ui/public/fonts/hub-font-9.ttf",
+    "source_sha256": "b9584e099e0e7f1e1e914c3037aabb9010c50346a3ce8df5eeeeecc0563044d8"
+  },
+  {
+    "source": "public/fonts/manrope-LICENSE.txt",
+    "destination": "app/ui/public/fonts/manrope-LICENSE.txt",
+    "source_sha256": "58172e0c0fac2cda8a37b348164bb55e44b0e69051e557e92b1d3f6910141f7b"
+  },
+  {
+    "source": "backend/app.py",
+    "destination": "services/backend/app.py",
+    "source_sha256": "d61c62f53e1c865b205cc02e4e99d082209879e95682260a86aa22d7ad5ce692"
+  },
+  {
+    "source": "backend/content.py",
+    "destination": "services/backend/content.py",
+    "source_sha256": "41be00f92d73adf6265c2ce63923ba0a24a74fa134f058c91de4286fb554409d"
+  },
+  {
+    "source": "backend/device.py",
+    "destination": "services/backend/device.py",
+    "source_sha256": "2b9b12db89928eecfbcf825ab96899bf8ff2e4e1a473e356ae15d666f8cfc730"
+  },
+  {
+    "source": "backend/player.py",
+    "destination": "services/backend/player.py",
+    "source_sha256": "20dbce9bf6aea2b2a1a47f88fc8aab80bfe8d6b9d3bb38ab28c40040cc524efa"
+  },
+  {
+    "source": "backend/preferences.py",
+    "destination": "services/backend/preferences.py",
+    "source_sha256": "7ccc0de13e802f9983cc32350b9bcd8debbe0b142846738aa081d532868c4342"
+  },
+  {
+    "source": "backend/__init__.py",
+    "destination": "services/backend/__init__.py",
+    "source_sha256": "ec71079d2fd8b4d704da68127101066162d243fd4adc84e6ebcc547c437bb37b"
+  },
+  {
+    "source": "browser-extension/background.js",
+    "destination": "app/browser-extension/background.js",
+    "source_sha256": "c02950a7a60912765e6db2a757ea772ac6149b49da7b8501bac3ee3795bb04a1"
+  },
+  {
+    "source": "browser-extension/manifest.json",
+    "destination": "app/browser-extension/manifest.json",
+    "source_sha256": "be978c38f685f0c9e9b6e076320ae2dd0f858e441df5e028c2279bd6766975fa"
+  },
+  {
+    "source": "browser-extension/return.js",
+    "destination": "app/browser-extension/return.js",
+    "source_sha256": "1c40df0d99898392fcbfe7f506fd880108a99312524df381095ce9d21c22e8a6"
+  },
+  {
+    "source": "skills/pi-smart-hub-delivery/SKILL.md",
+    "destination": "skills/pi-smart-hub-delivery/SKILL.md",
+    "source_sha256": "cd5696875c4cf17e7483bc81bbfc9854ea5a383ff3c79ccaec74d7ce319c4326"
+  },
+  {
+    "source": "skills/pi-smart-hub-device/SKILL.md",
+    "destination": "skills/pi-smart-hub-device/SKILL.md",
+    "source_sha256": "b197b667a68c23638fcf48c8263d72107af9ca6e005e32860e027bc71aa922cc"
+  },
+  {
+    "source": "skills/pi-smart-hub-touch-ux/SKILL.md",
+    "destination": "skills/pi-smart-hub-touch-ux/SKILL.md",
+    "source_sha256": "6e49a502c6a0ca22dd1183393c8d35291482ee2c236bafac0645861ecb17c09f"
+  },
+  {
+    "source": "FRONTEND_TOOLCHAIN.md",
+    "destination": "FRONTEND_TOOLCHAIN.md",
+    "source_sha256": "819bea68dc6ff89d4ceda658ee025baed612e31b72dc7c96db66a3739e4df9b9"
+  },
+  {
+    "source": "package.json",
+    "destination": "package.json",
+    "source_sha256": "ee65fe6f1f68b8205a278f7095ed122f9b2b89031bec7f33c4a1357e5b78e3bf"
+  },
+  {
+    "source": "playwright.config.ts",
+    "destination": "playwright.config.ts",
+    "source_sha256": "df119b7eab14dca38d6e03fe382988253e75457afe56f033f048e0acde86235c"
+  },
+  {
+    "source": "pnpm-lock.yaml",
+    "destination": "pnpm-lock.yaml",
+    "source_sha256": "223b56c203019e0e0feb8d470481026a005ed4180d1771cce93ee48ea77e4c05"
+  },
+  {
+    "source": "pytest.ini",
+    "destination": "pytest.ini",
+    "source_sha256": "e74e78c16d518c2b57916f324dd826339ff8af56bd8ba5079958d4f2aad2a4b2"
+  },
+  {
+    "source": "requirements-dev.in",
+    "destination": "requirements-dev.in",
+    "source_sha256": "ddd8544f353086ea5db6e37c55fb203012b3aa54a98203917b4435f91b8e6384"
+  },
+  {
+    "source": "requirements-dev.lock",
+    "destination": "requirements-dev.lock",
+    "source_sha256": "86760639b52abd34e88791f9c6da31474f1597f10b57026c1a86c3672c1b5ff7"
+  },
+  {
+    "source": "requirements.in",
+    "destination": "requirements.in",
+    "source_sha256": "5fa5e44a4b124228351b3c51d9a15c9e244c6cab405ca187ecc77ca43df7210e"
+  },
+  {
+    "source": "requirements.lock",
+    "destination": "requirements.lock",
+    "source_sha256": "b38f7150785cde7d4b85f24b4a09d819c77d00377d2c5ee66fcdd0d86fad8d1b"
+  },
+  {
+    "source": "tsconfig.app.json",
+    "destination": "tsconfig.app.json",
+    "source_sha256": "102c055ae2f7795da41ca12d6d28f46ba7bece4d20c9363d9839639fbaba9b37"
+  },
+  {
+    "source": "tsconfig.json",
+    "destination": "tsconfig.json",
+    "source_sha256": "770b4140bbb581e2dfd9ea9946ffc9c75a1d86ba7d2db5f77c83e37cbdf9d808"
+  },
+  {
+    "source": "tsconfig.node.json",
+    "destination": "tsconfig.node.json",
+    "source_sha256": "d227ca202d17bc3083bd9ca785492bb40d89801537dc3209e7bda05b0d3461f2"
+  },
+  {
+    "source": "vite.config.ts",
+    "destination": "vite.config.ts",
+    "source_sha256": "eb63e439f5d28ebfe37b656aad35d725f3e59f9c120f8d92a6fce3fa0f35859b"
+  },
+  {
+    "source": "index.html",
+    "destination": "app/ui/index.html",
+    "source_sha256": "4d12c85c6c06d597b92497bebbc40a20603c5abe729a494b19e3054d97eb4945"
+  },
+  {
+    "source": "scripts/activate-release.sh",
+    "destination": "scripts/activate-release.sh",
+    "source_sha256": "2b925fce97b0af3df5e30328ae8786b236bf36686277a625ef793025bb478905"
+  },
+  {
+    "source": "scripts/backend_smoke.py",
+    "destination": "scripts/backend_smoke.py",
+    "source_sha256": "054f324d6f29572ac2516c939fdeb1c2eec880e3d5996e605eb782c88df51fe5"
+  },
+  {
+    "source": "scripts/bootstrap-pi.sh",
+    "destination": "scripts/bootstrap-pi.sh",
+    "source_sha256": "2dbaf5d2709941af049ed08422e68110ecc5c794b8043ce25f246e1c76870eed"
+  },
+  {
+    "source": "scripts/check_acceptance.py",
+    "destination": "scripts/check_acceptance.py",
+    "source_sha256": "b8c14fae35468cd65ddfe6ca86647133d773988d7cf77d42cd7a3e8d5d9fd893"
+  },
+  {
+    "source": "scripts/dev.ps1",
+    "destination": "scripts/dev.ps1",
+    "source_sha256": "86d8370e4a3525ac790bd01efcbd3036884edc7395d223ab74a74465b4facd8c"
+  },
+  {
+    "source": "scripts/install-session.sh",
+    "destination": "scripts/install-session.sh",
+    "source_sha256": "bf20500d859635c50c6d988bb035f4d6e664331bfc15902ab3de65e6349e66fe"
+  },
+  {
+    "source": "scripts/mpv_smoke.py",
+    "destination": "scripts/mpv_smoke.py",
+    "source_sha256": "fad385ebf9f773918d5150b813e2194fd71d7ad241770e93ec640c5f69a5a6df"
+  },
+  {
+    "source": "scripts/package-release.py",
+    "destination": "scripts/package-release.py",
+    "source_sha256": "1878e7198c61723c5930841f33dd7c136d8abe324937386a54e82f1c8e1678d7"
+  },
+  {
+    "source": "scripts/pi_preflight.py",
+    "destination": "scripts/pi_preflight.py",
+    "source_sha256": "790c4b11ac54e4bfcdf66395ff7b6027972b49556d3fa49433a80b9f7f9b8711"
+  },
+  {
+    "source": "scripts/probe-application.py",
+    "destination": "scripts/probe-application.py",
+    "source_sha256": "a9bf1e4475bdd08f3ac139c283fa959a6b4f4bb92bd8b84e9323c37ae1d4aec5"
+  },
+  {
+    "source": "scripts/rollback.sh",
+    "destination": "scripts/rollback.sh",
+    "source_sha256": "eaf55194a46ceda2322e6284fd41357ce0bc6e381d789d7668e9088d2c9a7674"
+  },
+  {
+    "source": "scripts/run-hub.py",
+    "destination": "scripts/run-hub.py",
+    "source_sha256": "3c6fb307e5cbb902b2a2c9d0b71583f26e816e53a8ea783a2476d16a40ca0511"
+  },
+  {
+    "source": "scripts/toolchain-smoke.mjs",
+    "destination": "scripts/toolchain-smoke.mjs",
+    "source_sha256": "2c703916d9d073a2c7c1fbff57a0a3f2266c99c6566651bc66d45bc2893b694d"
+  },
+  {
+    "source": "tests/conftest.py",
+    "destination": "tests/conftest.py",
+    "source_sha256": "306ee75209fbb21c498b525c0fcdba2094d31f1f898dd190d50ca759ed443ef4"
+  },
+  {
+    "source": "tests/test_api.py",
+    "destination": "tests/test_api.py",
+    "source_sha256": "ca2014d09a2ade254bc4295ea3f3ac2aaa27d0aeaaf23249f80632d767b9d702"
+  },
+  {
+    "source": "tests/test_content.py",
+    "destination": "tests/test_content.py",
+    "source_sha256": "b873758d59e0fb554af676fb6a323370df9e0bffbb30309b8a4ab88ab1d99116"
+  },
+  {
+    "source": "tests/test_device.py",
+    "destination": "tests/test_device.py",
+    "source_sha256": "9d1080c8329da5f5dabaa9dcbb59a674aeff0383f64874c1fe90e7f1410f2afa"
+  },
+  {
+    "source": "tests/test_player.py",
+    "destination": "tests/test_player.py",
+    "source_sha256": "5bd9d9afebc82c07f0d89cb8e4f405fd145da62c8b41470bce88880944cf1afa"
+  },
+  {
+    "source": "tests/test_preferences.py",
+    "destination": "tests/test_preferences.py",
+    "source_sha256": "4a12a01b5248b04841d6d9fba78d9af95055f2affd624ce12bd3c9d719cddc16"
+  },
+  {
+    "source": "docs/PRODUCT.md",
+    "destination": "docs/PRODUCT.md",
+    "source_sha256": "cfcf1614edfe6560bdc2ecca78bc07b14fcb9724dc684fa607d58b799f5f174b"
+  },
+  {
+    "source": "docs/DEFINITION_OF_DONE.md",
+    "destination": "docs/DEFINITION_OF_DONE.md",
+    "source_sha256": "e3989663123b2dd035fe01e605cebb6375bf089a98e542792f36e4b4d6730b5f"
+  },
+  {
+    "source": "docs/SOURCE_FUNCTIONALITIES.md",
+    "destination": "docs/SOURCE_FUNCTIONALITIES.md",
+    "source_sha256": "2f35969e43efb03296675c8374da811bd160feca2defc64f464e300c3b83f307"
+  },
+  {
+    "source": "docs/INTEGRATIONS.md",
+    "destination": "docs/INTEGRATIONS.md",
+    "source_sha256": "d23c7866ab252b091c6f68b4d2c054057ee5a5a8cc97f7d266552111b4ff6c25"
+  },
+  {
+    "source": "docs/DECISIONS.md",
+    "destination": "docs/DECISIONS.md",
+    "source_sha256": "abb7abe1e64efba8df32c936347c7f9355b39abd883c77fb8d6b90addf89c2f9"
+  },
+  {
+    "source": "docs/PREPARATION_DOD.md",
+    "destination": "docs/PREPARATION_DOD.md",
+    "source_sha256": "0d7afe43c69040bf712d191c721a35aed23d7b75404b5ea23dc12bbf6db038d9"
+  },
+  {
+    "source": "docs/acceptance.json",
+    "destination": "docs/acceptance.json",
+    "source_sha256": "35d1b3f9b8b5bbb865ac3536e895a7fe1575c7d20812a23e1b9e45f9046729b3"
+  }
+]

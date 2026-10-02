@@ -1,0 +1,289 @@
+{
+  "candidate": "prep-2026-09-29",
+  "preparation": [
+    {
+      "id": "PREP-01",
+      "status": "PASS",
+      "candidate": "prep-2026-09-29",
+      "evidence": [
+        "docs/PRODUCT.md",
+        "docs/DECISIONS.md",
+        "docs/WORKFLOW.md",
+        "docs/DEFINITION_OF_DONE.md",
+        "docs/PREPARATION_DOD.md"
+      ]
+    },
+    {
+      "id": "PREP-02",
+      "status": "PASS",
+      "candidate": "prep-2026-09-29",
+      "evidence": [
+        "docs/evidence/skills-validation.txt",
+        "docs/evidence/independent-review.md"
+      ]
+    },
+    {
+      "id": "PREP-03",
+      "status": "PASS",
+      "candidate": "prep-2026-09-29",
+      "evidence": [
+        "docs/PREPARATION_REPORT.md",
+        "docs/evidence/preparation-evidence/cleanup-plan.json",
+        "docs/evidence/preparation-evidence/cleanup-apt.log"
+      ]
+    },
+    {
+      "id": "PREP-04",
+      "status": "PASS",
+      "candidate": "prep-2026-09-29",
+      "evidence": [
+        "docs/evidence/preparation-evidence/preflight.json",
+        "docs/evidence/preparation-evidence/apt-check.txt"
+      ]
+    },
+    {
+      "id": "PREP-05",
+      "status": "PASS",
+      "candidate": "prep-2026-09-29",
+      "evidence": [
+        "docs/evidence/frontend-build.txt",
+        "docs/evidence/typecheck.txt",
+        "docs/evidence/frontend-browser.md",
+        "docs/evidence/local-backend-smoke.txt"
+      ]
+    },
+    {
+      "id": "PREP-06",
+      "status": "PASS",
+      "candidate": "prep-2026-09-29",
+      "evidence": [
+        "docs/evidence/preparation-evidence/backend-smoke.txt",
+        "docs/evidence/preparation-evidence/mpv-smoke.txt",
+        "docs/evidence/preparation-evidence/python-freeze.txt",
+        "docs/evidence/preparation-evidence/bootstrap-repeat.log"
+      ]
+    },
+    {
+      "id": "PREP-07",
+      "status": "PASS",
+      "candidate": "prep-2026-09-29",
+      "evidence": [
+        "README.md",
+        "docs/ENVIRONMENT.md",
+        "docs/PREPARATION_REPORT.md"
+      ]
+    }
+  ],
+  "product": [
+    {
+      "id": "HW-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "UX-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "UX-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "UX-03",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "I18N-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "I18N-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "HOME-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "HOME-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "SET-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "SET-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "NET-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "NET-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "NET-03",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "MEDIA-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "MEDIA-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "MEDIA-03",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "BT-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "BT-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "EXT-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "EXT-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "EXT-03",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "BOOT-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "BOOT-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "REL-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "REL-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "PERF-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "PERF-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "DIAG-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "DEL-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    },
+    {
+      "id": "DEL-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Not implemented; preparation milestone only"
+    }
+  ]
+}

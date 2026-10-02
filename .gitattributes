@@ -1,0 +1,10 @@
+* text=auto eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.png binary
+*.woff2 binary
+*.ttf binary
+docs/SOURCE_FUNCTIONALITIES.md -text -whitespace
+app/ui/public/fonts/*LICENSE.txt -whitespace

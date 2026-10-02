@@ -1,0 +1,266 @@
+{
+  "candidate": null,
+  "preparation": [
+    {
+      "id": "PREP-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Historical preparation passed in legacy workspace; raw private evidence was not imported. See docs/MIGRATION.md."
+    },
+    {
+      "id": "PREP-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Historical preparation passed in legacy workspace; raw private evidence was not imported. See docs/MIGRATION.md."
+    },
+    {
+      "id": "PREP-03",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Historical preparation passed in legacy workspace; raw private evidence was not imported. See docs/MIGRATION.md."
+    },
+    {
+      "id": "PREP-04",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Historical preparation passed in legacy workspace; raw private evidence was not imported. See docs/MIGRATION.md."
+    },
+    {
+      "id": "PREP-05",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Historical preparation passed in legacy workspace; raw private evidence was not imported. See docs/MIGRATION.md."
+    },
+    {
+      "id": "PREP-06",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Historical preparation passed in legacy workspace; raw private evidence was not imported. See docs/MIGRATION.md."
+    },
+    {
+      "id": "PREP-07",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Historical preparation passed in legacy workspace; raw private evidence was not imported. See docs/MIGRATION.md."
+    }
+  ],
+  "product": [
+    {
+      "id": "HW-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "UX-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "UX-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "UX-03",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "I18N-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "I18N-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "HOME-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "HOME-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "SET-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "SET-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "NET-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "NET-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "NET-03",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "MEDIA-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "MEDIA-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "MEDIA-03",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "BT-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "BT-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "EXT-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "EXT-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "EXT-03",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "BOOT-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "BOOT-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "REL-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "REL-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "PERF-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "PERF-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "DIAG-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "DEL-01",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    },
+    {
+      "id": "DEL-02",
+      "status": "OPEN",
+      "candidate": null,
+      "evidence": [],
+      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Pi Smart Hub — Return",
+  "version": "1.0.0",
+  "description": "A touch-sized return button in the hub's dedicated service browser. No account data is collected.",
+  "background": {"service_worker": "background.js"},
+  "content_scripts": [{
+    "matches": ["https://*.youtube.com/*", "https://*.netflix.com/*", "https://*.spotify.com/*", "https://accounts.google.com/*"],
+    "js": ["return.js"],
+    "run_at": "document_end"
+  }]
+}
