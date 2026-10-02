@@ -36,12 +36,14 @@ install -D -m 0644 "$source_root/assets/pysh.service" "$target/etc/systemd/user/
 install -D -m 0644 "$source_root/assets/journald.conf" "$target/etc/systemd/journald.conf.d/pysh.conf"
 install -D -m 0755 "$source_root/assets/pysh-provision-recovery" "$target/usr/local/sbin/pysh-provision-recovery"
 install -D -m 0644 "$source_root/assets/pysh-recovery.service" "$target/etc/systemd/system/pysh-recovery.service"
+install -D -m 0755 "$source_root/assets/pysh-growfs.py" "$target/usr/local/sbin/pysh-growfs"
+install -D -m 0644 "$source_root/assets/pysh-growfs.service" "$target/etc/systemd/system/pysh-growfs.service"
 rm -f -- "$target/etc/sudoers.d/010_rpi-passwd"
 chroot "$target" gpasswd -d pysh sudo
 install -D -m 0644 "$payload/source.json" "$target/etc/pysh-build.json"
 printf '%s\n' 'EXPERIMENTAL: hardware boot, service recovery and flash gate not yet accepted.' > "$target/etc/pysh-os-candidate"
 chroot "$target" useradd --system --user-group --home /var/lib/pysh-greeter --create-home --shell /usr/sbin/nologin pysh-greeter
-chroot "$target" systemctl enable greetd.service bluetooth.service NetworkManager.service pysh-recovery.service
+chroot "$target" systemctl enable greetd.service bluetooth.service NetworkManager.service pysh-recovery.service pysh-growfs.service
 chroot "$target" systemctl mask systemd-networkd.service systemd-networkd.socket
 # Image SSH stays unavailable until its recovery key has been provisioned.
 install -d "$target/etc/systemd/system/ssh.service.d"
@@ -49,3 +51,5 @@ printf '[Unit]\nWants=pysh-recovery.service\nAfter=pysh-recovery.service\nCondit
 printf 'AllowUsers pysh-admin\nAuthenticationMethods publickey\nPasswordAuthentication no\nPermitRootLogin no\n' > "$target/etc/ssh/sshd_config.d/pysh-recovery.conf"
 chroot "$target" visudo -c
 chroot "$target" sh -c 'test -x /usr/sbin/agreety && test -x /usr/bin/labwc && test -x /usr/bin/chromium && test -x /usr/bin/mpv'
+
+chroot "$target" systemd-analyze verify pysh-growfs.service pysh-recovery.service

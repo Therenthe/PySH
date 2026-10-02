@@ -83,6 +83,25 @@ def test_unavailable_optional_ipc_property_does_not_break_status():
     asyncio.run(scenario())
 
 
+@pytest.mark.parametrize("metadata, expected", [
+    ("128", "Radio Swiss Jazz"),
+    ("https://radio.example/mp3/128", "Radio Swiss Jazz"),
+    (None, "Radio Swiss Jazz"),
+    ("Artist — Track", "Artist — Track"),
+])
+def test_radio_url_fallback_does_not_hide_station_but_keeps_broadcast_metadata(metadata, expected):
+    async def scenario():
+        player = Player()
+        player._process = FakeProcess()
+        player._reader = asyncio.StreamReader()
+        player._writer = FakeWriter(player._reader, {"media-title": metadata, "idle-active": False})
+        player._url = "https://radio.example/mp3/128"
+        player._title = "Radio Swiss Jazz"
+        assert (await player.status())["title"] == expected
+
+    asyncio.run(scenario())
+
+
 def test_unsupported_commands_and_invalid_ranges_have_stable_codes():
     async def scenario():
         player = Player()

@@ -18,4 +18,4 @@ The CI checks the actual generated ext4/VFAT and MBR files: runtime hashes, sess
 
 ## Partition identity
 
-ADR-0008 replaces upstream by-slot mount references with the UUIDs used when creating each filesystem. CI probes ext4/vfat UUIDs and matches fstab and root cmdline before packaging. This prepares SD/USB-independent mount references; physical USB boot and EEPROM compatibility are still OPEN. Root remains 4096M; automatic USB expansion is not claimed.
+ADR-0008 replaces upstream by-slot mount references with the UUIDs used when creating each filesystem. CI probes ext4/vfat UUIDs and matches fstab and root cmdline before packaging. This prepares SD/USB-independent mount references; physical USB boot and EEPROM compatibility are still OPEN. The image starts with a 4096M root. ADR-0009 adds guarded first-boot growth for this exact mounted UUID-backed DOS layout, with a throwaway loop-image CI gate before building. Failures do not produce a success stamp and leave recovery/kiosk available at the original capacity where boot is intact. CI/offline checks and physical mounted SD/USB/NVMe growth are separate; physical growth remains OPEN.

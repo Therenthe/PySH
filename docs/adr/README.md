@@ -11,3 +11,6 @@ Un ADR consemnează context, decizie, statut și consecințe. `Accepted` descrie
 - [0007 — Appliance service mode](0007-appliance-service-mode.md)
 
 Deciziile anterioare de navigare/media sunt păstrate în [DECISIONS](../DECISIONS.md); nu constituie dovadă de acceptare.
+
+- [0008 — UUID image mounts](0008-image-filesystem-uuids.md)
+- [0009 — Guarded first-boot root expansion](0009-guarded-root-expansion.md)

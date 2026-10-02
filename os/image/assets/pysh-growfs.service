@@ -1,0 +1,16 @@
+[Unit]
+Description=Verify and expand the PySH root filesystem
+After=local-fs.target pysh-recovery.service
+RequiresMountsFor=/boot/firmware
+Before=greetd.service
+# A failed expansion must leave recovery SSH and kiosk usable at original size.
+# Ordering only: recovery/greetd must not Require this service.
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/pysh-growfs
+TimeoutStartSec=5min
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

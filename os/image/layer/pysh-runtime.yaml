@@ -25,3 +25,7 @@ mmdebstrap:
     - grim
     - wlr-randr
     - sudo
+    - cloud-guest-utils
+    - e2fsprogs
+    - util-linux
+    - udev

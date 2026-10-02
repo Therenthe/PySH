@@ -12,7 +12,7 @@ import tempfile
 import time
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 
 class PlayerError(Exception):
@@ -228,9 +228,16 @@ class Player:
             if state in {"connecting", "buffering"}:
                 state = "playing"
         self._last_position = position
+        media_title = props.get("media-title")
+        # mpv falls back to the URL basename when a stream has no title metadata.
+        # Keep real broadcast metadata, but show the chosen station in that case.
+        if self._kind == "radio" and self._title and media_title in {
+            self._url, unquote(urlparse(self._url).path.rstrip("/").rsplit("/", 1)[-1])
+        }:
+            media_title = self._title
         return self._status_value(
             state,
-            title=props.get("media-title") or self._title,
+            title=media_title or self._title,
             position=position,
             duration=_number_or_none(props.get("duration")),
             volume=_number_or_none(props.get("volume")),

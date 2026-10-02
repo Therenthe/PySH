@@ -1,5 +1,5 @@
 {
-  "candidate": "41a17d9b69e8",
+  "candidate": "df9d3777bdec",
   "preparation": [
     {
       "id": "PREP-01",
@@ -127,7 +127,7 @@
     {
       "id": "SET-01",
       "status": "OPEN",
-      "candidate": "41a17d9b69e8",
+      "candidate": "c0b1e35b77a9",
       "evidence": [
         "docs/evidence/audio-weather-controls-2026-10-02.md"
       ],
@@ -173,7 +173,7 @@
     {
       "id": "MEDIA-02",
       "status": "OPEN",
-      "candidate": "41a17d9b69e8",
+      "candidate": "c0b1e35b77a9",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
         "docs/evidence/content-recovery-2026-10-02.md",
@@ -258,12 +258,11 @@
     {
       "id": "REL-02",
       "status": "PASS",
-      "candidate": "41a17d9b69e8",
+      "candidate": "df9d3777bdec",
       "evidence": [
-        "docs/evidence/video-process-recovery-2026-10-02.md",
-        "docs/evidence/audio-weather-controls-2026-10-02.md"
+        "docs/evidence/ui-handoff-2026-10-03.md"
       ],
-      "reason": "Real API/kiosk crash recovery1.903s/0.998s, unchanged preference bytes, zero zombies and one live mpv. Admin journal confirms exit=-9/restart without arguments/secrets. This accepts isolated preview recovery; dedicated OS candidate requires separate revalidation."
+      "reason": "Observed API/kiosk recovery 2.425s/0.979s, preferences unchanged, zero owned zombies and one live mpv; administrative exit-code logs observed on original desktop/card preview. Physical dedicated OS recovery remains OPEN."
     },
     {
       "id": "PERF-01",

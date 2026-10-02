@@ -61,6 +61,8 @@ for name, installed in {
     'greetd.toml':'/etc/greetd/config.toml',
     'pysh-provision-recovery':'/usr/local/sbin/pysh-provision-recovery',
     'pysh-recovery.service':'/etc/systemd/system/pysh-recovery.service',
+    'pysh-growfs.py':'/usr/local/sbin/pysh-growfs',
+    'pysh-growfs.service':'/etc/systemd/system/pysh-growfs.service',
 }.items():
     assert read_root(installed) == Path('os/image/assets',name).read_bytes(), installed
 groups = {line.split(':')[0]:line.split(':')[-1].split(',') for line in read_root('/etc/group').decode().splitlines()}
