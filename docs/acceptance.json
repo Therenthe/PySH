@@ -56,8 +56,10 @@
       "id": "HW-01",
       "status": "OPEN",
       "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "evidence": [
+        "docs/evidence/pi-source-checkout-2026-10-02.md"
+      ],
+      "reason": "Live board/OS and source checkout inventoried; product UI at 800x480 and physical panel acceptance remain unverified."
     },
     {
       "id": "UX-01",

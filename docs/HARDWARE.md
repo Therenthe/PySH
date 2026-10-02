@@ -1,6 +1,6 @@
 # Hardware de referință
 
-Date istorice din auditul local din 29 septembrie 2026, nu o inspecție live din această migrare:
+Referință istorică din 29 septembrie 2026, reconfirmată parțial live pe 2 octombrie: model, arhitectură, OS, kernel, RAM, stocare și adaptoarele active. Display-ul fizic și redarea audio rămân de verificat. Vezi [auditul live](evidence/pi-source-checkout-2026-10-02.md).
 
 | Componentă | Observat |
 | --- | --- |
@@ -13,4 +13,4 @@ Date istorice din auditul local din 29 septembrie 2026, nu o inspecție live din
 | Python | 3.13.5 |
 | Audio | PipeWire/WirePlumber; boxa și sunetul audibil necesită validare |
 
-Conversația ulterioară menționează detectarea unei boxe, dar registrul nu are dovadă completă de asociere și redare. Disponibilitatea curentă a boxei, OS-ul activ, build-ul instalat, alimentarea și modelul exact al panoului trebuie reconfirmate la reconectare. Adresele, parolele și inventarul privat nu intră în repository.
+Conversația ulterioară menționează detectarea unei boxe, dar registrul nu are dovadă completă de asociere și redare. Disponibilitatea curentă a boxei, alimentarea și modelul exact al panoului trebuie reconfirmate. Aplicația nu rulează la auditul din 2 octombrie; pachetul istoric 32d75c593e83 este prezent și hashurile sale sunt verificate. Adresele, parolele și inventarul privat nu intră în repository.
