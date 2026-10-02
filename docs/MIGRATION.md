@@ -27,3 +27,5 @@ Playwright indica un director `e2e/` inexistent. Probele vechi de browser prives
 ## Închiderea migrării
 
 Verificări locale → commit inițial → repository privat → push → verificare remote/commit → CI → actualizare STATUS. Până la confirmarea push-ului, migrarea GitHub nu este finalizată. Repository-ul privat `Therenthe/PySH` a fost creat de utilizator și accesul de scriere prin conector a fost verificat. Commit-ul inițial al utilizatorului este păstrat ca părinte al importului.
+
+Închisă publicarea inițială: commit `6ff604b7ebb9c80b11765ea59917971071afba78`, 109 fișiere cu tree identic copiei locale; main local sincronizat. CI 37030198002 a trecut frontend și backend pe Python 3.12/3.13. GitHub este sursa canonică; inventarul live Pi așteaptă autentificarea SSH.
