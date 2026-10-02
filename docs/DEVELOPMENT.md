@@ -31,4 +31,4 @@ Configurează `PI_HUB_DATA` spre un director local `.runtime/dev-data` pentru a 
 
 `python scripts/check_acceptance.py --phase product` este poarta de release și trebuie să eșueze cât timp criteriile sunt OPEN. Nu este testul CI pentru modificări obișnuite. Poarta preparation rămâne deschisă în copia migrată deoarece probele private istorice nu sunt importate.
 
-Playwright este configurat, dar suita de produs `tests/e2e/` nu este încă implementată. `test:ui` nu se raportează ca PASS. Smoke-ul toolchain testează un fixture și nu înlocuiește teste UI reale. CI verifică Python 3.12/3.13, TypeScript, build și integritatea structurii; nu acceptă hardware-ul.
+Playwright include regresia Wi-Fi în `tests/e2e/`: EN/RO × E-Ink/Noapte, 800×480, atingeri și operații API simulate numai în teste. Rulează `pnpm exec playwright install chromium`, apoi `pnpm test:ui`. Smoke-ul toolchain testează un fixture și nu înlocuiește aceste teste UI. CI verifică Python 3.12/3.13, TypeScript, build, integritatea structurii și testele de browser; nu acceptă hardware-ul.

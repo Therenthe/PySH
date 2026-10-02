@@ -1,5 +1,5 @@
 {
-  "candidate": null,
+  "candidate": "568c2b0c43de",
   "preparation": [
     {
       "id": "PREP-01",
@@ -55,18 +55,21 @@
     {
       "id": "HW-01",
       "status": "OPEN",
-      "candidate": null,
+      "candidate": "568c2b0c43de",
       "evidence": [
-        "docs/evidence/pi-source-checkout-2026-10-02.md"
+        "docs/evidence/pi-source-checkout-2026-10-02.md",
+        "docs/evidence/pi-preview-2026-10-02.md"
       ],
-      "reason": "Live board/OS and source checkout inventoried; product UI at 800x480 and physical panel acceptance remain unverified."
+      "reason": "Real panel setup capture inspected at 800x480; full target configuration and no-clipping screen matrix remain incomplete."
     },
     {
       "id": "UX-01",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "568c2b0c43de",
+      "evidence": [
+        "docs/evidence/pi-preview-2026-10-02.md"
+      ],
+      "reason": "User completed setup and opened Bluetooth settings by touch; real 800x480 capture shows connected speaker. Full tactile checklist and target sizing remain incomplete."
     },
     {
       "id": "UX-02",
@@ -155,30 +158,38 @@
     {
       "id": "MEDIA-02",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "568c2b0c43de",
+      "evidence": [
+        "docs/evidence/pi-preview-2026-10-02.md"
+      ],
+      "reason": "Generated local WAV played with real mpv/PipeWire/Bluetooth output, confirmed audible by user; remaining formats, browsing and failures untested."
     },
     {
       "id": "MEDIA-03",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "568c2b0c43de",
+      "evidence": [
+        "docs/evidence/pi-preview-2026-10-02.md"
+      ],
+      "reason": "Sink volume set to 25% and audible output confirmed; slider, mute and missing-output flow remain untested."
     },
     {
       "id": "BT-01",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "568c2b0c43de",
+      "evidence": [
+        "docs/evidence/pi-preview-2026-10-02.md"
+      ],
+      "reason": "Existing speaker connected; scan/pair/forget, errors and reconnection remain untested."
     },
     {
       "id": "BT-02",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "568c2b0c43de",
+      "evidence": [
+        "docs/evidence/pi-preview-2026-10-02.md"
+      ],
+      "reason": "Local WAV audible on existing Bluetooth speaker confirmed by user; radio, disconnect and recovery remain untested."
     },
     {
       "id": "EXT-01",

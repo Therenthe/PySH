@@ -5,6 +5,7 @@ export default defineConfig({
   fullyParallel: true,
   reporter: "list",
   use: {
+    baseURL: "http://127.0.0.1:5173",
     ...devices["Desktop Chrome"],
     viewport: { width: 800, height: 480 },
     deviceScaleFactor: 1,
