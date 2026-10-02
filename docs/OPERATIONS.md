@@ -29,3 +29,9 @@ Nu se reflashează cardul sau schimbă conexiunea SSH activă în această etap�
 ## Sincronizarea surselor fără credențiale GitHub pe Pi
 
 Conectorul GitHub poate publica modificările de pe PC. Când Pi nu are autentificare la repository-ul privat, se transferă un Git bundle care conține main verificat față de GitHub. Se verifică checksumul înainte de import; numai cu working tree curat se execută `git fetch /cale/bundle main`, apoi `git merge --ff-only FETCH_HEAD`. Se confirmă HEAD față de commit-ul GitHub și se actualizează origin/main la același SHA verificat. Acesta este un transfer de surse; nu activează aplicația. Nu copia tokenuri personale pe Pi pentru a evita acest pas.
+
+## Windows experimental writer
+
+`scripts/flash-experimental-image.ps1` defaults to inspection. Require the explicit USB disk number, serial, byte size, uncompressed image/hash, signed official Imager path, public key and an existing private log directory outside tracked files. No target defaults exist. The owner must explicitly select/authorize erasure before `-Write`; administrator access is required. Default Imager read-back verification remains enabled. Sources/logs cannot be on the target or traversed through reparse points; system disks and directory-mounted targets are rejected.
+
+On success the writer identifies the verified FAT boot partition by offset/size, copies only the public recovery key, flushes and checks its hash. Use Windows safe removal before disconnecting the drive. Preserve the original SD card and test USB boot separately. A successful write does not certify boot, recovery, root expansion or product acceptance. Private logs and keys must not be committed.
