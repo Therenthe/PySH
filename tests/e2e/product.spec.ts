@@ -29,8 +29,8 @@ async function fixture(page: Page, language: 'en'|'ro', theme: 'ink'|'night', se
     else if(path==='/api/network/scan' && method==='POST') json={networks:[{ssid:'Protected test Wi-Fi',security:'secured',signal:80}]};
     else if(['/api/play','/api/player','/api/audio','/api/bluetooth/power','/api/bluetooth/scan','/api/bluetooth/action','/api/bluetooth/reply','/api/weather/refresh','/api/network/connect','/api/external','/api/exit','/api/service/return','/api/favorites'].includes(path) && method==='POST') {
       f.actions.push({path,body});
-      if(path==='/api/play')state.player={state:'playing',title:body.title,kind:body.source==='radio'?'radio':'audio',url:body.url||body.path};
-      if(path==='/api/player'){if(body.action==='seek')state.player.position=body.value;else state.player.state=body.action==='stop'?'idle':body.action==='pause'?'paused':'playing';}
+      if(path==='/api/play'){state.player={state:'playing',title:body.title,kind:body.source==='radio'?'radio':'audio',url:body.url||body.path};if(body.source==='radio')state.preferences.lastStation={uuid:'test-station',name:body.title,url:body.url};}
+      if(path==='/api/player'){if(body.action==='seek')state.player.position=body.value;else if(body.action==='stop')Object.assign(state.player,{state:'idle',url:'',title:'',canPrevious:false,canNext:false});else state.player.state=body.action==='pause'?'paused':'playing';}
       if(path==='/api/favorites')state.preferences.favorites=body.remove?[]:[body.station];
       if(path==='/api/audio')Object.assign(state.audio,body);
       if(path==='/api/bluetooth/reply')state.bluetooth.prompts=[];
@@ -91,6 +91,15 @@ for(const theme of ['ink','night'] as const) {
       f.state.player={state,kind:'audio',title:'Completed local track',url:'/test/audio.mp3',canPrevious:true,canNext:true};await page.reload();await bar.getByRole('button',{name:ro?'Următor':'Next',exact:true}).tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('next');
     }
     expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
+  });
+  test(`radio transport explains idle and replays stopped or failed sources ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
+    await page.goto('/');await page.locator('.main-nav button').nth(1).tap();const controls=page.locator('.radio-side .player-controls'),play=()=>controls.getByRole('button',{name:ro?'Redă':'Play',exact:true});
+    await expect(play()).toBeDisabled();await expect(controls.getByRole('button',{name:ro?'Anterior':'Previous',exact:true})).toHaveCount(0);await expect(controls.getByRole('button',{name:ro?'Oprește':'Stop',exact:true})).toBeDisabled();
+    await page.locator('.station-main').tap();await controls.getByRole('button',{name:ro?'Oprește':'Stop',exact:true}).tap();expect(f.state.player.url).toBe('');await expect(play()).toBeEnabled();await play().tap();expect(f.actions.filter(a=>a.path==='/api/play')).toHaveLength(2);expect(f.actions.filter(a=>a.path==='/api/play').at(-1)?.body).toEqual({source:'radio',url:'https://example.com/test.mp3',title:'Test station'});
+    for(const state of ['error','ended']){f.state.player={state,kind:'radio',url:'https://example.com/failing.mp3',title:'Current failed station'};await page.reload();await page.locator('.main-nav button').nth(1).tap();await play().tap();expect(f.actions.filter(a=>a.path==='/api/play').at(-1)?.body).toEqual({source:'radio',url:'https://example.com/failing.mp3',title:'Current failed station'});}
+    for(const state of ['buffering','connecting']){f.state.player={state,kind:'radio',url:'https://example.com/test.mp3',title:'Test station'};await page.reload();await page.locator('.main-nav button').nth(1).tap();await controls.getByRole('button',{name:ro?'Pauză':'Pause',exact:true}).tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('pause');await expect(play()).toBeEnabled();}
+    await capture(page,info,'radio-transport-recovery',defects);expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
   });
   test(`active radio station pauses and resumes without reload ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);

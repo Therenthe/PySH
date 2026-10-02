@@ -32,3 +32,7 @@ Automatic approval review initially blocked the browser audit due to usage capac
 ## Audio and weather follow-up
 
 Source audit found missing local audio transport controls, active radio pause reloading the stream, saved audio values not applied on restart, and a late old-city weather response overwriting a new city. Repairs add queue-aware touch transport, persistent output/volume/mute restoration on availability and a weather request/location guard. Synthetic regressions pass; updated device/media/persistence checks remain pending. See [audio/weather evidence](docs/evidence/audio-weather-controls-2026-10-02.md).
+
+## Radio replay candidate
+
+Candidate `4049721e2f4b` repairs radio replay after Stop/error/end and removes local-file previous/next controls for radio. Synthetic browser regression: 56 passed, zero skipped/flaky/unexpected, 61.003 seconds. TypeScript, Vite, repository check and packaging passed; Python Windows regression: 49 passed, five Linux-only skips. Hardware radio replay verification is pending. The preceding `41a17d9b69e8` preview passed real audio touch/persistence/recovery checks and eight selected audio encodings; those observations do not accept this successor. Full product acceptance remains OPEN. Latest experimental OS image/evidence remains on PR #3; no flash was performed.
