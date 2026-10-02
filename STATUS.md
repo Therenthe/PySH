@@ -37,3 +37,7 @@ Existing local application migrated and published to private GitHub repository h
 2. Continue vertical product acceptance, beginning with setup and audio/Bluetooth recovery flows.
 3. Keep PC/Pi source checkouts synchronized with verified GitHub commits; protect legacy releases and persistent data during deployment.
 4. Follow docs/ROADMAP.md and accepted ADRs for appliance transition.
+
+## Appliance build in progress
+
+User requested autonomous full delivery and PySH OS flashing after verification. Experimental rpi-image-gen v2.8.0/Pi4/Trixie configuration and ARM64 CI build are prepared on feat/pysh-os-image. ADR-0006 records the build-only container exception and known gates. No image is accepted or flash-ready; no live OS changes. Recovery key provisioning, service-mode UX, target package provenance, actual boot and backup/restoration remain required.

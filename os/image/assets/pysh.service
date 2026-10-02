@@ -1,0 +1,15 @@
+[Unit]
+Description=PySH touch hub
+After=pipewire.service wireplumber.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/pysh/current
+ExecStart=/opt/pysh/venv/bin/python /opt/pysh/current/scripts/run-hub.py
+Restart=on-failure
+RestartSec=3
+Environment=PYTHONUNBUFFERED=1
+UMask=0077
+
+[Install]
+WantedBy=graphical-session.target

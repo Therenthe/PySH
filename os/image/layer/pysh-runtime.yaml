@@ -1,0 +1,26 @@
+# METABEGIN
+# X-Env-Layer-Name: pysh-runtime
+# X-Env-Layer-Desc: PySH Python/API and Chromium/labwc touch session.
+# X-Env-Layer-Category: application
+# X-Env-Layer-Version: 0.1.0
+# X-Env-Layer-Requires: pysh-base,device-user-admin
+# X-Env-VarPrefix: pysh
+# X-Env-Var-payload:
+# X-Env-Var-payload-Desc: Verified runtime archive and manifest staging directory.
+# X-Env-Var-payload-Required: y
+# X-Env-Var-payload-Valid: dir
+# X-Env-Var-payload-Set: y
+# METAEND
+---
+mmdebstrap:
+  packages:
+    - python3
+    - python3-venv
+    - chromium
+    - mpv
+    - labwc
+    - greetd
+    - foot
+    - fonts-dejavu-core
+    - grim
+    - wlr-randr

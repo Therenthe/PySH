@@ -1,0 +1,10 @@
+[terminal]
+vt = 1
+
+[initial_session]
+command = "/usr/local/bin/pysh-session"
+user = "pysh"
+
+[default_session]
+command = "agreety --cmd /usr/local/bin/pysh-session"
+user = "pysh-greeter"

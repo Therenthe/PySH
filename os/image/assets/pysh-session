@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
+export XDG_SESSION_TYPE=wayland
+exec /usr/bin/labwc
