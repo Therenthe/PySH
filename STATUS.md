@@ -47,3 +47,7 @@ Existing local application migrated and published to private GitHub repository h
 ## Content recovery candidate
 
 Active isolated Pi preview: `24f207c79081`, from main `b853a5e`. Its 48-screen real audit no longer reproduces the font/night text contrast defects. Eight synthetic audio encodings decode on the real player; a corrupt MP3 incorrectly reports idle. A coherent repair covers mpv events and radio/weather/library/video retry, with 46 Python and 36 browser tests passing. See [content recovery evidence](docs/evidence/content-recovery-2026-10-02.md). The experimental OS branch has built and inspected a recovery-capable image; USB boot addressing and physical recovery/boot still require verification. No storage has been flashed.
+
+## Video controls and crash recovery
+
+Real preview `bfb3cdd16723` passes five selected video encodings and invalid-video retry/back in EN/RO/themes, but native controls are too small/hidden. API crash restarts the UI but leaves orphan mpv processes (REL-02 FAIL). Persistent video controls and owned-process cleanup repairs pass 40 browser tests; 46 backend tests pass and four Linux-only cases await CI. See [evidence](docs/evidence/video-process-recovery-2026-10-02.md). OS UUID build `a9fdf3d` passed run `37050691172`; it must be updated with these final repairs before physical test. No flash has occurred.

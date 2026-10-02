@@ -67,6 +67,33 @@ async function capture(page:Page, info:TestInfo, name:string, defects:string[]) 
 async function closeModal(page:Page, ro:boolean){await page.locator('.modal-card header').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();}
 
 for(const theme of ['ink','night'] as const) {
+  test(`local video owns persistent touch playback controls ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
+    await page.goto('/');
+    // Real VP8 decoder input generated inside the test browser, not a simulated video element.
+    const bytes=await page.evaluate(async()=>{
+      const canvas=document.createElement('canvas');canvas.width=160;canvas.height=90;const ctx=canvas.getContext('2d')!;
+      const stream=canvas.captureStream(12),recorder=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp8'}),parts:BlobPart[]=[];
+      const done=new Promise<Blob>(resolve=>{recorder.ondataavailable=e=>parts.push(e.data);recorder.onstop=()=>resolve(new Blob(parts,{type:'video/webm'}));});
+      let frame=0;const draw=setInterval(()=>{ctx.fillStyle=frame++%2?'#4a7c6a':'#e5c257';ctx.fillRect(0,0,160,90);},80);
+      recorder.start();await new Promise(resolve=>setTimeout(resolve,2400));recorder.stop();const blob=await done;clearInterval(draw);stream.getTracks().forEach(track=>track.stop());return Array.from(new Uint8Array(await blob.arrayBuffer()));
+    });
+    await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Browser decoder fixture',items:[{name:'Real generated test.webm',path:'/test/real.webm',kind:'video'}]}}));
+    await page.route('**/api/media/file?**',route=>{const range=route.request().headers().range?.match(/bytes=(\d+)-(\d*)/);const data=Buffer.from(bytes);if(!range)return route.fulfill({contentType:'video/webm',headers:{'Accept-Ranges':'bytes'},body:data});const start=Number(range[1]),end=Math.min(range[2]?Number(range[2]):data.length-1,data.length-1);return route.fulfill({status:206,contentType:'video/webm',headers:{'Accept-Ranges':'bytes','Content-Range':`bytes ${start}-${end}/${data.length}`},body:data.subarray(start,end+1)});});
+    await page.locator('.main-nav button').nth(2).tap();await page.locator('.media-item').tap();
+    // MediaRecorder WebM initially exposes infinite duration; a normal local seekable file has a finite duration.
+    await page.locator('video').evaluate(async(v:HTMLVideoElement)=>{await new Promise<void>(resolve=>{if(v.readyState>=2)resolve();else v.addEventListener('loadeddata',()=>resolve(),{once:true});});if(!Number.isFinite(v.duration)){v.currentTime=1e6;await new Promise<void>(resolve=>v.addEventListener('seeked',()=>resolve(),{once:true}));v.currentTime=0;}});
+    await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>Number.isFinite(v.duration)&&v.duration>0)).toBe(true);
+    await expect(page.locator('video')).not.toHaveAttribute('controls');await expect(page.locator('.video-controls')).toBeVisible();
+    await page.locator('video').evaluate((v:HTMLVideoElement)=>v.pause());await expect(page.locator('.video-play')).toHaveText(ro?'Redă':'Play');
+    const seek=page.getByRole('slider',{name:ro?'Progres':'Progress',exact:true}),rect=await seek.boundingBox();await seek.tap({position:{x:rect!.width*.5,y:rect!.height*.5}});
+    await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(.5);
+    await page.locator('.video-play').tap();await expect(page.locator('.video-play')).toHaveText(ro?'Pauză':'Pause');await page.locator('.video-play').tap();await expect(page.locator('video')).toHaveJSProperty('paused',true);
+    await page.locator('.video-audio button').tap();expect(f.actions.filter(a=>a.path==='/api/audio').at(-1)?.body).toEqual({mute:true});await expect(page.locator('.video-audio button')).toHaveText(ro?'Activează sunetul':'Unmute');
+    const volume=page.getByRole('slider',{name:ro?'Volum':'Volume',exact:true}),vr=await volume.boundingBox();await volume.tap({position:{x:vr!.width*.65,y:vr!.height*.5}});await expect.poll(()=>f.actions.filter(a=>a.path==='/api/audio').at(-1)?.body.volume).toBeGreaterThan(50);
+    await capture(page,info,'local-video-controls',defects);
+    const controlContrast=await page.evaluate(()=>{const lum=(s:string)=>{const c=(s.match(/[\d.]+/g)||[]).slice(0,3).map(Number).map(x=>x/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return c.reduce((a,x,i)=>a+x*[.2126,.7152,.0722][i],0);};return [...document.querySelectorAll('.video-controls button,.video-header button')].map(el=>{const s=getComputedStyle(el),a=lum(s.borderTopColor),b=lum(s.backgroundColor);return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);});});expect(controlContrast.every(ratio=>ratio>=3)).toBe(true);await page.locator('.video-back').tap();await expect(page.locator('.media-page')).toBeVisible();await expect(page.locator('.video-overlay')).toHaveCount(0);expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
+  });
   test(`invalid local video keeps retry and return visible ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
     f.state.audio.ready=false;let attempts=0;
