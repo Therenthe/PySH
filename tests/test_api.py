@@ -54,3 +54,50 @@ def test_diagnostics_do_not_expose_network_identifiers_or_token(client):
     response = client.get('/api/diagnostics')
     assert response.status_code == 200
     assert all(value not in response.text for value in ['private-ssid','192.168.1.5',hub.token])
+
+
+def test_appliance_service_mode_stops_media_and_preserves_preferences(client):
+    hub = app.state.hub
+    hub.appliance = True
+    hub.player.status = AsyncMock(return_value={"state": "playing"})
+    hub.player.command = AsyncMock()
+    hub.store.update({"language": "en", "setupComplete": True})
+    before = hub.store.path.read_bytes()
+    headers = {'X-Hub-Token': hub.token}
+    response = client.post('/api/exit', headers=headers)
+    assert response.json() == {'exiting': False, 'mode': 'service'}
+    hub.player.command.assert_awaited_once_with('stop')
+    assert client.get('/api/state').json()['serviceMode'] is True
+    assert hub.store.path.read_bytes() == before
+    assert not (hub.store.directory / 'exit-request').exists()
+    assert client.post('/api/service/return', headers=headers).json() == {'mode': 'hub'}
+    assert client.get('/api/state').json()['serviceMode'] is False
+    assert hub.store.path.read_bytes() == before
+
+
+def test_service_return_requires_token_and_appliance_mode(client):
+    hub = app.state.hub
+    hub.appliance = True
+    hub.service_mode = True
+    assert client.post('/api/service/return').status_code == 403
+    assert hub.service_mode is True
+    hub.appliance = False
+    assert client.post('/api/service/return', headers={'X-Hub-Token': hub.token}).status_code == 409
+
+
+def test_failed_media_stop_does_not_hide_controls_in_service_mode(client):
+    from services.backend.player import PlayerError
+    hub = app.state.hub
+    hub.appliance = True
+    hub.player.status = AsyncMock(return_value={"state": "playing"})
+    hub.player.command = AsyncMock(side_effect=PlayerError("player_timeout", "timeout"))
+    response = client.post('/api/exit', headers={'X-Hub-Token': hub.token})
+    assert response.status_code == 409
+    assert hub.service_mode is False
+
+
+def test_unsupervised_desktop_exit_retains_existing_boundary(client, monkeypatch):
+    monkeypatch.delenv('PI_HUB_SUPERVISED', raising=False)
+    app.state.hub.appliance = False
+    response = client.post('/api/exit', headers={'X-Hub-Token': app.state.hub.token})
+    assert response.json() == {'error': 'desktop_exit_unavailable'}

@@ -30,7 +30,7 @@ Un criteriu este PASS doar cu dovada indicată și cu build-ul candidat identifi
 | EXT-02 | Netflix | Calea de acces, browserul/runtime-ul, autentificarea, DRM și rezoluția practic disponibilă sunt verificate pe hardware-ul și OS-ul țintă. Un shortcut nu se numește player dacă doar deschide un site. | Caz real cu cont autorizat pe Pi sau decizie de produs semnată pentru alternativă; capturi și limitări documentate. |
 | EXT-03 | Muzică | Este ales serviciul final; dreptul de integrare, login, planul de cont, suportul ARM/Linux, playback, controalele și condițiile comerciale sunt documentate și trec pe țintă. | Decizie de serviciu, linkuri la condiții oficiale, probă cont autorizat pe Pi sau alternativa aprobată și probată. |
 | BOOT-01 | Pornire | După alimentare și pornirea sesiunii grafice, hubul pornește automat în full-screen; splash-ul nu rămâne blocat; inițializarea ajunge într-o stare utilizabilă cu sau fără rețea. | Minimum 5 porniri la rece, timpi notați, capturi/video și jurnal pentru un boot offline. |
-| BOOT-02 | Revenire | După închiderea aplicației, utilizatorul revine controlat la desktop; atingerea accidentală nu închide instant aplicația; lansarea din nou restabilește o stare coerentă. | Probă ieșire, anulare confirmare și relansare. |
+| BOOT-02 | Revenire | În runtime-ul cu desktop, ieșirea revine controlat la desktop. În sesiunea PySH OS, acțiunea confirmată deschide explicit modul de service cu diagnostic și revenire în hub (ADR-0007). Anularea păstrează aplicația activă, iar revenirea și relansarea păstrează preferințele. Recuperarea administrativă este verificată separat înainte de instalarea OS. | Probă ieșire/service, anulare, revenire și relansare pe modul de livrare; probă separată a recuperării administrative. |
 | REL-01 | Stabilitate | O sesiune de utilizare continuă de cel puțin 8 ore nu produce blocaj, creștere necontrolată a memoriei, pierderea comenzilor tactile sau degradarea animațiilor. | Jurnal de sesiune, utilizare memorie la început/final și checklist periodic de interacțiune. |
 | REL-02 | Recuperare | Oprirea neașteptată a procesului nu corupe preferințele; lansatorul repornește aplicația sau oferă un mesaj recuperabil; logul păstrează cauza utilă fără secrete. | Oprire controlată pentru test, revenire automată/manuală și inspecția configurației/logului. |
 | PERF-01 | Răspuns | Pe Pi-ul țintă, feedback-ul vizual local apare în cel mult 100 ms, navigarea locală are latență p95 de cel mult 300 ms, iar ecranul Acasă devine utilizabil în cel mult 10 s de la pornirea sesiunii grafice, independent de rețea. Măsurarea nu include așteptări declarate pentru rețea/terți. | Raport pe build-ul candidat: minimum 30 de interacțiuni locale pe tip de acțiune pentru p95 și feedback, plus minimum 5 lansări pentru timpul Acasă; cronometraj monotonic, build și condiții consemnate. |
@@ -50,7 +50,7 @@ Release review-ul parcurge toate fluxurile următoare pe build-ul candidat, în 
 5. Aplicație → scanare Bluetooth → asociere/conectare boxă → redare → deconectare/uitare.
 6. Acasă → setări rapide → limbă/temă/noapte/volum → restart → preferințe restaurate.
 7. YouTube, Netflix și serviciul de muzică: fiecare pornește exact calea descrisă în UI și trece criteriul EXT aferent.
-8. Ieșire către desktop → anulare → confirmare → relansare.
+8. Ieșire către desktop sau mod de service explicit în PySH OS → anulare → confirmare → revenire/relansare.
 
 ## Evidență de release
 
