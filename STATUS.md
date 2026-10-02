@@ -19,7 +19,7 @@ Existing local application migrated and published to private GitHub repository h
 
 ## Acceptance and limitations
 
-- 30 product criteria remain OPEN. Candidate 1cc15fa4e625 is running as an isolated preview, not accepted for release.
+- 29 product criteria remain OPEN and UX-03 is FAIL on candidate ee58b51f45bd. Repairs pass automated regression; physical revalidation is pending. The candidate runs as an isolated preview, not accepted for release.
 - Historical preparation: 7 PASS in legacy ledger, preserved in docs/history. Active preparation entries are OPEN because private historical evidence was not imported.
 - Existing runtime uses a graphical desktop session. Direct appliance boot, Lite base and image builder are not implemented.
 - Wired SSH password authentication succeeded on 2026-10-02. Pi 4 / Debian 13.4 ARM64 confirmed, about 6 GiB disk space available. Both wired and wireless interfaces are up.
@@ -39,3 +39,7 @@ Existing local application migrated and published to private GitHub repository h
 2. Continue vertical product acceptance, beginning with setup and audio/Bluetooth recovery flows.
 3. Keep PC/Pi source checkouts synchronized with verified GitHub commits; protect legacy releases and persistent data during deployment.
 4. Follow docs/ROADMAP.md and accepted ADRs for appliance transition.
+
+## Real device audit and OS progress
+
+48 real Pi screens inspected across EN/RO/themes, with 120 navigation samples. Service-mode media stop/return and preference preservation passed. Font/night contrast defects recorded as UX-03 FAIL; fixes and permanent browser checks prepared. See docs/evidence/pi-legibility-2026-10-02.md. An application backup is verified independently on PC; original card/desktop retained. Updated OS build and actual boot remain next.

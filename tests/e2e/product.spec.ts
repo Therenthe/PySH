@@ -1,4 +1,5 @@
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
+import { textLegibility } from './legibility';
 
 // Strict browser-only fixtures: no production adapter returns these states.
 async function fixture(page: Page, language: 'en'|'ro', theme: 'ink'|'night', setupComplete = true) {
@@ -61,6 +62,7 @@ async function capture(page:Page, info:TestInfo, name:string, defects:string[]) 
     return results;
   });
   defects.push(...issues.map(x=>`${name}: ${x}`));
+  defects.push(...(await textLegibility(page)).map(x=>`${name}: ${x}`));
 }
 async function closeModal(page:Page, ro:boolean){await page.locator('.modal-card header').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();}
 
