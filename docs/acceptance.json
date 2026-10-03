@@ -1,5 +1,5 @@
 {
-  "candidate": "934d0d338e66",
+  "candidate": "4a133daa7278",
   "preparation": [
     {
       "id": "PREP-01",
@@ -55,7 +55,7 @@
     {
       "id": "HW-01",
       "status": "OPEN",
-      "candidate": "568c2b0c43de",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/pi-source-checkout-2026-10-02.md",
         "docs/evidence/pi-preview-2026-10-02.md"
@@ -65,36 +65,36 @@
     {
       "id": "UX-01",
       "status": "OPEN",
-      "candidate": "934d0d338e66",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/service-keyboard-2026-10-03.md",
         "docs/evidence/protected-playback-preparation-2026-10-03.md"
       ],
-      "reason": "Current native preparation viewport and immersive compositor capture verified; translation prompt removed. Earlier keyboard/touch fixture results are historical; complete physical current-candidate touch inventory remains incomplete."
+      "reason": "Owner assessment2026-10-03: UI3.5/10 and UX5/10, unsatisfactory. Major improvement required after SSH flasher/SD milestone; same-candidate EN/RO physical visual/touch acceptance remains OPEN."
     },
     {
       "id": "UX-02",
       "status": "OPEN",
-      "candidate": "4b56d5150640",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/home-weather-layout-2026-10-03.md"
       ],
-      "reason": "Known five-day Home overflow repaired on actual Pi; full visual/error/tactile inventory remains incomplete."
+      "reason": "Owner assessment2026-10-03: UI3.5/10 and UX5/10, unsatisfactory. Major improvement required after SSH flasher/SD milestone; same-candidate EN/RO physical visual/touch acceptance remains OPEN."
     },
     {
       "id": "UX-03",
       "status": "OPEN",
-      "candidate": "24f207c79081",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/pi-legibility-2026-10-02.md",
         "docs/evidence/content-recovery-2026-10-02.md"
       ],
-      "reason": "48 real Pi screen samples now have no small text or textual contrast failures; complete control contrast and physical day/night acceptance remain pending."
+      "reason": "Owner assessment2026-10-03: UI3.5/10 and UX5/10, unsatisfactory. Major improvement required after SSH flasher/SD milestone; same-candidate EN/RO physical visual/touch acceptance remains OPEN."
     },
     {
       "id": "I18N-01",
       "status": "OPEN",
-      "candidate": "1cc15fa4e625",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/ui-audit-2026-10-02.md"
       ],
@@ -103,21 +103,21 @@
     {
       "id": "I18N-02",
       "status": "OPEN",
-      "candidate": null,
+      "candidate": "4a133daa7278",
       "evidence": [],
       "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
     },
     {
       "id": "HOME-01",
       "status": "OPEN",
-      "candidate": null,
+      "candidate": "4a133daa7278",
       "evidence": [],
       "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
     },
     {
       "id": "HOME-02",
       "status": "OPEN",
-      "candidate": "c0b1e35b77a9",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/audio-weather-controls-2026-10-02.md"
       ],
@@ -126,7 +126,7 @@
     {
       "id": "SET-01",
       "status": "OPEN",
-      "candidate": "c0b1e35b77a9",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/audio-weather-controls-2026-10-02.md"
       ],
@@ -135,35 +135,35 @@
     {
       "id": "SET-02",
       "status": "OPEN",
-      "candidate": null,
+      "candidate": "4a133daa7278",
       "evidence": [],
       "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
     },
     {
       "id": "NET-01",
       "status": "OPEN",
-      "candidate": null,
+      "candidate": "4a133daa7278",
       "evidence": [],
       "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
     },
     {
       "id": "NET-02",
       "status": "OPEN",
-      "candidate": null,
+      "candidate": "4a133daa7278",
       "evidence": [],
       "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
     },
     {
       "id": "NET-03",
       "status": "OPEN",
-      "candidate": null,
+      "candidate": "4a133daa7278",
       "evidence": [],
       "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
     },
     {
       "id": "MEDIA-01",
       "status": "OPEN",
-      "candidate": "1cc15fa4e625",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/ui-audit-2026-10-02.md"
       ],
@@ -172,7 +172,7 @@
     {
       "id": "MEDIA-02",
       "status": "OPEN",
-      "candidate": "c0b1e35b77a9",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
         "docs/evidence/content-recovery-2026-10-02.md",
@@ -184,7 +184,7 @@
     {
       "id": "MEDIA-03",
       "status": "OPEN",
-      "candidate": "568c2b0c43de",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md"
       ],
@@ -193,7 +193,7 @@
     {
       "id": "BT-01",
       "status": "OPEN",
-      "candidate": "1cc15fa4e625",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
         "docs/evidence/ui-audit-2026-10-02.md"
@@ -203,7 +203,7 @@
     {
       "id": "BT-02",
       "status": "OPEN",
-      "candidate": "1cc15fa4e625",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
         "docs/evidence/ui-audit-2026-10-02.md"
@@ -213,14 +213,14 @@
     {
       "id": "EXT-01",
       "status": "OPEN",
-      "candidate": null,
+      "candidate": "4a133daa7278",
       "evidence": [],
       "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
     },
     {
       "id": "EXT-02",
       "status": "OPEN",
-      "candidate": "934d0d338e66",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/service-keyboard-2026-10-03.md",
         "docs/evidence/protected-playback-preparation-2026-10-03.md"
@@ -230,14 +230,14 @@
     {
       "id": "EXT-03",
       "status": "OPEN",
-      "candidate": null,
+      "candidate": "4a133daa7278",
       "evidence": [],
       "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
     },
     {
       "id": "BOOT-01",
       "status": "OPEN",
-      "candidate": "a32c29065d6d",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/os-cold-boots-2026-10-03.md",
         "docs/evidence/os-a32c29065d6d-acceptance-2026-10-03.md"
@@ -247,7 +247,7 @@
     {
       "id": "BOOT-02",
       "status": "OPEN",
-      "candidate": "a32c29065d6d",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/os-a32c29065d6d-acceptance-2026-10-03.md"
       ],
@@ -256,16 +256,17 @@
     {
       "id": "REL-01",
       "status": "OPEN",
-      "candidate": "934d0d338e66",
+      "candidate": "4a133daa7278",
       "evidence": [
-        "docs/evidence/appliance-tools-2026-10-03.md"
+        "docs/evidence/appliance-tools-2026-10-03.md",
+        "docs/evidence/appliance-update-and-sd-image-2026-10-03.md"
       ],
-      "reason": "Partial private observation40 samples/1175.801s, zero observation errors; full eight-hour telemetry plus periodic physical touch/media evidence still required. Public reproducible observer locally tested, Linux/native execution pending."
+      "reason": "Earlier934 observation ended on candidate change at2291.115s/76 samples; no eight-hour PASS. Final same-candidate interactive stability remains pending after SD installation."
     },
     {
       "id": "REL-02",
       "status": "OPEN",
-      "candidate": "4b56d5150640",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/home-weather-layout-2026-10-03.md"
       ],
@@ -274,7 +275,7 @@
     {
       "id": "PERF-01",
       "status": "OPEN",
-      "candidate": "24f207c79081",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/pi-legibility-2026-10-02.md",
         "docs/evidence/content-recovery-2026-10-02.md"
@@ -284,7 +285,7 @@
     {
       "id": "PERF-02",
       "status": "OPEN",
-      "candidate": "4b56d5150640",
+      "candidate": "4a133daa7278",
       "evidence": [
         "docs/evidence/home-weather-layout-2026-10-03.md"
       ],
@@ -293,27 +294,29 @@
     {
       "id": "DIAG-01",
       "status": "OPEN",
-      "candidate": null,
+      "candidate": "4a133daa7278",
       "evidence": [],
       "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
     },
     {
       "id": "DEL-01",
       "status": "OPEN",
-      "candidate": "934d0d338e66",
+      "candidate": "4a133daa7278",
       "evidence": [
-        "docs/evidence/appliance-tools-2026-10-03.md"
+        "docs/evidence/appliance-tools-2026-10-03.md",
+        "docs/evidence/appliance-update-and-sd-image-2026-10-03.md"
       ],
-      "reason": "Public guarded appliance update/rollback tool locally regression-tested. LinuxCI and native update/rollback/clean-install/backup-restore proofs remain required."
+      "reason": "Public native update→rollback→return passed with three independently PC-verified full backups; no pending transaction. New40-file SD image independently checked, but SD backup/write/provisioning/physical boot and remaining restore/clean-install proofs are pending."
     },
     {
       "id": "DEL-02",
       "status": "OPEN",
-      "candidate": "934d0d338e66",
+      "candidate": "4a133daa7278",
       "evidence": [
-        "docs/evidence/appliance-tools-2026-10-03.md"
+        "docs/evidence/appliance-tools-2026-10-03.md",
+        "docs/evidence/appliance-update-and-sd-image-2026-10-03.md"
       ],
-      "reason": "Dependency inventory569 OS packages and runtime notices recorded. New40-file notice package4a133daa7278 locally verified, not installed/image-verified; final licensing/source review and release/backup/restore evidence remain OPEN."
+      "reason": "Full browser MIT notices installed on4a133 and independently verified in successor imagec8ac9c709acb. Final licensing/source review, delivery artifacts and remaining backup/restore evidence remain OPEN."
     }
   ]
 }
