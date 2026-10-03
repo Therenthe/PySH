@@ -67,6 +67,29 @@ async function capture(page:Page, info:TestInfo, name:string, defects:string[]) 
 async function closeModal(page:Page, ro:boolean){await page.locator('.modal-card header').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();}
 
 for(const theme of ['ink','night'] as const) {
+  test(`populated Home forecast fits without scrolling ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
+    f.state.weather.daily=Array.from({length:5},(_,i)=>({date:`2026-10-0${i+2}`,max_c:23-i,min_c:8-i}));
+    f.state.preferences.location.name='Drobeta-Turnu Severin, Mehedinți';
+    for(const playing of [false,true])for(const stale of [false,true]){
+      f.state.player=playing?{state:'playing',kind:'radio',title:'Test station',url:'https://example.com/test.mp3'}:{state:'idle'};
+      f.state.weather.stale=stale;
+      await page.goto('/');await expect(page.locator('.forecast-line>span')).toHaveCount(4);
+      const issues=await page.locator('.home-weather,.home-shortcuts,.home-layout').evaluateAll(elements=>elements.flatMap(el=>{
+        const defects:string[]=[];
+        if(el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1)defects.push(`${el.className} scrolls: ${el.scrollWidth}×${el.scrollHeight} / ${el.clientWidth}×${el.clientHeight}`);
+        const bounds=el.getBoundingClientRect();
+        for(const child of el.querySelectorAll('.forecast-line span,.weather-place,.stale-mark,button')){
+          const r=child.getBoundingClientRect();if(!r.width||!r.height)continue;
+          if(r.left<bounds.left||r.right>bounds.right||r.top<bounds.top||r.bottom>bounds.bottom)defects.push(`clipped ${child.className||child.textContent}`);
+        }
+        return defects;
+      }));
+      expect(issues).toEqual([]);expect(await textLegibility(page)).toEqual([]);
+      await page.screenshot({path:info.outputPath(`forecast-${playing?'playing':'idle'}-${stale?'saved':'fresh'}.png`)});
+    }
+    expect(f.unexpected).toEqual([]);
+  });
   test(`video handoff queues behind an in-flight radio play ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
     await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Video test folder',items:[{name:'Test video.mp4',path:'/test/video.mp4',kind:'video'}]}}));

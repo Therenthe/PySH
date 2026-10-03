@@ -6,6 +6,10 @@ Updated: 2026-10-03 (Europe/Bucharest). GitHub is canonical: https://github.com/
 
 Fresh corrected PySH OS runtime `a32c29065d6d`, image source `d61ec8d23c4c025167bd009a67e9cfcab4193a72`, is physically booted from the verified USB. Recovery SSH, automatic root growth, all33 installed runtime hashes, native800×480/rotation180, network label, Bluetooth plugin and zero failed services verified. Owner confirmed touch Continue→Connectivity and audible Bluetooth tone after pairing from scratch. Original SD retained; no post-boot repair needed. Native UI48-screen survey, audio/video controls, radio recovery and service-mode flows revalidated; REL-02 passes for this candidate. Five physical cold boots passed, including owner-confirmed offline Home/touch and journal-verified Ethernet return. BOOT-01/02 and REL-02 pass for this candidate. Populated Home weather layout revealed forecast overflow: UX-02 FAIL, repair in progress. Complete product acceptance remains OPEN. See [fresh-candidate evidence](docs/evidence/os-a32c29065d6d-acceptance-2026-10-03.md).
 
+## Prepared Home weather repair
+
+Home weather repair package `4b56d5150640` is prepared: populated five-day forecast now fits in EN/RO and both themes, including saved data and active playback. All76 UI regressions, TypeScript/Vite build, Python60 (five Linux-only skips), repository/package checks pass. Publishing and guarded Pi deployment/recapture follow; a32 remains the installed acceptance candidate until activation. See [weather layout evidence](docs/evidence/home-weather-layout-2026-10-03.md).
+
 ## Previous desktop candidate
 
 Main `4d28e523e87bb71b83614c53903d629f0e48757b` includes radio replay and media handoff/search/pairing-prompt repairs (PRs #10/#11). Original-desktop preview `df9d3777bdec` is deployed with all 33 runtime hashes verified; previous release and private backup retained. TypeScript/Vite/repository/package checks pass; 72 browser regressions pass with zero skips/failures/flaky tests; Windows Python 53 passed, five Linux-only skips. GitHub frontend/Python 3.12/3.13 run37064480391 passed.

@@ -1,0 +1,7 @@
+# Populated Home weather repair — 2026-10-03
+
+Actual cold-boot captures of runtime a32c29065d6d exposed a Home weather card with horizontal and vertical scrolling, clipped forecast and hidden location. The previous two-day fixture and empty-weather survey did not cover a complete forecast.
+
+Repair keeps the four future days in equal-width columns, places the update time or saved-weather message in the existing weather header and reserves space for location. The shortcut area uses a compact heading; while playback controls are present, it keeps the two 48px shortcut actions without their secondary descriptions. Settings remain accessible from the main navigation and top-bar control. This gives the populated weather card room at native 800×480.
+
+New regression uses five forecast days, a long Romanian place name and all 16 combinations of language, theme, fresh/saved data and inactive/active playback. It reproduced the original overflow in all four language/theme tests, then passed after repair. Checks include actual scroll dimensions, forecast/location/control bounds and text legibility. Production TypeScript/Vite build passed, all 76 browser regressions passed without skips/failures, Python 60 passed with five Linux-only skips, repository check passed. Package build `4b56d5150640` contains 33 allowlisted files. These are PC checks; actual Pi deployment and recapture are pending, and UX-02 is not yet accepted.

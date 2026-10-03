@@ -6,7 +6,11 @@
 .app .rail-bottom{padding-top:4px;gap:0}
 .app .status-button{flex-direction:column;gap:2px;height:48px;flex-shrink:0;white-space:normal}
 .app .status-label{max-width:100%;text-align:center;line-height:16px;overflow:visible;text-overflow:clip}
-.app .home-layout{padding:12px 18px;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);grid-template-rows:minmax(0,1fr) minmax(112px,.6fr);gap:10px}
+.app .home-layout{padding:12px 18px;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);grid-template-rows:minmax(0,1fr) 100px;gap:10px}
+.app .page-content.with-player .home-layout{grid-template-rows:minmax(0,1fr) 64px}
+.app .page-content.with-player .home-shortcuts .section-head,.app .page-content.with-player .shortcut small{display:none}
+.app .page-content.with-player .shortcut-row{margin-top:0}
+.app .page-content.with-player .shortcut{min-height:48px}
 .app .home-weather,.app .home-focus{min-width:0;min-height:0;overflow:auto}
 .app .home-focus{display:flex;flex-direction:column;padding:12px 16px}
 .app .focus-top h1{font-size:20px}
@@ -74,12 +78,17 @@
 .app .service-panel{overflow-y:auto;overscroll-behavior:contain;padding:10px}
 .app .service-panel>.muted{font-size:14px;line-height:1.3;margin-bottom:8px}
 .app .service-row{flex-shrink:0}
-.app .forecast-line{display:flex;gap:12px;margin-top:5px}
-.app .forecast-line>span{display:flex;gap:5px}
-.app .weather-place{font-size:14px;margin-top:5px}
+.app .forecast-line{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:4px}
+.app .forecast-line>span{display:flex;flex-direction:column;gap:0;font-size:14px;line-height:17px;min-width:0}
+.app .weather-place{font-size:14px;line-height:17px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+.app .weather-heading{display:flex;flex-direction:column;min-width:0;gap:2px}
+.app .weather-heading small{font-size:14px;line-height:17px;color:var(--muted)}
+.app .weather-top{gap:8px;flex-shrink:0}
+.app .weather-top button{flex-shrink:0}
 .app .home-weather{padding:10px 12px}
 .app .temp{font-size:48px}
-.app .temp-row{margin-top:4px}
+.app .temp-row{margin-top:0}
+.app .home-weather .feels{margin-top:2px;line-height:17px}
 .app .weather-range{margin-top:5px;padding-top:5px}
 .app .shortcut small{white-space:normal;font-size:14px;line-height:1.25}
 .app .shortcut-row{align-items:stretch}
