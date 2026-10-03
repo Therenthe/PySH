@@ -72,6 +72,11 @@ assert 'pysh' not in groups.get('sudo', [])
 assert b'AllowUsers pysh-admin' in read_root('/etc/ssh/sshd_config.d/pysh-recovery.conf')
 assert b'PasswordAuthentication no' in read_root('/etc/ssh/sshd_config.d/pysh-recovery.conf')
 packages = read_root('/var/lib/dpkg/status')
+package_records = [dict(line.split(': ', 1) for line in record.splitlines()
+                        if ': ' in line and not line.startswith(' '))
+                   for record in packages.decode().split('\n\n')]
+assert any(p.get('Package') == 'libspa-0.2-bluetooth' and
+           p.get('Status') == 'install ok installed' for p in package_records), 'Bluetooth audio plugin missing'
 Path('.runtime/os-build/packages.txt').write_bytes(packages)
 source = json.loads(read_root('/etc/pysh-build.json'))
 assert source == json.loads(Path('os/image/payload/source.json').read_text())

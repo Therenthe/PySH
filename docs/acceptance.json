@@ -1,5 +1,5 @@
 {
-  "candidate": "df9d3777bdec",
+  "candidate": "115cb4173f52",
   "preparation": [
     {
       "id": "PREP-01",
@@ -257,12 +257,12 @@
     },
     {
       "id": "REL-02",
-      "status": "PASS",
-      "candidate": "df9d3777bdec",
+      "status": "OPEN",
+      "candidate": "115cb4173f52",
       "evidence": [
-        "docs/evidence/ui-handoff-2026-10-03.md"
+        "docs/evidence/os-network-audio-2026-10-03.md"
       ],
-      "reason": "Observed API/kiosk recovery 2.425s/0.979s, preferences unchanged, zero owned zombies and one live mpv; administrative exit-code logs observed on original desktop/card preview. Physical dedicated OS recovery remains OPEN."
+      "reason": "Target moved to dedicated USB OS/runtime115cb4173f52; previous desktop-preview recovery PASS is historical. Dedicated-OS recovery and preference preservation are pending."
     },
     {
       "id": "PERF-01",

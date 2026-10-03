@@ -17,5 +17,6 @@ mmdebstrap:
     - bluez
     - pipewire
     - pipewire-pulse
+    - libspa-0.2-bluetooth
     - wireplumber
     - rtkit
