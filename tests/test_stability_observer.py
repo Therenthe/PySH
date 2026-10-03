@@ -237,8 +237,59 @@ def test_supervisor_resolves_current_alias_and_rejects_matching_extra_argument(c
 def test_normal_scheduler_transition_is_not_pid_reuse(tmp_path, monkeypatch, after, complete):
     proc = tmp_path / 'proc'
     process(proc,100)
-    statuses=iter([('S',10),after])
+    statuses=iter([('S',10),after]*3)
     monkeypatch.setattr(observer,'process_status',lambda directory:next(statuses))
     result=observer.collect_processes(proc,GROUP,100,UID)
     assert result['memory_observation_complete'] is complete
     assert result['unreadable_pids']==([] if complete else [100])
+
+def test_vanished_foreign_process_does_not_become_live_unknown_membership(tmp_path, monkeypatch):
+    proc = tmp_path / 'proc'
+    process(proc, 100)
+    foreign = process(proc, 102, GROUP + '-foreign')
+    original = observer.group_of
+    def disappearing(directory):
+        if directory == foreign:
+            for name in ['cgroup', 'stat', 'smaps_rollup']:
+                (directory / name).unlink()
+            directory.rmdir()
+            raise FileNotFoundError('process exited')
+        return original(directory)
+    monkeypatch.setattr(observer, 'group_of', disappearing)
+    sample = observer.collect_processes(proc, GROUP, 100, UID)
+    assert sample['memory_observation_complete'] and sample['pss_kib_total'] == 128
+    assert sample['membership_unreadable_pids'] == []
+    assert sample['memory_collection_attempts'] == 1
+
+
+def test_member_exit_retries_fresh_snapshot_without_mixing_partial_sums(tmp_path, monkeypatch):
+    proc = tmp_path / 'proc'
+    process(proc, 100, pss=321)
+    child = process(proc, 101, pss=9000)
+    original = observer.process_status
+    def disappearing(directory):
+        if directory == child:
+            for name in ['cgroup', 'stat', 'smaps_rollup']:
+                (directory / name).unlink()
+            directory.rmdir()
+            raise FileNotFoundError('child exited')
+        return original(directory)
+    monkeypatch.setattr(observer, 'process_status', disappearing)
+    sample = observer.collect_processes(proc, GROUP, 100, UID)
+    assert sample['memory_observation_complete']
+    assert sample['memory_collection_attempts'] == 2
+    assert sample['memory_retry_history'] == [{'unreadable_count':1, 'unknown_membership_count':0, 'membership_changed':True}]
+    assert sample['pss_kib_total'] == 321
+    assert [row['pid'] for row in sample['processes']] == [100]
+
+
+def test_persistent_unreadable_live_member_exhausts_bounded_retries(tmp_path):
+    proc = tmp_path / 'proc'
+    process(proc, 100)
+    child = process(proc, 101)
+    (child / 'smaps_rollup').unlink()
+    sample = observer.collect_processes(proc, GROUP, 100, UID)
+    assert not sample['memory_observation_complete'] and sample['pss_kib_total'] is None
+    assert sample['memory_collection_attempts'] == 3
+    assert len(sample['memory_retry_history']) == 2
+    assert sample['unreadable_pids'] == [101]

@@ -58,3 +58,7 @@ Candidateadb2f3a42a42 is packaged and locally verified:114 browser,164 backend a
 
 Candidate5c174880ca5b fixes explicit saved-profile credential updates, recovery errors and touch profile selection/Forget confirmation.200 backend and122 browser tests passed;12 network tests rerun after a translation correction. Native preflight: NetworkManager1.52.1, LAN active, zero saved Wi-Fi profiles. Activation/validation pending; full physical Wi-Fi acceptance remains OPEN. [Evidence](docs/evidence/wifi-profile-recovery-2026-10-03.md).
 
+
+## Observer collection follow-up
+
+Observer-only source change: vanished process discovery is distinguished from unreadable live membership; incomplete snapshots get up to three fresh attempts with recorded retry reasons.20 focused checks passed (2 platform skips); full backend287 passed/22 skips. No runtime activation is implied. Native smoke and final8h/idle PSS remain OPEN. [Observer evidence](docs/evidence/stable-memory-snapshots-2026-10-03.md).

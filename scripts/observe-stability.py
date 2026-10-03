@@ -123,13 +123,22 @@ def discover(proc, expected, uid):
                 continue
             if in_group(group_of(directory), expected):
                 members.add(pid)
+        except FileNotFoundError:
+            # A process absent at the end of discovery is not a live unknown
+            # member. Missing cgroup data for a directory that still exists is
+            # different: retain it as unreadable, rather than assuming foreign.
+            try:
+                directory.stat()
+            except FileNotFoundError:
+                continue
+            except OSError:
+                pass
+            unknown.append(pid)
         except (OSError, ValueError, Refused):
-            # Membership unreadable for a same-user process cannot be silently
-            # assumed foreign. A vanished unrelated process is also explicit.
             unknown.append(pid)
     return members, sorted(unknown)
 
-def collect_processes(proc, group, main_pid, uid):
+def collect_processes_once(proc, group, main_pid, uid):
     require(group.startswith('/') and group != '/' and '..' not in group.split('/'), 'invalid_unit_cgroup')
     members, unknown = discover(Path(proc), group, uid)
     rows, unreadable = [], []
@@ -147,6 +156,7 @@ def collect_processes(proc, group, main_pid, uid):
             # Scheduling transitions such as sleeping→running do not change PID
             # identity. PID reuse, zombie transitions and ownership changes do.
             require(after_began == began and (after_state == 'Z') == (state == 'Z')
+                    and directory.stat().st_uid == uid
                     and in_group(group_of(directory), group), 'process_changed_during_sample')
             rows.append({'pid':pid, 'state':state, 'pss_kib':pss, 'start_ticks':began})
         except (OSError, ValueError, Refused):
@@ -159,6 +169,21 @@ def collect_processes(proc, group, main_pid, uid):
             'membership_changed':membership_changed, 'memory_observation_complete':complete,
             'pss_kib_observed':total, 'pss_kib_total':total if complete else None,
             'zombies':sum(row['state']=='Z' for row in rows)}
+
+def collect_processes(proc, group, main_pid, uid):
+    # Retry a complete fresh snapshot, never add a partial sum from earlier
+    # attempts. Chromium child churn is expected; persistent unreadability,
+    # missing main PID and continual churn still produce incomplete evidence.
+    history = []
+    for attempt in range(3):
+        sample = collect_processes_once(proc, group, main_pid, uid)
+        sample.update(memory_collection_attempts=attempt+1, memory_retry_history=history.copy())
+        if sample['memory_observation_complete']:
+            return sample
+        history.append({'unreadable_count':len(sample['unreadable_pids']),
+                        'unknown_membership_count':len(sample['membership_unreadable_pids']),
+                        'membership_changed':sample['membership_changed']})
+    return sample
 
 def project_api(state):
     require(isinstance(state, dict) and type(state.get('appliance')) is bool and type(state.get('serviceMode')) is bool, 'invalid_api_state')

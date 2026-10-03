@@ -1,0 +1,7 @@
+# Stable memory snapshot collection — 2026-10-03
+
+Historical e546 observer evidence had17 incomplete samples among79 before a runtime change invalidated that session. A later root/nonroot audit on54a31cd7e182 found the same15 actual application-cgroup members readable by user pysh. Transient unrelated process disappearance and child-group changes were recorded, rather than a permissions deficit. No idle-memory or8h acceptance follows from those samples.
+
+The observer now distinguishes a disappeared process directory from unreadable membership of a still-live process. Up to three complete fresh captures are attempted after an incomplete snapshot. Prior partial sums are never reused; retry reasons remain in telemetry. Persistent unreadability, absent main PID, PID reuse during capture or continuing membership changes still prevent a complete sum. Post-read ownership is checked alongside start ticks and cgroup membership. The observer remains nonroot and does not emit preference, network, account or media identifiers.
+
+Focused fake-process regression:20 passed,2 Windows symlink skips. Full backend suite:287 passed,22 platform skips. Cases exercise vanished foreign process, a member exiting during capture and an unreadable live member exhausting the bound; existing privacy, candidate-change, timing and interruption checks remain. Native smoke and the final same-candidate8h/physical-interaction proof are pending at this source commit. Product criteria remain OPEN.
