@@ -69,9 +69,9 @@ export function AudioVisualizer({style, canVisualize, language, reducedMotion = 
   const wave = signal.waveform.map((value, index) => `${index ? 'L' : 'M'}${(index * 320 / 63).toFixed(1)},${(40 - value * 36).toFixed(1)}`).join(' ');
   const orbit = signal.bars.map((value, index) => {const angle = index / 16 * Math.PI * 2; const radius = 18 + value * 20; return `${index ? 'L' : 'M'}${(160 + Math.cos(angle) * radius).toFixed(1)},${(40 + Math.sin(angle) * radius).toFixed(1)}`;}).join(' ') + ' Z';
   return <div className="audio-visualizer" data-signal-status="ready" data-signal-style={style}>
-    <svg viewBox="0 0 320 80" role="img" aria-label={signal.silent ? `${label}: ${silence}` : label}>
+    <svg viewBox="0 0 320 80" preserveAspectRatio={style==='orbit'?'xMidYMid meet':'none'} role="img" aria-label={signal.silent ? `${label}: ${silence}` : label}>
       <defs><linearGradient id={gradient}><stop stopColor="#a78bfa"/><stop offset=".5" stopColor="#34d399"/><stop offset="1" stopColor="#f59e0b"/></linearGradient></defs>
-      {style === 'wave' && <path d={wave} fill="none" stroke={`url(#${gradient})`} strokeWidth="2"/>}
+      {style === 'wave' && <path d={wave} fill="none" stroke={`url(#${gradient})`} strokeWidth="2" vectorEffect="non-scaling-stroke"/>}
       {style === 'bars' && signal.bars.map((value, index) => <rect key={index} x={index * 20 + 4} y={40 - value * 38} width="12" height={Math.max(1, value * 76)} rx="2" fill={`url(#${gradient})`}/>)}
       {style === 'orbit' && <path d={orbit} fill="none" stroke={`url(#${gradient})`} strokeWidth="2"/>}
     </svg>

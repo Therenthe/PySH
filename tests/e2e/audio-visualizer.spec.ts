@@ -17,6 +17,7 @@ for(const theme of ['ink','night'])for(const style of ['wave','bars','orbit']){
   });
   await page.clock.install();await page.goto('/');
   await expect(page.locator('.audio-visualizer svg')).toBeVisible();
+  if(style==='wave')expect(await page.locator('.audio-visualizer svg').evaluate(svg=>svg.querySelector('path')!.getBoundingClientRect().width/svg.getBoundingClientRect().width)).toBeGreaterThan(.95);
   signalValid=false;await page.clock.runFor(1200);await expect(page.locator('.audio-visualizer')).toContainText(ro?'indisponibil':'unavailable');
   signalValid=true;await page.clock.runFor(1200);await expect(page.locator('.audio-visualizer svg')).toBeVisible();
   await page.locator('.main-nav button').nth(1).tap();
