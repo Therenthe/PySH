@@ -1,3 +1,9 @@
+# Current runtime update — Home ambient rest
+
+Installed `c425ad0475dc`, source `06b5cf5f999f51257980b734b78e9cb998aa0ddf`. Compact arrangement and edge anchors are retained. Home idle hides cards and chrome, retaining clock, audio signal and sky; first gesture wakes compact cards without activating controls.41native file hashes and ongoing radio verified; actual panel idle capture inspected. See [evidence](docs/evidence/home-ambient-phase-2026-10-04.md). All30product criteria remain OPEN.
+
+The following records are historical unless explicitly stated otherwise.
+
 # PySH status
 
 Updated: 2026-10-04 (Europe/Bucharest). GitHub is canonical: https://github.com/Therenthe/PySH. Work is on draft PR3, branch feat/pysh-os-image; main remains the earlier desktop delivery. The product is not complete; all30 required criteria remain OPEN in [acceptance.json](docs/acceptance.json).

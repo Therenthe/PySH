@@ -9,9 +9,9 @@ Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4def
 | UI-01 | Dimensiunea Compact/Echilibrat/Mare schimbă toate stilurile, inclusiv cu redarea extinsă și poziții manuale | Instalat94/sourcec1; matrice audio e2e trecută; proba tactilă/persistență nativă finală OPEN |
 | UI-02 | Variante audio distincte, semnal real, logo/nume post, pauză/mute și reduced motion oneste | Instalat94; geometrii/pixeli inspectați, semnal real; tur hardware final OPEN |
 | UI-03 | Arrange cu carduri restrânse; aliniere dreapta/jos păstrată la extindere spre spațiul liber; Done/reload persistente | Instalat94;6teste ancore+4swap/suprapunere trecute; gest tactil fizic final OPEN |
-| UI-04 | Schimbarea pozițiilor, suprapunere voluntară, selectarea cardului acoperit și ordinea straturilor | Instalate43; regresia pentru ancore/compactare rămâne OPEN |
+| UI-04 | Schimbarea pozițiilor, suprapunere voluntară, selectarea cardului acoperit și ordinea straturilor | Instalate94 și păstratec425; swap/suprapunere regresie trecută; gest fizic final OPEN |
 | UI-05 | Meteori descendenți cu cap/coadă corecte, lungimi/unghiuri/viteze și intervale variate | Instalat94;8probe geometrie/browser trecute; tur vizual/performance final OPEN |
-| UI-06 | Acasă inactiv: numai ceas, vizualizator și scenă; fără screensaver separat; prima atingere arată cardurile compacte fără comandă accidentală | OPEN root; timers/dialoguri/keyboard/editare trebuie verificate |
+| UI-06 | Acasă inactiv: numai ceas, vizualizator și scenă; fără screensaver separat; prima atingere arată cardurile compacte fără comandă accidentală | Instalatc425/source06b5;264cazuri acoperite, audit independent și captură panou; wake fizic/performance final OPEN |
 | UI-07 | Spectacol ambiental matur: stele sclipitoare, evenimente rare variate, posibile avioane și praf lunar, fără a simula informații astronomice/live | OPEN; bounded animation/performance/reduced motion |
 | UI-08 | Lună cu fază reală; scenă zi/noapte și condiție meteo coerente, nori vizibili, ploaie/zăpadă peste oraș, lumini urbane și skyline mai înalt | Există implementare anterioară; revizie vizuală pe noul candidat OPEN |
 | UI-09 | Card vreme se reduce la partea principală; prognoză1↔5zile cu icoane; separare vizuală corectă la extindere | Există implementare; layout nou și ancore necesită regresie |

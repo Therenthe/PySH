@@ -13,3 +13,7 @@ Independent usability audit: four EN/RO playing/paused cases held Unmute pending
 Independent visual audit: eight exact 800×480 captures across EN/RO and both themes; compact wake without mutations or dialogs; three manual right anchors stable within two pixels; twelve weather/sky checks; reduced-motion transition duration zero. Representative pixel contrast: clock 15.06:1, Ink signal 10.56:1, night purple signal 7.00:1. Browser fixtures do not prove physical touch or native rendering performance.
 
 All product acceptance criteria remain OPEN. Optional aircraft/lunar effects and recovery defects are separate tracked tasks.
+
+## Observed native installation
+
+Source `06b5cf5f999f51257980b734b78e9cb998aa0ddf`; runtime `c425ad0475dc` activated on the existing SD, retaining `94ca6c6baf22` for rollback. Separate PC backup SHA256 `8e7ebc2b4ce717533b2339024eb99910d8690cf04cbd4e3ad5a6e235d8648dea`, archive and receipt verified before activation. All41 runtime file hashes matched; no pending transaction. Radio resumed, audio-ready true throughout four samples with playback position16.116→19.120→22.149→25.137seconds. Actual800×480 private compositor capture inspected: Home idle shows clock, signal and sky, with navigation/cards absent. No physical wake/Arrange gesture or native performance acceptance is claimed from this capture.

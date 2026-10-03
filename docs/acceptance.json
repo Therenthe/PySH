@@ -1,5 +1,5 @@
 {
-  "candidate": "94ca6c6baf22",
+  "candidate": "c425ad0475dc",
   "preparation": [
     {
       "id": "PREP-01",
@@ -55,7 +55,7 @@
     {
       "id": "HW-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/pi-source-checkout-2026-10-02.md",
         "docs/evidence/pi-preview-2026-10-02.md",
@@ -67,7 +67,7 @@
     {
       "id": "UX-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/service-keyboard-2026-10-03.md",
         "docs/evidence/protected-playback-preparation-2026-10-03.md",
@@ -81,7 +81,7 @@
     {
       "id": "UX-02",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/home-weather-layout-2026-10-03.md",
         "docs/evidence/free-card-placement-2026-10-04.md",
@@ -93,7 +93,7 @@
     {
       "id": "UX-03",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/pi-legibility-2026-10-02.md",
         "docs/evidence/content-recovery-2026-10-02.md",
@@ -106,7 +106,7 @@
     {
       "id": "I18N-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/ui-audit-2026-10-02.md"
       ],
@@ -116,7 +116,7 @@
     {
       "id": "I18N-02",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [],
       "reason": "Current43bbb099a8b6 is under review; existing evidence from earlier candidates is historical. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
@@ -124,7 +124,7 @@
     {
       "id": "HOME-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [],
       "reason": "Current43bbb099a8b6 is under review; existing evidence from earlier candidates is historical. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
@@ -132,7 +132,7 @@
     {
       "id": "HOME-02",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/audio-weather-controls-2026-10-02.md"
       ],
@@ -142,7 +142,7 @@
     {
       "id": "SET-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/audio-weather-controls-2026-10-02.md",
         "docs/evidence/free-card-placement-2026-10-04.md",
@@ -154,7 +154,7 @@
     {
       "id": "SET-02",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [],
       "reason": "Current43bbb099a8b6 is under review; existing evidence from earlier candidates is historical. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
@@ -162,7 +162,7 @@
     {
       "id": "NET-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [],
       "reason": "Current43bbb099a8b6 is under review; existing evidence from earlier candidates is historical. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
@@ -170,7 +170,7 @@
     {
       "id": "NET-02",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [],
       "reason": "Current43bbb099a8b6 is under review; existing evidence from earlier candidates is historical. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
@@ -178,7 +178,7 @@
     {
       "id": "NET-03",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [],
       "reason": "Current43bbb099a8b6 is under review; existing evidence from earlier candidates is historical. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
@@ -186,7 +186,7 @@
     {
       "id": "MEDIA-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/ui-audit-2026-10-02.md",
         "docs/evidence/sd-audio-radio-2026-10-03.md"
@@ -197,7 +197,7 @@
     {
       "id": "MEDIA-02",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
         "docs/evidence/content-recovery-2026-10-02.md",
@@ -211,7 +211,7 @@
     {
       "id": "MEDIA-03",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
         "docs/evidence/sd-audio-radio-2026-10-03.md"
@@ -222,7 +222,7 @@
     {
       "id": "BT-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
         "docs/evidence/ui-audit-2026-10-02.md",
@@ -234,7 +234,7 @@
     {
       "id": "BT-02",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
         "docs/evidence/ui-audit-2026-10-02.md",
@@ -246,7 +246,7 @@
     {
       "id": "EXT-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [],
       "reason": "Current43bbb099a8b6 is under review; existing evidence from earlier candidates is historical. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
@@ -254,7 +254,7 @@
     {
       "id": "EXT-02",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/service-keyboard-2026-10-03.md",
         "docs/evidence/protected-playback-preparation-2026-10-03.md"
@@ -265,7 +265,7 @@
     {
       "id": "EXT-03",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [],
       "reason": "Current43bbb099a8b6 is under review; existing evidence from earlier candidates is historical. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
@@ -273,7 +273,7 @@
     {
       "id": "BOOT-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/os-cold-boots-2026-10-03.md",
         "docs/evidence/os-a32c29065d6d-acceptance-2026-10-03.md",
@@ -285,7 +285,7 @@
     {
       "id": "BOOT-02",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/os-a32c29065d6d-acceptance-2026-10-03.md"
       ],
@@ -295,7 +295,7 @@
     {
       "id": "REL-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/appliance-tools-2026-10-03.md",
         "docs/evidence/appliance-update-and-sd-image-2026-10-03.md"
@@ -306,7 +306,7 @@
     {
       "id": "REL-02",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/home-weather-layout-2026-10-03.md"
       ],
@@ -316,7 +316,7 @@
     {
       "id": "PERF-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/pi-legibility-2026-10-02.md",
         "docs/evidence/content-recovery-2026-10-02.md"
@@ -327,7 +327,7 @@
     {
       "id": "PERF-02",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/home-weather-layout-2026-10-03.md"
       ],
@@ -337,7 +337,7 @@
     {
       "id": "DIAG-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [],
       "reason": "Current43bbb099a8b6 is under review; existing evidence from earlier candidates is historical. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
@@ -345,7 +345,7 @@
     {
       "id": "DEL-01",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/appliance-tools-2026-10-03.md",
         "docs/evidence/appliance-update-and-sd-image-2026-10-03.md",
@@ -361,7 +361,7 @@
     {
       "id": "DEL-02",
       "status": "OPEN",
-      "candidate": "94ca6c6baf22",
+      "candidate": "c425ad0475dc",
       "evidence": [
         "docs/evidence/appliance-tools-2026-10-03.md",
         "docs/evidence/appliance-update-and-sd-image-2026-10-03.md",
