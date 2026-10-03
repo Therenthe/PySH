@@ -12,8 +12,15 @@ for(const theme of ['ink','night'])test(`Home ${theme}: cross-row swapping and d
  await drag('weather',w.x,f.y);await drag('forecast',f.x,w.y);
  expect((await cards.weather.boundingBox())!.y-(await cards.forecast.boundingBox())!.y).toBeGreaterThan(100);
  await drag('forecast',w.x,f.y); // intentionally overlaps weather; no collision avoidance
- const assertOverlap=async()=>{const a=(await cards.weather.boundingBox())!,b=(await cards.forecast.boundingBox())!;expect(Math.abs(a.y-b.y)).toBeLessThan(2);expect(Math.abs(a.x-b.x)).toBeLessThan(2);expect(await page.evaluate(({x,y})=>document.elementFromPoint(x,y)?.closest('.ambient-forecast')!==null,{x:b.x+30,y:b.y+45})).toBe(true);};
+ const assertOverlap=async()=>{const a=(await cards.weather.boundingBox())!,b=(await cards.forecast.boundingBox())!;const left=Math.max(a.x,b.x),top=Math.max(a.y,b.y),right=Math.min(a.x+a.width,b.x+b.width),bottom=Math.min(a.y+a.height,b.y+b.height);expect(right-left).toBeGreaterThan(80);expect(bottom-top).toBeGreaterThan(30);expect(await page.evaluate(({x,y})=>Boolean(document.elementFromPoint(x,y)?.closest('.ambient-forecast')),{x:(left+right)/2,y:(top+bottom)/2})).toBe(true);};
+ // Compact cards deliberately share a top-left point while being arranged.
+ expect(Math.abs((await cards.weather.boundingBox())!.y-(await cards.forecast.boundingBox())!.y)).toBeLessThan(2);expect(Math.abs((await cards.weather.boundingBox())!.x-(await cards.forecast.boundingBox())!.x)).toBeLessThan(2);
  await assertOverlap();await choose('weather');await expect(cards.weather).toHaveCSS('z-index','5');await choose('forecast');
+ const before={weather:(await cards.weather.boundingBox())!,forecast:(await cards.forecast.boundingBox())!};
  await page.getByRole('button',{name:ro?'Gata':'Done',exact:true}).tap();expect(state.preferences.homePositions.forecast.z).toBe(4);expect(state.preferences.homePositions.weather.z).toBeLessThan(4);
- await page.reload();await expect(cards.forecast).toBeVisible();await assertOverlap();await page.screenshot({path:info.outputPath(`free-overlap-${theme}.png`)});
+ await page.reload();await expect(cards.forecast).toBeVisible();
+ // Reload expands cards. Their anchored edge, not necessarily their top-left,
+ // must survive growth, and the deliberate overlap/stacking must still hold.
+ for(const key of ['weather','forecast'] as const){const saved=state.preferences.homePositions[key],original=before[key];const horizontal=(r:typeof original)=>saved.anchorX==='right'?r.x+r.width:r.x,vertical=(r:typeof original)=>saved.anchorY==='bottom'?r.y+r.height:r.y;await expect.poll(async()=>Math.abs(horizontal((await cards[key].boundingBox())!)-horizontal(original))).toBeLessThan(2);await expect.poll(async()=>Math.abs(vertical((await cards[key].boundingBox())!)-vertical(original))).toBeLessThan(2);}
+ await assertOverlap();await page.screenshot({path:info.outputPath(`free-overlap-${theme}.png`)});
 });

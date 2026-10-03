@@ -171,3 +171,27 @@
 .app .home-v2.ambient-home .ambient-dock{padding:7px 12px}
 /* E-Ink transport remains readable when its actual weather scene is nocturnal. */
 .app[data-theme=ink]:has(>.ambient-sky.sky-night) .ambient-visualizer{--signal-ink:#d7ebe7;--ambient-text:#f4f7fb;--muted:#d0d9da}
+/* The chosen signal size applies whether the transport is open or folded. */
+.app .home-v2.ambient-home{container-type:inline-size}
+.app .ambient-home .ambient-visualizer{height:64px;min-height:64px;width:min(380px,100%)}
+.app .ambient-home[data-visualizer-size=balanced] .ambient-visualizer{height:88px;min-height:88px;width:min(520px,100%)}
+.app .ambient-home[data-visualizer-size=large] .ambient-visualizer{height:112px;min-height:112px;width:min(660px,100%)}
+.app .home-v2.ambient-home.transport-expanded{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}
+.app .ambient-home.transport-expanded .ambient-weather{grid-column:1;grid-row:1;margin:0;width:calc((100cqw - 16px)/2);max-width:500px}
+.app .ambient-home.transport-expanded .ambient-weather.card-compact{width:min(250px,calc((100cqw - 16px)/2))}
+.app .ambient-home.transport-expanded .ambient-forecast{grid-column:2;grid-row:1;align-self:end;width:calc((100cqw - 16px)/2)}
+.app .ambient-home.transport-expanded .ambient-forecast.card-compact{width:186px}
+.app .ambient-home.transport-expanded .forecast-day{display:flex;flex-direction:column;gap:3px;padding:0 2px}
+.app .ambient-home.transport-expanded .forecast-day>span{gap:3px}
+.app .ambient-home.transport-expanded .ambient-visualizer{grid-column:1/-1;grid-row:2}
+.app .ambient-home.transport-expanded .ambient-dock{grid-column:1/-1;grid-row:3}
+/* Arrange works with the same compact footprints that remain after Done. */
+.app .ambient-home[data-layout-editing=true] .ambient-dock{display:grid}
+.app .ambient-home[data-layout-editing=true] .playback-expand{pointer-events:none}
+.app .ambient-home[data-layout-editing=true] *{transition:none}
+/* The carrier is the leading point; its trail extends backward along the flight axis. */
+.ambient-meteor.meteor-transient{width:0;height:0;background:none;border:0;transform-origin:0 0;pointer-events:none;animation:meteor-flight var(--meteor-duration) linear both}
+.meteor-transient .meteor-tail{position:absolute;left:0;top:0;width:var(--meteor-length);height:var(--meteor-thickness);transform:translate(-100%,-50%);border-radius:100%;background:linear-gradient(90deg,transparent 0%,rgb(166 198 218 / .12) 30%,rgb(193 217 231 / .6) 78%,#edf8ff 100%)}
+.meteor-transient .meteor-head{position:absolute;left:0;top:0;width:calc(var(--meteor-thickness) + 2px);height:calc(var(--meteor-thickness) + 2px);transform:translate(-50%,-50%);border-radius:50%;background:#f6fbff;box-shadow:0 0 4px 1px rgb(193 225 245 / .55)}
+@keyframes meteor-flight{0%{opacity:0;transform:translate(0,0) rotate(var(--meteor-angle))}10%,68%{opacity:var(--meteor-brightness)}100%{opacity:0;transform:translate(var(--meteor-dx),var(--meteor-dy)) rotate(var(--meteor-angle))}}
+@media(prefers-reduced-motion:reduce){.ambient-meteor.meteor-transient{display:none;animation:none}}

@@ -38,6 +38,9 @@ class HomePosition(BaseModel):
     x: float = Field(ge=0, le=1, allow_inf_nan=False)
     y: float = Field(ge=0, le=1, allow_inf_nan=False)
     z: int = Field(default=1, ge=1, le=4)
+    # Missing anchors keep the legacy top-left x/y interpretation.
+    anchorX: Literal["left", "right"] = "left"
+    anchorY: Literal["top", "bottom"] = "top"
 
 
 class Preferences(BaseModel):

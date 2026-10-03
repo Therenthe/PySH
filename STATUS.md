@@ -4,6 +4,8 @@ Updated: 2026-10-04 (Europe/Bucharest). GitHub is canonical: https://github.com/
 
 ## Installed application and device
 
+Next local candidate94ca6c6baf22: compact Arrange with persistent edge anchors, audio sizes across expanded/collapsed transport, six distinct signal geometries and descending varied meteors. Not installed yet. See docs/UI_DELIVERY_PLAN.md and docs/evidence/anchored-cards-audio-meteors-2026-10-04.md. The plan retains every earlier UI request and the full product gates.
+
 Current43bbb099a8b6/source22e7e46e72a5373111419f7ea90fb8bba45ddcd3 fixes cross-row card movement, deliberate overlap, selectable/persistent stacking and toolbar contrast. Fresh232UI tests/292backend tests passed. All41installed hashes verified, no pending transaction, saved preferences retained and radio advanced60.890→69.936s. Priorb180 retained, PC backup verified. See docs/evidence/free-card-placement-2026-10-04.md. Details below are historical for older candidates.
 
 

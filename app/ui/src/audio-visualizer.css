@@ -3,3 +3,6 @@
 .signal-empty,.signal-level {display:flex;align-items:center;justify-content:center;font-size:14px;}
 [data-theme="ink"] .audio-visualizer svg path {stroke:var(--signal-ink,#17211c);}
 [data-theme="ink"] .audio-visualizer svg rect {fill:var(--signal-ink,#17211c);}
+[data-theme="ink"] .audio-visualizer svg line,
+[data-theme="ink"] .audio-visualizer svg ellipse {stroke:var(--signal-ink,#17211c);}
+[data-theme="ink"] .audio-visualizer[data-signal-style="ribbon"] svg path {fill:var(--signal-ink,#17211c);}

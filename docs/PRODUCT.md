@@ -2,6 +2,8 @@
 
 ## Scop și stare
 
+Aranjarea Acasă se face cu cardurile restrânse. Cardurile aliniate la dreapta sau jos păstrează acea margine când se extind spre spațiul liber; pozițiile și straturile se salvează. HomePosition fără ancore explicite rămâne compatibil cu vechile coordonate stânga/sus. Inventarul urmărit al cerințelor și restanțelor este în UI_DELIVERY_PLAN.md.
+
 Pi Smart Hub este un dispozitiv de uz zilnic pentru Raspberry Pi 4 (4 GB) și ecran tactil DSI de 7 inchi, 800 × 480, în orientare landscape. Reunește ceasul, vremea, comenzile uzuale și accesul la audio/video într-o interfață dedicată, fluentă și ușor de folosit prin atingere. Produsul final trebuie să fie complet, configurabil și recuperabil în utilizare reală; un shell demonstrativ nu îndeplinește definiția.
 
 Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că funcțiile sunt implementate sau că serviciile externe au fost validate pe Pi. Implementarea locală a fost importată în structura PySH. Starea verificată și restanțele sunt în STATUS.md; această specificație nu certifică funcțiile implementate.

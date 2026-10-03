@@ -49,6 +49,34 @@ def test_home_customization_survives_restart(tmp_path):
     assert restored.homePositions['visualizer'].y == 1
 
 
+def test_home_anchors_persist_without_reinterpreting_legacy_positions(tmp_path):
+    store = PreferenceStore(tmp_path)
+    store.update({'homePositions': {
+        'weather': {'x': .1, 'y': .2, 'z': 3},
+        'forecast': {'x': .05, 'y': .08, 'anchorX': 'right', 'anchorY': 'bottom', 'z': 4},
+    }})
+    positions = PreferenceStore(tmp_path).value.homePositions
+    assert positions['weather'].model_dump() == {
+        'x': .1, 'y': .2, 'z': 3, 'anchorX': 'left', 'anchorY': 'top'}
+    assert positions['forecast'].model_dump() == {
+        'x': .05, 'y': .08, 'z': 4, 'anchorX': 'right', 'anchorY': 'bottom'}
+
+
+@pytest.mark.parametrize('anchor', [
+    {'anchorX': 'center'}, {'anchorY': 'right'}, {'anchorX': None},
+    {'anchorY': 1}, {'anchorX': 'RIGHT'},
+])
+def test_invalid_home_anchor_preserves_disk_and_memory(tmp_path, anchor):
+    store = PreferenceStore(tmp_path)
+    store.update({'homePositions': {'weather': {'x': .1, 'y': .2}}})
+    before = store.path.read_bytes()
+    value = store.export()
+    with pytest.raises(ValidationError):
+        store.update({'homePositions': {'weather': {'x': 0, 'y': 0, **anchor}}})
+    assert store.path.read_bytes() == before
+    assert store.export() == value
+
+
 @pytest.mark.parametrize('patch', [
     {'homePositions': {'weather': {'x': -1, 'y': 0}}},
     {'homePositions': {'forecast': {'x': .5, 'y': 1.01}}},

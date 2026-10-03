@@ -67,16 +67,30 @@ export function AudioVisualizer({style, canVisualize, language, reducedMotion = 
   if (!signal.available || !canVisualize) return <div className="audio-visualizer signal-empty" data-signal-status={canVisualize ? signal.status : 'inactive'}>{canVisualize ? unavailable : inactive}</div>;
   if (quiet) return <div className="audio-visualizer signal-level" aria-label={label}>{signal.silent ? silence : `${language === 'ro' ? 'Nivel' : 'Level'} ${Math.round((signal.rms ?? 0) * 100)}%`}</div>;
   const wave = signal.waveform.map((value, index) => `${index ? 'L' : 'M'}${(index * 320 / 63).toFixed(1)},${(40 - value * 36).toFixed(1)}`).join(' ');
-  const orbit = signal.bars.map((value, index) => {const angle = index / 16 * Math.PI * 2; const radius = 18 + value * 20; return `${index ? 'L' : 'M'}${(160 + Math.cos(angle) * radius).toFixed(1)},${(40 + Math.sin(angle) * radius).toFixed(1)}`;}).join(' ') + ' Z';
+  // These are views of PCM amplitude, not frequency bins. No decorative motion:
+  // every contour, spoke and ring is driven by the measured output signal.
+  const envelope = signal.bars.map((value,index)=>({x:index*320/15, amplitude:value*35}));
+  const ribbon = envelope.map(({x,amplitude},index)=>`${index?'L':'M'}${x.toFixed(1)},${(40-amplitude).toFixed(1)}`).join(' ')
+    + ' ' + [...envelope].reverse().map(({x,amplitude})=>`L${x.toFixed(1)},${(40+amplitude).toFixed(1)}`).join(' ') + ' Z';
+  const level = signal.rms ?? 0;
   return <div className="audio-visualizer" data-signal-status="ready" data-signal-style={style}>
-    <svg viewBox="0 0 320 80" preserveAspectRatio={['orbit','rings'].includes(style)?'xMidYMid meet':'none'} role="img" aria-label={signal.silent ? `${label}: ${silence}` : label}>
-      <defs><linearGradient id={gradient}><stop stopColor="#a78bfa"/><stop offset=".5" stopColor="#34d399"/><stop offset="1" stopColor="#f59e0b"/></linearGradient></defs>
+    <svg viewBox="0 0 320 80" preserveAspectRatio="none" role="img" aria-label={signal.silent ? `${label}: ${silence}` : label}>
+      <defs><linearGradient id={gradient} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="320" y2="0"><stop stopColor="#a78bfa"/><stop offset=".5" stopColor="#34d399"/><stop offset="1" stopColor="#f59e0b"/></linearGradient></defs>
       {style === 'wave' && <path d={wave} fill="none" stroke={`url(#${gradient})`} strokeWidth="2" vectorEffect="non-scaling-stroke"/>}
-      {style === 'bars' && signal.bars.map((value, index) => <rect key={index} x={index * 20 + 4} y={40 - value * 38} width="12" height={Math.max(1, value * 76)} rx="2" fill={`url(#${gradient})`}/>)}
-      {style === 'orbit' && <path d={orbit} fill="none" stroke={`url(#${gradient})`} strokeWidth="2"/>}
-      {style === 'ribbon' && <><path d={`${wave} L320,40 L0,40 Z`} fill={`url(#${gradient})`} opacity=".3"/><path d={wave} fill="none" stroke={`url(#${gradient})`} strokeWidth="2" vectorEffect="non-scaling-stroke"/></>}
-      {style === 'mirror' && signal.bars.map((value,index)=><rect key={index} x={index*20+2} y={40-value*35} width="16" height={Math.max(1,value*70)} rx="4" fill={`url(#${gradient})`} opacity={.5+value*.5}/>)}
-      {style === 'rings' && [0,1,2].map(index=><circle key={index} cx="160" cy="40" r={8+index*7+(signal.rms??0)*(index+1)*10} fill="none" stroke={`url(#${gradient})`} strokeWidth="2" opacity={1-index*.22}/>)}
+      {style === 'bars' && signal.bars.map((value, index) => <rect key={index} x={index * 20 + 4} y={76 - Math.max(1,value * 72)} width="12" height={Math.max(1, value * 72)} rx="2" fill={`url(#${gradient})`}/>)}
+      {style === 'orbit' && <g fill="none" stroke={`url(#${gradient})`} strokeWidth="2" strokeLinecap="round">
+        <ellipse cx="160" cy="40" rx="94" ry="19" opacity=".25"/>
+        {signal.bars.map((value,index)=>{const angle=index/16*Math.PI*2;return <line key={index}
+          x1={160+Math.cos(angle)*94} y1={40+Math.sin(angle)*19}
+          x2={160+Math.cos(angle)*(94+value*56)} y2={40+Math.sin(angle)*(19+value*18)} vectorEffect="non-scaling-stroke"/>;})}
+      </g>}
+      {style === 'ribbon' && <path d={ribbon} fill={`url(#${gradient})`} fillOpacity=".4" stroke={`url(#${gradient})`} strokeWidth="1.5" vectorEffect="non-scaling-stroke"/>}
+      {style === 'mirror' && <g stroke={`url(#${gradient})`} strokeWidth="3" strokeLinecap="round">
+        {signal.bars.map((value,index)=><line key={index} x1={160-value*150} x2={160+value*150} y1={4+index*4.8} y2={4+index*4.8} opacity={.5+value*.5} vectorEffect="non-scaling-stroke"/>)}
+      </g>}
+      {style === 'rings' && <g fill="none" stroke={`url(#${gradient})`} strokeWidth="2">
+        {[0,1,2,3].map(index=><ellipse key={index} cx="160" cy="40" rx={30+index*29+level*12} ry={6+index*7+level*5} opacity={1-index*.18} vectorEffect="non-scaling-stroke"/>)}
+      </g>}
     </svg>
   </div>;
 }
