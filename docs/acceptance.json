@@ -74,13 +74,12 @@
     },
     {
       "id": "UX-02",
-      "status": "OPEN",
-      "candidate": "24f207c79081",
+      "status": "FAIL",
+      "candidate": "a32c29065d6d",
       "evidence": [
-        "docs/evidence/ui-audit-2026-10-02.md",
-        "docs/evidence/content-recovery-2026-10-02.md"
+        "docs/evidence/os-cold-boots-2026-10-03.md"
       ],
-      "reason": "48 real Pi EN/RO/theme screen samples inspected; newly repaired content error overlays need repeat on device and full physical matrix."
+      "reason": "Real populated Home weather card scrolls vertically and horizontally and clips forecast content at native 800×480; repair and recapture required."
     },
     {
       "id": "UX-03",
@@ -234,19 +233,22 @@
     },
     {
       "id": "BOOT-01",
-      "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "status": "PASS",
+      "candidate": "a32c29065d6d",
+      "evidence": [
+        "docs/evidence/os-cold-boots-2026-10-03.md",
+        "docs/evidence/os-a32c29065d6d-acceptance-2026-10-03.md"
+      ],
+      "reason": "Five physically confirmed cold-power boots, including offline Home and touch Settings→Home, distinct boot IDs and real network-return journal; audit uptimes are observed upper bounds, not exact render latency."
     },
     {
       "id": "BOOT-02",
-      "status": "OPEN",
-      "candidate": "ee58b51f45bd",
+      "status": "PASS",
+      "candidate": "a32c29065d6d",
       "evidence": [
-        "docs/evidence/pi-legibility-2026-10-02.md"
+        "docs/evidence/os-a32c29065d6d-acceptance-2026-10-03.md"
       ],
-      "reason": "Partial real Pi evidence recorded; final OS candidate, full criterion and physical acceptance remain pending."
+      "reason": "Native EN/RO × both themes passed service cancel, entry, diagnostics and return with preferences preserved; relaunch/reboot persistence and separate key-only administrative recovery verified on fresh image."
     },
     {
       "id": "REL-01",
