@@ -64,7 +64,7 @@ if (!$taskAdmin.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 $null = Get-VerifiedTarget
 $taskDevice = "\\.\PhysicalDrive$DiskNumber"
 # Keep default read-back verification. Do not eject before public-key provisioning.
-$taskArguments = @('--cli','--disable-eject','--sha256',$ImageSha256,'"'+$taskImage+'"',$taskDevice)
+$taskArguments = @('--cli','--debug','--log-file',('"'+(Join-Path $taskLogDir 'imager-debug.log')+'"'),'--disable-eject','--sha256',$ImageSha256,('"'+$taskImage+'"'),$taskDevice)
 $taskWriter = Start-Process -FilePath $taskImager -ArgumentList $taskArguments -WindowStyle Hidden -Wait -PassThru -RedirectStandardOutput (Join-Path $taskLogDir 'flash.stdout.log') -RedirectStandardError (Join-Path $taskLogDir 'flash.stderr.log')
 if ($taskWriter.ExitCode -ne 0) { throw "Imager failed: $($taskWriter.ExitCode); inspect flash.stderr.log" }
 $null = Get-VerifiedTarget
@@ -84,7 +84,8 @@ if (!$taskBoot[0].DriveLetter) {
     $taskBoot = @(Get-Partition -DiskNumber $DiskNumber | Where-Object { $_.Offset -eq $taskBootOffset -and $_.Size -eq $taskBootSize })
 }
 $taskVolume = Get-Volume -DriveLetter $taskBoot[0].DriveLetter
-if ($taskVolume.FileSystem -ne 'FAT32') { throw 'Boot volume is not FAT32' }
+# The pinned image uses FAT16 (Windows reports FAT); both are vfat on Linux.
+if ($taskVolume.FileSystem -notin @('FAT','FAT32')) { throw 'Boot volume is not a supported FAT filesystem' }
 $taskBootPath = "$($taskBoot[0].DriveLetter):\"
 if (!(Test-Path -LiteralPath (Join-Path $taskBootPath 'cmdline.txt')) -or !(Test-Path -LiteralPath (Join-Path $taskBootPath 'config.txt'))) { throw 'Boot files missing' }
 $taskBootKey = Join-Path $taskBootPath 'pysh-recovery.pub'

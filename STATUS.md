@@ -12,7 +12,7 @@ Actual Pi revalidation passed eight media handoffs, four city-empty states, 48-s
 
 Draft PR #3 integrates main above. Image source `59fcd319fadf133295cabd0443b13c5060430c12`, successful run37066609253, Linux runtime `1e2918ca798f`. Complete image verified on PC: raw SHA256 `4c99dc0b6f9b812fec4d291b3e34347642289211dc65b8b77fa00fead870e6c4`, 4,571,791,360 bytes. Includes UUID addressing, dedicated labwc/greetd session, key-only administrative recovery and guarded first-boot root expansion. Sixteen disposable Linux growth checks passed, including actually mounted online growth. [Image evidence](docs/evidence/os-image-2026-10-03.md), [growth evidence](docs/evidence/root-expansion-2026-10-03.md).
 
-Windows wrapper passed inspection-only for the intended USB inventory. Explicit erase-target approval remains pending; no flash performed and original SD preserved. This is an experimental image, not physical product acceptance.
+Windows wrapper passed inspection-only for the intended USB inventory. Explicit USB erase approval received; candidate written with full Imager read-back and independent MBR/root/428 boot-file checks. Public recovery key provisioned; original SD preserved. Physical USB boot is next. This is an experimental image, not physical product acceptance.
 
 ## Remaining delivery work
 
