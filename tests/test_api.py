@@ -5,6 +5,22 @@ from fastapi.testclient import TestClient
 from services.backend.app import app, Hub
 
 
+@pytest.mark.parametrize('error,expected',[(None,300),('weather_unavailable',60)])
+def test_weather_background_retries_automatically(tmp_path,monkeypatch,error,expected):
+    import asyncio
+    hub=Hub(tmp_path)
+    hub.weather={'error':error}
+    hub.refresh_weather=AsyncMock()
+    delays=[]
+    async def once(delay):
+        delays.append(delay)
+        raise asyncio.CancelledError()
+    monkeypatch.setattr(asyncio,'sleep',once)
+    with pytest.raises(asyncio.CancelledError):asyncio.run(hub.weather_loop())
+    assert delays==[expected]
+    hub.refresh_weather.assert_awaited_once()
+
+
 @pytest.fixture
 def client(tmp_path):
     # Do not start hardware or external network services in HTTP boundary tests.

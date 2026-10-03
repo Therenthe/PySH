@@ -8,7 +8,7 @@
 .ambient-sky.sky-night.sky-overcast,.ambient-sky.sky-night.sky-fog{background:linear-gradient(#19232c,#344344)}
 .ambient-stars{position:absolute;inset:0;width:100%;height:100%;opacity:.65}
 .ambient-orb{position:absolute;right:23px;top:23px;width:90px;height:90px;border-radius:50%}
-.ambient-moon{background:radial-gradient(circle at 30% 28%,#d6dedb 0 9%,transparent 10%),radial-gradient(circle at 67% 65%,#7c9195 0 12%,transparent 13%),radial-gradient(circle at 42% 64%,#a3b2b1 0 8%,transparent 9%),radial-gradient(circle at 28% 32%,#e8eddf,#788c90);box-shadow:0 0 26px #a8cbd329}
+.ambient-moon{background:none;filter:drop-shadow(0 0 12px #a8cbd320)}
 .ambient-sun{background:radial-gradient(circle at 35% 30%,#fff8d9,#e8c98a);box-shadow:0 0 24px #e4ba7940}
 .ambient-clouds{position:absolute;inset:0;background:radial-gradient(ellipse at 80% 15%,#f7fbff65 0 10%,transparent 27%),radial-gradient(ellipse at 95% 27%,#ecf1f74a 0 15%,transparent 37%)}
 .ambient-rain{position:absolute;inset:0;background:repeating-linear-gradient(110deg,transparent 0 42px,#adc2d722 43px 44px,transparent 45px 90px);opacity:.45}
@@ -17,7 +17,7 @@
 .app[data-theme=night] .ambient-sky:not(.sky-night){filter:brightness(.55)}
 .app[data-theme=night] .ambient-city{color:#03090e;opacity:.8}
 .app .ambient-home{--ambient-panel:#fbfaf5ef;--ambient-text:#23251f;--ambient-secondary:#4b554e;--ambient-edge:#65786c;--ambient-divider:#68786b40;--ambient-button:#375e47;--ambient-button-text:#fff}
-.app[data-theme=night] .ambient-home{--ambient-panel:#121d27ee;--ambient-text:#f1f3ee;--ambient-secondary:#bac6c9;--ambient-edge:#7c9997;--ambient-divider:#a8bbb32b;--ambient-button:#67cba4;--ambient-button-text:#081611}
+.app[data-theme=night] .ambient-home{--ambient-panel:#0c1720b8;--ambient-text:#f1f3ee;--ambient-secondary:#d0d9da;--ambient-edge:#91a8a6;--ambient-divider:#a8bbb32b;--ambient-button:#67cba4;--ambient-button-text:#081611}
 .app .ambient-home .ambient-weather,.app .ambient-home .ambient-forecast,.app .ambient-home .ambient-dock{background:var(--ambient-panel);color:var(--ambient-text);border:1px solid var(--ambient-divider);border-radius:16px;box-shadow:0 5px 18px #05101a20}
 .app .home-v2.ambient-home .ambient-weather{padding:8px 14px;width:calc(100% - 112px);max-width:550px;overflow:hidden}
 .app .ambient-home .weather-top{min-height:48px;display:flex;align-items:center;gap:8px}
@@ -66,3 +66,9 @@
 .ambient-visualizer .audio-visualizer{height:100%}
 @keyframes ambient-arrive{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.app .home-v2.ambient-home{animation:none}}
+.ambient-stars circle:nth-child(13n){animation:ambient-twinkle 9s ease-in-out infinite alternate}
+.ambient-stars circle:nth-child(17n){animation:ambient-twinkle 13s 4s ease-in-out infinite alternate}
+.ambient-meteor{position:absolute;top:17%;left:65%;width:90px;height:1px;opacity:0;background:linear-gradient(90deg,transparent,#cbdde4);transform:rotate(-30deg);animation:ambient-meteor 37s 12s linear infinite}
+@keyframes ambient-twinkle{from{opacity:.28}to{opacity:.95}}
+@keyframes ambient-meteor{0%,94%,100%{opacity:0;transform:translate(0,0) rotate(-30deg)}95%{opacity:.7}98%{opacity:0;transform:translate(-170px,98px) rotate(-30deg)}}
+@media(prefers-reduced-motion:reduce){.ambient-stars circle,.ambient-meteor{animation:none}.ambient-meteor{display:none}}

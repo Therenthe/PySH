@@ -230,7 +230,7 @@ class Hub:
     async def weather_loop(self):
         while True:
             await self.refresh_weather()
-            await asyncio.sleep(900)
+            await asyncio.sleep(60 if self.weather and self.weather.get('error') else 300)
 
     def background(self, coroutine):
         task = asyncio.create_task(coroutine)

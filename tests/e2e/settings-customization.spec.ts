@@ -1,5 +1,12 @@
 import {test,expect} from '@playwright/test';
 import {effectiveTheme} from '../../app/ui/src/themeSchedule';
+import {lunarPhase} from '../../app/ui/src/Moon';
+
+test('moon is waning near last quarter on 3 October and bright near the full moon',()=>{
+ const quarter=lunarPhase(new Date('2026-10-03T13:25:00Z'));
+ expect(quarter.waxing).toBe(false);expect(quarter.illumination).toBeGreaterThan(.4);expect(quarter.illumination).toBeLessThan(.6);
+ expect(lunarPhase(new Date('2026-10-26T04:11:00Z')).illumination).toBeGreaterThan(.97);
+});
 
 test('solar switching uses exact boundaries and survives missing/stale previous-day data',()=>{
  const prefs:any={nightEnabled:true,nightMode:'solar',theme:'ink',timezone:'Europe/Bucharest'};
@@ -15,7 +22,12 @@ for(const theme of ['ink','night'])test(`touch choices persist across clock/poll
  const ro=info.project.name.endsWith('ro');
  const state:any={preferences:{language:ro?'ro':'en',theme,setupComplete:true,nightEnabled:false,screensaverMinutes:5,visualizerStyle:'off',screensaverLayout:'clock',timezone:'Europe/Bucharest',favorites:[],shortcuts:[]},network:{},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:40},player:{state:'playing',kind:'radio',station_name:'Radio Test'},weather:{}};
  await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname;let json:any={ok:true};if(path==='/api/state')json=state;else if(path==='/api/session')json={token:'test-only'};else if(path==='/api/preferences'){Object.assign(state.preferences,route.request().postDataJSON());json=state.preferences;}else if(path==='/api/audio/visualization')json={available:true,status:'ready',waveform:Array(64).fill(.2),bars:Array(16).fill(.4),peak:.4,rms:.2,silent:false};await route.fulfill({json});});
- await page.clock.install();await page.goto('/');await page.locator('.rail button').filter({hasText:ro?'Setări':'Settings'}).click();
+ await page.clock.install();await page.goto('/');
+ const width=await page.locator('.main-area').evaluate(el=>el.getBoundingClientRect().width);
+ await page.getByRole('button',{name:ro?'Ascunde navigarea':'Hide navigation',exact:true}).tap();await page.clock.runFor(350);
+ await expect.poll(()=>page.locator('.main-area').evaluate(el=>el.getBoundingClientRect().width)).toBeGreaterThan(width+100);
+ await page.getByRole('button',{name:ro?'Arată navigarea':'Show navigation',exact:true}).tap();await page.clock.runFor(350);await expect.poll(()=>page.locator('.rail').evaluate(el=>el.getBoundingClientRect().width)).toBeGreaterThan(100);
+ await page.locator('.rail button').filter({hasText:ro?'Setări':'Settings'}).click();
  const trigger=page.getByRole('button',{name:ro?'Vizualizare audio':'Audio visualization',exact:true});await trigger.scrollIntoViewIfNeeded();await trigger.tap();
  const dialog=page.getByRole('dialog');await expect(dialog).toBeVisible();
  const old=await dialog.elementHandle();await page.clock.runFor(6200);await expect(dialog).toBeVisible();expect(await old?.evaluate(node=>node.isConnected)).toBe(true);

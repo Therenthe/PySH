@@ -46,6 +46,8 @@ New SD Bluetooth audio is now observed: owner confirmed the local tone and is li
 
 ## UI polish in progress
 
+Two owner-requested audits produced candidate546335e64372: automatic weather5min/error retry1min, București and sectors1–6, tolerant radio country/language filters, corrected gear, transparent night panels with approximate lunar phase and decorative stars, retractable navigation.275 backend checks passed (22 skips);10focused settings/recovery cases passed, full176-case regression passed. Native activation pending. [Audit and follow-up](docs/evidence/usability-and-ambient-review-2026-10-03.md).
+
 Owner's latest assessment is UI4/10 and UX4/10. Candidateca39fd956f0f fixes remounting setting rows and replaces native dropdowns with persistent touch choices; adds solar theme switching, customizable visualizer-only screensaver with temporary controls, and a signal between clock/playback.172 browser and262 backend tests passed (22 platform skips). Native activation pending. [Scoped evidence](docs/evidence/settings-and-saver-2026-10-03.md). No10/10 or product completion claimed.
 
 Candidateadb2f3a42a42 is packaged and locally verified:114 browser,164 backend and26 extension tests passed;3 weather mapping tests, TypeScript, build and structure passed. Home duplication/source/weather icons, hidden bars with real touch scrolling and screensaver transport are implemented. Native activation passed with radio resumed and compositor Home inspected. The forecast/attribution correction ebd9af386290 is installed;16 affected browser checks passed, all40 native hashes passed, no pending update and advancing radio playback verified in4 samples; audio visualizers and full UI acceptance remain OPEN. [Evidence](docs/evidence/ui-polish-2026-10-03.md).

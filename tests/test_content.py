@@ -236,3 +236,26 @@ def test_solar_times_are_utc_epochs_and_optional_failures_do_not_break_weather()
     assert value['daily'][0]['sunset_epoch'] == datetime(2026,10,3,15,50,tzinfo=timezone.utc).timestamp()
     assert value['daily'][1]['sunrise_epoch'] is None
     assert value['daily'][2]['sunset_epoch'] is None
+
+
+@pytest.mark.parametrize('query',['bucuresti','BUCUREȘTI','Bucharest'])
+def test_bucharest_search_includes_city_and_six_verified_districts(tmp_path,query):
+    results=run(Content(tmp_path).geocode(query))
+    assert len(results)==7 and results[0]['name']=='București'
+    assert results[5]['name']=='București · Sector 5'
+    assert results[5]['latitude']==44.38808
+
+
+@pytest.mark.parametrize('query',['sector 5','Sectorul 5','bucuresti sector 5','București · Sector 5'])
+def test_specific_district_search(tmp_path,query):
+    results=run(Content(tmp_path).geocode(query))
+    assert len(results)==1 and results[0]['name']=='București · Sector 5'
+
+
+@pytest.mark.parametrize('country',['romania','Romania','ROMÂNIA','ro'])
+def test_radio_country_case_and_diacritics_use_country_code(tmp_path,monkeypatch,country):
+    calls=[]
+    def request(params):calls.append(params);return []
+    content=Content(tmp_path);monkeypatch.setattr(content,'_radio_request',request)
+    run(content.radio_search('',country,'ROMÂNĂ'))
+    assert calls[0]['countrycode']=='RO' and calls[0]['language']=='romanian'

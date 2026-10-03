@@ -252,7 +252,7 @@ for(const theme of ['ink','night'] as const) {
   test(`weather, radio and media retry target the failed operation ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
     f.state.weather={available:false,error:'weather_unavailable'};
-    await page.goto('/');await expect(page.locator('.weather-empty')).toContainText(ro?'Meteo indisponibilă':'Weather is unavailable');await page.locator('.weather-empty').tap();expect(f.actions.some(a=>a.path==='/api/weather/refresh')).toBeTruthy();await expect(page.locator('.home-layout')).toBeVisible();
+    await page.goto('/');await expect(page.locator('.weather-empty')).toContainText(ro?'Meteo indisponibilă':'Weather is unavailable');await page.locator('.weather-empty').tap();expect(f.actions.some(a=>a.path==='/api/weather/refresh')).toBeFalsy();await expect(page.locator('.settings-page')).toBeVisible();
     f.radio='error';await page.locator('.main-nav button').nth(1).tap();await expect(page.locator('.error-strip')).toBeVisible();f.radio='populated';await page.locator('.error-strip').getByRole('button',{name:ro?'Încearcă din nou':'Try again',exact:true}).tap();await expect(page.locator('.station-main')).toHaveCount(1);await expect(page.locator('.error-strip')).toHaveCount(0);
     f.media='error';await page.locator('.main-nav button').nth(2).tap();await expect(page.locator('.error-strip')).toBeVisible();f.media='populated';await page.locator('.error-strip').getByRole('button',{name:ro?'Încearcă din nou':'Try again',exact:true}).tap();await expect(page.locator('.media-item')).toHaveCount(2);await expect(page.locator('.error-strip')).toHaveCount(0);expect(f.unexpected).toEqual([]);
   });

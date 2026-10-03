@@ -23,6 +23,7 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 - Card principal dinamic (de exemplu, redarea activă, radio sau un mesaj de stare) și scurtături configurabile spre funcțiile folosite frecvent.
 - Bară de stare pentru rețea, Bluetooth și audio; navigare coerentă către Acasă, media și setări.
 - Aspect echilibrat, fără suprapuneri, zone moarte disproporționate sau text care cere scroll accidental pe panourile de bază.
+- Navigarea laterală se poate retrage și redeschide printr-o comandă tactilă permanent accesibilă; opțional se retrage după schimbarea paginii. Fundalul rămâne vizibil prin panouri discrete, fără a compromite lizibilitatea. Luna reflectă faza calculată pentru moment; efectele de stele sunt decorative și respectă reducerea mișcării.
 - Barele de scroll nu sunt vizibile în nicio zonă PySH; conținutul derulabil rămâne accesibil prin atingere. Aceasta include liste, setări, dialoguri și serviciile externe gestionate de hub.
 - Acasă prezintă o singură zonă principală pentru redarea curentă, fără repetarea acelorași informații într-un card și o bară. La radio, numele postului rămâne clar, separat de artist/melodie și stările de flux.
 - Pictograma meteo corespunde codului condiției reale și etichetei localizate: senin folosește simbolul de soare, iar stările fără date au un simbol distinct.
@@ -40,6 +41,7 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 
 - Prima pornire: întâmpinare, selecția limbii, verificarea rețelei și ghid Wi-Fi/Ethernet cu progres, confirmarea rezultatului și cale de revenire. Configurarea trebuie să poată fi reluată ulterior.
 - Setări rapide și pagină dedicată pentru limbă, rețea, audio, teme, mod de noapte, screensaver, sursa/vizualizarea vremii și comportament la pornire.
+- Vremea se actualizează automat, cu reluare după indisponibilitate; utilizatorul nu face refresh manual. Căutarea locației include București și sectoarele1–6, fără a confunda orașul cu Bucureștii Noi. Filtrele radio acceptă diferențe de majuscule/minuscule și aliasurile localizate suportate.
 - Screensaverul păstrează controale tactile pentru redare/pauză și anterior/următor când radioul este activ; la radio acestea aleg posturile, iar la fișiere locale piesele. Sunt disponibile stiluri de vizualizare audio configurabile; vizualizarea de nivel/undă trebuie să reflecte semnalul real, iar o animație decorativă să fie prezentată explicit astfel.
 - Teme: temă întunecată pentru utilizare nocturnă și temă vizuală inspirată de E-Ink pe LCD (paletă predominant alb-negru cu accente limitate; ecranul rămâne LCD). Temele schimbă o paletă și tokenuri comune, nu fragmentează comportamentul UI.
 - Preferințele supraviețuiesc repornirii. Datele sensibile de rețea și credențialele de servicii nu sunt afișate în jurnale sau în interfață după salvare.

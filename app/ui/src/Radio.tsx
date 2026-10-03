@@ -58,7 +58,8 @@ export function Radio(props: RadioProps) {
     onSearch, onCountry, onLanguage, onFavoritesFilter, onRetry, onPlayStation, onFavorite,
     onPlayPause, onStop, onPrevious, onNext, onVolume, onMute } = props;
   const ro = language === 'ro';
-  const items = favoritesOnly ? favorites : stations;
+  const key=(value:string)=>value.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase().trim();
+  const items = favoritesOnly ? favorites.filter(station=>key(station.name||'').includes(key(query))&&key(station.country||'').includes(key(country))&&key(station.language||'').includes(key(radioLanguage))) : stations;
   const isRadio = playerKind === 'radio';
   const remembered = !currentUrl && currentStation?.name;
   const title = (currentUrl ? (isRadio ? stationName : trackTitle) : remembered) || t('nothingPlaying');
@@ -103,11 +104,11 @@ export function Radio(props: RadioProps) {
       </section>
       <section className="radio-side" aria-label={t('nowPlaying')}>
         <div className="mini-player">
-          <span className="eyebrow">{remembered ? (ro ? 'Ultimul post' : 'Last station') : t('nowPlaying')}</span>
+          <span className="eyebrow">{remembered ? (ro ? 'Ultimul post' : 'Last station') : currentUrl?t('nowPlaying'):t('radio')}</span>
           <StationArtwork station={isRadio ? currentStation : null} name={isRadio ? stationName : ''} large />
           <b className="radio-station-name"><MarqueeText text={title} active={playerState==='playing'}/></b>
           {metadata && <span className="radio-track-name"><MarqueeText text={metadata} active={playerState==='playing'}/></span>}
-          <small className={`state-text ${playerState}`} role="status">{status}</small>
+          <small className={`state-text ${playerState}`} role="status">{!currentUrl&&!remembered?(ro?'Alege un post din listă.':'Choose a station from the list.'):status}</small>
           {visualizer && <div className="radio-visualizer">{visualizer}</div>}
           <div className="player-controls">
             <button aria-label={ro ? 'Postul anterior' : 'Previous station'} disabled={busy || !isRadio || !canPrevious} onClick={onPrevious}>{icon('back', 20)}</button>

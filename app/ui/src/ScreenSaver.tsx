@@ -55,8 +55,9 @@ function TransportIcon({ action }: { action: 'previous' | 'next' | 'play' | 'pau
 /** Transport callbacks own backend operations. Capability flags must include pending/audio state. */
 export function ScreenSaver({ layout='clock', visualizer, time, date, language, theme, player, canPlay, canPrevious, canNext, onPlayPause, onPrevious, onNext, onWake }: ScreenSaverProps) {
   const [controls,setControls]=useState(false);
-  const full=layout==='visualizer';
-  useEffect(()=>{if(!controls)return;const timer=setTimeout(()=>setControls(false),6000);return()=>clearTimeout(timer);},[controls]);
+  const [interaction,setInteraction]=useState(0);
+  const full=layout==='visualizer'&&!!visualizer;
+  useEffect(()=>{if(!controls)return;const timer=setTimeout(()=>setControls(false),6000);return()=>clearTimeout(timer);},[controls,interaction]);
   const t = labels[language], radio = player.kind === 'radio';
   const active = ['playing', 'buffering', 'connecting'].includes(player.state || '');
   const title = (radio ? player.station_name : '') || player.title || player.station_name || '';
@@ -67,10 +68,11 @@ export function ScreenSaver({ layout='clock', visualizer, time, date, language, 
   const status = state in t ? t[state as keyof typeof t] : t.unknown;
   const invoke = (event: MouseEvent<HTMLButtonElement>, action: () => void | Promise<unknown>) => {
     event.stopPropagation();
+    setInteraction(value=>value+1);
     void action();
   };
   return <section className={`pysh-screensaver ${visualizer ? 'saver-with-signal' : ''} ${full?'saver-full-signal':''} ${controls?'saver-controls-visible':''}`} data-theme={theme} role="region" aria-label={t.screen}
-    onPointerDown={event => event.stopPropagation()}
+    onPointerDown={event => {event.stopPropagation();setInteraction(value=>value+1);}}
     onClick={event => { event.stopPropagation(); if(full)setControls(value=>!value);else onWake(); }}>
     <header className="saver-header"><span className="saver-brand">PI SMART HUB</span>
       <button className="saver-home" onClick={event => invoke(event, onWake)}>{t.home}<span aria-hidden="true">↗</span></button>

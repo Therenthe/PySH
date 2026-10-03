@@ -13,11 +13,25 @@ import sys
 import tempfile
 import threading
 import time
+import re
+import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, ClassVar
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+
+
+def search_key(value: str) -> str:
+    return ' '.join(''.join(c for c in unicodedata.normalize('NFKD', value) if not unicodedata.combining(c)).casefold().split())
+
+
+# Representative GeoNames locality points, not street-level measurements.
+# https://www.geonames.org/search.html?country=RO&q=Bucharest (CC BY 4.0)
+BUCHAREST_POINTS = [("București",44.43224761932805,26.10626220703125),
+    ("București · Sector 1",44.49239,26.04831),("București · Sector 2",44.4528,26.13321),
+    ("București · Sector 3",44.4234,26.16874),("București · Sector 4",44.37571,26.12085),
+    ("București · Sector 5",44.38808,26.07144),("București · Sector 6",44.43579,26.01649)]
 
 
 class ContentError(Exception):
@@ -47,7 +61,14 @@ class Content:
         query = str(query).strip()
         if not query:
             raise ContentError("invalid_query", "Enter a city or postal code.")
-        params = {"name": query, "count": 8, "language": "en", "format": "json"}
+        key = search_key(query)
+        match = re.fullmatch(r'(?:bucuresti|bucharest|bucarest)(?:\s*[·,\-]?\s*(?:sector(?:ul)?\s*)?([1-6]))?', key)
+        sector = re.fullmatch(r'sector(?:ul)?\s*([1-6])(?:\s+(?:bucuresti|bucharest))?', key)
+        if match or sector:
+            index = int((sector or match).group(1) or 0)
+            points = BUCHAREST_POINTS[index:index+1] if index else BUCHAREST_POINTS
+            return [{'name':name,'admin1':'București','country':'Romania','latitude':lat,'longitude':lon,'timezone':'Europe/Bucharest'} for name,lat,lon in points]
+        params = {"name": query, "count": 20, "language": "ro", "format": "json"}
         try:
             data = await asyncio.to_thread(self._get_json, "https://geocoding-api.open-meteo.com/v1/search", params)
         except Exception as exc:
@@ -79,7 +100,7 @@ class Content:
         try:
             cached = await asyncio.to_thread(_read_json, cache_path, {})
             cached_entry = cached.get(key) if isinstance(cached, dict) else None
-            if not force and cached_entry and time.time() - float(cached_entry.get("cached_epoch", 0)) < 900:
+            if not force and cached_entry and time.time() - float(cached_entry.get("cached_epoch", 0)) < 300:
                 return {**cached_entry["value"], "stale": False, "error": None}
             params = {
                 "latitude": latitude,
@@ -184,9 +205,15 @@ class Content:
         if query:
             params["name"] = query
         if country:
-            params["country"] = country
+            normalized = search_key(country)
+            codes = {'romania':'RO','ro':'RO','germany':'DE','germania':'DE','de':'DE','france':'FR','franta':'FR','fr':'FR','italy':'IT','italia':'IT','it':'IT','united kingdom':'GB','marea britanie':'GB','uk':'GB','gb':'GB','united states':'US','usa':'US','us':'US'}
+            if normalized in codes or len(normalized)==2 and normalized.isalpha():
+                params['countrycode'] = codes.get(normalized, normalized.upper())
+            else:
+                params["country"] = normalized.title()
         if language:
-            params["language"] = language
+            normalized = search_key(language)
+            params["language"] = {'romana':'romanian','engleza':'english','germana':'german','franceza':'french'}.get(normalized, normalized)
         try:
             raw = await asyncio.to_thread(self._radio_request, params)
             stations = [self._station(item) for item in raw if isinstance(item, dict)]

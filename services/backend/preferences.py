@@ -45,6 +45,8 @@ class Preferences(BaseModel):
     screensaverMinutes: int = Field(default=5, ge=0, le=120)
     visualizerStyle: Literal["off", "wave", "bars", "orbit"] = "off"
     screensaverLayout: Literal["clock", "visualizer"] = "clock"
+    navigationCollapsed: bool = False
+    navigationAutoHide: bool = False
     timezone: str = "Europe/Bucharest"
     location: Location | None = None
     setupComplete: bool = False

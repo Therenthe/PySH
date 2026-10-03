@@ -74,3 +74,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+
+București city/sector locality points: GeoNames, CC BY 4.0.
+Source: https://www.geonames.org/search.html?country=RO&q=Bucharest
+License: https://creativecommons.org/licenses/by/4.0/
+Names adapted to Romanian UI labels; coordinates retained as representative locality points.
+
