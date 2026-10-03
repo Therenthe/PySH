@@ -38,6 +38,23 @@ def test_session_and_preference_roundtrip(client):
     assert client.get('/api/state').json()['preferences']['language'] == 'en'
 
 
+def test_radio_artwork_survives_recovery_but_not_station_change(client):
+    hub=app.state.hub
+    hub.refresh_device=AsyncMock()
+    hub.audio_selected=True
+    hub.snapshots['audio']={'output':'fixture-output'}
+    hub.player.select_output=AsyncMock()
+    hub.player.play=AsyncMock(return_value={'state':'playing','kind':'radio'})
+    headers={'X-Hub-Token':hub.token}
+    station={'source':'radio','url':'https://radio.example.org/stream','title':'Fixture radio','favicon':'https://radio.example.org/logo.svg'}
+    assert client.post('/api/play',headers=headers,json=station).status_code==200
+    assert hub.store.value.lastStation.favicon==station['favicon']
+    assert client.post('/api/play',headers=headers,json={k:v for k,v in station.items() if k!='favicon'}).status_code==200
+    assert hub.store.value.lastStation.favicon==station['favicon']
+    assert client.post('/api/play',headers=headers,json={'source':'radio','url':'https://other.example.org/stream','title':'Other'}).status_code==200
+    assert hub.store.value.lastStation.favicon==''
+
+
 @pytest.mark.parametrize('headers', [{'Origin':'https://evil.example'}, {'Host':'evil.example:8765'}, {'Sec-Fetch-Site':'cross-site'}])
 def test_host_and_cross_site_boundary(client, headers):
     assert client.get('/api/session', headers=headers).status_code == 403

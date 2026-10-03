@@ -77,6 +77,7 @@ class Play(StrictBody):
     url: str = Field(default="", max_length=2048)
     path: str = Field(default="", max_length=4096)
     title: str = Field(default="", max_length=300)
+    favicon: str | None = Field(default=None, max_length=2048)
 
 
 class Transport(StrictBody):
@@ -481,7 +482,10 @@ async def play(request: Request, body: Play):
     else:
         hub.queue = []
         hub.queue_index = -1
-        hub.store.update({"lastStation": {"uuid": hashlib.sha256(source.encode()).hexdigest(), "name": body.title or "Radio", "url": source}})
+        previous = hub.store.value.lastStation
+        # Artwork is optional catalog metadata; the backend never fetches it.
+        artwork = body.favicon if body.favicon is not None else previous.favicon if previous and previous.url == source else ""
+        hub.store.update({"lastStation": {"uuid": hashlib.sha256(source.encode()).hexdigest(), "name": body.title or "Radio", "url": source, "favicon": artwork}})
     hub.cache_playback({})
     await hub.visualizer.close()
     return hub.cache_playback(await hub.player.play(source, title=body.title, kind=body.source))

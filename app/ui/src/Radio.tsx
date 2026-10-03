@@ -40,7 +40,7 @@ export function safeRadioLogo(value: unknown): string | null {
   } catch { return null; }
 }
 
-function StationArtwork({ station, name, large = false }: { station?: RadioStation | null; name: string; large?: boolean }) {
+export function StationArtwork({ station, name, large = false }: { station?: RadioStation | null; name: string; large?: boolean }) {
   const source = safeRadioLogo(station?.favicon);
   const [failed, setFailed] = useState<string | null>(null);
   const initials = name.trim().split(/\s+/).slice(0, 2).map(word => Array.from(word)[0] || '').join('').toUpperCase();
