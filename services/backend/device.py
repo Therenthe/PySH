@@ -308,6 +308,8 @@ class Device:
             for path in await self._nm_device_paths():
                 p = await self._props(NM, path, NM_DEVICE)
                 device_type = int(p.get("DeviceType", 0))
+                if device_type not in (1, 2):
+                    continue
                 entry: dict[str, Any] = {"interface": p.get("Interface", ""), "type": {1: "ethernet", 2: "wifi"}.get(device_type, "other"), "state": self._state_name(int(p.get("State", 0)))}
                 if device_type == 2:
                     wifi = await self._proxy(NM, path, NM_WIFI)
@@ -325,24 +327,38 @@ class Device:
                         entry["ip"] = addresses[0].get("address")
                 result["devices"].append(entry)
             settings = await self._proxy(NM, NM_SETTINGS_PATH, "org.freedesktop.NetworkManager.Settings")
-            active_paths = set(await nm.get_active_connections())
-            active_names: set[str] = set()
+            active_paths = await nm.get_active_connections()
+            primary_path = await nm.get_primary_connection()
+            active_profiles: set[str] = set()
+            candidates: list[tuple[tuple, str]] = []
+            connection_types = {"802-3-ethernet", "802-11-wireless"}
             for active_path in active_paths:
                 try:
                     active = await self._props(NM, active_path, NM_ACTIVE)
-                    active_names.add(str(active.get("Id", "")))
-                    if active.get("State") == 2:
-                        result["connection"] = active.get("Id")
+                    if active.get("Type") not in connection_types or active.get("State") != 2:
+                        continue
+                    active_profiles.add(str(active.get("Uuid", "")))
+                    name = str(active.get("Id", ""))
+                    # Loopback is also active on recent NetworkManager versions.
+                    # Use its primary route, rather than whichever object is last.
+                    priority = (active_path != primary_path,
+                                not (active.get("Default") or active.get("Default6")),
+                                active.get("Type") != "802-3-ethernet", name, active_path)
+                    candidates.append((priority, name))
                 except Exception:
                     continue
+            if candidates:
+                result["connection"] = min(candidates)[1]
             for conn_path in await settings.call_list_connections():
                 try:
                     conn = await self._proxy(NM, conn_path, NM_CONN)
                     config = _unvariant(await conn.call_get_settings())
                     cs = config.get("connection", {})
+                    if cs.get("type") not in connection_types:
+                        continue
                     name = str(cs.get("id", ""))
                     profile_id = str(cs.get("uuid", ""))
-                    result["saved"].append({"id": profile_id, "name": name, "active": name in active_names, "type": str(cs.get("type", "other"))})
+                    result["saved"].append({"id": profile_id, "name": name, "active": profile_id in active_profiles, "type": str(cs.get("type", "other"))})
                 except Exception:
                     continue
             return result

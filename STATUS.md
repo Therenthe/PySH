@@ -16,8 +16,12 @@ Windows wrapper passed inspection-only for the intended USB inventory. Explicit 
 
 ## Remaining delivery work
 
-Physical boot/recovery login/root growth on actual storage; five cold boots and eight-hour stability; complete Bluetooth pair/forget/reconnect and real network-disconnection recovery; native resource/performance acceptance; external-account playback and DRM support; clean installation/rollback. Known paired-speaker appearance and a previously heard WAV are evidence of those observations only. Full product acceptance remains OPEN and the project is not complete.
+Fresh successor-image installation/rollback; five cold boots and eight-hour stability; complete Bluetooth pair/forget/reconnect and real network-disconnection recovery; native resource/performance acceptance; external-account playback and DRM support; clean installation/rollback. Known paired-speaker appearance and a previously heard WAV are evidence of those observations only. Full product acceptance remains OPEN and the project is not complete.
 
 ## First physical USB boot
 
 Recovery SSH login and real mounted USB root growth passed (255,810,580,480 filesystem bytes). Initial GUI startup exposed tty1 getty/greetd conflict; live repair now runs Labwc/API/Chromium at800×480. Output rotation180 physically confirmed. Native Chromium tracing identified doubled touch rotation; identity calibration with DSI rotation180 restored native touch. Trusted button events and user-confirmed Continue → Connectivity passed. Full touch-navigation acceptance remains OPEN. Temporary browser debugging removed; four source assets installed with matching hashes. Normal OS reboot passed with automatic UI/API/SSH startup, persisted DSI rotation and zero failed units. See [first-boot evidence](docs/evidence/os-first-boot-2026-10-03.md). Base runtime1e2918ca798f plus documented live session patches; product acceptance remains OPEN.
+
+## Native OS UI survey
+
+Actual existing-kiosk EN/RO and E-Ink/night survey passed48 screens, zero measured target/font/text-contrast defects or JavaScript errors;120 navigation samples p95=65.9ms. Initial setup completed, choices deferred, preferences restored. Network display exposed active loopback selection; corrected primary-route selection has seven regressions and read-only live D-Bus verification. New runtime deployment remains pending. See [native OS UI evidence](docs/evidence/os-native-ui-2026-10-03.md).
