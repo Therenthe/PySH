@@ -1,5 +1,5 @@
 .audio-visualizer {width:100%;height:80px;min-width:0;overflow:hidden;pointer-events:none;color:var(--muted);}
 .audio-visualizer svg {display:block;width:100%;height:100%;}
 .signal-empty,.signal-level {display:flex;align-items:center;justify-content:center;font-size:14px;}
-[data-theme="ink"] .audio-visualizer svg path {stroke:var(--text,#17211c);}
-[data-theme="ink"] .audio-visualizer svg rect {fill:var(--text,#17211c);}
+[data-theme="ink"] .audio-visualizer svg path {stroke:var(--signal-ink,#17211c);}
+[data-theme="ink"] .audio-visualizer svg rect {fill:var(--signal-ink,#17211c);}

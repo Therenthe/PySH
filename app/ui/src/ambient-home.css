@@ -168,3 +168,5 @@
 .app .ambient-home .playback-source{line-height:22px;margin:2px 0}
 .app .ambient-home .playback-metadata{line-height:17px;margin:1px 0 0}
 .app .home-v2.ambient-home .ambient-dock{padding:7px 12px}
+/* E-Ink transport remains readable when its actual weather scene is nocturnal. */
+.app[data-theme=ink]:has(>.ambient-sky.sky-night) .ambient-visualizer{--signal-ink:#d7ebe7;--ambient-text:#f4f7fb;--muted:#d0d9da}
