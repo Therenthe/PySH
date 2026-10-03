@@ -2,13 +2,15 @@
 
 Updated: 2026-10-03 (Europe/Bucharest). GitHub is canonical: https://github.com/Therenthe/PySH.
 
-## Current candidate
+## Historical weather candidate
 
-Installed application `4b56d5150640`, source `75bda82e0d58bb0786664e9c3281c7baf5d1a947`, runs on the USB-booted corrected image (image source d61ec8d, original runtime a32c29065d6d). All33 runtime hashes and real update→rollback→update verified with unchanged preferences. Native five-day weather overflow is repaired: eight actual Home captures and48-screen survey pass the measured layout checks. API/kiosk recovery1.905/1.182s; complete idle PSS586.819MiB at native Home+120s; usable local WAV/radio/720p video resource probes passed. Five physical cold boots and offline tactile use were verified on the earlier image runtime a32; they are historical evidence, not five cold boots of4b. [Weather evidence](docs/evidence/home-weather-layout-2026-10-03.md).
+Previous application `4b56d5150640`, source `75bda82e0d58bb0786664e9c3281c7baf5d1a947`, was tested on the USB-booted corrected image (image source d61ec8d, original runtime a32c29065d6d). All33 runtime hashes and real update→rollback→update verified with unchanged preferences. Native five-day weather overflow is repaired: eight actual Home captures and48-screen survey pass the measured layout checks. API/kiosk recovery1.905/1.182s; complete idle PSS586.819MiB at native Home+120s; usable local WAV/radio/720p video resource probes passed. Five physical cold boots and offline tactile use were verified on the earlier image runtime a32; they are historical evidence, not five cold boots of4b. [Weather evidence](docs/evidence/home-weather-layout-2026-10-03.md).
 
-Netflix login exposed missing keyboard. Owner confirmed typing with wvkbd0.15-1. Packagecfb129d12e91/source194e847 is installed with35 hashes verified and unchanged preferences. Controlled native probes found keyboard TOP-layer/fullscreen interaction; follow-up6012a2bda401 corrects app-window kiosk interference and the measured Wayland app-id match, preserving keyboard-driven resize and immersive return.22 extension regressions pass; staging/backup verified. Current acceptance of affected criteria remains OPEN until the follow-up is activated and probed.
+## Current installed candidate
 
-Chromium154 ARM64 requires its official Widevine component updater; the old /opt package does not provide its DRM. Isolated profile downloaded4.10.3057.0; after full browser restart, actual H.264/AAC EME access and media-key creation passed. User's authenticated profile and Netflix film playback still need validation. [Keyboard/DRM evidence](docs/evidence/service-keyboard-2026-10-03.md). Original SD and previous releases retained. Full product acceptance remains OPEN.
+Installed application6012a2bda401/sourceb1ac75d8195c129c1e948ca54f5ed1b65f6782e9 adds an external browser keyboard and immersive controls.35 installed hashes, exact preferences and rollback targetcfb129d12e91 verified. Native isolated fixture proves real keyboard visible at800×240, automatic hide and restored800×480, no window frame or visible scrollbars, four-second control retraction/top-right48px reveal and Return/owned-child cleanup.22 extension regressions, Python86 (six Linux-only skips), unchanged frontend76 browser regressions and build checks pass.
+
+Official Chromium component updater downloaded Widevine4.10.3057.0. Native isolated EME access and key creation pass for H.264/AAC and VP9/Opus after browser restart. The user's retained service profile has the same component and Netflix was reopened without changing account data; owner-confirmed film playback/resolution is pending. Debug fixture/tunnel closed. [Keyboard/DRM evidence](docs/evidence/service-keyboard-2026-10-03.md). Fresh-image component download/relaunch UX, full touch inventory, current-candidate recovery/resources, eight-hour stability and the remaining product criteria are still OPEN. Original SD and previous releases are retained.
 
 ## Previous desktop candidate
 
@@ -24,7 +26,7 @@ Windows wrapper passed inspection-only for the intended USB inventory. Explicit 
 
 ## Remaining delivery work
 
-Durable external keyboard activation and Netflix playback; eight-hour stability; complete Bluetooth pair/forget/reconnect and real network-disconnection recovery; native resource/performance acceptance; external-account playback and DRM support; clean installation/rollback. Known paired-speaker appearance and a previously heard WAV are evidence of those observations only. Full product acceptance remains OPEN and the project is not complete.
+Netflix account playback/resolution and first-use DRM preparation; eight-hour stability; complete Bluetooth pair/forget/reconnect and real network-disconnection recovery; native resource/performance acceptance; external-account playback and DRM support; clean installation/rollback. Known paired-speaker appearance and a previously heard WAV are evidence of those observations only. Full product acceptance remains OPEN and the project is not complete.
 
 ## Historical first physical USB boot
 

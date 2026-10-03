@@ -1,6 +1,22 @@
 # Operare, update și recuperare
 
-Procedura de mai jos descrie runtime-ul importat, dependent de sesiune grafică. Nu este încă o procedură validată pentru PySH OS Lite. Migrarea repository-ului nu a executat aceste comenzi pe Pi.
+Procedura pentru desktop de mai jos descrie runtime-ul importat. Pentru appliance-ul instalat pe USB, folosește secțiunea PySH OS; comenzile și directoarele celor două moduri diferă. Starea candidatului și dovezile sunt în [STATUS](../STATUS.md).
+
+## PySH OS instalat pe USB
+
+Imaginea și procedura de provisioning sunt în [os/image](../os/image/README.md). Runtime-ul appliance este în `/opt/pysh/releases/<build>`, cu `current` și `previous`; venv-ul este `/opt/pysh/venv`. Utilizatorul grafic este `pysh`, iar recuperarea administrativă folosește `pysh-admin` și cheia publică provisionată. Profilul serviciilor și preferințele rămân separat în `/home/pysh/.local/share/pi-smart-hub`; nu le publica și nu le înlocui la update.
+
+Unitatea `pysh.service` aparține utilizatorului, nu managerului de servicii de sistem. Din SSH administrativ, verificarea read-only este:
+
+```sh
+readlink -f /opt/pysh/current
+findmnt -no UUID /
+sudo -u pysh env XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus systemctl --user is-active pysh.service
+```
+
+O relansare autorizată folosește aceeași invocare cu `restart pysh.service`; închide și ferestrele media deținute de aplicație. Nu folosi aici scripturile desktop `activate-release.sh` sau `rollback.sh`: acestea operează în `~/pi-smart-hub` și asupra altei unități. Activările appliance documentate până acum folosesc scripturi administrative private, verificate pentru UUID, release curent, manifest, backup separat și preferințe, cu revenire la precedent dacă API-ul nu se restabilește. O procedură generică de update/rollback appliance publicată și repetată rămâne necesară pentru DEL-01.
+
+Înainte de schimbare, salvează runtime-ul precedent, manifestul sursă, preferințele și configurația afectată; verifică checksumul și conținutul lizibil pe PC. Păstrează originalul SD offline. O imagine CI verde sau un serviciu activ nu înlocuiește proba de boot, touch, audio și redare.
 
 ## Inventar și pregătire
 

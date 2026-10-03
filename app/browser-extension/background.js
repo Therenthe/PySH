@@ -12,6 +12,12 @@ function restoreFullscreen() {
   }
   return windowRecovery;
 }
+function forgetPort(port) {
+  // A delayed disconnect from a replaced host must not retract a newer keyboard.
+  if (keyboardPort !== port) return;
+  keyboardPort = undefined;
+  void restoreFullscreen();
+}
 function allowed(sender) {
   if (!sender || sender.id !== chrome.runtime.id || sender.frameId !== 0 ||
       !Number.isInteger(sender.tab?.windowId) || sender.tab.windowId < 0) return false;
@@ -29,8 +35,7 @@ function keyboard(action) {
       const connected = keyboardPort;
       connected.onDisconnect.addListener(() => {
         void chrome.runtime.lastError;
-        if (keyboardPort === connected) keyboardPort = undefined;
-        void restoreFullscreen();
+        forgetPort(connected);
       });
     }
     const port = keyboardPort;
@@ -46,11 +51,11 @@ function keyboard(action) {
     const reply = result => finish(result);
     const disconnected = () => {
       void chrome.runtime.lastError;
-      if (keyboardPort === port) keyboardPort = undefined;
+      forgetPort(port);
       finish({ ok: false, error: 'keyboard_unavailable' });
     };
     const timer = setTimeout(() => {
-      if (keyboardPort === port) keyboardPort = undefined;
+      forgetPort(port);
       finish({ ok: false, error: 'keyboard_unavailable' });
       port.disconnect();
     }, 3000);
@@ -59,7 +64,7 @@ function keyboard(action) {
     try {
       port.postMessage({ action });
     } catch {
-      if (keyboardPort === port) keyboardPort = undefined;
+      forgetPort(port);
       finish({ ok: false, error: 'keyboard_unavailable' });
       port.disconnect();
     }

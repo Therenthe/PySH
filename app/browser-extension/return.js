@@ -19,7 +19,7 @@
   hint.style.cssText = message.style.cssText = 'font:600 16px/20px system-ui;background:#f7f5ee;color:#18261e;max-width:320px;padding:8px 12px;border-radius:8px;display:block;';
   message.style.display = 'none';
   message.setAttribute('role', 'status');
-  let ro = false, keyboardShown = false, retractTimer, blurTimer;
+  let ro = false, keyboardShown = false, retractTimer, blurTimer, revealAfterFullscreen = false;
   function localize() {
     keyboard.textContent = keyboardShown ? (ro ? 'Închide tastatura' : 'Hide keyboard') : (ro ? 'Tastatură' : 'Keyboard');
     keyboard.title = keyboard.textContent;
@@ -69,14 +69,38 @@
     clearTimeout(blurTimer);
     blurTimer = setTimeout(() => { if (!editable(document.activeElement)) keyboardAction(false); }, 200);
   }, true);
-  function attach() {
-    const parent = document.fullscreenElement || document.documentElement;
-    if (parent && !parent.contains(host)) parent.append(host);
-  }
-  document.addEventListener('fullscreenchange', () => {
-    attach();
+  function leaveTyping() {
+    clearTimeout(blurTimer);
     keyboardAction(false);
     retract();
+  }
+  // Submission can retain focus; navigation does not guarantee a focusout event.
+  // Observe only lifecycle events, never the form or any typed value.
+  document.addEventListener('submit', leaveTyping, true);
+  window.addEventListener('pagehide', leaveTyping);
+  function attach() {
+    const parent = document.fullscreenElement || document.documentElement;
+    if (parent && host.parentElement !== parent) parent.append(host);
+  }
+  document.addEventListener('pointerup', event => {
+    // Replaced fullscreen elements do not paint appended controls. The same
+    // 48px edge gesture exits only HTML fullscreen, then reveals our controls;
+    // the browser window remains fullscreen and the official player is intact.
+    if (!['VIDEO', 'AUDIO', 'IFRAME', 'IMG', 'CANVAS', 'OBJECT', 'EMBED'].includes(document.fullscreenElement?.tagName) ||
+        event.clientX < window.innerWidth - 48 || event.clientX > window.innerWidth ||
+        event.clientY < 0 || event.clientY > 48) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    revealAfterFullscreen = true;
+    document.exitFullscreen().catch(() => { revealAfterFullscreen = false; });
+  }, true);
+  document.addEventListener('fullscreenchange', () => {
+    attach();
+    leaveTyping();
+    if (revealAfterFullscreen && !document.fullscreenElement) {
+      revealAfterFullscreen = false;
+      expose();
+    }
   });
   localize();
   attach();

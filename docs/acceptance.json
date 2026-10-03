@@ -1,5 +1,5 @@
 {
-  "candidate": "cfb129d12e91",
+  "candidate": "6012a2bda401",
   "preparation": [
     {
       "id": "PREP-01",
@@ -65,11 +65,11 @@
     {
       "id": "UX-01",
       "status": "OPEN",
-      "candidate": "ccb25a3bdf10",
+      "candidate": "6012a2bda401",
       "evidence": [
         "docs/evidence/service-keyboard-2026-10-03.md"
       ],
-      "reason": "Native keyboard and DRM integration follow-up pending; isolated EME passed after official component update, but full current-candidate tactile/account playback remains unverified."
+      "reason": "Native frameless keyboard/control hide/reveal and EME capability passed on installed runtime; full physical tactile/account playback/resolution and first-use DRM preparation remain open."
     },
     {
       "id": "UX-02",
@@ -219,11 +219,11 @@
     {
       "id": "EXT-02",
       "status": "OPEN",
-      "candidate": "ccb25a3bdf10",
+      "candidate": "6012a2bda401",
       "evidence": [
         "docs/evidence/service-keyboard-2026-10-03.md"
       ],
-      "reason": "Native keyboard and DRM integration follow-up pending; isolated EME passed after official component update, but full current-candidate tactile/account playback remains unverified."
+      "reason": "Native frameless keyboard/control hide/reveal and EME capability passed on installed runtime; full physical tactile/account playback/resolution and first-use DRM preparation remain open."
     },
     {
       "id": "EXT-03",

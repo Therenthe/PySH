@@ -182,15 +182,42 @@ test('failed window resize attempts fullscreen recovery without starting a host'
   assert.equal(h.ports.length, 0);
 });
 
+test('delayed replaced-port disconnect cannot retract a newer typing window', async () => {
+  const h = background(); h.request({ action: 'show' }); await tick();
+  const old = h.ports[0];
+  old.disconnect = () => { old.closed = true; }; // Chromium delivers disconnect later.
+  [...h.timers.values()][0](); await tick();
+  assert.deepEqual(h.updates.at(-1), { id: 7, state: 'fullscreen' });
+  h.request({ action: 'show' }); await tick();
+  const current = h.ports[1]; current.onMessage.emit({ ok: true }); await tick();
+  assert.deepEqual(h.updates.at(-1), { id: 7, state: 'maximized' });
+  const before = h.updates.length;
+  old.onDisconnect.emit(); await tick();
+  assert.equal(h.updates.length, before);
+  h.request({ action: 'hide' }); await tick();
+  assert.equal(h.ports.length, 2); // Old disconnect did not clear the active port.
+  current.onMessage.emit({ ok: true }); await tick();
+  assert.deepEqual(h.updates.at(-1), { id: 7, state: 'fullscreen' });
+});
+
 function content(language = 'en') {
-  const sent = [], nodes = [], listeners = new Map(), timers = new Map();
+  const sent = [], nodes = [], listeners = new Map(), windowListeners = new Map(), timers = new Map();
   let timerId = 0;
   function element(tag) {
     const e = { tag, tagName: tag.toUpperCase(), nodeType: 1, children: [], style: {}, events: new Map(),
-      append(...children) { this.children.push(...children); children.forEach(child => { child.parentElement = this; }); },
+      append(...children) {
+        for (const child of children) {
+          if (child.parentElement) child.parentElement.children = child.parentElement.children.filter(node => node !== child);
+          this.children.push(child); child.parentElement = this;
+        }
+      },
       contains: child => e === child || e.children.some(node => node.contains(child)),
       setAttribute(name, value) { this[name] = value; },
       getAttribute(name) { return this[name] ?? null; },
+      removeAttribute(name) { delete this[name]; },
+      matches(selector) { return selector === ':popover-open' && Boolean(this.popoverOpen); },
+      showPopover() { this.popoverOpen = true; },
+      hidePopover() { this.popoverOpen = false; },
       addEventListener(name, fn) { this.events.set(name, fn); },
       attachShadow(options) { assert.equal(options.mode, 'closed'); this.shadow = element('shadow'); return this.shadow; } };
     nodes.push(e); return e;
@@ -202,7 +229,8 @@ function content(language = 'en') {
     sent.push(copy(message)); if (message.action === 'status') callback({ ok: true, language });
     else if (callback) chrome.runtime.callback = callback;
   } } };
-  vm.runInNewContext(source('return.js'), { document, chrome,
+  const window = { innerWidth: 800, addEventListener: (name, fn) => windowListeners.set(name, fn) };
+  vm.runInNewContext(source('return.js'), { document, chrome, window,
     setTimeout: (fn, ms) => { timers.set(++timerId, { fn, ms }); return timerId; },
     clearTimeout: id => timers.delete(id) });
   const runTimers = maxDelay => {
@@ -210,7 +238,7 @@ function content(language = 'en') {
       if (timer.ms <= maxDelay && timers.has(id)) { timers.delete(id); timer.fn(); }
     }
   };
-  return { document, chrome, nodes, sent, listeners, timers, element, runTimers };
+  return { document, chrome, nodes, sent, listeners, windowListeners, timers, element, runTimers };
 }
 
 for (const language of ['en', 'ro']) test(`content controls localize ${language} and recover after unavailable keyboard`, () => {
@@ -314,4 +342,51 @@ test('immersive styles hide scrollbars while preserving page scrolling', () => {
   assert.match(css, /scrollbar-width\s*:\s*none/);
   assert.match(css, /::-webkit-scrollbar/);
   assert.doesNotMatch(css, /overflow(?:-x|-y)?\s*:\s*hidden/);
+});
+
+test('submit and pagehide close keyboard without reading form fields or event data', () => {
+  const h = content(), input = Object.assign(h.element('input'), { type: 'password' });
+  Object.defineProperty(input, 'value', { get() { throw new Error('Credential read'); } });
+  const event = new Proxy({}, { get() { throw new Error('Lifecycle event data read'); } });
+  h.listeners.get('focusin')({ target: input }); h.chrome.runtime.callback({ ok: true });
+  h.listeners.get('focusout')(); h.listeners.get('submit')(event);
+  assert.deepEqual(h.sent.at(-1), { action: 'hide' });
+  assert.ok([...h.timers.values()].every(timer => timer.ms !== 200));
+  h.chrome.runtime.callback({ ok: true });
+  const keyboard = h.nodes.find(e => e.tag === 'button' && e.textContent === 'Keyboard'); assert.ok(keyboard);
+  h.listeners.get('focusin')({ target: input }); h.chrome.runtime.callback({ ok: true });
+  h.windowListeners.get('pagehide')(event);
+  assert.deepEqual(h.sent.at(-1), { action: 'hide' });
+});
+
+test('replaced fullscreen edge exits only HTML fullscreen and reparents visible controls', async () => {
+  const h = content(), host = h.nodes.find(e => e.tag === 'pi-hub-return'), video = h.element('video');
+  h.document.documentElement.append(video);
+  h.document.fullscreenElement = video; h.listeners.get('fullscreenchange')();
+  assert.equal(host.parentElement, video);
+  let exits = 0, prevented = 0, stopped = 0;
+  h.document.exitFullscreen = async () => { exits++; };
+  const click = (x, y) => h.listeners.get('pointerup')({clientX:x, clientY:y,
+    preventDefault:()=>prevented++, stopImmediatePropagation:()=>stopped++});
+  click(400, 240); click(751, 20); click(780, 49); click(780, -1);
+  assert.equal(exits, 0); assert.equal(prevented, 0); assert.equal(stopped, 0);
+  click(780, 20); assert.equal(exits, 1); assert.equal(prevented, 1); assert.equal(stopped, 1);
+  h.document.fullscreenElement = null; h.listeners.get('fullscreenchange')(); await tick();
+  assert.equal(host.parentElement, h.document.documentElement);
+  assert.equal(video.contains(host), false);
+  const controls = host.shadow.children.find(e => e.tag === 'div');
+  assert.equal(controls.style.display, 'flex');
+  h.runTimers(4000); assert.equal(controls.style.display, 'none');
+});
+
+test('container fullscreen uses its overlay without exiting or swallowing page events', () => {
+  const h = content(), host = h.nodes.find(e => e.tag === 'pi-hub-return'), wrapper = h.element('div');
+  h.document.documentElement.append(wrapper);
+  h.document.fullscreenElement = wrapper; h.listeners.get('fullscreenchange')();
+  assert.equal(host.parentElement, wrapper);
+  h.listeners.get('pointerup')({clientX:780, clientY:20,
+    preventDefault(){throw new Error('Swallowed container event');},
+    stopImmediatePropagation(){throw new Error('Swallowed container event');}});
+  h.document.fullscreenElement = null; h.listeners.get('fullscreenchange')();
+  assert.equal(host.parentElement, h.document.documentElement);
 });
