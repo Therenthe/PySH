@@ -1,3 +1,4 @@
+import { MarqueeText } from './MarqueeText';
 import type { MouseEvent, ReactNode } from 'react';
 import './screensaver.css';
 
@@ -72,7 +73,7 @@ export function ScreenSaver({ visualizer, time, date, language, theme, player, c
     <div className="saver-clock"><time>{time}</time><p>{date}</p></div>
     <section className={`saver-playback ${title ? '' : 'saver-empty'}`} aria-label={radio ? t.radio : t.audio}>
       <div className="saver-source">{title ? (radio ? t.radio : t.audio) : t.nothing}</div>
-      {title && <><h1 title={title}>{title}</h1><p className="saver-metadata" title={detail}>{detail || '\u00a0'}</p></>}
+      {title && <><h1 title={title}><MarqueeText text={title} active={player.state==='playing'}/></h1><p className="saver-metadata" title={detail}><MarqueeText text={detail || '\u00a0'} active={player.state==='playing'}/></p></>}
       {visualizer&&<div className="saver-visualizer">{visualizer}</div>}
       <div className="saver-transport" onClick={event => event.stopPropagation()}>
         <button disabled={!canPrevious} aria-label={radio ? t.previousStation : t.previousTrack} onClick={event => invoke(event, onPrevious)}><TransportIcon action="previous" /><span>{radio ? t.previousStation : t.previousTrack}</span></button>

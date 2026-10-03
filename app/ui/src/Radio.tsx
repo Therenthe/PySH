@@ -1,3 +1,4 @@
+import { MarqueeText } from './MarqueeText';
 import { useState, type ReactNode } from 'react';
 import './radio.css';
 
@@ -103,8 +104,8 @@ export function Radio(props: RadioProps) {
         <div className="mini-player">
           <span className="eyebrow">{t('nowPlaying')}</span>
           <StationArtwork station={isRadio ? currentStation : null} name={isRadio ? stationName : ''} large />
-          <b className="radio-station-name">{title}</b>
-          {metadata && <span className="radio-track-name">{metadata}</span>}
+          <b className="radio-station-name"><MarqueeText text={title} active={playerState==='playing'}/></b>
+          {metadata && <span className="radio-track-name"><MarqueeText text={metadata} active={playerState==='playing'}/></span>}
           <small className={`state-text ${playerState}`} role="status">{status}</small>
           {visualizer && <div className="radio-visualizer">{visualizer}</div>}
           <div className="player-controls">

@@ -5,6 +5,7 @@ Updated: 2026-10-03 (Europe/Bucharest). GitHub is canonical: https://github.com/
 ## Installed application and device
 
 - Current physical SD application53c750ceab68, source912040b136ebc18bbe8d63d040d5ff7ab8feef99, all41 installed hashes independently verified. Previous5c174880ca5b retained. Backup/activation verified; active radio resumed and progressing. [Wi-Fi evidence](docs/evidence/wifi-profile-recovery-2026-10-03.md).
+- Metadata/navigation follow-up5db8b9b0bdb6:162 complete browser tests passed, build/typecheck passed; native activation pending.
 - Ambient Canvas/Radio candidate53c750ceab68 contains41 runtime files.154 browser tests and260 backend tests passed; native activation and real output-monitor proof passed (60 distinct PCM samples). [Redesign evidence](docs/evidence/ambient-canvas-2026-10-03.md).
 - Pi4/4GB, Debian13 ARM64, DSI800×480, rotation180 with identity touch calibration. Active SD root UUID4d41b42c-d61a-4052-8898-94191aaa18fc, expanded root15,685,627,904 bytes. Original SD has a complete verified PC backup; corrected USB is retained separately for recovery. [SD boot evidence](docs/evidence/sd-boot-2026-10-03.md).
 - Dedicated greetd/labwc session, user pysh.service, /opt/pysh/current and /opt/pysh/venv. API is loopback8765. Administrative SSH uses the provisioned key; secrets, profiles and backups stay outside Git. Desktop deployment scripts do not operate this appliance.
