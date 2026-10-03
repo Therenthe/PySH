@@ -143,7 +143,11 @@ def collect_processes(proc, group, main_pid, uid):
                 require(len(values) == 1 and len(values[0]) == 3 and values[0][2] == 'kB', 'invalid_pss')
                 pss = int(values[0][1])
                 require(pss >= 0, 'invalid_pss')
-            require(process_status(directory) == (state, began) and in_group(group_of(directory), group), 'process_changed_during_sample')
+            after_state, after_began = process_status(directory)
+            # Scheduling transitions such as sleeping→running do not change PID
+            # identity. PID reuse, zombie transitions and ownership changes do.
+            require(after_began == began and (after_state == 'Z') == (state == 'Z')
+                    and in_group(group_of(directory), group), 'process_changed_during_sample')
             rows.append({'pid':pid, 'state':state, 'pss_kib':pss, 'start_ticks':began})
         except (OSError, ValueError, Refused):
             unreadable.append(pid)

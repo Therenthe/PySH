@@ -232,3 +232,13 @@ def test_supervisor_resolves_current_alias_and_rejects_matching_extra_argument(c
     except OSError:
         pytest.skip('Real alias resolution is exercised by Linux CI')
     assert observer.supervisor_matches([b'python', os.fsencode(alias / 'scripts/run-hub.py')], target)
+
+@pytest.mark.parametrize('after,complete', [(('R',10),True), (('R',11),False), (('Z',10),False)])
+def test_normal_scheduler_transition_is_not_pid_reuse(tmp_path, monkeypatch, after, complete):
+    proc = tmp_path / 'proc'
+    process(proc,100)
+    statuses=iter([('S',10),after])
+    monkeypatch.setattr(observer,'process_status',lambda directory:next(statuses))
+    result=observer.collect_processes(proc,GROUP,100,UID)
+    assert result['memory_observation_complete'] is complete
+    assert result['unreadable_pids']==([] if complete else [100])
