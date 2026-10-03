@@ -26,6 +26,8 @@ Public appliance update/rollback is now natively exercised; all six application 
 
 Owner priority: complete flasher/SD installation first, then remaining functionality and major UI/UX improvement. Current owner assessment UI3.5/10, UX5/10 is unsatisfactory; visual/product acceptance remains OPEN. [Roadmap](docs/ROADMAP.md).
 
+SSH console flasher is now implemented: [procedure](docs/SSH_FLASHER.md). All18 focused tests passed; full local suite153 passed/22 Windows/Linux-platform skips, one existing deprecation warning. Linux loop/provisioning proof, SD identity/whole-card backup, physical write/readback and SD boot remain pending. No SD has been erased.
+
 ## Remaining release gates
 
 - Complete EN/RO physical touch, theme and error-state inventory on one current candidate; native preparation timeout/retry.

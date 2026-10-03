@@ -91,6 +91,8 @@ Conectorul GitHub poate publica modificările de pe PC. Când Pi nu are autentif
 
 ## Windows experimental writer
 
+Pentru scrierea unui SD inactiv din Raspberry pornit pe USB, folosește [flasherul SSH cu progres în consolă](SSH_FLASHER.md). Acesta păstrează o copie integrală verificată separat pe PC, refuză discul activ și verifică imaginea prin recitire înainte de provisioning. Nu folosi fluxul SSH pentru a rescrie SD-ul de pe care rulează Raspberry. Flash/readback, provisioning și primul boot sunt probe distincte.
+
 `scripts/flash-experimental-image.ps1` defaults to inspection. Require the explicit USB disk number, serial, byte size, uncompressed image/hash, signed official Imager path, public key and an existing private log directory outside tracked files. No target defaults exist. The owner must explicitly select/authorize erasure before `-Write`; administrator access is required. Default Imager read-back verification remains enabled. Sources/logs cannot be on the target or traversed through reparse points; system disks and directory-mounted targets are rejected.
 
 On success the writer identifies the verified FAT boot partition by offset/size, copies only the public recovery key, flushes and checks its hash. Use Windows safe removal before disconnecting the drive. Preserve the original SD card and test USB boot separately. A successful write does not certify boot, recovery, root expansion or product acceptance. Private logs and keys must not be committed.
