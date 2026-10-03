@@ -50,6 +50,8 @@ def test_route_selection_ignores_loopback_and_tracks_profile_uuid(monkeypatch, r
     assert result["connection"] == ("wifi-route" if primary == "/active/wifi" else "same-name")
     assert [d["interface"] for d in result["devices"]] == ["eth0"]
     assert {p["id"]: p["active"] for p in result["saved"]} == {"wired": True, "unused": False}
+    wifi = next(p for p in result["saved"] if p["id"] == "unused")
+    assert wifi["ssid"] is None and wifi["security"] == "unknown"
 
 
 def test_loopback_alone_is_not_a_network_connection(monkeypatch):
@@ -72,3 +74,31 @@ def test_loopback_alone_is_not_a_network_connection(monkeypatch):
     assert result["state"] == "disconnected"
     assert result["connection"] is None
     assert result["saved"] == []
+
+
+@pytest.mark.parametrize("secured", [False, True])
+def test_saved_wifi_exposes_ssid_and_security_without_credentials(monkeypatch, secured):
+    device = Device()
+    device._linux, device._bus = True, object()
+    profile = {"connection": {"id":"Different display name","uuid":"wifi-id","type":"802-11-wireless"},
+               "802-11-wireless": {"ssid":list("Café".encode("utf-8"))}}
+    if secured:
+        profile["802-11-wireless-security"] = {"key-mgmt":"sae","psk":"must-not-leak"}
+    async def get_state(): return 20
+    async def get_primary_connection(): return "/"
+    async def get_active_connections(): return []
+    async def call_list_connections(): return ["/saved/wifi"]
+    async def call_get_devices(): return []
+    async def call_get_settings(): return profile
+    async def proxy(service, path, interface):
+        if path == "/saved/wifi":
+            return SimpleNamespace(call_get_settings=call_get_settings)
+        return SimpleNamespace(get_state=get_state, get_primary_connection=get_primary_connection,
+                               get_active_connections=get_active_connections,
+                               call_get_devices=call_get_devices, call_list_connections=call_list_connections)
+    monkeypatch.setattr(device, "_proxy", proxy)
+    result = asyncio.run(device.network_status())
+    assert result["saved"] == [{"id":"wifi-id","name":"Different display name","active":False,
+                                "type":"802-11-wireless","ssid":"Café",
+                                "security":"secured" if secured else "open"}]
+    assert "must-not-leak" not in repr(result)

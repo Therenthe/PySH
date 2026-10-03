@@ -57,6 +57,7 @@ class BTReply(StrictBody):
 class NetworkConnect(StrictBody):
     ssid: str = Field(min_length=1, max_length=32)
     password: str = Field(default="", max_length=128, repr=False)
+    profile_id: str | None = Field(default=None, pattern=r"^[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$")
 
 
 class NetworkForget(StrictBody):
@@ -353,7 +354,7 @@ async def network_scan(request: Request):
 
 @app.post("/api/network/connect")
 async def network_connect(request: Request, body: NetworkConnect):
-    result = await request.app.state.hub.device.network_connect(body.ssid, body.password)
+    result = await request.app.state.hub.device.network_connect(body.ssid, body.password, body.profile_id)
     await request.app.state.hub.refresh_device()
     return result
 

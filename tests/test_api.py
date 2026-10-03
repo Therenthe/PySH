@@ -90,6 +90,23 @@ def test_validation_never_reflects_submitted_credentials(client):
     assert response.json() == {'error':'invalid_request'}
 
 
+def test_network_connect_forwards_explicit_uuid_and_redacts_invalid_request(client):
+    handler = AsyncMock(return_value={'connected':True})
+    app.state.hub.device.network_connect = handler
+    app.state.hub.refresh_device = AsyncMock()
+    headers = {'X-Hub-Token':app.state.hub.token}
+    profile = '12345678-1234-1234-1234-123456789abc'
+    response = client.post('/api/network/connect', headers=headers,
+                           json={'ssid':'Hub','password':'private-credential','profile_id':profile})
+    assert response.status_code == 200
+    handler.assert_awaited_once_with('Hub','private-credential',profile)
+    response = client.post('/api/network/connect', headers=headers,
+                           json={'ssid':'Hub','password':'private-credential','profile_id':'/saved/path'})
+    assert response.status_code == 422
+    assert response.json() == {'error':'invalid_request'}
+    assert 'private-credential' not in response.text
+
+
 def test_unknown_preferences_rejected_without_persistence(client):
     token = client.get('/api/session').json()['token']
     response = client.patch('/api/preferences', headers={'X-Hub-Token':token}, json={'command':'shell'})

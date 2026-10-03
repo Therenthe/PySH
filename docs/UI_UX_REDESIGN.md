@@ -9,6 +9,6 @@ Proprietarul evaluează interfața actuală la3,5/10 și experiența la5/10. Fla
 5. Mișcare cu rol: feedback tactil, tranziții scurte și progres real. Fără animații perpetue costisitoare; mod redus, măsurători pe Pi și accesibilitate.
 6. Stiluri configurabile de vizualizare audio. Pentru vizualizări de undă/nivel, sursa este ieșirea de redare reală, exclusiv locală; nu microfonul și nu valori inventate. Animațiile ambientale sunt distincte. Verifică volum zero, mute, pause, schimbarea ieșirii și impactul asupra redării/performance.
 
-Defect funcțional separat încă deschis: actualizarea parolei Wi-Fi creează momentan un profil nou. Fluxul final trebuie să selecteze profilul salvat explicit și să păstreze conexiunea/credențialele precedente dacă activarea eșuează. Nu șterge profiluri automat pentru a simula succesul.
+Actualizarea parolei Wi-Fi este implementată prin selectarea explicită a profilului salvat și restaurare înainte de rollback, fără ștergerea originalului. Testele backend/browser trec; verificarea completă pe Wi-Fi real rămâne OPEN deoarece noul SD nu are profiluri salvate. [Dovadă și limite](evidence/wifi-profile-recovery-2026-10-03.md).
 
 Acceptarea se bazează pe capturi native și folosire tactilă, nu doar pe teste simulate. Toate30 de criterii rămân OPEN până la dovezile complete pe candidatul final.

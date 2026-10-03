@@ -45,3 +45,7 @@ New SD Bluetooth audio is now observed: owner confirmed the local tone and is li
 ## UI polish in progress
 
 Candidateadb2f3a42a42 is packaged and locally verified:114 browser,164 backend and26 extension tests passed;3 weather mapping tests, TypeScript, build and structure passed. Home duplication/source/weather icons, hidden bars with real touch scrolling and screensaver transport are implemented. Native activation passed with radio resumed and compositor Home inspected. The forecast/attribution correction ebd9af386290 is installed;16 affected browser checks passed, all40 native hashes passed, no pending update and advancing radio playback verified in4 samples; audio visualizers and full UI acceptance remain OPEN. [Evidence](docs/evidence/ui-polish-2026-10-03.md).
+
+## Saved Wi-Fi profile recovery
+
+Candidate5c174880ca5b fixes explicit saved-profile credential updates, recovery errors and touch profile selection/Forget confirmation.200 backend and122 browser tests passed;12 network tests rerun after a translation correction. Native preflight: NetworkManager1.52.1, LAN active, zero saved Wi-Fi profiles. Activation/validation pending; full physical Wi-Fi acceptance remains OPEN. [Evidence](docs/evidence/wifi-profile-recovery-2026-10-03.md).
