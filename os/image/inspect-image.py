@@ -58,7 +58,9 @@ for name in ['pysh.service']:
 for name, installed in {
     'pysh-session':'/usr/local/bin/pysh-session',
     'labwc-autostart':'/etc/xdg/labwc/autostart',
+    'labwc-rc.xml':'/etc/xdg/labwc/rc.xml',
     'greetd.toml':'/etc/greetd/config.toml',
+    'greetd-tty.conf':'/etc/systemd/system/greetd.service.d/pysh-tty.conf',
     'pysh-provision-recovery':'/usr/local/sbin/pysh-provision-recovery',
     'pysh-recovery.service':'/etc/systemd/system/pysh-recovery.service',
     'pysh-growfs.py':'/usr/local/sbin/pysh-growfs',

@@ -1,5 +1,9 @@
 #!/bin/sh
 set -eu
+# Target DSI panel is mounted upside down; wlroots maps native touch through this output transform.
+if wlr-randr | grep -q '^DSI-1 '; then
+    wlr-randr --output DSI-1 --transform 180
+fi
 systemctl --user import-environment DISPLAY WAYLAND_DISPLAY XDG_RUNTIME_DIR DBUS_SESSION_BUS_ADDRESS XDG_SESSION_TYPE
 systemctl --user start pipewire.service pipewire-pulse.service wireplumber.service
 systemctl --user start pysh.service

@@ -31,7 +31,9 @@ chroot "$target" /opt/pysh/venv/bin/python -c "import sys;sys.path.insert(0,'/op
 install -d "$target/etc/xdg/labwc" "$target/etc/greetd" "$target/usr/local/bin"
 install -m 0755 "$source_root/assets/pysh-session" "$target/usr/local/bin/pysh-session"
 install -m 0755 "$source_root/assets/labwc-autostart" "$target/etc/xdg/labwc/autostart"
+install -m 0644 "$source_root/assets/labwc-rc.xml" "$target/etc/xdg/labwc/rc.xml"
 install -m 0644 "$source_root/assets/greetd.toml" "$target/etc/greetd/config.toml"
+install -D -m 0644 "$source_root/assets/greetd-tty.conf" "$target/etc/systemd/system/greetd.service.d/pysh-tty.conf"
 install -D -m 0644 "$source_root/assets/pysh.service" "$target/etc/systemd/user/pysh.service"
 install -D -m 0644 "$source_root/assets/journald.conf" "$target/etc/systemd/journald.conf.d/pysh.conf"
 install -D -m 0755 "$source_root/assets/pysh-provision-recovery" "$target/usr/local/sbin/pysh-provision-recovery"
@@ -52,4 +54,4 @@ printf 'AllowUsers pysh-admin\nAuthenticationMethods publickey\nPasswordAuthenti
 chroot "$target" visudo -c
 chroot "$target" sh -c 'test -x /usr/sbin/agreety && test -x /usr/bin/labwc && test -x /usr/bin/chromium && test -x /usr/bin/mpv'
 
-chroot "$target" systemd-analyze verify pysh-growfs.service pysh-recovery.service
+chroot "$target" systemd-analyze verify greetd.service pysh-growfs.service pysh-recovery.service

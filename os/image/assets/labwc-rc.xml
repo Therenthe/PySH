@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<labwc_config>
+  <touch deviceName="10-0038 generic ft5x06 (00)" mapToOutput="DSI-1" mouseEmulation="no" />
+  <libinput>
+    <device category="10-0038 generic ft5x06 (00)">
+      <calibrationMatrix>1 0 0 0 1 0</calibrationMatrix>
+    </device>
+  </libinput>
+</labwc_config>
