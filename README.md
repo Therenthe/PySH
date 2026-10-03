@@ -11,6 +11,6 @@ Hub tactil EN/RO pentru Raspberry Pi 4 (4 GB), LCD DSI 7″, 800 × 480: ceas, v
 
 Cod: `app/ui/` și `app/browser-extension/`; servicii: `services/backend/`; integrare sistem: `os/`; particularități placă: `hardware/`; automatizare: `scripts/`; teste: `tests/`.
 
-GitHub devine sursa canonică după primul push verificat. Copiile locale și cea de pe Pi trebuie să indice același repository și commit. Fișierele sincronizate din ChatGPT Project sunt referințe, nu directorul de dezvoltare.
+GitHub este sursa canonică. Copiile de dezvoltare și artefactele instalate își păstrează explicit commit-ul și build-ul; un runtime instalat nu este automat identic cu ultimul HEAD al documentației. Fișierele sincronizate din ChatGPT Project sunt referințe, nu directorul de dezvoltare.
 
 Codul proiectului nu are încă o licență de redistribuire aleasă. Licențele componentelor terțe, inclusiv fonturile, sunt păstrate.

@@ -256,9 +256,11 @@
     {
       "id": "REL-01",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "934d0d338e66",
+      "evidence": [
+        "docs/evidence/appliance-tools-2026-10-03.md"
+      ],
+      "reason": "Partial private observation40 samples/1175.801s, zero observation errors; full eight-hour telemetry plus periodic physical touch/media evidence still required. Public reproducible observer locally tested, Linux/native execution pending."
     },
     {
       "id": "REL-02",
@@ -298,16 +300,20 @@
     {
       "id": "DEL-01",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "934d0d338e66",
+      "evidence": [
+        "docs/evidence/appliance-tools-2026-10-03.md"
+      ],
+      "reason": "Public guarded appliance update/rollback tool locally regression-tested. LinuxCI and native update/rollback/clean-install/backup-restore proofs remain required."
     },
     {
       "id": "DEL-02",
       "status": "OPEN",
-      "candidate": null,
-      "evidence": [],
-      "reason": "Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed."
+      "candidate": "934d0d338e66",
+      "evidence": [
+        "docs/evidence/appliance-tools-2026-10-03.md"
+      ],
+      "reason": "Dependency inventory569 OS packages and runtime notices recorded. New40-file notice package4a133daa7278 locally verified, not installed/image-verified; final licensing/source review and release/backup/restore evidence remain OPEN."
     }
   ]
 }

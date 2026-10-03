@@ -1,5 +1,7 @@
 # Dezvoltare
 
+Procedurile appliance sunt în [OPERATIONS](OPERATIONS.md). `scripts/observe-stability.py --output <director-nou-privat>` se rulează pe Pi ca utilizatorul `pysh`, în sesiunea user systemd activă. Implicit observă opt ore la intervale de30s, fără restart sau operații API de modificare. Identitatea runtime-ului este verificată, procesele sunt limitate la cgroup-ul aplicației, iar răspunsul API este redus la indicatori booleni fără conturi/preferințe. Datele rămân private; nu publica loguri brute. Schimbarea candidatului invalidează observația, iar completarea telemetriei nu acordă automat PASS pentru stabilitatea tactilă/media REL-01.
+
 Din rădăcina repository-ului: Node 24.19.0 și pnpm 11.19.0 (versiunile mediului verificat), Python 3.12 sau 3.13. Dependențele sunt fixate în lockfile-uri. Hardware-ul Linux nu este simulat ca funcțional pe Windows.
 
 ```sh
