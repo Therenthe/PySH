@@ -31,6 +31,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: node --test tests/extension-keyboard.test.mjs
+      - run: node tests/weather-icon.test.mjs
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:ui
       - uses: actions/upload-artifact@v4

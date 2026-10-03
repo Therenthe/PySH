@@ -249,6 +249,7 @@ class Player:
             "state": state,
             "url": self._url,
             "title": self._title,
+            "station_name": self._title if self._kind == "radio" else None,
             "kind": self._kind,
             "position": None,
             "duration": None,

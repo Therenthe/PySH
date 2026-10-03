@@ -66,6 +66,43 @@ async function capture(page:Page, info:TestInfo, name:string, defects:string[]) 
 }
 async function closeModal(page:Page, ro:boolean){await page.locator('.modal-card header').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();}
 
+for(const theme of ['ink','night'] as const){
+ test(`Home separates radio source and song without duplicated transport ${theme}`,async({page},info)=>{
+  const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
+  f.state.player={state:'playing',kind:'radio',station_name:'Radio București',title:'An artist — A very long song title '.repeat(6),url:'https://example.com/test.mp3'};
+  await page.goto('/');await expect(page.locator('.playback-source')).toHaveText('Radio București');
+  await expect(page.locator('.playback-metadata')).toHaveText(f.state.player.title);await expect(page.locator('.now-bar,.top-clock')).toHaveCount(0);
+  await expect(page.locator('.weather-symbol svg')).toHaveAttribute('data-weather-condition','clear');
+  const defects:string[]=[];await capture(page,info,'home-polished-radio',defects);
+  const overflow=await page.locator('.home-v2,.home-playback').evaluateAll(elements=>elements.some(el=>el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1));
+  expect(overflow).toBe(false);expect(defects).toEqual([]);
+ });
+ test(`screensaver station controls preserve the screen and Return wakes ${theme}`,async({page},info)=>{
+  const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
+  f.state.preferences.screensaverMinutes=1;f.state.preferences.favorites=[{name:'Radio One',url:'https://example.com/one'},{name:'Radio Two',url:'https://example.com/two'}];
+  f.state.player={state:'playing',kind:'radio',station_name:'Radio One',title:'Artist — Song',url:'https://example.com/one'};
+  await page.clock.install();await page.goto('/');await expect(page.locator('.home-v2')).toBeVisible();await page.clock.fastForward(61000);
+  const saver=page.locator('.pysh-screensaver');await expect(saver).toBeVisible();await expect(saver.locator('h1')).toHaveText('Radio One');
+  const defects:string[]=[];await capture(page,info,'screensaver-radio',defects);expect(defects).toEqual([]);
+  await saver.getByRole('button',{name:ro?'Pauză':'Pause',exact:true}).tap();await expect(saver).toBeVisible();await expect(saver.getByRole('button',{name:ro?'Redă':'Play',exact:true})).toBeVisible();
+  await saver.getByRole('button',{name:ro?'Postul următor':'Next station',exact:true}).tap();
+  expect(f.actions.filter(a=>a.path==='/api/play').at(-1)?.body).toEqual({source:'radio',url:'https://example.com/two',title:'Radio Two'});await expect(saver).toBeVisible();
+  f.state.audio.ready=false;await page.clock.runFor(2600);await expect(saver.getByRole('button',{name:ro?'Postul anterior':'Previous station',exact:true})).toBeDisabled();
+  await saver.getByRole('button',{name:ro?'Revino în hub':'Back to hub',exact:true}).tap();await expect(saver).toHaveCount(0);
+ });
+ test(`hidden scrollbars retain real touch scrolling ${theme}`,async({page},info)=>{
+  const ro=info.project.name==='touch-ro';await fixture(page,ro?'ro':'en',theme);
+  await page.route('**/api/radio?**',route=>route.fulfill({json:{stations:Array.from({length:30},(_,i)=>({name:`Station ${i}`,stationuuid:`station-${i}`,url:`https://example.com/${i}`}))}}));
+  await page.goto('/');await page.locator('.main-nav button').nth(1).tap();const list=page.locator('.scroll-list');await expect(list.locator('.station-row')).toHaveCount(30);
+  expect(await list.evaluate(el=>getComputedStyle(el).scrollbarWidth)).toBe('none');
+  expect(await list.evaluate(el=>getComputedStyle(el,'::-webkit-scrollbar').display)).toBe('none');
+  const r=(await list.boundingBox())!,cdp=await page.context().newCDPSession(page),x=r.x+r.width/2,y=r.y+r.height-20;
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
+  for(let i=1;i<=8;i++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y:y-i*15}]});
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await expect.poll(()=>list.evaluate(el=>el.scrollTop)).toBeGreaterThan(30);
+ });
+}
+
 for(const theme of ['ink','night'] as const) {
   test(`populated Home forecast fits without scrolling ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
@@ -121,10 +158,10 @@ for(const theme of ['ink','night'] as const) {
   });
   test(`pairing prompt wakes and suspends idle screensaver ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);f.state.preferences.screensaverMinutes=1;await page.clock.install();
-    await page.goto('/');await expect(page.locator('.home-layout')).toBeVisible();await page.clock.fastForward(61000);await expect(page.locator('.screensaver')).toBeVisible();
+    await page.goto('/');await expect(page.locator('.home-layout')).toBeVisible();await page.clock.fastForward(61000);await expect(page.locator('.pysh-screensaver')).toBeVisible();
     f.state.bluetooth.prompts=[{id:'wake-prompt',name:'Test speaker',kind:'confirmation',value:'123456'}];await page.clock.runFor(2600);
-    await expect(page.locator('.pair-code')).toBeVisible();await expect(page.locator('.screensaver')).toHaveCount(0);await page.clock.fastForward(120000);await expect(page.locator('.screensaver')).toHaveCount(0);
-    await page.locator('.dialog-actions button').first().tap();await expect(page.locator('.pair-code')).toHaveCount(0);await page.clock.fastForward(61000);await expect(page.locator('.screensaver')).toBeVisible();expect(f.unexpected).toEqual([]);
+    await expect(page.locator('.pair-code')).toBeVisible();await expect(page.locator('.pysh-screensaver')).toHaveCount(0);await page.clock.fastForward(120000);await expect(page.locator('.pysh-screensaver')).toHaveCount(0);
+    await page.locator('.dialog-actions button').first().tap();await expect(page.locator('.pair-code')).toHaveCount(0);await page.clock.fastForward(61000);await expect(page.locator('.pysh-screensaver')).toBeVisible();expect(f.unexpected).toEqual([]);
   });
   test(`city search explains empty results and ignores late old results ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);let release!:()=>void,oldDone=false;const gate=new Promise<void>(resolve=>release=resolve);
@@ -145,18 +182,18 @@ for(const theme of ['ink','night'] as const) {
     const slider=bar.getByRole('slider',{name:ro?'Progres':'Progress',exact:true}),rect=await slider.boundingBox();await slider.tap({position:{x:rect!.width*.5,y:rect!.height*.5}});
     await expect.poll(()=>f.actions.filter(a=>a.path==='/api/player'&&a.body.action==='seek').at(-1)?.body.value).toBeGreaterThan(55);expect(f.state.player.position).toBeLessThan(65);await expect(bar.locator('.audio-time')).toContainText('/ 2:00');
     await bar.getByRole('button',{name:ro?'Redă':'Play',exact:true}).tap();await next.tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('next');
-    f.state.player.canPrevious=true;f.state.player.canNext=false;await page.reload();await expect(previous).toBeEnabled();await expect(next).toBeDisabled();await previous.tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('previous');
+    f.state.player.canPrevious=true;f.state.player.canNext=false;await page.reload();await page.locator('.main-nav button').nth(2).tap();await expect(previous).toBeEnabled();await expect(next).toBeDisabled();await previous.tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('previous');
     await capture(page,info,'local-audio-transport',defects);await bar.getByRole('button',{name:ro?'Oprește':'Stop',exact:true}).tap();await expect(bar).toHaveCount(0);expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
   });
   test(`ended or failed local audio retains replay and queue controls ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
     for(const state of ['ended','error']){
       f.state.player={state,kind:'audio',title:'Completed local track',url:'/test/audio.mp3',duration:120,position:120,canPrevious:true,canNext:true};
-      await page.goto('/');const bar=page.locator('.local-audio-bar');await expect(bar).toBeVisible();await expect(page.locator('.home-focus .player-state')).toHaveText(ro?'Pregătit':'Ready');
+      await page.goto('/');await expect(page.locator('.home-focus .player-state')).toHaveText(state==='error'?(ro?'Problemă de redare':'Playback problem'):(ro?'Redare încheiată':'Playback finished'));await page.locator('.main-nav button').nth(2).tap();const bar=page.locator('.local-audio-bar');await expect(bar).toBeVisible();
       await expect(bar.locator('.audio-time')).toHaveText(state==='error'?(ro?'Problemă de redare':'Playback problem'):(ro?'Redare încheiată':'Playback finished'));await expect(bar.getByRole('slider')).toBeDisabled();
       await expect(bar.getByRole('button',{name:ro?'Următor':'Next',exact:true})).toBeEnabled();await capture(page,info,`local-audio-${state}`,defects);
       await bar.getByRole('button',{name:ro?'Redă':'Play',exact:true}).tap();expect(f.actions.filter(a=>a.path==='/api/play').at(-1)?.body).toEqual({source:'local',path:'/test/audio.mp3',title:'Completed local track'});await expect(bar.getByRole('button',{name:ro?'Pauză':'Pause',exact:true})).toBeVisible();
-      f.state.player={state,kind:'audio',title:'Completed local track',url:'/test/audio.mp3',canPrevious:true,canNext:true};await page.reload();await bar.getByRole('button',{name:ro?'Următor':'Next',exact:true}).tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('next');
+      f.state.player={state,kind:'audio',title:'Completed local track',url:'/test/audio.mp3',canPrevious:true,canNext:true};await page.reload();await page.locator('.main-nav button').nth(2).tap();await bar.getByRole('button',{name:ro?'Următor':'Next',exact:true}).tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('next');
     }
     expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
   });
@@ -165,7 +202,7 @@ for(const theme of ['ink','night'] as const) {
     await page.goto('/');await page.locator('.main-nav button').nth(1).tap();const controls=page.locator('.radio-side .player-controls'),play=()=>controls.getByRole('button',{name:ro?'Redă':'Play',exact:true});
     await expect(play()).toBeDisabled();await expect(controls.getByRole('button',{name:ro?'Anterior':'Previous',exact:true})).toHaveCount(0);await expect(controls.getByRole('button',{name:ro?'Oprește':'Stop',exact:true})).toBeDisabled();
     await page.locator('.station-main').tap();await controls.getByRole('button',{name:ro?'Oprește':'Stop',exact:true}).tap();expect(f.state.player.url).toBe('');await expect(play()).toBeEnabled();await play().tap();expect(f.actions.filter(a=>a.path==='/api/play')).toHaveLength(2);expect(f.actions.filter(a=>a.path==='/api/play').at(-1)?.body).toEqual({source:'radio',url:'https://example.com/test.mp3',title:'Test station'});
-    for(const state of ['error','ended']){f.state.player={state,kind:'radio',url:'https://example.com/failing.mp3',title:'Current failed station'};await page.reload();await page.locator('.main-nav button').nth(1).tap();await play().tap();expect(f.actions.filter(a=>a.path==='/api/play').at(-1)?.body).toEqual({source:'radio',url:'https://example.com/failing.mp3',title:'Current failed station'});}
+    for(const state of ['error','ended']){f.state.player={state,kind:'radio',url:'https://example.com/failing.mp3',title:'Current failed station',station_name:'Current failed station'};await page.reload();await page.locator('.main-nav button').nth(1).tap();await play().tap();expect(f.actions.filter(a=>a.path==='/api/play').at(-1)?.body).toEqual({source:'radio',url:'https://example.com/failing.mp3',title:'Current failed station'});}
     for(const state of ['buffering','connecting']){f.state.player={state,kind:'radio',url:'https://example.com/test.mp3',title:'Test station'};await page.reload();await page.locator('.main-nav button').nth(1).tap();await controls.getByRole('button',{name:ro?'Pauză':'Pause',exact:true}).tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('pause');await expect(play()).toBeEnabled();}
     await capture(page,info,'radio-transport-recovery',defects);expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
   });
@@ -247,7 +284,7 @@ for(const theme of ['ink','night'] as const) {
     await capture(page,info,'service-mode',defects);
     f.backendDown=true;await expect(page.locator('.error-strip')).toBeVisible({timeout:6000});await capture(page,info,'service-backend-error',defects);
     f.backendDown=false;await page.locator('.error-strip button').tap();await expect(page.locator('.error-strip')).toHaveCount(0);
-    await page.clock.fastForward(120000);await expect(page.locator('.service-screen')).toBeVisible();await page.getByRole('button',{name:ro?'Revino în hub':'Return to hub',exact:true}).tap();await expect(page.locator('.screensaver')).toHaveCount(0);
+    await page.clock.fastForward(120000);await expect(page.locator('.service-screen')).toBeVisible();await page.getByRole('button',{name:ro?'Revino în hub':'Return to hub',exact:true}).tap();await expect(page.locator('.pysh-screensaver')).toHaveCount(0);
     await expect(page.locator('.service-screen')).toHaveCount(0);await expect(page.locator('.main-nav')).toBeVisible();
     expect(JSON.stringify(f.state.preferences)).toBe(prefs);expect(f.unexpected).toEqual([]);expect(defects).toEqual([]);
   });

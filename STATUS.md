@@ -4,8 +4,8 @@ Updated: 2026-10-03 (Europe/Bucharest). GitHub is canonical: https://github.com/
 
 ## Installed application and device
 
-- Application4a133daa7278, source dda57f080de2f9d03eae01947594a159fae887f6; all40 installed file hashes verified. Previous934d0d338e66 retained. Public update→rollback→return succeeded, each with separately verified PC backup; no pending transaction. Preferences, display/touch configuration and native host unchanged. [Native procedure evidence](docs/evidence/appliance-update-and-sd-image-2026-10-03.md).
-- Corrected physical USB image source d61ec8d, original runtimea32c29065d6d. Pi4/4GB, Debian13 ARM64, DSI800×480, rotation180 with identity touch calibration. Root UUID5610e056-221b-46c9-8046-65c9adb6a5c1. USB is now retained as recovery; original SD contents have a full separately verified private PC backup.
+- Current physical SD application5aef8c81c90b, source803b09734eb4171d35942ba923704e71e29529fe, all40 files checked by the public update tool. Previousc8ac9c709acb retained. Separately verified PC backup and activation passed; radio resumed. [Functional evidence](docs/evidence/functional-recovery-2026-10-03.md).
+- Pi4/4GB, Debian13 ARM64, DSI800×480, rotation180 with identity touch calibration. Active SD root UUID4d41b42c-d61a-4052-8898-94191aaa18fc, expanded root15,685,627,904 bytes. Original SD has a complete verified PC backup; corrected USB is retained separately for recovery. [SD boot evidence](docs/evidence/sd-boot-2026-10-03.md).
 - Dedicated greetd/labwc session, user pysh.service, /opt/pysh/current and /opt/pysh/venv. API is loopback8765. Administrative SSH uses the provisioned key; secrets, profiles and backups stay outside Git. Desktop deployment scripts do not operate this appliance.
 
 ## Current evidence
@@ -41,3 +41,7 @@ New SD Bluetooth audio is now observed: owner confirmed the local tone and is li
 - Public appliance update/rollback, clean successor-image installation, backup/restore, dependency/license deliverables and full requirement-by-requirement audit.
 
 [Roadmap](docs/ROADMAP.md), [operations](docs/OPERATIONS.md), [Definition of Done](docs/DEFINITION_OF_DONE.md). The detailed prior ledger is preserved in [historical status](docs/evidence/status-history-through-2026-10-03.md); it is not a current-state checklist.
+
+## UI polish in progress
+
+Candidateadb2f3a42a42 is packaged and locally verified:114 browser,164 backend and26 extension tests passed;3 weather mapping tests, TypeScript, build and structure passed. Home duplication/source/weather icons, hidden bars with real touch scrolling and screensaver transport are implemented. Native activation pending; audio visualizers and full UI acceptance remain OPEN. [Evidence](docs/evidence/ui-polish-2026-10-03.md).
