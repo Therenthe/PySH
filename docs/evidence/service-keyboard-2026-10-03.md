@@ -1,0 +1,15 @@
+# External-service keyboard repair
+
+The owner could not authenticate in Netflix: the dedicated browser had no system keyboard. On the real USB-booted PySH OS, APT simulation and installation added only `wvkbd 0.15-1` and Raspberry Pi's `libwidevinecdm0 4.10.2662.3+1`: no upgrades or removals. The owner confirmed the keyboard appeared and accepted typing in the Netflix form. No account fields or pressed keys were inspected or recorded.
+
+Durable repair adds an EN/RO Keyboard/TastaturÃ„Æ’ control beside the return control in the external-service browser. Chromium native messaging reaches a narrowly scoped user-level host: only status/show/hide, one fixed extension origin, a bounded JSON protocol, no arbitrary commands or typed text. The host owns and reaps the keyboard on browser disconnect. The API's loopback, origin and mutation protections remain unchanged. Image provisioning installs the keyboard, Widevine and host registration; image inspection checks packages and extension identity. Keyboard geometry is 240 px high at native 800Ãƒâ€”480, with browser content remaining scrollable.
+
+References: [Chrome native messaging](https://developer.chrome.com/docs/extensions/develop/concepts/native-messaging), [stable manifest key](https://developer.chrome.com/docs/extensions/reference/manifest/key), [wvkbd](https://github.com/jjsullivan5196/wvkbd). Installing Widevine does not prove Netflix authentication, DRM playback or available resolution; EXT-02 remains OPEN pending the actual account test.
+
+Prepared packageccb25a3bdf10 contains35 allowlisted files, with an executable LF-only native host. Python86 passed, six Linux-only skips; 17 extension regressions passed; TypeScript/Vite and repository checks passed. Device activation and native extension-path verification follow publication. This is not complete product acceptance.
+
+Owner requested immersive playback: external browser now starts fullscreen; PySH controls retract after four seconds and upon document fullscreen, with an invisible48Ã—48 top-right reveal target. Initial EN/RO hint explains access. Keyboard has explicit hide, editable-field focus shows it, leaving editable fields hides it, and fullscreen hides it. Only field tag/type/editability metadata is checked; no values, cookies or account data. Extension CSS hides scrollbars without disabling touch scrolling or modifying the official player.
+
+The requested actual-panel screenshot showed Netflix M7701-1003 before browser relaunch; screenshot is private. [Netflix guidance](https://help.netflix.com/en/node/27451) identifies protected-content settings/update and notes Chromium-based browsers are not supported. We do not claim certified compatibility. Widevine installation and EME capability alone cannot establish account playback.
+
+All76 UI regressions passed. Staged35 new runtime hashes verified. Separate PC backup SHA256f3199f72914dcbc941cd91e912c4970ea03ee08421500bc56bc17736cc826c15:36 regular members readable, all33 previous runtime hashes checked. Activation still pending at this publication.

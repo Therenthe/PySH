@@ -4,11 +4,9 @@ Updated: 2026-10-03 (Europe/Bucharest). GitHub is canonical: https://github.com/
 
 ## Current candidate
 
-Fresh corrected PySH OS runtime `a32c29065d6d`, image source `d61ec8d23c4c025167bd009a67e9cfcab4193a72`, is physically booted from the verified USB. Recovery SSH, automatic root growth, all33 installed runtime hashes, native800×480/rotation180, network label, Bluetooth plugin and zero failed services verified. Owner confirmed touch Continue→Connectivity and audible Bluetooth tone after pairing from scratch. Original SD retained; no post-boot repair needed. Native UI48-screen survey, audio/video controls, radio recovery and service-mode flows revalidated; REL-02 passes for this candidate. Five physical cold boots passed, including owner-confirmed offline Home/touch and journal-verified Ethernet return. BOOT-01/02 and REL-02 pass for this candidate. Populated Home weather layout revealed forecast overflow: UX-02 FAIL, repair in progress. Complete product acceptance remains OPEN. See [fresh-candidate evidence](docs/evidence/os-a32c29065d6d-acceptance-2026-10-03.md).
+Installed application `4b56d5150640`, source `75bda82e0d58bb0786664e9c3281c7baf5d1a947`, runs on the USB-booted corrected image (image source d61ec8d, original runtime a32c29065d6d). All33 runtime hashes and real update→rollback→update verified with unchanged preferences. Native five-day weather overflow is repaired: eight actual Home captures and48-screen survey pass the measured layout checks. API/kiosk recovery1.905/1.182s; complete idle PSS586.819MiB at native Home+120s; usable local WAV/radio/720p video resource probes passed. Five physical cold boots and offline tactile use were verified on the earlier image runtime a32; they are historical evidence, not five cold boots of4b. [Weather evidence](docs/evidence/home-weather-layout-2026-10-03.md).
 
-## Prepared Home weather repair
-
-Home weather repair package `4b56d5150640` is prepared: populated five-day forecast now fits in EN/RO and both themes, including saved data and active playback. All76 UI regressions, TypeScript/Vite build, Python60 (five Linux-only skips), repository/package checks pass. Publishing and guarded Pi deployment/recapture follow; a32 remains the installed acceptance candidate until activation. See [weather layout evidence](docs/evidence/home-weather-layout-2026-10-03.md).
+Netflix login exposed missing external-browser keyboard. Owner confirmed typing after installation of wvkbd0.15-1; Widevine4.10.2662.3+1 was also installed, without other upgrades/removals. Durable keyboard-control package `ccb25a3bdf10` is prepared for guarded activation. Real account/DRM playback remains OPEN. [Keyboard repair](docs/evidence/service-keyboard-2026-10-03.md). Original SD and previous application releases are retained. Full product acceptance remains OPEN.
 
 ## Previous desktop candidate
 
@@ -24,7 +22,7 @@ Windows wrapper passed inspection-only for the intended USB inventory. Explicit 
 
 ## Remaining delivery work
 
-Home weather overflow repair; update/rollback; eight-hour stability; complete Bluetooth pair/forget/reconnect and real network-disconnection recovery; native resource/performance acceptance; external-account playback and DRM support; clean installation/rollback. Known paired-speaker appearance and a previously heard WAV are evidence of those observations only. Full product acceptance remains OPEN and the project is not complete.
+Durable external keyboard activation and Netflix playback; eight-hour stability; complete Bluetooth pair/forget/reconnect and real network-disconnection recovery; native resource/performance acceptance; external-account playback and DRM support; clean installation/rollback. Known paired-speaker appearance and a previously heard WAV are evidence of those observations only. Full product acceptance remains OPEN and the project is not complete.
 
 ## Historical first physical USB boot
 

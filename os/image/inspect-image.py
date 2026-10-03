@@ -65,6 +65,7 @@ for name, installed in {
     'pysh-recovery.service':'/etc/systemd/system/pysh-recovery.service',
     'pysh-growfs.py':'/usr/local/sbin/pysh-growfs',
     'pysh-growfs.service':'/etc/systemd/system/pysh-growfs.service',
+    'org.pysh.keyboard.json':'/etc/chromium/native-messaging-hosts/org.pysh.keyboard.json',
 }.items():
     assert read_root(installed) == Path('os/image/assets',name).read_bytes(), installed
 groups = {line.split(':')[0]:line.split(':')[-1].split(',') for line in read_root('/etc/group').decode().splitlines()}
@@ -77,6 +78,14 @@ package_records = [dict(line.split(': ', 1) for line in record.splitlines()
                    for record in packages.decode().split('\n\n')]
 assert any(p.get('Package') == 'libspa-0.2-bluetooth' and
            p.get('Status') == 'install ok installed' for p in package_records), 'Bluetooth audio plugin missing'
+for required in ('wvkbd', 'libwidevinecdm0'):
+    assert any(p.get('Package') == required and p.get('Status') == 'install ok installed'
+               for p in package_records), f'Service-browser dependency missing: {required}'
+keyboard_manifest = json.loads(read_root('/etc/chromium/native-messaging-hosts/org.pysh.keyboard.json'))
+extension = json.loads(read_root('/opt/pysh/current/app/browser-extension/manifest.json'))
+import base64
+extension_id = ''.join(chr(97+int(c,16)) for c in hashlib.sha256(base64.b64decode(extension['key'])).hexdigest()[:32])
+assert keyboard_manifest['allowed_origins'] == [f'chrome-extension://{extension_id}/']
 Path('.runtime/os-build/packages.txt').write_bytes(packages)
 source = json.loads(read_root('/etc/pysh-build.json'))
 assert source == json.loads(Path('os/image/payload/source.json').read_text())

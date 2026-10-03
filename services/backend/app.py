@@ -456,7 +456,7 @@ async def external(request: Request, body: External):
     with contextlib.suppress(Exception):
         await hub.player.command("pause")
     urls = {"youtube": "https://www.youtube.com", "netflix": "https://www.netflix.com", "spotify": "https://open.spotify.com"}
-    hub.external = await asyncio.create_subprocess_exec(executable, "--ozone-platform=wayland", "--no-first-run", "--start-maximized", "--user-data-dir=" + str(DATA / "services-browser"), "--load-extension=" + str(ROOT / "app" / "browser-extension"), "--app=" + urls[body.service], stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
+    hub.external = await asyncio.create_subprocess_exec(executable, "--ozone-platform=wayland", "--no-first-run", "--start-fullscreen", "--user-data-dir=" + str(DATA / "services-browser"), "--load-extension=" + str(ROOT / "app" / "browser-extension"), "--app=" + urls[body.service], stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
     return {"opened": True, "service": body.service}
 
 
