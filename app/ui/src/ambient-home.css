@@ -222,3 +222,5 @@
 .app[data-theme=night] .ambient-city .city-backdrop{fill:#355260;opacity:.52}
 .ambient-city .city-windows{fill:#dcc69b}
 .ambient-clouds{overflow:visible}
+/* The open Ink rail keeps its own foreground when the header reveals a night sky. */
+.app[data-theme=ink][data-navigation=open] .topbar-idle.sky-header-night .navigation-toggle{color:#23251f}

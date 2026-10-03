@@ -248,6 +248,29 @@ class Content:
             "codec": item.get("codec", ""),
         }
 
+    async def radio_click(self, station_uuid: str) -> bool:
+        """Best-effort catalog signal after a successful explicit stream start.
+
+        Only a catalog UUID is accepted. The response is never used to choose a
+        stream, and the fixed Radio Browser hosts cannot be supplied by callers.
+        """
+        if not isinstance(station_uuid, str) or not re.fullmatch(r"[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}", station_uuid):
+            return False
+        servers = self._radio_servers_discovered or self.RADIO_SERVERS
+        server = servers[self._radio_server_index % len(servers)]
+        if not re.fullmatch(r"[a-zA-Z0-9-]+\.api\.radio-browser\.info", server):
+            return False
+        try:
+            result = await asyncio.wait_for(asyncio.to_thread(
+                self._get_json,
+                f"https://{server}/json/url/{station_uuid.lower()}",
+                headers={"User-Agent": self.RADIO_USER_AGENT, "Accept": "application/json"},
+                timeout=min(self.timeout, 2.0),
+            ), timeout=2.0)
+            return isinstance(result, dict) and result.get("ok") in (True, "true")
+        except (ContentError, OSError, ValueError, TypeError, TimeoutError):
+            return False
+
     def _radio_request(self, params: dict[str, Any]) -> Any:
         # Radio Browser recommends DNS resolution of all.api followed by reverse
         # lookup of its addresses. Cache the discovered mirrors and randomize their
@@ -429,11 +452,11 @@ class Content:
             return []
         return []
 
-    def _get_json(self, url: str, params: dict[str, Any] | None = None, *, headers: dict[str, str] | None = None) -> Any:
+    def _get_json(self, url: str, params: dict[str, Any] | None = None, *, headers: dict[str, str] | None = None, timeout: float | None = None) -> Any:
         if params:
             url += ("&" if "?" in url else "?") + urlencode(params)
         request = Request(url, headers={"User-Agent": "PiSmartHub/1.0", "Accept": "application/json", **(headers or {})})
-        with urlopen(request, timeout=self.timeout) as response:
+        with urlopen(request, timeout=self.timeout if timeout is None else timeout) as response:
             data = json.loads(response.read().decode("utf-8"))
         if isinstance(data, dict) and data.get("error"):
             raise ContentError("upstream_error", str(data.get("reason", "Upstream service error")))

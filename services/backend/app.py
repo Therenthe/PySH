@@ -78,6 +78,7 @@ class Play(StrictBody):
     path: str = Field(default="", max_length=4096)
     title: str = Field(default="", max_length=300)
     favicon: str | None = Field(default=None, max_length=2048)
+    station_uuid: str | None = Field(default=None, pattern=r"^[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$")
 
 
 class Transport(StrictBody):
@@ -485,10 +486,15 @@ async def play(request: Request, body: Play):
         previous = hub.store.value.lastStation
         # Artwork is optional catalog metadata; the backend never fetches it.
         artwork = body.favicon if body.favicon is not None else previous.favicon if previous and previous.url == source else ""
-        hub.store.update({"lastStation": {"uuid": hashlib.sha256(source.encode()).hexdigest(), "name": body.title or "Radio", "url": source, "favicon": artwork}})
+        hub.store.update({"lastStation": {"uuid": body.station_uuid or (previous.uuid if previous and previous.url == source else hashlib.sha256(source.encode()).hexdigest()), "name": body.title or "Radio", "url": source, "favicon": artwork}})
     hub.cache_playback({})
     await hub.visualizer.close()
-    return hub.cache_playback(await hub.player.play(source, title=body.title, kind=body.source))
+    result = hub.cache_playback(await hub.player.play(source, title=body.title, kind=body.source))
+    # Only the explicit UI start sends a catalog UUID; failed/local/automatic
+    # playback, polling and existing-stream pause/resume produce no signal.
+    if body.source == "radio" and body.station_uuid and result.get("state") not in {"error", "idle"}:
+        hub.background(hub.content.radio_click(body.station_uuid))
+    return result
 
 
 @app.post("/api/player")
