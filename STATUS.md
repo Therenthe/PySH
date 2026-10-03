@@ -62,3 +62,8 @@ Candidate5c174880ca5b fixes explicit saved-profile credential updates, recovery 
 ## Observer collection follow-up
 
 Observer-only source change: vanished process discovery is distinguished from unreadable live membership; incomplete snapshots get up to three fresh attempts with recorded retry reasons.20 focused checks passed (2 platform skips); full backend287 passed/22 skips. No runtime activation is implied. Native smoke and final8h/idle PSS remain OPEN. [Observer evidence](docs/evidence/stable-memory-snapshots-2026-10-03.md).
+# Verification follow-up — 2026-10-04
+
+The personalized UI source1cda passed the complete GitHub application workflow37152452942. Its refreshed OS image17afa59162cc passed artifact, gzip/raw integrity and independent read-only verification of41 runtime files; see docs/evidence/personalized-image-verification-2026-10-04.md. No storage was written. Current SD application remainsb180f17fb355.
+
+The corrected canonical observer44ef was exercised in memory as nonroot pysh: six complete native snapshots, including one successful fresh retry after child-process churn. See docs/evidence/stable-memory-snapshots-2026-10-03.md for measured values and scope. Timed observer-session and final8h acceptance remain pending. All product criteria remain OPEN.
