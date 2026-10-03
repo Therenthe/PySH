@@ -2,7 +2,7 @@
 
 ## Runtime-ul actual PySH OS
 
-Raspberry pornește de pe USB în sesiunea dedicată greetd/labwc, cu API și Chromium supravegheate de unitatea utilizatorului `pysh.service`. Runtime-ul este în `/opt/pysh/current`, venv-ul în `/opt/pysh/venv`, datele în `/home/pysh/.local/share/pi-smart-hub`; release-urile gestionate și rollback-ul sunt separate de date. Imaginea inițială instalează un director current real; actualizările verificate îl conservă înainte de trecerea la legături current/previous. Originalul SD rămâne mediu separat de recuperare. Identitățile și rezultatele exacte sunt în STATUS, nu se deduc din HEAD.
+Sesiunea dedicată greetd/labwc pornește API și Chromium supravegheate de unitatea utilizatorului `pysh.service`. Runtime-ul este în `/opt/pysh/current`, venv-ul în `/opt/pysh/venv`, datele în `/home/pysh/.local/share/pi-smart-hub`; release-urile gestionate și rollback-ul sunt separate de date. Imaginea inițială instalează un director current real; actualizările verificate îl conservă înainte de trecerea la legături current/previous. USB-ul verificat rămâne mediu de recuperare după migrarea la SD; originalul SD are backup integral separat pe PC. Identitățile și rezultatele exacte sunt în STATUS, nu se deduc din HEAD.
 
 Serviciile externe folosesc un profil Chromium separat de kiosk. Pagina loopback de pregătire cere EME/key creation reale înainte de Netflix/Spotify; component updater oficial și o repornire delimitată pregătesc profilurile noi. Extensia și host-ul nativ gestionează tastatura/revenirea. API-ul rămâne exclusiv loopback, cu verificarea originii și token pentru mutații. Profilul conturilor nu este sursă, diagnostic sau fixture de depanare.
 

@@ -16,7 +16,7 @@ sudo -u pysh env XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:pa
 
 O relansare autorizată folosește aceeași invocare cu `restart pysh.service`; închide și ferestrele media deținute de aplicație. Nu folosi aici scripturile desktop `activate-release.sh` sau `rollback.sh`: acestea operează în `~/pi-smart-hub` și asupra altei unități. Activările appliance documentate până acum folosesc scripturi administrative private, verificate pentru UUID, release curent, manifest, backup separat și preferințe, cu revenire la precedent dacă API-ul nu se restabilește. O procedură generică de update/rollback appliance publicată și repetată rămâne necesară pentru DEL-01.
 
-Înainte de schimbare, salvează runtime-ul precedent, manifestul sursă, preferințele și configurația afectată; verifică checksumul și conținutul lizibil pe PC. Păstrează originalul SD offline. O imagine CI verde sau un serviciu activ nu înlocuiește proba de boot, touch, audio și redare.
+Înainte de schimbare, salvează runtime-ul precedent, manifestul sursă, preferințele și configurația afectată; verifică checksumul și conținutul lizibil pe PC. La migrarea la SD, păstrează USB-ul verificat și backupul integral original pe PC. O imagine CI verde sau un serviciu activ nu înlocuiește proba de boot, touch, audio și redare. Pentru scrierea unui SD inactiv de pe USB, folosește [flasherul SSH](SSH_FLASHER.md); nu rescrie root-ul activ.
 
 ## Update și rollback runtime PySH OS (procedură publică)
 

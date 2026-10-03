@@ -5,7 +5,7 @@ Updated: 2026-10-03 (Europe/Bucharest). GitHub is canonical: https://github.com/
 ## Installed application and device
 
 - Application4a133daa7278, source dda57f080de2f9d03eae01947594a159fae887f6; all40 installed file hashes verified. Previous934d0d338e66 retained. Public update→rollback→return succeeded, each with separately verified PC backup; no pending transaction. Preferences, display/touch configuration and native host unchanged. [Native procedure evidence](docs/evidence/appliance-update-and-sd-image-2026-10-03.md).
-- Corrected physical USB image source d61ec8d, original runtimea32c29065d6d. Pi4/4GB, Debian13 ARM64, DSI800×480, rotation180 with identity touch calibration. Root UUID5610e056-221b-46c9-8046-65c9adb6a5c1. Original SD is kept offline for recovery.
+- Corrected physical USB image source d61ec8d, original runtimea32c29065d6d. Pi4/4GB, Debian13 ARM64, DSI800×480, rotation180 with identity touch calibration. Root UUID5610e056-221b-46c9-8046-65c9adb6a5c1. USB is now retained as recovery; original SD contents have a full separately verified private PC backup.
 - Dedicated greetd/labwc session, user pysh.service, /opt/pysh/current and /opt/pysh/venv. API is loopback8765. Administrative SSH uses the provisioned key; secrets, profiles and backups stay outside Git. Desktop deployment scripts do not operate this appliance.
 
 ## Current evidence
@@ -22,13 +22,13 @@ Image source20f19b907359da5aede58b933888c0eb7a5f5be6/runtime4ce1a5fe6390 built i
 
 The934 observer is authoritatively inactive after candidate change:2291.115s/76 samples, zero observation errors, incomplete observation. It supplies no eight-hour acceptance for4a133. The final same-candidate observation remains OPEN.
 
-Public appliance update/rollback is now natively exercised; all six application CI jobs37128431057/37128428420 passed. New notice asset is installed and independently verified inside successor imagec8ac9c709acb/source3ca7e4e. Its4,571,791,360-byte raw SHA256 is de085cdcae326cfafba7ef93c2bf4956efd33aaf650ccdbb4a5cd311f3db5979. This image is not provisioned or written. SSH console flasher is being implemented; SD is offline, while USB remains the current/recovery medium. [Latest image/procedure evidence](docs/evidence/appliance-update-and-sd-image-2026-10-03.md), [dependency inventory](docs/DEPENDENCIES.md).
+Public appliance update/rollback is now natively exercised; all six application CI jobs37128431057/37128428420 passed. New notice asset is installed and independently verified inside successor imagec8ac9c709acb/source3ca7e4e. Its4,571,791,360-byte raw SHA256 is de085cdcae326cfafba7ef93c2bf4956efd33aaf650ccdbb4a5cd311f3db5979. This image has now been written/read back on the physical SD and provisioned with the recovery public key; first SD boot is pending. [Latest image/procedure evidence](docs/evidence/appliance-update-and-sd-image-2026-10-03.md), [dependency inventory](docs/DEPENDENCIES.md).
 
 Owner priority: complete flasher/SD installation first, then remaining functionality and major UI/UX improvement. Current owner assessment UI3.5/10, UX5/10 is unsatisfactory; visual/product acceptance remains OPEN. [Roadmap](docs/ROADMAP.md).
 
-SSH console flasher is now implemented: [procedure](docs/SSH_FLASHER.md). All18 focused tests passed; full local suite153 passed/22 Windows/Linux-platform skips, one existing deprecation warning. Linux loop/provisioning proof, SD identity/whole-card backup, physical write/readback and SD boot remain pending. No SD has been erased.
+SSH console flasher is implemented: [procedure](docs/SSH_FLASHER.md). All18 focused tests passed; full local suite153 passed/22 Windows/Linux-platform skips, one existing deprecation warning. Native loop proof, full original SD backup, physical write/readback and recovery-key provisioning passed; first SD boot remains pending.
 
-Native Linux loop/provisioning proof now passed, including exact raw readback, separate public-key proof and all owned mappings detached; [evidence](docs/evidence/ssh-flasher-linux-2026-10-03.md). SD is inserted,15,962,472,448 bytes, unmounted; current root remains USB. Whole-card backup is running in a visible local console. Backup verification, actual SD write/readback/recovery provisioning and SD boot remain pending.
+Native Linux loop/provisioning proof passed, including exact raw readback, separate public-key proof and all owned mappings detached; [evidence](docs/evidence/ssh-flasher-linux-2026-10-03.md). Original SD backup is independently verified on PC; [backup evidence](docs/evidence/sd-backup-2026-10-03.md). Physical SD flash finished15:25:30Z, exit0, exact image hash before provisioning and separate public-key hash verified. Controlled shutdown was requested after rechecking USB root and both new SD UUIDs; SSH disconnected during shutdown and a subsequent connection timed out. Owner action to remove USB and start SD is pending; [physical flash evidence](docs/evidence/sd-flash-2026-10-03.md). Product acceptance remains OPEN.
 
 ## Remaining release gates
 
