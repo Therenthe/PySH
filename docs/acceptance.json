@@ -1,5 +1,5 @@
 {
-  "candidate": "8ede2b86f53a",
+  "candidate": "934d0d338e66",
   "preparation": [
     {
       "id": "PREP-01",
@@ -65,11 +65,12 @@
     {
       "id": "UX-01",
       "status": "OPEN",
-      "candidate": "8ede2b86f53a",
+      "candidate": "934d0d338e66",
       "evidence": [
-        "docs/evidence/service-keyboard-2026-10-03.md"
+        "docs/evidence/service-keyboard-2026-10-03.md",
+        "docs/evidence/protected-playback-preparation-2026-10-03.md"
       ],
-      "reason": "Actual Pi fixture verifies keyboard geometry, submit/navigation cleanup and native touch-event recovery of Return from video fullscreen. Full physical touch inventory remains incomplete."
+      "reason": "Current native preparation viewport and immersive compositor capture verified; translation prompt removed. Earlier keyboard/touch fixture results are historical; complete physical current-candidate touch inventory remains incomplete."
     },
     {
       "id": "UX-02",
@@ -219,11 +220,12 @@
     {
       "id": "EXT-02",
       "status": "OPEN",
-      "candidate": "8ede2b86f53a",
+      "candidate": "934d0d338e66",
       "evidence": [
-        "docs/evidence/service-keyboard-2026-10-03.md"
+        "docs/evidence/service-keyboard-2026-10-03.md",
+        "docs/evidence/protected-playback-preparation-2026-10-03.md"
       ],
-      "reason": "Widevine4.10.3057.0 EME access/key creation passed on Pi; retained owner profile reopened and actual panel shows profile selection. Real film playback/resolution and fresh-image preparation remain unverified."
+      "reason": "Current native empty/prepared profiles pass real EME/key preparation, restart and cancel; retained owner profile reaches ready and Netflix Home is visible. Real authenticated film playback/resolution and real timeout/retry remain unverified."
     },
     {
       "id": "EXT-03",
