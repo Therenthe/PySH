@@ -16,7 +16,7 @@ Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4def
 | UI-08 | Lună cu fază reală; scenă zi/noapte și condiție meteo coerente, nori vizibili, ploaie/zăpadă peste oraș, lumini urbane și skyline mai înalt | Instalat7d525; textură NASA cu fază calculată, stele/nori/lumini revizuite și captură panou inspectată; tur meteo/performance final OPEN |
 | UI-09 | Card vreme se reduce la partea principală; prognoză1↔5zile cu icoane; separare vizuală corectă la extindere | Există implementare; layout nou și ancore necesită regresie |
 | UI-10 | Redarea se retrage în vizualizator; atingere o extinde, reatingere/inactivitate o restrânge | Există implementare; Arrange trebuie să permită poziționarea cardului compact |
-| UI-11 | Meniu retractabil, mâner aproape de stânga care urmează marginea; header transparent la inactivitate, solid la utilizare | Implementare existentă; revizie pe noul candidat OPEN |
+| UI-11 | Meniu retractabil, mâner aproape de stânga care urmează marginea; header transparent la inactivitate, solid la utilizare | Instalat24b268: contrast mâner Ink/open/idle corectat;16stări randate și18regresii Home trecute; tur fizic final OPEN |
 | UI-12 | Fără scrollbar vizibil; swipe tactil funcțional; fără scroll accidental Acasă | Regresie completă și probă tactilă nouă OPEN |
 | UI-13 | Personalizare carduri Acasă, dimensiuni/stiluri vizualizator, screensaver numai vizualizator pe întregul ecran | Există setări; fiecare combinație/persistență verificată din nou |
 | UI-14 | Fără salut fictiv, duplicări de ceas/redare/text; pictogramă settings corectă, logo pentru posturile care au | Există corecții; tur vizual/inventar OPEN |
@@ -29,7 +29,7 @@ Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4def
 | UI-21 | Salvare locație eșuată păstrează rezultatele și permite retry | Instalat98385/source9e91;52probe recovery+316regresie browser; hardware final OPEN |
 | UI-22 | Animații/microanimații explică acțiunile, aspect matur apropiat de referințe, fără ornament care ascunde UI | Revizie continuă pe800×480; fără autoevaluare10/10 |
 | UI-23 | Atribuire meteo cu link sursă/licență lângă date, revenire la hub fără întreruperea radioului | OPEN; audit furnizor identifică lipsă; implementare izolată în lucru |
-| INTEGRATION-01 | Radio Browser: semnal best-effort numai la porniri explicite cu UUID catalog valid | Local nepublicat;327backend și110browser teste trecute; publicare/instalare OPEN |
+| INTEGRATION-01 | Radio Browser: semnal best-effort numai la porniri explicite cu UUID catalog valid | Instalat24b268/source152f;327backend și110browser teste trecute; actual upstream counter reply not claimed |
 | QA-01 | Auditor uzabilitate execută fiecare comandă, inclusiv eșec/retry/cancel | Raport user-ui-audit-2026-10-04:232existente+12probe+4lifecycle; fixture≠hardware |
 | QA-02 | Auditor aspect inspectează capturi EN/RO×Ink/Noapte și stări expand/collapse/idle | Raport visual-ui-audit-2026-10-04:72combinații+4Arrange; retest nou candidat OPEN |
 | QA-03 | Vizualizare întregului panou exclusiv privată, prin PC loopback/SSH; fără publicare sau înregistrare | Există viewer privat; nu expunem API/viewer în internet |

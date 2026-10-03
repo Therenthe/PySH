@@ -1,3 +1,9 @@
+# Current runtime — idle handle contrast and radio catalog signal
+
+Installed `24b26865a2d5`, source `152f7567ff95c2b043a9c813a70552474314e9f5`. Ink idle/open-rail handle contrast corrected; valid explicit catalog starts report best-effort without changing the selected audio source.42 native hashes verified, radio progressing1.584→10.672s; previous931b8 retained and readable PC backup checked.327backend/110browser tests passed for radio changes;18Home tests and16rendered contrast states passed after CSS correction. Weather attribution links remain in implementation. See [evidence](docs/evidence/idle-handle-radio-catalog-2026-10-04.md). All30 product criteria remain OPEN.
+
+Following entries are historical.
+
 # Current runtime — complete material notices and measured idle
 
 Installed `931b8d206a00`, source `559cd184537dce4026cc7785649228de0cbc138a`. NASA credit now ships in runtime notices; UI JS/CSS match7d525. All42 native hashes and continuing radio verified; prior7d525 retained and PC backup checked. Five app service relaunches reached actual800×480Home in4.701–5.089s; complete idle PSS598.951MiB atHome+120.0156s. Preferences/audio restored and debugger closed after that probe. These are scoped measurements, not cold boots, physical latency or8-hour acceptance. See [evidence](docs/evidence/native-material-performance-2026-10-04.md). All30 product criteria remain OPEN.
