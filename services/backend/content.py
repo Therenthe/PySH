@@ -63,7 +63,7 @@ class Content:
             if isinstance(item, dict) and _number(item.get("latitude")) and _number(item.get("longitude"))
         ]
 
-    async def weather(self, location: dict[str, Any]) -> dict[str, Any]:
+    async def weather(self, location: dict[str, Any], *, force: bool = False) -> dict[str, Any]:
         try:
             latitude = float(location["latitude"])
             longitude = float(location["longitude"])
@@ -77,7 +77,7 @@ class Content:
         try:
             cached = await asyncio.to_thread(_read_json, cache_path, {})
             cached_entry = cached.get(key) if isinstance(cached, dict) else None
-            if cached_entry and time.time() - float(cached_entry.get("cached_epoch", 0)) < 900:
+            if not force and cached_entry and time.time() - float(cached_entry.get("cached_epoch", 0)) < 900:
                 return {**cached_entry["value"], "stale": False, "error": None}
             params = {
                 "latitude": latitude,
@@ -282,10 +282,14 @@ class Content:
             current = None
         scan_roots = [current] if current else roots
         items: list[dict[str, Any]] = []
+        warnings: list[dict[str, str]] = []
         for root in scan_roots:
             try:
                 entries = await asyncio.to_thread(lambda p=root: list(p.iterdir()))
-            except (PermissionError, OSError):
+            except OSError as exc:
+                if current:
+                    raise ContentError("media_unavailable", "This media folder cannot be read. Try again.") from exc
+                warnings.append({"path": str(root), "error": "media_unavailable"})
                 continue
             for entry in entries:
                 try:
@@ -302,12 +306,14 @@ class Content:
                     continue
                 items.append({"name": entry.name, "path": str(canonical), "kind": kind, "is_dir": is_dir, "size": stat.st_size, "modified": stat.st_mtime})
         items.sort(key=lambda item: (not item["is_dir"], item["name"].casefold()))
+        if scan_roots and len(warnings) == len(scan_roots):
+            raise ContentError("media_unavailable", "The media folders cannot be read. Try again.")
         parent = None
         if current:
             root = next((candidate for candidate in roots if self._within_any(current, [candidate])), current)
             if current != root:
                 parent = str(current.parent)
-        return {"path": str(current) if current else "", "parent": parent, "roots": [str(root) for root in roots], "items": items}
+        return {"path": str(current) if current else "", "parent": parent, "roots": [str(root) for root in roots], "items": items, "partial": bool(warnings), "warnings": warnings}
 
     def resolve_media(self, path: str | Path) -> Path:
         target = self._resolve_approved_path(path)

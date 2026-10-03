@@ -167,9 +167,10 @@
       "status": "OPEN",
       "candidate": "c8ac9c709acb",
       "evidence": [
-        "docs/evidence/ui-audit-2026-10-02.md"
+        "docs/evidence/ui-audit-2026-10-02.md",
+        "docs/evidence/sd-audio-radio-2026-10-03.md"
       ],
-      "reason": "Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Real Radio Romania stream reported playing after 10 seconds and was stopped through API; favorites and filters covered in browser tests. Full Radio checklist incomplete."
+      "reason": "Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted."
     },
     {
       "id": "MEDIA-02",
@@ -179,18 +180,20 @@
         "docs/evidence/pi-preview-2026-10-02.md",
         "docs/evidence/content-recovery-2026-10-02.md",
         "docs/evidence/video-process-recovery-2026-10-02.md",
-        "docs/evidence/audio-weather-controls-2026-10-02.md"
+        "docs/evidence/audio-weather-controls-2026-10-02.md",
+        "docs/evidence/sd-audio-radio-2026-10-03.md"
       ],
-      "reason": "Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Five selected video encodings and persistent control/error matrix pass on c0b1e35b77a9. Missing local audio transport repaired; updated real audio queue/seek/EOF and complete final format matrix pending."
+      "reason": "Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted."
     },
     {
       "id": "MEDIA-03",
       "status": "OPEN",
       "candidate": "c8ac9c709acb",
       "evidence": [
-        "docs/evidence/pi-preview-2026-10-02.md"
+        "docs/evidence/pi-preview-2026-10-02.md",
+        "docs/evidence/sd-audio-radio-2026-10-03.md"
       ],
-      "reason": "Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Sink volume set to 25% and audible output confirmed; slider, mute and missing-output flow remain untested."
+      "reason": "Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted."
     },
     {
       "id": "BT-01",
@@ -198,9 +201,10 @@
       "candidate": "c8ac9c709acb",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
-        "docs/evidence/ui-audit-2026-10-02.md"
+        "docs/evidence/ui-audit-2026-10-02.md",
+        "docs/evidence/sd-audio-radio-2026-10-03.md"
       ],
-      "reason": "Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Known speaker disconnected and explicitly reconnected through real API; scan/pair/forget and all failures incomplete."
+      "reason": "Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted."
     },
     {
       "id": "BT-02",
@@ -208,9 +212,10 @@
       "candidate": "c8ac9c709acb",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
-        "docs/evidence/ui-audit-2026-10-02.md"
+        "docs/evidence/ui-audit-2026-10-02.md",
+        "docs/evidence/sd-audio-radio-2026-10-03.md"
       ],
-      "reason": "Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Real radio stream progressed with active Bluetooth sink; disconnect blocked local playback and reconnect restored ready. Audible checks and complete recovery matrix on this candidate incomplete."
+      "reason": "Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted."
     },
     {
       "id": "EXT-01",

@@ -139,3 +139,11 @@
 .app .video-controls input[type=range]::-webkit-slider-runnable-track{height:6px;background:var(--muted);border-radius:3px}
 .app .video-controls input[type=range]::-webkit-slider-thumb{appearance:none;width:24px;height:24px;margin-top:-9px;border-radius:50%;background:var(--ink);border:2px solid var(--paper)}
 .app .video-output{overflow-wrap:anywhere;line-height:1.3}
+
+/* Setup recovery and partial-library actions remain reachable at 800x480. */
+.app .setup-actions{gap:8px}
+.app .setup-actions button{min-width:48px;padding-left:12px;padding-right:12px}
+.app .setup-brand:has(.setup-cancel){height:48px;min-height:48px}
+.app .setup-cancel{margin-left:auto;font-size:16px;letter-spacing:normal}
+.app .media-partial{display:flex;align-items:center;gap:10px;padding:12px;border-bottom:1px solid var(--line)}
+.app .media-partial span{font-size:16px;line-height:1.4;flex:1}

@@ -175,14 +175,14 @@ class Hub:
             await self.refresh_device()
             await asyncio.sleep(2)
 
-    async def refresh_weather(self):
+    async def refresh_weather(self, *, force=False):
         self._weather_generation += 1
         generation = self._weather_generation
         location = self.store.value.location
         identity = location.model_dump() if location else None
         if location:
             try:
-                result = await self.content.weather(identity)
+                result = await self.content.weather(identity, force=True) if force else await self.content.weather(identity)
             except Exception:
                 result = {**(self.weather or {}), "stale": True, "error": "weather_unavailable"}
         else:
@@ -388,7 +388,7 @@ async def geocode(request: Request, q: str = ""):
 
 @app.post("/api/weather/refresh")
 async def weather_refresh(request: Request):
-    return await request.app.state.hub.refresh_weather()
+    return await request.app.state.hub.refresh_weather(force=True)
 
 
 @app.get("/api/radio")

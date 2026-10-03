@@ -218,6 +218,24 @@ def test_saved_audio_restores_once_and_after_reconnection(tmp_path):
     asyncio.run(scenario())
 
 
+def test_explicit_weather_refresh_requests_provider_refresh(client):
+    hub = app.state.hub
+    hub.store.update({'location': {'name': 'Bucharest', 'latitude': 44.4, 'longitude': 26.1}})
+    weather = AsyncMock(return_value={'current': {'temperature_c': 24}, 'stale': False, 'error': None})
+    hub.content.weather = weather
+    response = client.post('/api/weather/refresh', headers={'X-Hub-Token': hub.token})
+    assert response.status_code == 200 and response.json()['current']['temperature_c'] == 24
+    weather.assert_awaited_once_with(hub.store.value.location.model_dump(), force=True)
+
+
+def test_media_folder_read_error_is_a_safe_retryable_api_error(client):
+    from services.backend.content import ContentError
+    app.state.hub.content.media_list = AsyncMock(side_effect=ContentError('media_unavailable', 'Folder unavailable.'))
+    response = client.get('/api/media', params={'path': '/approved/Media'})
+    assert response.status_code == 409
+    assert response.json() == {'error': 'media_unavailable'}
+
+
 def test_local_queue_boundaries_exposed_without_enabling_radio_queue(client):
     hub = app.state.hub
     hub.queue = [{'path': 'a'}, {'path': 'b'}]

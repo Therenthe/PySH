@@ -13,6 +13,7 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 - Toate ecranele, dialogurile, erorile și configurările sunt disponibile în română și engleză. Limba poate fi schimbată din setări și alegerea persistă după repornire.
 - Interfața este proiectată întâi pentru 800 × 480, landscape și atingere. Ținta tactilă minimă este 48 × 48 px, cu spațiere între acțiuni riscante. Textul, dialogurile și tastatura virtuală nu se taie la rezoluția țintă.
 - Mișcarea și efectele vizuale sunt discrete și nu ascund starea sau comenzile. Contrastul și lizibilitatea au prioritate față de ornament.
+- Microanimațiile explică acțiunile și tranzițiile: atingere, schimbarea paginii, încărcare, asociere și schimbarea redării. Respectă reducerea mișcării și bugetele de performanță pe Pi.
 
 ## Zone și capabilități
 
@@ -22,6 +23,9 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 - Card principal dinamic (de exemplu, redarea activă, radio sau un mesaj de stare) și scurtături configurabile spre funcțiile folosite frecvent.
 - Bară de stare pentru rețea, Bluetooth și audio; navigare coerentă către Acasă, media și setări.
 - Aspect echilibrat, fără suprapuneri, zone moarte disproporționate sau text care cere scroll accidental pe panourile de bază.
+- Barele de scroll nu sunt vizibile în nicio zonă PySH; conținutul derulabil rămâne accesibil prin atingere. Aceasta include liste, setări, dialoguri și serviciile externe gestionate de hub.
+- Acasă prezintă o singură zonă principală pentru redarea curentă, fără repetarea acelorași informații într-un card și o bară. La radio, numele postului rămâne clar, separat de artist/melodie și stările de flux.
+- Pictograma meteo corespunde codului condiției reale și etichetei localizate: senin folosește simbolul de soare, iar stările fără date au un simbol distinct.
 
 ### Media și audio
 
@@ -36,6 +40,7 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 
 - Prima pornire: întâmpinare, selecția limbii, verificarea rețelei și ghid Wi-Fi/Ethernet cu progres, confirmarea rezultatului și cale de revenire. Configurarea trebuie să poată fi reluată ulterior.
 - Setări rapide și pagină dedicată pentru limbă, rețea, audio, teme, mod de noapte, screensaver, sursa/vizualizarea vremii și comportament la pornire.
+- Screensaverul păstrează controale tactile pentru redare/pauză și anterior/următor când radioul este activ; la radio acestea aleg posturile, iar la fișiere locale piesele. Sunt disponibile stiluri de vizualizare audio configurabile; vizualizarea de nivel/undă trebuie să reflecte semnalul real, iar o animație decorativă să fie prezentată explicit astfel.
 - Teme: temă întunecată pentru utilizare nocturnă și temă vizuală inspirată de E-Ink pe LCD (paletă predominant alb-negru cu accente limitate; ecranul rămâne LCD). Temele schimbă o paletă și tokenuri comune, nu fragmentează comportamentul UI.
 - Preferințele supraviețuiesc repornirii. Datele sensibile de rețea și credențialele de servicii nu sunt afișate în jurnale sau în interfață după salvare.
 - În runtime-ul cu desktop, utilizatorul poate părăsi aplicația și reveni la desktop printr-o acțiune vizibilă, protejată de atingere accidentală. În sesiunea dedicată PySH OS, aceeași zonă oferă explicit „Mod de service”: oprește redarea, păstrează diagnosticul accesibil și permite revenirea în hub fără pierderea setărilor. Recuperarea administrativă se validează separat înainte de instalarea OS (ADR-0004 și ADR-0007).

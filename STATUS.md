@@ -30,6 +30,8 @@ SSH console flasher is implemented: [procedure](docs/SSH_FLASHER.md). All18 focu
 
 Native Linux loop/provisioning proof passed, including exact raw readback, separate public-key proof and all owned mappings detached; [evidence](docs/evidence/ssh-flasher-linux-2026-10-03.md). Original SD backup is independently verified on PC; [backup evidence](docs/evidence/sd-backup-2026-10-03.md). Physical SD flash finished15:25:30Z, exit0, exact image hash before provisioning and separate public-key hash verified. Controlled shutdown was requested after rechecking USB root and both new SD UUIDs; SSH disconnected during shutdown and a subsequent connection timed out. Owner removed USB and started SD; first boot was independently verified; [physical flash evidence](docs/evidence/sd-flash-2026-10-03.md). Product acceptance remains OPEN. [First SD boot evidence](docs/evidence/sd-boot-2026-10-03.md).
 
+New SD Bluetooth audio is now observed: owner confirmed the local tone and is listening to radio. Six read-only samples over40 seconds showed progressing radio playback and active Bluetooth output. Original image has no preloaded Bluetooth pairing or checked home preferences/profile. [Scoped audio/radio evidence](docs/evidence/sd-audio-radio-2026-10-03.md); complete media/Bluetooth acceptance remains OPEN.
+
 ## Remaining release gates
 
 - Complete EN/RO physical touch, theme and error-state inventory on one current candidate; native preparation timeout/retry.

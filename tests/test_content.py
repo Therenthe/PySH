@@ -60,6 +60,46 @@ def test_weather_uses_saved_forecast_when_upstream_fails(tmp_path, monkeypatch):
     assert result["current"]["temperature_c"] == 18
 
 
+@pytest.mark.parametrize("failure", ["offline", "invalid_response"])
+def test_explicit_weather_refresh_bypasses_recent_cache_and_recovers(tmp_path, monkeypatch, failure):
+    import time
+    content = Content(tmp_path)
+    location = {"name": "Bucharest", "latitude": 44.4, "longitude": 26.1}
+    cached = {"location": location, "current": {"temperature_c": 18}, "daily": [],
+              "updated_at": "2026-10-03T10:00:00Z"}
+    cache_file = tmp_path / "weather-cache.json"
+    cache_file.write_text(json.dumps({"44.4000,26.1000": {"cached_epoch": time.time(), "value": cached}}), encoding="utf-8")
+    attempts = []
+    def unavailable(*args, **kwargs):
+        attempts.append(True)
+        if failure == "offline":
+            raise OSError("offline")
+        return {"current": {}, "daily": {}}
+    monkeypatch.setattr(content, "_get_json", unavailable)
+    assert run(content.weather(location))["stale"] is False
+    assert attempts == []
+    saved_bytes = cache_file.read_bytes()
+    failed = run(content.weather(location, force=True))
+    assert len(attempts) == 1
+    assert failed["stale"] is True and failed["error"] == "weather_unavailable"
+    assert failed["current"]["temperature_c"] == 18
+    assert failed["updated_at"] == cached["updated_at"]
+    assert cache_file.read_bytes() == saved_bytes
+    def recovered(*args, **kwargs):
+        attempts.append(True)
+        return {"current": {"temperature_2m": 24, "apparent_temperature": 23, "weather_code": 1,
+                            "precipitation": 0, "wind_speed_10m": 4},
+                "daily": {"time": ["2026-10-03", "2026-10-04", "2026-10-05", "2026-10-06", "2026-10-07"],
+                          "weather_code": [1]*5, "temperature_2m_min": [12]*5,
+                          "temperature_2m_max": [24]*5, "precipitation_sum": [0]*5}}
+    monkeypatch.setattr(content, "_get_json", recovered)
+    fresh = run(content.weather(location, force=True))
+    assert len(attempts) == 2
+    assert fresh["stale"] is False and fresh["error"] is None
+    assert fresh["current"]["temperature_c"] == 24
+    assert json.loads(cache_file.read_text())["44.4000,26.1000"]["value"]["current"]["temperature_c"] == 24
+
+
 def test_radio_search_returns_cached_catalog_offline(tmp_path, monkeypatch):
     content = Content(tmp_path)
     monkeypatch.setattr(content, "_radio_request", lambda params: [{
@@ -134,6 +174,49 @@ def test_media_roots_exclude_missing_and_non_directories(tmp_path, monkeypatch):
     monkeypatch.setattr("services.backend.content.Path.home", lambda: tmp_path)
     monkeypatch.setattr(content, "_mounted_media_roots", list)
     assert content._media_roots() == [root.resolve()]
+
+
+@pytest.mark.parametrize("failure", [PermissionError, OSError])
+def test_selected_unreadable_media_folder_is_not_reported_empty(tmp_path, monkeypatch, failure):
+    music = tmp_path / "Music"
+    music.mkdir()
+    content = Content(tmp_path / "data")
+    monkeypatch.setattr(content, "_media_roots", lambda: [music.resolve()])
+    empty = run(content.media_list(str(music)))
+    assert empty["items"] == [] and empty["partial"] is False and empty["warnings"] == []
+    original = type(music).iterdir
+    def unreadable(path):
+        if path == music:
+            raise failure("private failure details")
+        return original(path)
+    monkeypatch.setattr(type(music), "iterdir", unreadable)
+    with pytest.raises(ContentError) as denied:
+        run(content.media_list(str(music)))
+    assert denied.value.code == "media_unavailable"
+    assert "private failure details" not in str(denied.value)
+
+
+def test_combined_media_library_retains_readable_roots_and_exposes_partial_failure(tmp_path, monkeypatch):
+    music, videos = tmp_path / "Music", tmp_path / "Videos"
+    music.mkdir()
+    videos.mkdir()
+    (music / "song.flac").write_bytes(b"audio")
+    content = Content(tmp_path / "data")
+    monkeypatch.setattr(content, "_media_roots", lambda: [music.resolve(), videos.resolve()])
+    original = type(music).iterdir
+    def unreadable(path):
+        if path == videos:
+            raise PermissionError("private failure details")
+        return original(path)
+    monkeypatch.setattr(type(music), "iterdir", unreadable)
+    partial = run(content.media_list())
+    assert [item["name"] for item in partial["items"]] == ["song.flac"]
+    assert partial["partial"] is True
+    assert partial["warnings"] == [{"path": str(videos), "error": "media_unavailable"}]
+    monkeypatch.setattr(content, "_media_roots", lambda: [videos.resolve()])
+    with pytest.raises(ContentError) as denied:
+        run(content.media_list())
+    assert denied.value.code == "media_unavailable"
 
 
 def test_invalid_weather_location_is_rejected(tmp_path):

@@ -326,3 +326,52 @@ for(const theme of ['ink','night'] as const) {
     await capture(page,info,'backend-recovered',defects);await info.attach('layout-audit',{body:JSON.stringify(defects,null,2),contentType:'application/json'});expect.soft(defects).toEqual([]);
   });
 }
+for(const theme of ['ink','night'] as const){
+ test(`setup back and revisit preserve saved preferences ${theme}`,async({page},info)=>{
+  const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme,false);
+  f.state.preferences.favorites=[{uuid:'saved-station',name:'Saved station'}];f.state.preferences.accent='amber';
+  const original=JSON.parse(JSON.stringify(f.state.preferences));
+  await page.goto('/');
+  const wizard=page.locator('.setup-card'),next=()=>wizard.getByRole('button',{name:ro?'Continuă':'Continue',exact:false}).tap();
+  for(let i=1;i<=3;i++){
+   await next();const back=wizard.getByRole('button',{name:ro?'Înapoi':'Back',exact:true});
+   const box=await back.boundingBox();expect(box!.width).toBeGreaterThanOrEqual(48);expect(box!.height).toBeGreaterThanOrEqual(48);expect(box!.y+box!.height).toBeLessThanOrEqual(480);
+   await back.tap();await next();
+  }
+  await wizard.getByRole('button',{name:ro?'Finalizează':'Finish setup',exact:false}).tap();await expect(page.locator('.home-layout')).toBeVisible();
+  await page.locator('.main-nav button').nth(3).tap();
+  const rerun=ro?'Reia configurarea':'Run setup again',cancel=ro?'Anulează':'Cancel',leave=ro?'Ieși din configurare':'Leave setup';
+  await page.getByRole('button',{name:rerun,exact:true}).tap();await page.locator('.dialog-actions').getByRole('button',{name:cancel,exact:true}).tap();await expect(wizard).toHaveCount(0);
+  await page.getByRole('button',{name:rerun,exact:true}).tap();await page.locator('.dialog-actions').getByRole('button',{name:rerun,exact:true}).tap();await expect(wizard).toBeVisible();
+  await next();await next();await wizard.locator('.search-field button').tap();await expect(page.locator('.keyboard-card')).toBeVisible();
+  await page.locator('.keyboard-card header').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();await expect(wizard).toBeVisible();
+  const leaveButton=page.locator('.setup-cancel');await expect(leaveButton).toHaveText(leave);const leaveBox=await leaveButton.boundingBox();expect(leaveBox!.height).toBeGreaterThanOrEqual(48);expect(leaveBox!.y+leaveBox!.height).toBeLessThanOrEqual(480);
+  await page.screenshot({path:info.outputPath('setup-revisit-weather.png')});await leaveButton.tap();await page.locator('.dialog-actions').getByRole('button',{name:cancel,exact:true}).tap();await expect(wizard).toBeVisible();
+  await leaveButton.tap();await page.locator('.dialog-actions').getByRole('button',{name:leave,exact:true}).tap();await expect(wizard).toHaveCount(0);
+  expect(f.state.preferences).toEqual({...original,setupComplete:true});expect(f.actions.filter(a=>a.path==='/api/preferences')).toEqual([{path:'/api/preferences',body:{setupComplete:true}}]);
+  await page.reload();await expect(page.locator('.home-layout')).toBeVisible();expect(f.unexpected).toEqual([]);
+ });
+ test(`local video pauses on output loss and awaits deliberate resume ${theme}`,async({page},info)=>{
+  const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
+  await page.addInitScript(()=>{
+   const calls={play:0,pause:0,paused:true};(window as any).__videoCalls=calls;
+   Object.defineProperty(HTMLMediaElement.prototype,'paused',{get:()=>calls.paused});
+   HTMLMediaElement.prototype.play=function(){calls.play++;calls.paused=false;this.dispatchEvent(new Event('play'));this.dispatchEvent(new Event('playing'));return Promise.resolve();};
+   HTMLMediaElement.prototype.pause=function(){calls.pause++;calls.paused=true;this.dispatchEvent(new Event('pause'));};
+  });
+  await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Video folder',items:[{name:'Test video.mp4',path:'/test/video.mp4',kind:'video'}]}}));
+  await page.route('**/api/media/file?**',route=>route.fulfill({contentType:'video/mp4',body:''}));
+  await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).tap();
+  const v=page.locator('video'),play=page.locator('.video-play');await v.dispatchEvent('canplay');await expect.poll(()=>page.evaluate(()=>(window as any).__videoCalls.play)).toBe(1);
+  f.state.audio.ready=false;await expect(play).toBeDisabled();await expect(page.locator('.video-state')).toHaveText(ro?'Audio deconectat. Video în pauză.':'Audio disconnected. Video paused.');
+  await page.screenshot({path:info.outputPath('video-output-lost.png')});expect(await page.evaluate(()=>(window as any).__videoCalls.paused)).toBe(true);await v.dispatchEvent('canplay');expect(await page.evaluate(()=>(window as any).__videoCalls.play)).toBe(1);
+  f.state.audio.ready=true;await expect(play).toBeEnabled();await expect(page.locator('.video-state')).toHaveText(ro?'Audio pregătit. Apasă Redă pentru a continua.':'Audio ready. Press Play to resume.');expect(await page.locator('.video-state,.video-play,.video-back').evaluateAll(elements=>elements.flatMap(el=>{const r=el.getBoundingClientRect();return r.left<0||r.top<0||r.right>800||r.bottom>480||el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1?[el.className]:[]}))).toEqual([]);await v.dispatchEvent('canplay');expect(await page.evaluate(()=>(window as any).__videoCalls.play)).toBe(1);
+  await page.screenshot({path:info.outputPath('video-output-restored.png')});await play.tap();await expect.poll(()=>page.evaluate(()=>(window as any).__videoCalls.play)).toBe(2);await expect(play).toHaveText(ro?'Pauză':'Pause');expect(f.unexpected).toEqual([]);
+ });
+ test(`partial media library retains files and retry recovers ${theme}`,async({page},info)=>{
+  const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);let partial=true;
+  await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Library',partial,warnings:partial?[{path:'/missing',error:'media_unavailable'}]:[],items:[{name:'Available.mp3',path:'/test/available.mp3',kind:'audio'}]}}));
+  await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await expect(page.getByRole('button',{name:'Available.mp3',exact:false})).toBeVisible();await expect(page.locator('.media-partial')).toContainText(ro?'Unele directoare media sunt indisponibile':'Some media folders are unavailable');
+  partial=false;await page.locator('.media-partial button').tap();await expect(page.locator('.media-partial')).toHaveCount(0);await expect(page.getByRole('button',{name:'Available.mp3',exact:false})).toBeVisible();expect(f.unexpected).toEqual([]);
+ });
+}
