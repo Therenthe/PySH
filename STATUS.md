@@ -1,6 +1,6 @@
 # PySH status
 
-Updated: 2026-10-03 (Europe/Bucharest). GitHub is canonical: https://github.com/Therenthe/PySH. Work is on draft PR3, branch feat/pysh-os-image; main remains the earlier desktop delivery. The product is not complete; all30 required criteria remain OPEN in [acceptance.json](docs/acceptance.json).
+Updated: 2026-10-04 (Europe/Bucharest). GitHub is canonical: https://github.com/Therenthe/PySH. Work is on draft PR3, branch feat/pysh-os-image; main remains the earlier desktop delivery. The product is not complete; all30 required criteria remain OPEN in [acceptance.json](docs/acceptance.json).
 
 ## Installed application and device
 
@@ -67,3 +67,7 @@ Observer-only source change: vanished process discovery is distinguished from un
 The personalized UI source1cda passed the complete GitHub application workflow37152452942. Its refreshed OS image17afa59162cc passed artifact, gzip/raw integrity and independent read-only verification of41 runtime files; see docs/evidence/personalized-image-verification-2026-10-04.md. No storage was written. Current SD application remainsb180f17fb355.
 
 The corrected canonical observer44ef was exercised in memory as nonroot pysh: six complete native snapshots, including one successful fresh retry after child-process churn. See docs/evidence/stable-memory-snapshots-2026-10-03.md for measured values and scope. Timed observer-session and final8h acceptance remain pending. All product criteria remain OPEN.
+
+## Free card placement correction — 2026-10-04
+
+Prepared43bbb099a8b6 removes per-row positioning constraints, preserves deliberate overlap and saved stacking order, provides a selector for covered cards and fixes arrangement toolbar contrast. Four cross-row/overlap EN/RO theme regressions passed; full UI regression and activation pending. Backend292passed22skips. Read docs/evidence/free-card-placement-2026-10-04.md. The native memory audit exposed an omitted Chromium leader in its sibling scope; previous cgroup-only observer completeness is not whole-application memory acceptance. Observer source now includes verified same-UID descendants. All product criteria stay OPEN.

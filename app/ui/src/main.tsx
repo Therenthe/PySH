@@ -95,7 +95,7 @@ function App(){
  const ask=(title:string,value='',password=false)=>new Promise<string|null>(resolve=>setKeyboard({title,value,resolve,password}));
  const say=(message:string)=>{setToast(message);setTimeout(()=>setToast(''),2600)};
  const toggleNavigation=async()=>{const next=!navHidden;setNavHidden(next);if(!await savePrefs({navigationCollapsed:next}))setNavHidden(!next);};
- const navigate=(p:Page)=>{setPage(p);setModal('');setErr('');if(hub.preferences.navigationAutoHide){setNavHidden(true);void savePrefs({navigationCollapsed:true});}};
+ const navigate=(p:Page)=>{setHomeEditing(false);setPage(p);setModal('');setErr('');if(hub.preferences.navigationAutoHide){setNavHidden(true);void savePrefs({navigationCollapsed:true});}};
  activePage.current=page;
  const loadRadio=async(q=radioQuery,c=country,l=radioLanguage,refresh=true)=>{
   const key=JSON.stringify([q,c,l]);if(!refresh&&(radioPending.current===key||(radioLoaded.current.key===key&&Date.now()-radioLoaded.current.at<300000)))return;

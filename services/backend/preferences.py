@@ -37,6 +37,7 @@ class HomePosition(BaseModel):
     model_config = ConfigDict(extra="forbid")
     x: float = Field(ge=0, le=1, allow_inf_nan=False)
     y: float = Field(ge=0, le=1, allow_inf_nan=False)
+    z: int = Field(default=1, ge=1, le=4)
 
 
 class Preferences(BaseModel):

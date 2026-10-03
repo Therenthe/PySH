@@ -40,11 +40,12 @@ def test_home_customization_survives_restart(tmp_path):
     assert store.value.homeCards == ['weather', 'forecast', 'playback']
     assert store.value.visualizerSize == 'compact'
     store.update({'homeCards': ['weather'], 'visualizerSize': 'large', 'visualizerStyle': 'rings',
-                  'homePositions': {'weather': {'x': .2, 'y': .4}, 'visualizer': {'x': 0, 'y': 1}}})
+                  'homePositions': {'weather': {'x': .2, 'y': .4, 'z': 4}, 'visualizer': {'x': 0, 'y': 1}}})
     restored = PreferenceStore(tmp_path).value
     assert restored.homeCards == ['weather']
     assert restored.visualizerSize == 'large'
     assert restored.homePositions['weather'].x == .2
+    assert restored.homePositions['weather'].z == 4
     assert restored.homePositions['visualizer'].y == 1
 
 
@@ -53,6 +54,8 @@ def test_home_customization_survives_restart(tmp_path):
     {'homePositions': {'forecast': {'x': .5, 'y': 1.01}}},
     {'homePositions': {'visualizer': {'x': float('nan'), 'y': 0}}},
     {'homePositions': {'unknown': {'x': 0, 'y': 0}}},
+    {'homePositions': {'weather': {'x': 0, 'y': 0, 'z': 0}}},
+    {'homePositions': {'weather': {'x': 0, 'y': 0, 'z': 5}}},
     {'homeCards': ['unknown']}, {'visualizerSize': 'huge'}, {'visualizerStyle': 'invalid'}])
 def test_invalid_home_customization_preserves_saved_preferences(tmp_path, patch):
     store = PreferenceStore(tmp_path)

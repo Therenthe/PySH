@@ -13,11 +13,11 @@ spec.loader.exec_module(observer)
 UID = getattr(os, 'getuid', lambda:0)()
 GROUP = '/user.slice/user-1000.slice/user@1000.service/app.slice/pysh.service'
 
-def process(proc, pid, group=GROUP, state='S', pss=128, start=10):
+def process(proc, pid, group=GROUP, state='S', pss=128, start=10, parent=1):
     folder = proc / str(pid)
     folder.mkdir(parents=True)
     (folder / 'cgroup').write_text('0::' + group + '\n')
-    fields = [state,'1'] + ['0']*17 + [str(start)]
+    fields = [state,str(parent)] + ['0']*17 + [str(start)]
     (folder / 'stat').write_text(f'{pid} (chromium child with spaces) ' + ' '.join(fields) + '\n')
     if state != 'Z':
         (folder / 'smaps_rollup').write_text(f'Rss: 2048 kB\nPss: {pss} kB\nPrivate_Dirty: 2 kB\n')
@@ -293,3 +293,44 @@ def test_persistent_unreadable_live_member_exhausts_bounded_retries(tmp_path):
     assert sample['memory_collection_attempts'] == 3
     assert len(sample['memory_retry_history']) == 2
     assert sample['unreadable_pids'] == [101]
+
+
+def test_browser_leader_in_sibling_scope_and_its_descendants_are_counted(tmp_path):
+    proc = tmp_path / 'proc'
+    sibling = GROUP.rsplit('/',1)[0] + '/app-org.chromium.Chromium-101.scope'
+    process(proc, 100, pss=100)
+    process(proc, 101, sibling, pss=200, parent=100)
+    process(proc, 102, sibling + '/renderer', pss=300, parent=101)
+    process(proc, 103, sibling, pss=9000, parent=1)  # unrelated browser
+    process(proc, 104, GROUP, pss=400, parent=1)  # detached app-cgroup member
+    sample = observer.collect_processes(proc, GROUP, 100, UID)
+    assert sample['memory_observation_complete'] and sample['pss_kib_total'] == 1000
+    assert {row['pid'] for row in sample['processes']} == {100,101,102,104}
+
+
+def test_owned_browser_changing_parent_during_read_forces_fresh_discovery(tmp_path, monkeypatch):
+    proc = tmp_path / 'proc'
+    sibling = GROUP + '-browser-scope'
+    process(proc, 100, pss=100)
+    browser = process(proc, 101, sibling, pss=9000, parent=100)
+    original = observer.process_status
+    def reparented(directory):
+        if directory == browser:
+            text = (directory/'stat').read_text().replace(') S 100 ', ') S 1 ')
+            (directory/'stat').write_text(text)
+        return original(directory)
+    monkeypatch.setattr(observer, 'process_status', reparented)
+    sample = observer.collect_processes(proc, GROUP, 100, UID)
+    assert sample['memory_observation_complete'] and sample['pss_kib_total'] == 100
+    assert sample['memory_collection_attempts'] == 2
+    assert sample['memory_retry_history'][0]['membership_changed']
+
+
+def test_pid_reused_between_discovery_and_first_read_is_not_summed(tmp_path, monkeypatch):
+    proc = tmp_path / 'proc'
+    process(proc, 100, pss=100)
+    original = observer.process_status
+    monkeypatch.setattr(observer, 'process_status', lambda directory:(original(directory)[0],11))
+    sample = observer.collect_processes(proc, GROUP, 100, UID)
+    assert not sample['memory_observation_complete'] and sample['pss_kib_total'] is None
+    assert sample['unreadable_pids'] == [100]

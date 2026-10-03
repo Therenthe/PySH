@@ -114,14 +114,24 @@ def process_status(directory):
     require(len(fields) >= 20 and fields[0] in {'R','S','D','Z','T','t','X','I','P'}, 'invalid_process_status')
     return fields[0], int(fields[19])
 
-def discover(proc, expected, uid):
-    members, unknown = set(), []
+def process_identity(directory):
+    fields = (directory / 'stat').read_text().rpartition(')')[2].split()
+    require(len(fields) >= 20, 'invalid_process_identity')
+    parent, began = int(fields[1]), int(fields[19])
+    require(parent >= 0 and began >= 0, 'invalid_process_identity')
+    return parent, began
+
+def discover(proc, expected, uid, main_pid):
+    members, unknown, identities = set(), [], {}
     for directory in proc.glob('[0-9]*'):
         pid = int(directory.name)
         try:
             if directory.stat().st_uid != uid:
                 continue
-            if in_group(group_of(directory), expected):
+            group = group_of(directory)
+            parent, began = process_identity(directory)
+            identities[pid] = (parent, began, group)
+            if in_group(group, expected):
                 members.add(pid)
         except FileNotFoundError:
             # A process absent at the end of discovery is not a live unknown
@@ -136,16 +146,27 @@ def discover(proc, expected, uid):
             unknown.append(pid)
         except (OSError, ValueError, Refused):
             unknown.append(pid)
-    return members, sorted(unknown)
+    # Chromium can move its browser leader into a sibling systemd app scope.
+    # Include same-UID descendants of the verified app leader, never all scopes
+    # or every Chromium process owned by the graphical user.
+    owned = {main_pid} if main_pid in members else set()
+    while True:
+        added = {pid for pid, identity in identities.items() if identity[0] in owned} - owned
+        if not added:
+            break
+        owned.update(added)
+    members.update(owned)
+    return members, sorted(unknown), identities
 
 def collect_processes_once(proc, group, main_pid, uid):
     require(group.startswith('/') and group != '/' and '..' not in group.split('/'), 'invalid_unit_cgroup')
-    members, unknown = discover(Path(proc), group, uid)
+    members, unknown, identities = discover(Path(proc), group, uid, main_pid)
     rows, unreadable = [], []
     for pid in sorted(members):
         directory = Path(proc) / str(pid)
         try:
             state, began = process_status(directory)
+            require(began == identities[pid][1], 'pid_reused_after_discovery')
             pss = 0
             if state != 'Z':
                 values = [line.split() for line in (directory / 'smaps_rollup').read_text().splitlines() if line.startswith('Pss:')]
@@ -157,12 +178,13 @@ def collect_processes_once(proc, group, main_pid, uid):
             # identity. PID reuse, zombie transitions and ownership changes do.
             require(after_began == began and (after_state == 'Z') == (state == 'Z')
                     and directory.stat().st_uid == uid
-                    and in_group(group_of(directory), group), 'process_changed_during_sample')
+                    and process_identity(directory) == identities[pid][:2]
+                    and group_of(directory) == identities[pid][2], 'process_changed_during_sample')
             rows.append({'pid':pid, 'state':state, 'pss_kib':pss, 'start_ticks':began})
         except (OSError, ValueError, Refused):
             unreadable.append(pid)
-    after, after_unknown = discover(Path(proc), group, uid)
-    membership_changed = after != members
+    after, after_unknown, after_identities = discover(Path(proc), group, uid, main_pid)
+    membership_changed = after != members or any(after_identities.get(pid) != identities[pid] for pid in members)
     complete = not (unknown or after_unknown or unreadable or membership_changed) and main_pid in members and main_pid in {row['pid'] for row in rows}
     total = sum(row['pss_kib'] for row in rows)
     return {'processes':rows, 'unreadable_pids':unreadable, 'membership_unreadable_pids':sorted(set(unknown+after_unknown)),

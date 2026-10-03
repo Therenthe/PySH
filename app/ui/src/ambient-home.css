@@ -145,6 +145,7 @@
 .app .home-layout-toolbar{position:absolute;top:3px;left:8px;right:8px;z-index:8;display:flex;align-items:center;gap:8px;padding:5px 8px;background:var(--paper);border:1px solid var(--line-dark);border-radius:12px;color:var(--ink);box-shadow:0 3px 12px #0003}
 .app .home-layout-toolbar>span{font-size:14px;flex:1}
 .app .home-layout-toolbar button{min-height:48px;min-width:48px;padding:0 12px}
+.app .home-layout-toolbar button{background:var(--soft);color:var(--ink);border:1px solid var(--line-dark);border-radius:10px}
 .app .home-layout-toolbar [role=alert]{position:absolute;top:100%;left:0;right:0;padding:8px;background:var(--paper);border-radius:8px}
 .app .ambient-home .home-drag-handle{position:absolute;right:4px;top:4px;z-index:4;width:48px;height:48px;min-width:48px;min-height:48px;border:1px solid var(--ambient-edge);border-radius:10px;background:var(--ambient-panel);color:var(--ambient-text);font-size:28px;touch-action:none;cursor:grab}
 .app .ambient-home .home-drag-handle:active{cursor:grabbing}
