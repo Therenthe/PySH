@@ -8,5 +8,6 @@
   </libinput>
   <windowRules>
     <windowRule identifier="pysh-service" serverDecoration="no" />
+    <windowRule identifier="chrome-*" serverDecoration="no" />
   </windowRules>
 </labwc_config>
