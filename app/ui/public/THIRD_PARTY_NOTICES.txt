@@ -1,6 +1,18 @@
 Third-party notices for the PySH frontend runtime
 
-These notices apply to the bundled frontend dependencies, not to the PySH project code.
+These notices apply to bundled frontend dependencies and visual materials, not to the PySH project code.
+
+=== Moon surface material ===
+
+Credit: NASA's Scientific Visualization Studio.
+Visualizer: Ernie Wright (USRA); scientists: John Keller and Noah Petro (NASA/GSFC);
+producer: David Ladd (USRA).
+Source: Moon Phase and Libration, 2017, https://svs.gsfc.nasa.gov/4537/
+Unchanged JPEG: https://svs.gsfc.nasa.gov/vis/a000000/a004200/a004236/phase_full.0815_preview.jpg
+SHA256: 6ab80cb03da593930d21d29ba802480a5afc0a987f142e57d32e9ff255060a01
+NASA SVS content is public domain unless otherwise noted: https://svs.gsfc.nasa.gov/help/
+No NASA endorsement is implied. PySH uses this static surface with a separately
+computed approximate lunar phase; it is not a live observation or current libration.
 
 === react-19.3.0-LICENSE.txt ===
 
