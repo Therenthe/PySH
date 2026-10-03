@@ -19,3 +19,9 @@ The preceding live7d525 audit observed Pi4BRev1.5,3886824KiB MemTotal, Debian13/
 GitHub image run37160979739 succeeded for prior sourcecd1ff. All five downloaded artifact ZIP digests matched. Joined gzipSHA256bbcc16d8fc56b0828136458ce93e5dab285e5dfa647a85af1a6ad3ff6c30f4fc; rawSHA25662e512a38a8c7f4e48385b39d178ca3912aa077968cc68f2c36750e04ba99dff,4571791360bytes. Independent ext4 inspection verified all42 runtime files, NASA texture bytes, unit/native keyboard host/touch profile/immersive flags; four text-file differences from the Windows runtime were CRLF/LF only. Image runtime2e58e4f741de/sourcecd1ff, not installed931b8: this image lacks the new distributed NASA credit and is superseded for final delivery. No storage was written or boot claimed.
 
 All30 product acceptance criteria remain OPEN; these scoped probes do not certify the complete product.
+
+## Native UI follow-up
+
+Actual production Chromium at800×480:36 checks passed acrossEN/RO×Ink/night for decorative preferences persistence/reload, four compact Arrange selectors with maximum right/bottom placement and expansion, three actual64/88/112px audio sizes and real decoded station logo. No mocked APIs. CDP injected gestures are not physical touch proof. Audited preferences restored and compared; temporary debugger and SSH tunnel closed, radio resumed. Private captures/report:.runtime/native-audit-559cd/. Independent visual review identified an Ink idle/open-rail chevron contrast defect; this remains a UI acceptance gap despite the functional checks.
+
+Fresh931 hardware: firmwarea86983925695a7e63166327d7c002d64040ed31d (2026-09-14); wlr-randrDSI-1 enabled800×480@60.029Hz, transform180, scale1.0,154×86mm; make/model fields null, not an identified vendor model. Input name10-0038 generic ft5x06(00). After cleanup API binds127.0.0.1:8765 and onlySSH has external listeners; no9222debugger.

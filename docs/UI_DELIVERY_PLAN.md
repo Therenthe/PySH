@@ -28,6 +28,8 @@ Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4def
 | UI-20 | Bluetooth: pending/eroare/retry în dialogul activ, fără eroare ascunsă în spate | Instalat98385/source9e91;52probe recovery+316regresie browser; hardware final OPEN |
 | UI-21 | Salvare locație eșuată păstrează rezultatele și permite retry | Instalat98385/source9e91;52probe recovery+316regresie browser; hardware final OPEN |
 | UI-22 | Animații/microanimații explică acțiunile, aspect matur apropiat de referințe, fără ornament care ascunde UI | Revizie continuă pe800×480; fără autoevaluare10/10 |
+| UI-23 | Atribuire meteo cu link sursă/licență lângă date, revenire la hub fără întreruperea radioului | OPEN; audit furnizor identifică lipsă; implementare izolată în lucru |
+| INTEGRATION-01 | Radio Browser: semnal best-effort numai la porniri explicite cu UUID catalog valid | Local nepublicat;327backend și110browser teste trecute; publicare/instalare OPEN |
 | QA-01 | Auditor uzabilitate execută fiecare comandă, inclusiv eșec/retry/cancel | Raport user-ui-audit-2026-10-04:232existente+12probe+4lifecycle; fixture≠hardware |
 | QA-02 | Auditor aspect inspectează capturi EN/RO×Ink/Noapte și stări expand/collapse/idle | Raport visual-ui-audit-2026-10-04:72combinații+4Arrange; retest nou candidat OPEN |
 | QA-03 | Vizualizare întregului panou exclusiv privată, prin PC loopback/SSH; fără publicare sau înregistrare | Există viewer privat; nu expunem API/viewer în internet |
