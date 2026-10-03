@@ -25,8 +25,8 @@ Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4def
 | UI-17 | Temă nocturnă după apus/răsărit la locație; ambele teme logice și lizibile EN/RO | Există implementare solară; noile geometrii/layout necesită revizie |
 | UI-18 | Dropdownuri stabile, tastatură apare când trebuie și dispare după utilizare | Probe existente; tur toate controalele/nativ OPEN |
 | UI-19 | Netflix imersiv, fără rame/scroll; întoarcere la hub recuperabilă dar discretă | Implementare existentă; film DRM real/resoluție/audio încă OPEN |
-| UI-20 | Bluetooth: pending/eroare/retry în dialogul activ, fără eroare ascunsă în spate | Defect confirmat de auditor; OPEN de remediat |
-| UI-21 | Salvare locație eșuată păstrează rezultatele și permite retry | Defect confirmat de auditor; OPEN de remediat |
+| UI-20 | Bluetooth: pending/eroare/retry în dialogul activ, fără eroare ascunsă în spate | Instalat98385/source9e91;52probe recovery+316regresie browser; hardware final OPEN |
+| UI-21 | Salvare locație eșuată păstrează rezultatele și permite retry | Instalat98385/source9e91;52probe recovery+316regresie browser; hardware final OPEN |
 | UI-22 | Animații/microanimații explică acțiunile, aspect matur apropiat de referințe, fără ornament care ascunde UI | Revizie continuă pe800×480; fără autoevaluare10/10 |
 | QA-01 | Auditor uzabilitate execută fiecare comandă, inclusiv eșec/retry/cancel | Raport user-ui-audit-2026-10-04:232existente+12probe+4lifecycle; fixture≠hardware |
 | QA-02 | Auditor aspect inspectează capturi EN/RO×Ink/Noapte și stări expand/collapse/idle | Raport visual-ui-audit-2026-10-04:72combinații+4Arrange; retest nou candidat OPEN |

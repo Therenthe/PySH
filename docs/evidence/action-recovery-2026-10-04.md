@@ -11,3 +11,7 @@ Independent isolated audit:52 distinct EN/RO, Ink/night,800×480 recovery and gu
 The previous-source GitHub run37157162597 passed253browser cases and failed one immediate weather/forecast spacing read. An isolated auditor subsequently passed48Arrange edge cases and8spacing cases across languages/themes, including64reloads; settled spacing was exactly16px. The negative CI value was not reproduced. The spacing probe now advances its virtual clock400ms and reads both DOMRects atomically within expect.poll, retaining the strict16px requirement. Application layout was not changed for that test correction.
 
 All product criteria remain OPEN until same-candidate native acceptance.
+
+## Native installation
+
+Runtime98385a22787c/source9e919486c66561e8cad76b1a7886f2136af24e84activated on existing SD with c425ad0475dc retained for rollback. Separate PC backup SHA25697ca716c2f818b2bec37e925714d417661a1b2a858ecc14dda078a44b5a0da70verified before activation.41file hashes matched; no pending transaction. Radio resumed; four audio-ready playback samples progressed1.525→4.570→7.602→10.586seconds. Recovery failure flows remain browser-fixture evidence; no deliberate hardware pairing or physical touch acceptance is claimed. The amended spacing test also passed4/4fresh cases in21.7seconds.

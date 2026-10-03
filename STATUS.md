@@ -1,3 +1,9 @@
+# Current runtime — visible action recovery
+
+Installed `98385a22787c`, source `9e919486c66561e8cad76b1a7886f2136af24e84`. Bluetooth/location recovery remains accessible across context closure and navigation, pending/errors block idle, and retries do not repeat accepted mutations. Compact arrangement/edge anchors and Home ambient rest are retained.316browser cases passed,41native file hashes and continuing radio verified. See [evidence](docs/evidence/action-recovery-2026-10-04.md). All30product criteria remain OPEN.
+
+Following entries are historical.
+
 # Current runtime update — Home ambient rest
 
 Installed `c425ad0475dc`, source `06b5cf5f999f51257980b734b78e9cb998aa0ddf`. Compact arrangement and edge anchors are retained. Home idle hides cards and chrome, retaining clock, audio signal and sky; first gesture wakes compact cards without activating controls.41native file hashes and ongoing radio verified; actual panel idle capture inspected. See [evidence](docs/evidence/home-ambient-phase-2026-10-04.md). All30product criteria remain OPEN.
