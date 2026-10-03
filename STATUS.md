@@ -28,6 +28,8 @@ Owner priority: complete flasher/SD installation first, then remaining functiona
 
 SSH console flasher is now implemented: [procedure](docs/SSH_FLASHER.md). All18 focused tests passed; full local suite153 passed/22 Windows/Linux-platform skips, one existing deprecation warning. Linux loop/provisioning proof, SD identity/whole-card backup, physical write/readback and SD boot remain pending. No SD has been erased.
 
+Native Linux loop/provisioning proof now passed, including exact raw readback, separate public-key proof and all owned mappings detached; [evidence](docs/evidence/ssh-flasher-linux-2026-10-03.md). SD is inserted,15,962,472,448 bytes, unmounted; current root remains USB. Whole-card backup is running in a visible local console. Backup verification, actual SD write/readback/recovery provisioning and SD boot remain pending.
+
 ## Remaining release gates
 
 - Complete EN/RO physical touch, theme and error-state inventory on one current candidate; native preparation timeout/retry.

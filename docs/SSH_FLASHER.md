@@ -1,5 +1,7 @@
 # Flash PySH OS prin SSH, cu progres în consolă
 
+Proba Linux pe loop-uri deținute a verificat scrierea, block flush, readback-ul și provisioning FAT, cu cleanup complet; [dovada](evidence/ssh-flasher-linux-2026-10-03.md). Aceasta nu înlocuiește SD-ul real și primul boot. `tests/linux/ssh_flasher_loop.py` poate repeta proba într-un workspace nou, privat, folosind doar backing files proprii; producția continuă să refuze loop-uri.
+
 Acest tool scrie **un card SD inactiv** dintr-un Raspberry pornit de pe USB. Nu poate rescrie în siguranță sistemul SD din care rulează Raspberry; refuză root, boot, swap, partiții montate sau dispozitive cu holders. Nu permite ținte USB, aliasuri/symlinkuri, partiții individuale sau identificarea doar prin numele `/dev/mmcblk0`. CID-ul fizic și capacitatea exactă trebuie confirmate și repetate.
 
 Tool-urile sunt `scripts/flash-pysh-ssh.py` pe PC și `scripts/flash-pysh-target.py` ca helper transmis în sesiunea SSH, executat cu `sudo -n python3`. Nu este necesară instalarea unui daemon. PC-ul necesită Python 3.12+ și OpenSSH; Raspberry necesită Linux, Python, sudo administrativ, lsblk, blockdev, udevadm, blkid, mount/umount și vfat. SSH folosește obligatoriu cheia explicită și fișierul known-hosts explicit, strict host checking și BatchMode; nu acceptă parole sau expunere publică. Comenzile exemplificate mai jos sunt pe o singură linie și funcționează din PowerShell sau shell Linux, adaptând căile.

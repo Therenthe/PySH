@@ -49,7 +49,7 @@ def snapshot(device):
     require(re.fullmatch('/dev/mmcblk[0-9]+', device), 'Only whole physical SD devices are permitted')
     path = Path(device)
     require(not path.is_symlink() and stat.S_ISBLK(path.stat().st_mode), 'Target is not a direct block device')
-    tree = json.loads(subprocess.check_output(['lsblk', '--json', '--bytes', '--output',
+    tree = json.loads(subprocess.check_output(['lsblk', '--json', '--tree', '--bytes', '--output',
                      'PATH,TYPE,SIZE,MAJ:MIN,MOUNTPOINTS', device], text=True))['blockdevices']
     require(len(tree) == 1 and tree[0]['path'] == device and tree[0]['type'] == 'disk', 'Unexpected target tree')
     nodes = []
