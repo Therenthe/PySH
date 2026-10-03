@@ -27,3 +27,5 @@
 .app .main-nav::before{content:'';position:absolute;left:-7px;top:10px;width:3px;height:36px;border-radius:3px;background:var(--accent);transform:translateY(calc(var(--nav-index,0)*59px));transition:transform 180ms ease-out;pointer-events:none}
 @media(prefers-reduced-motion:reduce){.app .main-nav::before{transition:none}}
 .app .radio-redesign .radio-station-name,.app .radio-redesign .radio-track-name{display:block;white-space:nowrap;text-overflow:ellipsis}
+
+.app button[data-pressed=true]:not(:disabled){box-shadow:inset 0 0 0 2px var(--accent-strong);transition:none}

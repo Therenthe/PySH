@@ -60,8 +60,9 @@ export function Radio(props: RadioProps) {
   const ro = language === 'ro';
   const items = favoritesOnly ? favorites : stations;
   const isRadio = playerKind === 'radio';
-  const title = (isRadio ? stationName : trackTitle) || t('nothingPlaying');
-  const metadata = isRadio && trackTitle && trackTitle !== stationName ? trackTitle : '';
+  const remembered = !currentUrl && currentStation?.name;
+  const title = (currentUrl ? (isRadio ? stationName : trackTitle) : remembered) || t('nothingPlaying');
+  const metadata = Boolean(currentUrl) && isRadio && trackTitle && trackTitle !== stationName ? trackTitle : '';
   const status = playerState === 'error' ? t('errorState') : t(playerState || 'idle');
   return <div className="radio-page radio-redesign">
     <div className="radio-columns">
@@ -102,7 +103,7 @@ export function Radio(props: RadioProps) {
       </section>
       <section className="radio-side" aria-label={t('nowPlaying')}>
         <div className="mini-player">
-          <span className="eyebrow">{t('nowPlaying')}</span>
+          <span className="eyebrow">{remembered ? (ro ? 'Ultimul post' : 'Last station') : t('nowPlaying')}</span>
           <StationArtwork station={isRadio ? currentStation : null} name={isRadio ? stationName : ''} large />
           <b className="radio-station-name"><MarqueeText text={title} active={playerState==='playing'}/></b>
           {metadata && <span className="radio-track-name"><MarqueeText text={metadata} active={playerState==='playing'}/></span>}

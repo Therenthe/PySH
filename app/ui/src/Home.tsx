@@ -22,7 +22,7 @@ function AmbientSky({code,isDay,stale}:{code:unknown;isDay:unknown;stale:boolean
 }
 export function Home({language,timezone,weather:w,temperature,condition,location,stale,player,stationName,trackTitle,audioReady,canPlay,pauses,shortcuts,t,icon,onWeather,onToggle,onStop,onNavigate,visualizer}:Props){
  const hasWeather=typeof temperature==='number'&&Number.isFinite(temperature),active=['playing','paused','buffering','connecting'].includes(player.state);
- const title=player.kind==='radio'?stationName:player.title,metadata=player.kind==='radio'&&trackTitle&&trackTitle!==stationName?trackTitle:'';
+ const title=player.kind==='radio'?(player.url?stationName:''):player.title,metadata=player.kind==='radio'&&!!player.url&&trackTitle&&trackTitle!==stationName?trackTitle:'';
  const status=player.state==='error'?t('errorState'):t(player.state||'idle'),locale=language==='ro'?'ro-RO':'en-GB';
  const stamp=w.updated_at?new Date(w.updated_at).toLocaleTimeString(locale,{hour:'2-digit',minute:'2-digit',timeZone:timezone}):'';
  const labels=language==='ro'?{forecast:'Prognoză 5 zile',wind:'Vânt',humidity:'Umiditate',pressure:'Presiune',uv:'Indice UV'}:{forecast:'5-day forecast',wind:'Wind',humidity:'Humidity',pressure:'Pressure',uv:'UV index'};
