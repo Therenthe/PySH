@@ -20,7 +20,7 @@ Fresh successor-image installation/rollback; five cold boots and eight-hour stab
 
 ## First physical USB boot
 
-Recovery SSH login and real mounted USB root growth passed (255,810,580,480 filesystem bytes). Initial GUI startup exposed tty1 getty/greetd conflict; live repair now runs Labwc/API/Chromium at800Ã—480. Output rotation180 physically confirmed. Native Chromium tracing identified doubled touch rotation; identity calibration with DSI rotation180 restored native touch. Trusted button events and user-confirmed Continue â†’ Connectivity passed. Full touch-navigation acceptance remains OPEN. Temporary browser debugging removed; four source assets installed with matching hashes. Normal OS reboot passed with automatic UI/API/SSH startup, persisted DSI rotation and zero failed units. See [first-boot evidence](docs/evidence/os-first-boot-2026-10-03.md). Base runtime1e2918ca798f plus documented live session patches; product acceptance remains OPEN.
+Recovery SSH login and real mounted USB root growth passed (255,810,580,480 filesystem bytes). Initial GUI startup exposed tty1 getty/greetd conflict; live repair now runs Labwc/API/Chromium at800Ãƒâ€”480. Output rotation180 physically confirmed. Native Chromium tracing identified doubled touch rotation; identity calibration with DSI rotation180 restored native touch. Trusted button events and user-confirmed Continue Ã¢â€ â€™ Connectivity passed. Full touch-navigation acceptance remains OPEN. Temporary browser debugging removed; four source assets installed with matching hashes. Normal OS reboot passed with automatic UI/API/SSH startup, persisted DSI rotation and zero failed units. See [first-boot evidence](docs/evidence/os-first-boot-2026-10-03.md). Base runtime1e2918ca798f plus documented live session patches; product acceptance remains OPEN.
 
 ## Native OS UI survey
 
@@ -28,4 +28,14 @@ Actual existing-kiosk EN/RO and E-Ink/night survey passed48 screens, zero measur
 
 ## OS network/audio integration
 
-Network primary-route correction is deployed; real Wi-Fi scan found three networks without disrupting Ethernet. Bluetooth connect exposed missing PipeWire Bluetooth plugin; installed isolated plugin1.4.2-1+rpt3 and five codec dependencies after simulation, zero upgrades/removals. Known speaker now connected with selected Bluetooth output and actual WAV playback; human audible confirmation is pending. Image package/inspection repair is prepared. Acceptance target115cb4173f52; previous preview REL-02 reopened. See [network/audio evidence](docs/evidence/os-network-audio-2026-10-03.md).
+Network primary-route correction is deployed; real Wi-Fi scan found three networks without disrupting Ethernet. Bluetooth connect exposed missing PipeWire Bluetooth plugin; installed isolated plugin1.4.2-1+rpt3 and five codec dependencies after simulation, zero upgrades/removals. Known speaker now connected with selected Bluetooth output and actual WAV playback; human audible confirmation is pending. Image package/inspection repair is prepared. Acceptance target115cb4173f52; dedicated-OS REL-02 revalidated after reopening. See [network/audio evidence](docs/evidence/os-network-audio-2026-10-03.md).
+
+## Dedicated OS performance/recovery
+
+Five installed app relaunches reached native Home in4.04–4.23s. Complete15-process idle PSS563.487MiB at Home+120.0001s, below700MiB, zero zombies. Owned API/kiosk crash recovery2.396s/1.179s with exact preferences unchanged and administrative exit-code causes logged. REL-02 passes for115cb4173f52. These are app launches, not cold boots; full graphical-start and media-load/stability acceptance remain OPEN. See [OS performance/recovery evidence](docs/evidence/os-performance-recovery-2026-10-03.md).
+
+## Current OS media and successor image
+
+Runtime115cb4173f52 passed a repeated48-screen native survey (120 navigation samples, p95=67.8ms), eight local audio formats, five video containers with the tested encodings, video controls/error recovery, and service cancel/entry/return in EN/RO × both themes. Temporary kiosk debugging removed after these probes; original preferences restored. New-OS speaker audibility remains pending.
+
+Successor image d61ec8d/runtimea32c29065d6d built successfully (run37104486072), downloaded and fully verified on PC: 4,571,791,360 bytes, raw SHA256 `d34aef22890cc0b1f767b39cc46d60ca1f811e18c1c89d7f38dc75a1ef16dcbd`. Includes startup/touch, network-route and Bluetooth-plugin fixes. This fresh image is not installed or physically accepted; recovery provisioning remains required. Live inventory sees only the mounted USB, no SD. See [media/service/image evidence](docs/evidence/os-media-service-image-2026-10-03.md).

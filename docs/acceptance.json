@@ -257,12 +257,12 @@
     },
     {
       "id": "REL-02",
-      "status": "OPEN",
+      "status": "PASS",
       "candidate": "115cb4173f52",
       "evidence": [
-        "docs/evidence/os-network-audio-2026-10-03.md"
+        "docs/evidence/os-performance-recovery-2026-10-03.md"
       ],
-      "reason": "Target moved to dedicated USB OS/runtime115cb4173f52; previous desktop-preview recovery PASS is historical. Dedicated-OS recovery and preference preservation are pending."
+      "reason": "Observed dedicated OS owned API/kiosk recovery2.396s/1.179s, preferences SHA unchanged, zero zombies, one live mpv and scoped exit-code journal causes."
     },
     {
       "id": "PERF-01",
