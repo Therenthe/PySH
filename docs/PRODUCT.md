@@ -19,7 +19,7 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 
 ### Acasă și navigare
 
-- Ceas mare, dată localizată, vreme curentă și prognoză utilă, cu oră de actualizare și stare clară pentru date indisponibile sau expirate.
+- Un singur ceas și o singură dată în bara de sus, fără salut/profil fictiv. Ambient Canvas urmărește condiția reală și zi/noapte; datele expirate folosesc o scenă neutră. Prognoza cuprinde cinci coloane vizibile cu icoana condiției și maximă/minimă, fără scroll. Umiditatea, presiunea, vântul și UV provin din date reale; valorile absente rămân indisponibile.
 - Card principal dinamic (de exemplu, redarea activă, radio sau un mesaj de stare) și scurtături configurabile spre funcțiile folosite frecvent.
 - Bară de stare pentru rețea, Bluetooth și audio; navigare coerentă către Acasă, media și setări.
 - Aspect echilibrat, fără suprapuneri, zone moarte disproporționate sau text care cere scroll accidental pe panourile de bază.

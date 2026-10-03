@@ -1,0 +1,13 @@
+# Ambient Canvas and Radio candidate
+
+Owner reference prioritizes a unified weather canvas, restrained depth, one clock/date and no greeting. Home now has genuine condition/day-night scene, five forecast icons plus high/low values and a single station/metadata transport dock. Authored SVG/CSS scenery uses no GPU blur. Stale/unknown weather stays neutral. Both E-Ink and night themes remain available.
+
+Radio uses search/filter pills, an explicit favorites filter, whole station rows with optional artwork and a focal player. Station and stream metadata remain separate. Previous/next select stations; volume/mute use the real audio API. Optional artwork rejects insecure URLs, IP literals and local hostnames, and has a monogram fallback. Compositor live viewing remains PC-loopback-only.
+
+Weather adds documented relative humidity, sea-level pressure, wind direction and hourly UV. UV is matched to the provider current hour; missing/malformed/ambiguous values become unavailable. It never substitutes a daily maximum, neighbouring hour or fabricated nighttime zero. Sources: [Open-Meteo docs](https://open-meteo.com/en/docs), [official schema](https://github.com/open-meteo/open-meteo/blob/main/openapi/forecast.yml).
+
+Visualization choices are Off/Wave/Levels/Orbit; default Off. The local backend reads only the selected sink monitor via parec, 8kHz mono signed16 PCM.64 waveform samples and16 time-domain RMS bins are ephemeral; these bins are not a frequency spectrum. No microphone/default source, recording file or external upload. A two-second consumer heartbeat and cached playback context stop capture for stale state, pause, mute, route change, service mode or hidden/unmounted UI.10Hz endpoint makes no mpv/device status calls. Reduced motion uses a static numeric level. Same visualizer is available in screensaver.
+
+Candidate53c750ceab68 packages41 files. TypeScript/build/repository checks passed.260 backend tests passed,22 platform skips, existing Starlette warning.154 complete browser cases passed in1.4 minutes with frozen sources. This includes20 new ambient cases and12 signal cases, EN/RO and both themes at800×480, real touch scrolling, recovery layout, font/contrast checks, station transport, invalid signal, mute and screensaver. Earlier run failures from obsolete selectors/font sizes/recovery clipping were repaired; one run interrupted by source hot reload is superseded by the frozen complete run.
+
+Native activation and physical output monitor validation remain pending. Current SD has no parec binary; package dependency is now explicit in the image layer. Final UI acceptance, performance, long-title treatment and final same-candidate stability remain OPEN. These tests do not assign a product score or certify all hardware flows.

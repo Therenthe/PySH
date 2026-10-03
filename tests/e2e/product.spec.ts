@@ -71,8 +71,8 @@ for(const theme of ['ink','night'] as const){
   const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
   f.state.player={state:'playing',kind:'radio',station_name:'Radio București',title:'An artist — A very long song title '.repeat(6),url:'https://example.com/test.mp3'};
   await page.goto('/');await expect(page.locator('.playback-source')).toHaveText('Radio București');
-  await expect(page.locator('.playback-metadata')).toHaveText(f.state.player.title);await expect(page.locator('.now-bar,.top-clock')).toHaveCount(0);
-  await expect(page.locator('.weather-symbol svg')).toHaveAttribute('data-weather-condition','clear');
+  await expect(page.locator('.playback-metadata')).toHaveText(f.state.player.title);await expect(page.locator('.now-bar')).toHaveCount(0);await expect(page.locator('.top-clock')).toHaveCount(1);
+  await expect(page.locator('.ambient-current svg')).toHaveAttribute('data-weather-condition','clear');
   const defects:string[]=[];await capture(page,info,'home-polished-radio',defects);
   const overflow=await page.locator('.home-v2,.home-playback').evaluateAll(elements=>elements.some(el=>el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1));
   expect(overflow).toBe(false);expect(defects).toEqual([]);
@@ -111,7 +111,7 @@ for(const theme of ['ink','night'] as const) {
     for(const playing of [false,true])for(const stale of [false,true]){
       f.state.player=playing?{state:'playing',kind:'radio',title:'Test station',url:'https://example.com/test.mp3'}:{state:'idle'};
       f.state.weather.stale=stale;
-      await page.goto('/');await expect(page.locator('.forecast-line>span')).toHaveCount(4);
+      await page.goto('/');await expect(page.locator('.forecast-day')).toHaveCount(5);await expect(page.locator('.forecast-day svg')).toHaveCount(5);
       const issues=await page.locator('.home-weather,.home-shortcuts,.home-layout').evaluateAll(elements=>elements.flatMap(el=>{
         const defects:string[]=[];
         if(el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1)defects.push(`${el.className} scrolls: ${el.scrollWidth}×${el.scrollHeight} / ${el.clientWidth}×${el.clientHeight}`);
@@ -317,12 +317,12 @@ for(const theme of ['ink','night'] as const) {
     await capture(page,info,'home-weather',defects);
     if(ro)expect.soft(await page.locator('.home-focus').innerText()).not.toContain('YOUR HUB');
     const nav=async(index:number)=>page.locator('.main-nav button').nth(index).tap();
-    await nav(1); await page.locator('.radio-toolbar button.primary').tap();
+    await nav(1); await page.locator('.radio-refresh').tap();
     await expect(page.locator('.station-main')).toHaveCount(1); await capture(page,info,'radio-populated',defects);
     if(ro)expect.soft(await page.locator('.radio-page').innerText()).not.toMatch(/LISTEN|DISCOVER|\bidle\b/);
     await page.locator('.station-main').tap(); await capture(page,info,'radio-playing',defects);
-    f.radio='empty';await page.locator('.radio-toolbar button.primary').tap();await expect(page.locator('.station-main')).toHaveCount(0);await capture(page,info,'radio-empty',defects);
-    f.radio='error';await page.locator('.radio-toolbar button.primary').tap();await expect(page.locator('.error-strip')).toBeVisible();await capture(page,info,'radio-error',defects);
+    f.radio='empty';await page.locator('.radio-refresh').tap();await expect(page.locator('.station-main')).toHaveCount(0);await capture(page,info,'radio-empty',defects);
+    f.radio='error';await page.locator('.radio-refresh').tap();await expect(page.locator('.error-strip')).toBeVisible();await capture(page,info,'radio-error',defects);
     await nav(2); await expect(page.locator('.media-item')).toHaveCount(2);await capture(page,info,'media-populated',defects);
     await page.locator('.media-item').first().tap();expect(f.actions.some(a=>a.path==='/api/play'&&a.body.source==='local')).toBeTruthy();
     f.media='empty';await page.locator('.crumb-actions button').first().tap();await expect(page.locator('.media-item')).toHaveCount(0);await capture(page,info,'media-empty',defects);
@@ -334,7 +334,7 @@ for(const theme of ['ink','night'] as const) {
     await page.getByRole('button',{name:ro?'Deschide setările':'Open settings',exact:true}).first().tap();await capture(page,info,'quick-settings',defects);
     for(const [index,name] of [[0,'network'],[1,'bluetooth'],[2,'audio']] as const) {
       await page.locator('.quick-modal>button').nth(index).tap();await capture(page,info,`${name}-dialog`,defects);await closeModal(page,ro);
-      if(index<2)await page.locator('.topbar-right button').tap();
+      if(index<2)await page.locator('.topbar-right .icon-button').tap();
     }
     await nav(1);await page.locator('.radio-toolbar .search-field').tap();await expect(page.locator('.keyboard-card')).toBeVisible();await capture(page,info,'keyboard',defects);
     await page.locator('.diacritics-row button').first().tap();await expect(page.locator('.keyboard-value')).toContainText('ă');await page.locator('.keyboard-card header button').tap();await expect(page.locator('.keyboard-card')).toHaveCount(0);

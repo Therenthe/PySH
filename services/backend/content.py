@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import math
 import os
 import queue
 import random
@@ -82,7 +83,8 @@ class Content:
             params = {
                 "latitude": latitude,
                 "longitude": longitude,
-                "current": "temperature_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m",
+                "current": "temperature_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,relative_humidity_2m,pressure_msl,wind_direction_10m",
+                "hourly": "uv_index",
                 "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum",
                 "forecast_days": 5,
                 "timezone": "auto",
@@ -131,6 +133,10 @@ class Content:
             for day in days
         ):
             raise ContentError("invalid_weather_response", "Weather service returned incomplete data.")
+        # Optional model variables must not make otherwise usable weather fail.
+        # UV is an hourly forecast matched to the provider's current local hour,
+        # never a daily maximum, a neighbouring sample, or an inferred night zero.
+        uv_index, uv_time = _current_hour_uv(raw.get("hourly"), current.get("time"))
         return {
             "location": {k: location.get(k) for k in ("name", "admin1", "country", "latitude", "longitude", "timezone")},
             "current": {
@@ -141,6 +147,11 @@ class Content:
                 "is_day": current.get("is_day"),
                 "precipitation_mm": current.get("precipitation"),
                 "wind_kmh": current.get("wind_speed_10m"),
+                "humidity_pct": _optional_measurement(current.get("relative_humidity_2m"), minimum=0, maximum=100),
+                "pressure_hpa": _optional_measurement(current.get("pressure_msl"), minimum=0, exclusive_minimum=True),
+                "wind_direction_deg": _optional_measurement(current.get("wind_direction_10m"), minimum=0, maximum=360),
+                "uv_index": uv_index,
+                "uv_index_time": uv_time,
             },
             "daily": days,
             "updated_at": updated_at,
@@ -385,6 +396,50 @@ class Content:
         if isinstance(data, dict) and data.get("error"):
             raise ContentError("upstream_error", str(data.get("reason", "Upstream service error")))
         return data
+
+
+def _optional_measurement(value: Any, *, minimum: float, maximum: float | None = None,
+                          exclusive_minimum: bool = False) -> int | float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    try:
+        if not math.isfinite(value):
+            return None
+    except OverflowError:
+        return None
+    if value < minimum or (exclusive_minimum and value == minimum) or (maximum is not None and value > maximum):
+        return None
+    return value
+
+
+def _current_hour_uv(hourly: Any, current_time: Any) -> tuple[int | float | None, str | None]:
+    from datetime import datetime
+    if not isinstance(hourly, dict) or not isinstance(current_time, str) or len(current_time) < 16 or current_time[10] != "T":
+        return None, None
+    times, values = hourly.get("time"), hourly.get("uv_index")
+    if not isinstance(times, list) or not isinstance(values, list) or len(times) != len(values):
+        return None, None
+    try:
+        current = datetime.fromisoformat(current_time)
+    except ValueError:
+        return None, None
+    target = current.replace(minute=0, second=0, microsecond=0)
+    matches = []
+    for index, stamp in enumerate(times):
+        if not isinstance(stamp, str) or len(stamp) < 16 or stamp[10] != "T":
+            continue
+        try:
+            sample = datetime.fromisoformat(stamp)
+        except ValueError:
+            continue
+        if sample.minute == 0 and sample.second == 0 and sample.microsecond == 0 and sample == target:
+            matches.append(index)
+    # Duplicate local timestamps around clock changes are ambiguous.
+    if len(matches) != 1:
+        return None, None
+    index = matches[0]
+    value = _optional_measurement(values[index], minimum=0)
+    return (value, times[index]) if value is not None else (None, None)
 
 
 def _number(value: Any) -> bool:

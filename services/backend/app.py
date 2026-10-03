@@ -11,6 +11,7 @@ from pathlib import Path
 import secrets
 import shutil
 import sys
+import time
 from typing import Literal
 from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
@@ -26,6 +27,7 @@ from .device import Device, DeviceError
 from .content import Content, ContentError
 from .player import Player, PlayerError
 from .external import ExternalBrowser, ExternalError
+from .visualizer import OutputVisualizer
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = Path(os.environ.get("PI_HUB_DATA", str(Path.home() / ".local/share/pi-smart-hub")))
@@ -131,6 +133,36 @@ class Hub:
         self.queue = []
         self.queue_index = -1
         self.started = datetime.now(timezone.utc).isoformat()
+        self._playback_snapshot = {}
+        self._playback_sampled = 0
+        self._visualizer_suspended = 0
+        self.visualizer = OutputVisualizer(self.visualizer_context)
+
+    def cache_playback(self, playback):
+        self._playback_snapshot = dict(playback) if isinstance(playback, dict) else {}
+        self._playback_sampled = time.monotonic()
+        return playback
+
+    def visualizer_context(self):
+        # The 10Hz visualization endpoint never issues mpv or device commands.
+        # Normal state requests and completed transport commands maintain this
+        # small cache. Missing/stale context fails closed, even with PCM present.
+        if self.service_mode or self._visualizer_suspended or self.store.value.visualizerStyle == "off" or time.monotonic() - self._playback_sampled > 3:
+            return {}, {}
+        playback = self._playback_snapshot
+        if playback.get("muted") or playback.get("volume") == 0:
+            return {}, {}
+        return self.snapshots["audio"], playback
+
+    @contextlib.asynccontextmanager
+    async def changing_audio(self):
+        self._visualizer_suspended += 1
+        self.cache_playback({})
+        try:
+            await self.visualizer.close()
+            yield
+        finally:
+            self._visualizer_suspended -= 1
 
     async def safe(self, name, function):
         try:
@@ -166,8 +198,10 @@ class Hub:
         # An analog endpoint is not evidence of speakers. It must be selected explicitly.
         self.audio_selected = bool(active and (active.get("bluetooth") or str(active.get("id")) == self.store.value.audioOutput))
         if self.last_output is not None and (str(output) != str(self.last_output) or not self.audio_selected):
+            self.cache_playback({})
+            await self.visualizer.close()
             with contextlib.suppress(Exception):
-                await self.player.command("pause")
+                self.cache_playback(await self.player.command("pause"))
         self.last_output = output if self.audio_selected else None
         audio["ready"] = self.audio_selected
 
@@ -217,6 +251,7 @@ class Hub:
         self.background(self.weather_loop())
 
     async def close(self):
+        await self.visualizer.close()
         tasks = list(self.tasks)
         for task in tasks:
             task.cancel()
@@ -305,7 +340,7 @@ async def session(request: Request):
 @app.get("/api/state")
 async def state(request: Request):
     hub = request.app.state.hub
-    playback = await hub.player.status()
+    playback = hub.cache_playback(await hub.player.status())
     local = playback.get("kind") == "audio" and bool(playback.get("url"))
     playback.update(canPrevious=local and hub.queue_index > 0, canNext=local and 0 <= hub.queue_index < len(hub.queue) - 1)
     return {"version": VERSION, "preferences": hub.store.export(), **hub.snapshots, "player": playback, "weather": hub.weather, "recovered": hub.store.recovered, "appliance": hub.appliance, "serviceMode": hub.service_mode}
@@ -315,6 +350,8 @@ async def state(request: Request):
 async def preferences(request: Request, patch: dict):
     hub = request.app.state.hub
     result = hub.store.update(patch)
+    if patch.get("visualizerStyle") == "off":
+        await hub.visualizer.close()
     if "location" in patch:
         hub.weather = None
         hub.background(hub.refresh_weather())
@@ -335,8 +372,10 @@ async def bluetooth_scan(request: Request):
 async def bluetooth_action(request: Request, body: BTAction):
     hub = request.app.state.hub
     if body.action in {"disconnect", "forget"}:
+        hub.cache_playback({})
+        await hub.visualizer.close()
         with contextlib.suppress(Exception):
-            await hub.player.command("pause")
+            hub.cache_playback(await hub.player.command("pause"))
     result = await hub.device.bluetooth_action(body.address, body.action)
     await hub.refresh_device()
     return result
@@ -367,19 +406,29 @@ async def network_forget(request: Request, body: NetworkForget):
 @app.post("/api/audio")
 async def audio(request: Request, body: Audio):
     hub = request.app.state.hub
-    result = await hub.device.audio_set(**body.model_dump(exclude_none=True))
-    if not result.get("error"):
-        patch = {}
-        if body.volume is not None:
-            patch["volume"] = body.volume
-        if body.mute is not None:
-            patch["mute"] = body.mute
-        if body.output is not None:
-            patch["audioOutput"] = body.output
-        if patch:
-            hub.store.update(patch)
-        await hub.refresh_device()
+    # Even concurrent state/signal requests cannot restart the old monitor while
+    # output selection or volume/mute is still changing in WirePlumber.
+    async with hub.changing_audio():
+        result = await hub.device.audio_set(**body.model_dump(exclude_none=True))
+        if not result.get("error"):
+            patch = {}
+            if body.volume is not None:
+                patch["volume"] = body.volume
+            if body.mute is not None:
+                patch["mute"] = body.mute
+            if body.output is not None:
+                patch["audioOutput"] = body.output
+            if patch:
+                hub.store.update(patch)
+            await hub.refresh_device()
     return result
+
+
+@app.get("/api/audio/visualization")
+async def audio_visualization(request: Request):
+    hub = request.app.state.hub
+    result = await hub.visualizer.snapshot(enabled=hub.store.value.visualizerStyle != "off" and not hub.service_mode)
+    return JSONResponse(result, headers={"Cache-Control": "no-store"})
 
 
 @app.get("/api/geocode")
@@ -433,12 +482,16 @@ async def play(request: Request, body: Play):
         hub.queue = []
         hub.queue_index = -1
         hub.store.update({"lastStation": {"uuid": hashlib.sha256(source.encode()).hexdigest(), "name": body.title or "Radio", "url": source}})
-    return await hub.player.play(source, title=body.title, kind=body.source)
+    hub.cache_playback({})
+    await hub.visualizer.close()
+    return hub.cache_playback(await hub.player.play(source, title=body.title, kind=body.source))
 
 
 @app.post("/api/player")
 async def player(request: Request, body: Transport):
     hub = request.app.state.hub
+    hub.cache_playback({})
+    await hub.visualizer.close()
     if body.action in {"resume", "toggle"} and not hub.audio_selected:
         return JSONResponse({"error": "no_audio_output"}, status_code=409)
     if body.action in {"resume", "toggle", "next", "previous"} and hub.audio_selected:
@@ -453,8 +506,8 @@ async def player(request: Request, body: Transport):
         target = str(hub.content.resolve_media(item["path"]))
         result = await hub.player.play(target, title=item["name"], kind="local")
         hub.queue_index = next_index
-        return result
-    return await hub.player.command(body.action, body.value)
+        return hub.cache_playback(result)
+    return hub.cache_playback(await hub.player.command(body.action, body.value))
 
 
 @app.post("/api/external")
@@ -463,8 +516,10 @@ async def external(request: Request, body: External):
     executable = shutil.which("chromium")
     if sys.platform != "linux" or not executable:
         return JSONResponse({"error": "browser_unavailable"}, status_code=409)
+    hub.cache_playback({})
+    await hub.visualizer.close()
     with contextlib.suppress(Exception):
-        await hub.player.command("pause")
+        hub.cache_playback(await hub.player.command("pause"))
     prefs = hub.store.value
     local = datetime.now(ZoneInfo(prefs.timezone)).strftime("%H:%M")
     scheduled_night = prefs.nightEnabled and (prefs.nightStart <= local < prefs.nightEnd if prefs.nightStart <= prefs.nightEnd else local >= prefs.nightStart or local < prefs.nightEnd)
@@ -517,6 +572,8 @@ async def exit_hub(request: Request):
         playback = await hub.player.status()
         if playback.get("state") not in {"idle", "ended", "error"}:
             await hub.player.command("stop")
+        hub.cache_playback({})
+        await hub.visualizer.close()
         await hub.external.close()
         hub.service_mode = True
         return {"exiting": False, "mode": "service"}

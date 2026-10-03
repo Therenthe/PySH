@@ -1,4 +1,4 @@
-import type { MouseEvent } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import './screensaver.css';
 
 export type ScreenSaverPlayer = {
@@ -11,6 +11,7 @@ export type ScreenSaverPlayer = {
 };
 
 export type ScreenSaverProps = {
+  visualizer?: ReactNode;
   time: string;
   date: string;
   language: 'en' | 'ro';
@@ -49,7 +50,7 @@ function TransportIcon({ action }: { action: 'previous' | 'next' | 'play' | 'pau
 }
 
 /** Transport callbacks own backend operations. Capability flags must include pending/audio state. */
-export function ScreenSaver({ time, date, language, theme, player, canPlay, canPrevious, canNext, onPlayPause, onPrevious, onNext, onWake }: ScreenSaverProps) {
+export function ScreenSaver({ visualizer, time, date, language, theme, player, canPlay, canPrevious, canNext, onPlayPause, onPrevious, onNext, onWake }: ScreenSaverProps) {
   const t = labels[language], radio = player.kind === 'radio';
   const active = ['playing', 'buffering', 'connecting'].includes(player.state || '');
   const title = (radio ? player.station_name : '') || player.title || player.station_name || '';
@@ -62,7 +63,7 @@ export function ScreenSaver({ time, date, language, theme, player, canPlay, canP
     event.stopPropagation();
     void action();
   };
-  return <section className="pysh-screensaver" data-theme={theme} role="region" aria-label={t.screen}
+  return <section className={`pysh-screensaver ${visualizer ? 'saver-with-signal' : ''}`} data-theme={theme} role="region" aria-label={t.screen}
     onPointerDown={event => event.stopPropagation()}
     onClick={event => { event.stopPropagation(); onWake(); }}>
     <header className="saver-header"><span className="saver-brand">PI SMART HUB</span>
@@ -72,6 +73,7 @@ export function ScreenSaver({ time, date, language, theme, player, canPlay, canP
     <section className={`saver-playback ${title ? '' : 'saver-empty'}`} aria-label={radio ? t.radio : t.audio}>
       <div className="saver-source">{title ? (radio ? t.radio : t.audio) : t.nothing}</div>
       {title && <><h1 title={title}>{title}</h1><p className="saver-metadata" title={detail}>{detail || '\u00a0'}</p></>}
+      {visualizer&&<div className="saver-visualizer">{visualizer}</div>}
       <div className="saver-transport" onClick={event => event.stopPropagation()}>
         <button disabled={!canPrevious} aria-label={radio ? t.previousStation : t.previousTrack} onClick={event => invoke(event, onPrevious)}><TransportIcon action="previous" /><span>{radio ? t.previousStation : t.previousTrack}</span></button>
         <button className="saver-primary" disabled={!canPlay} aria-label={active ? t.pause : t.play} onClick={event => invoke(event, onPlayPause)}><TransportIcon action={active ? 'pause' : 'play'} /><span>{active ? t.pause : t.play}</span></button>

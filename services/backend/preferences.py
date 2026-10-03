@@ -42,6 +42,7 @@ class Preferences(BaseModel):
     nightStart: str = Field(default="22:00", pattern=r"^(?:[01]\d|2[0-3]):[0-5]\d$")
     nightEnd: str = Field(default="07:00", pattern=r"^(?:[01]\d|2[0-3]):[0-5]\d$")
     screensaverMinutes: int = Field(default=5, ge=0, le=120)
+    visualizerStyle: Literal["off", "wave", "bars", "orbit"] = "off"
     timezone: str = "Europe/Bucharest"
     location: Location | None = None
     setupComplete: bool = False

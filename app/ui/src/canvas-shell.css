@@ -1,0 +1,24 @@
+.app[data-theme=night]{--bg:#0b0e14;--paper:#141824;--surface:#161b26;--surface-2:#222a37;--line:#303b48;--line-dark:#566576;--ink:#f4f7fb;--muted:#b4c0cf;--accent:#6edbb3;--accent-strong:#8be8c6;--soft:#203b35}
+.app .topbar{height:58px;flex-basis:58px;padding:0 16px;display:grid;grid-template-columns:140px minmax(0,1fr) auto;gap:12px}
+.app .topbar-title .eyebrow{font-size:14px;letter-spacing:.04em}
+.app .topbar-time{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0}
+.app .top-clock{font-size:24px;line-height:27px}
+.app .date-label{font-size:14px;line-height:17px;white-space:nowrap}
+.app .topbar-right{gap:8px}
+.app .top-network{border:0;background:transparent;color:var(--muted);display:flex;align-items:center;gap:7px;min-height:48px;padding:0 4px;font-size:14px}
+.app .topbar .icon-button{width:48px;height:48px}
+.app .now-bar{bottom:0}
+.app .main-nav button{transition:background-color .16s,color .16s}
+.app .main-nav button:active,.app .top-network:active{background:var(--soft)}
+@media(prefers-reduced-motion:reduce){.app .main-nav button{transition:none}}
+/* Recovery replaces the header so a failure never clips Home transport. */
+.app .main-area:has(>.error-strip)>.topbar{display:none}
+.app .main-area>.error-strip{height:58px;min-height:58px;flex:0 0 58px;font-size:14px;padding:4px 12px}
+.app .main-area>.error-strip button:not(.icon-button){min-height:48px;min-width:48px;padding:0 8px}
+.app .radio-redesign button:active:not(:disabled){transform:none;background:var(--soft)}
+.app .radio-redesign .filter-button small,.app .radio-redesign .mini-player .eyebrow{font-size:14px}
+.app .radio-redesign .station-row.selected{background:var(--soft)}
+.app .pysh-screensaver.saver-with-signal{grid-template-rows:56px 128px minmax(0,1fr) 28px}
+.app .saver-with-signal .saver-clock time{font-size:76px}
+.app .saver-visualizer{height:44px;width:min(520px,100%);flex:0 0 44px;overflow:hidden;margin-bottom:4px}
+.app .saver-visualizer .audio-visualizer{height:100%}
