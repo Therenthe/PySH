@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import pytest
 from pydantic import ValidationError
 from services.backend.preferences import PreferenceStore
@@ -24,3 +25,12 @@ def test_invalid_patch_never_changes_disk(tmp_path, patch):
     with pytest.raises(ValidationError):
         store.update(patch)
     assert store.path.read_bytes() == before
+
+
+def test_legacy_night_schedule_preserved_and_new_saver_choices_persist(tmp_path):
+    (tmp_path / 'preferences.json').write_text(json.dumps({'nightEnabled': True, 'nightStart':'21:00'}))
+    store = PreferenceStore(tmp_path)
+    assert store.value.nightMode == 'schedule'
+    store.update({'nightMode':'solar','screensaverLayout':'visualizer','visualizerStyle':'orbit'})
+    restored = PreferenceStore(tmp_path).value
+    assert (restored.nightMode, restored.screensaverLayout, restored.visualizerStyle) == ('solar','visualizer','orbit')

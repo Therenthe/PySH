@@ -39,10 +39,12 @@ class Preferences(BaseModel):
     theme: Literal["ink", "night"] = "ink"
     accent: Literal["sage", "amber", "blue"] = "sage"
     nightEnabled: bool = False
+    nightMode: Literal["solar", "schedule"] = "solar"
     nightStart: str = Field(default="22:00", pattern=r"^(?:[01]\d|2[0-3]):[0-5]\d$")
     nightEnd: str = Field(default="07:00", pattern=r"^(?:[01]\d|2[0-3]):[0-5]\d$")
     screensaverMinutes: int = Field(default=5, ge=0, le=120)
     visualizerStyle: Literal["off", "wave", "bars", "orbit"] = "off"
+    screensaverLayout: Literal["clock", "visualizer"] = "clock"
     timezone: str = "Europe/Bucharest"
     location: Location | None = None
     setupComplete: bool = False
@@ -76,7 +78,10 @@ class PreferenceStore:
         for path in (self.path, self.backup):
             if path.exists():
                 try:
-                    result = Preferences.model_validate_json(path.read_text(encoding="utf-8"))
+                    saved = json.loads(path.read_text(encoding="utf-8"))
+                    if isinstance(saved, dict) and "nightMode" not in saved and saved.get("nightEnabled"):
+                        saved["nightMode"] = "schedule"
+                    result = Preferences.model_validate(saved)
                     self.recovered = path == self.backup
                     return result
                 except (ValueError, OSError):

@@ -13,6 +13,7 @@ import sys
 import tempfile
 import threading
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, ClassVar
 from urllib.parse import urlencode
@@ -85,7 +86,7 @@ class Content:
                 "longitude": longitude,
                 "current": "temperature_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,relative_humidity_2m,pressure_msl,wind_direction_10m",
                 "hourly": "uv_index",
-                "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum",
+                "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset",
                 "forecast_days": 5,
                 "timezone": "auto",
                 "temperature_unit": "celsius",
@@ -114,6 +115,17 @@ class Content:
         def day_value(key: str, index: int) -> Any:
             values = daily.get(key, [])
             return values[index] if index < len(values) else None
+        def solar_epoch(key: str, index: int) -> float | None:
+            value, offset = day_value(key, index), raw.get("utc_offset_seconds")
+            if not isinstance(value, str) or not _number(offset):
+                return None
+            try:
+                local = datetime.fromisoformat(value)
+                if local.tzinfo is not None:
+                    return local.timestamp()
+                return local.replace(tzinfo=timezone.utc).timestamp() - offset
+            except ValueError:
+                return None
         days = [
             {
                 "date": day,
@@ -121,6 +133,8 @@ class Content:
                 "min_c": day_value("temperature_2m_min", i),
                 "max_c": day_value("temperature_2m_max", i),
                 "precipitation_mm": day_value("precipitation_sum", i),
+                "sunrise_epoch": solar_epoch("sunrise", i),
+                "sunset_epoch": solar_epoch("sunset", i),
             }
             for i, day in enumerate(times[:5])
         ]
@@ -154,6 +168,7 @@ class Content:
                 "uv_index_time": uv_time,
             },
             "daily": days,
+            "timezone": raw.get("timezone"),
             "updated_at": updated_at,
             "stale": False,
             "error": None,

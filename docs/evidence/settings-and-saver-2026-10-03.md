@@ -1,0 +1,13 @@
+# Stable touch settings, solar themes and customizable screensaver
+
+Candidate ca39fd956f0f (41 runtime files), prepared locally on 2026-10-03; native activation is pending. This is scoped evidence, not product acceptance.
+
+The owner reported visualizer and idle-time dropdowns closing almost immediately. SettingRow was declared inside App: each one-second clock update created a different component type and remounted the native select. SettingRow now has module identity; app-owned TouchChoice dialogs preserve the open choice across clock updates and state polls. Targets are at least48px; lists scroll by touch without visible scrollbars, expose selected state, trap Tab and support Escape/cancel. Preference save failures keep the choice open rather than pretending success.
+
+Screensaver layout is configurable as clock/playback or visualizer only. Choosing visualizer-only with visualization off enables Wave; the layout has no clock, playback or header at rest. A background touch reveals transport and return temporarily; return wakes the hub. The clock layout places the actual output signal between clock and playback and removes the divider. Both palettes use the same behavior. Home now presents the signal above its dock and a narrower centered forecast. No fictional greeting was introduced.
+
+Night modes are manual, solar or scheduled. Solar uses the weather location's current-day sunrise/sunset converted to UTC epochs from the provider's local times and offset; sunset enters Night, sunrise returns E-Ink. Missing/current-day unavailable solar data retains the chosen manual theme, with an explanation in Settings. Existing enabled schedules migrate to scheduled mode. Preferences persist atomically. Provider fields verified against [Open-Meteo documentation](https://open-meteo.com/en/docs).
+
+Local verification: TypeScript, production build and structure checks passed.262 backend tests passed,22 platform skips and one existing Starlette warning.172 browser cases passed across EN/RO, including choices remaining mounted/open for6.2seconds, changed saver delay, configurable full-screen signal, controls reveal/hide/return, exact solar boundaries and missing-day fallback. Captures inspected at800×480. Mocked output signals do not prove physical audio or panel touch. New native proof and complete product acceptance remain OPEN; no10/10 score is claimed.
+
+The previous e546 observation was confirmed active by unit/PID/invocation identity (6ef39bb9dd30421b947dec60a55eb9dc):15samples/420.18s, zero API/observation errors but5 incomplete memory samples. It is not eight-hour stability or complete idle PSS evidence. A candidate update invalidates this window; it must not be combined with successor observations.

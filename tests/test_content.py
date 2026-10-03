@@ -223,3 +223,16 @@ def test_invalid_weather_location_is_rejected(tmp_path):
     with pytest.raises(ContentError) as error:
         run(Content(tmp_path).weather({"latitude": 120, "longitude": 0}))
     assert error.value.code == "invalid_location"
+
+
+def test_solar_times_are_utc_epochs_and_optional_failures_do_not_break_weather():
+    from datetime import datetime, timezone
+    raw = {'utc_offset_seconds':10800,'timezone':'Europe/Bucharest',
+           'current':{'temperature_2m':20,'apparent_temperature':20,'weather_code':0,'precipitation':0,'wind_speed_10m':5},
+           'daily':{'time':['2026-10-03']*5,'weather_code':[0]*5,'temperature_2m_min':[10]*5,'temperature_2m_max':[20]*5,'precipitation_sum':[0]*5,
+                    'sunrise':['2026-10-03T07:15','invalid',None], 'sunset':['2026-10-03T18:50']}}
+    value = Content._normalize_weather(raw, {}, '2026-10-03T12:00:00Z')
+    assert value['daily'][0]['sunrise_epoch'] == datetime(2026,10,3,4,15,tzinfo=timezone.utc).timestamp()
+    assert value['daily'][0]['sunset_epoch'] == datetime(2026,10,3,15,50,tzinfo=timezone.utc).timestamp()
+    assert value['daily'][1]['sunrise_epoch'] is None
+    assert value['daily'][2]['sunset_epoch'] is None

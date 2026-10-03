@@ -1,4 +1,5 @@
 import { MarqueeText } from './MarqueeText';
+import {useEffect, useState} from 'react';
 import type { MouseEvent, ReactNode } from 'react';
 import './screensaver.css';
 
@@ -12,6 +13,7 @@ export type ScreenSaverPlayer = {
 };
 
 export type ScreenSaverProps = {
+  layout?: 'clock' | 'visualizer';
   visualizer?: ReactNode;
   time: string;
   date: string;
@@ -51,7 +53,10 @@ function TransportIcon({ action }: { action: 'previous' | 'next' | 'play' | 'pau
 }
 
 /** Transport callbacks own backend operations. Capability flags must include pending/audio state. */
-export function ScreenSaver({ visualizer, time, date, language, theme, player, canPlay, canPrevious, canNext, onPlayPause, onPrevious, onNext, onWake }: ScreenSaverProps) {
+export function ScreenSaver({ layout='clock', visualizer, time, date, language, theme, player, canPlay, canPrevious, canNext, onPlayPause, onPrevious, onNext, onWake }: ScreenSaverProps) {
+  const [controls,setControls]=useState(false);
+  const full=layout==='visualizer';
+  useEffect(()=>{if(!controls)return;const timer=setTimeout(()=>setControls(false),6000);return()=>clearTimeout(timer);},[controls]);
   const t = labels[language], radio = player.kind === 'radio';
   const active = ['playing', 'buffering', 'connecting'].includes(player.state || '');
   const title = (radio ? player.station_name : '') || player.title || player.station_name || '';
@@ -64,17 +69,17 @@ export function ScreenSaver({ visualizer, time, date, language, theme, player, c
     event.stopPropagation();
     void action();
   };
-  return <section className={`pysh-screensaver ${visualizer ? 'saver-with-signal' : ''}`} data-theme={theme} role="region" aria-label={t.screen}
+  return <section className={`pysh-screensaver ${visualizer ? 'saver-with-signal' : ''} ${full?'saver-full-signal':''} ${controls?'saver-controls-visible':''}`} data-theme={theme} role="region" aria-label={t.screen}
     onPointerDown={event => event.stopPropagation()}
-    onClick={event => { event.stopPropagation(); onWake(); }}>
+    onClick={event => { event.stopPropagation(); if(full)setControls(value=>!value);else onWake(); }}>
     <header className="saver-header"><span className="saver-brand">PI SMART HUB</span>
       <button className="saver-home" onClick={event => invoke(event, onWake)}>{t.home}<span aria-hidden="true">↗</span></button>
     </header>
     <div className="saver-clock"><time>{time}</time><p>{date}</p></div>
+    {visualizer&&<div className="saver-visualizer">{visualizer}</div>}
     <section className={`saver-playback ${title ? '' : 'saver-empty'}`} aria-label={radio ? t.radio : t.audio}>
       <div className="saver-source">{title ? (radio ? t.radio : t.audio) : t.nothing}</div>
       {title && <><h1 title={title}><MarqueeText text={title} active={player.state==='playing'}/></h1><p className="saver-metadata" title={detail}><MarqueeText text={detail || '\u00a0'} active={player.state==='playing'}/></p></>}
-      {visualizer&&<div className="saver-visualizer">{visualizer}</div>}
       <div className="saver-transport" onClick={event => event.stopPropagation()}>
         <button disabled={!canPrevious} aria-label={radio ? t.previousStation : t.previousTrack} onClick={event => invoke(event, onPrevious)}><TransportIcon action="previous" /><span>{radio ? t.previousStation : t.previousTrack}</span></button>
         <button className="saver-primary" disabled={!canPlay} aria-label={active ? t.pause : t.play} onClick={event => invoke(event, onPlayPause)}><TransportIcon action={active ? 'pause' : 'play'} /><span>{active ? t.pause : t.play}</span></button>
@@ -82,6 +87,6 @@ export function ScreenSaver({ visualizer, time, date, language, theme, player, c
       </div>
       <p className="saver-status" role="status" aria-live="polite">{title ? status : '\u00a0'}</p>
     </section>
-    <footer className="saver-hint">{t.hint}</footer>
+    <footer className="saver-hint">{full?(language==='ro'?'Atinge pentru comenzi':'Touch for controls'):t.hint}</footer>
   </section>;
 }

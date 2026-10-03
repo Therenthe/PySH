@@ -18,10 +18,23 @@
 .app .radio-redesign button:active:not(:disabled){transform:none;background:var(--soft)}
 .app .radio-redesign .filter-button small,.app .radio-redesign .mini-player .eyebrow{font-size:14px}
 .app .radio-redesign .station-row.selected{background:var(--soft)}
-.app .pysh-screensaver.saver-with-signal{grid-template-rows:56px 128px minmax(0,1fr) 28px}
+.app .pysh-screensaver.saver-with-signal{grid-template-rows:56px 128px 48px minmax(0,1fr) 28px}
 .app .saver-with-signal .saver-clock time{font-size:76px}
-.app .saver-visualizer{height:44px;width:min(520px,100%);flex:0 0 44px;overflow:hidden;margin-bottom:4px}
+.app .saver-visualizer{height:48px;width:min(640px,100%);overflow:hidden;justify-self:center}
 .app .saver-visualizer .audio-visualizer{height:100%}
+.app .pysh-screensaver .saver-playback{border-top:0}
+.app .pysh-screensaver[data-theme=night]{background:#0b0e14;color:#f4f7fb;--saver-muted:#b4c0cf;--saver-button:#161b26;--saver-primary:#8be8c6;--saver-on-primary:#0b0e14;--saver-active:#203b35;--saver-line:#566576}
+.app .pysh-screensaver.saver-full-signal{display:block;padding:0}
+.app .saver-full-signal .saver-clock{display:none}
+.app .saver-full-signal .saver-visualizer{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:24px}
+.app .saver-full-signal .audio-visualizer{height:100%}
+.app .saver-full-signal .saver-header{position:absolute;top:16px;left:24px;right:24px;z-index:2}
+.app .saver-full-signal .saver-playback{position:absolute;bottom:24px;left:24px;right:24px;padding:16px;border-radius:20px;background:var(--saver-button);z-index:2}
+.app .saver-full-signal .saver-header,.app .saver-full-signal .saver-playback{visibility:hidden;opacity:0;pointer-events:none;transition:opacity 160ms ease}
+.app .saver-full-signal.saver-controls-visible .saver-header,.app .saver-full-signal.saver-controls-visible .saver-playback{visibility:visible;opacity:1;pointer-events:auto}
+.app .saver-full-signal .saver-hint{display:none}
+.app .setting-help{font-size:14px;line-height:1.5;color:var(--muted);margin:8px 0 16px}
+@media(prefers-reduced-motion:reduce){.app .saver-full-signal .saver-header,.app .saver-full-signal .saver-playback{transition:none}}
 
 .app .main-nav{position:relative}
 .app .main-nav::before{content:'';position:absolute;left:-7px;top:10px;width:3px;height:36px;border-radius:3px;background:var(--accent);transform:translateY(calc(var(--nav-index,0)*59px));transition:transform 180ms ease-out;pointer-events:none}
