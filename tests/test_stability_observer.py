@@ -219,3 +219,16 @@ def test_changed_unit_runtime_invalidates_before_any_sample(tmp_path):
     report = run.run()
     assert report['candidate_changed'] and not report['telemetry_complete']
     assert report['samples']==0 and (folder/'samples.jsonl').read_text()==''
+
+def test_supervisor_resolves_current_alias_and_rejects_matching_extra_argument(candidate):
+    root, _, target, _ = candidate
+    script = target / 'scripts/run-hub.py'
+    assert observer.supervisor_matches([b'python', os.fsencode(script)], target)
+    assert observer.supervisor_matches([b'python', b'scripts/run-hub.py'], target)
+    assert not observer.supervisor_matches([b'python', b'foreign.py', os.fsencode(script)], target)
+    alias = root / 'runtime-alias'
+    try:
+        alias.symlink_to(target, target_is_directory=True)
+    except OSError:
+        pytest.skip('Real alias resolution is exercised by Linux CI')
+    assert observer.supervisor_matches([b'python', os.fsencode(alias / 'scripts/run-hub.py')], target)

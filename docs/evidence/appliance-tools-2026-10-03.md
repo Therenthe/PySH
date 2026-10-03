@@ -6,6 +6,8 @@ Public `scripts/appliance-release.py` handles identified PySH OS runtime updates
 
 Public `scripts/observe-stability.py` verifies runtime hashes/source identity, guards candidate changes before/after each sample, observes only the application cgroup and records explicit incomplete/unreadable samples. Unit restarts, sampling gaps and interrupted observations remain visible. API evidence is a boolean projection without accounts, preferences or URLs. Output is private. Telemetry completion never automatically accepts REL-01.
 
+First native smoke run refused before creating output: `unit_supervisor_mismatch`. The unit invokes `/opt/pysh/current/scripts/run-hub.py`, while the guard compared its text to the resolved release path. The corrected guard resolves the actual script argument against the verified candidate, accepts the owned current alias/relative script and rejects an unrelated script carrying a matching extra argument. No production process or configuration was changed. A repeated native probe is required.
+
 Local full Python regression:132 passed,21 skipped on Windows, one existing Starlette/httpx deprecation warning. TypeScript and repository checks passed. Linux-specific checks and native public-tool execution remain OPEN.
 
 The earlier private read-only eight-hour observer was rechecked against its actual user-unit handle: active, same invocation/PID;1175.801 elapsed seconds,40 samples and zero observation errors. This partial measurement is neither an eight-hour result nor an idle-memory claim. Netflix was left open. Full-panel live view is available privately via loopback on the development PC, with compositor snapshots through SSH approximately once a second; no continuous recording or browser-account instrumentation.

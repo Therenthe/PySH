@@ -180,6 +180,17 @@ def read_unit(unit):
     require(re.fullmatch('[0-9a-f]{32}', value.get('InvocationID','')), 'invalid_unit_invocation')
     return {'main_pid':pid, 'active':value['ActiveState']=='active', 'group':group, 'invocation':value['InvocationID']}
 
+def supervisor_matches(arguments, target):
+    if len(arguments) < 2 or not arguments[1]:
+        return False
+    script = Path(os.fsdecode(arguments[1]))
+    if not script.is_absolute():
+        script = target / script
+    try:
+        return script.resolve(strict=True) == (target / 'scripts/run-hub.py').resolve(strict=True)
+    except (OSError, ValueError):
+        return False
+
 def create_output(path):
     path = Path(path).absolute()
     require(path.parent.is_dir(), 'output_parent_missing')
@@ -311,7 +322,7 @@ def main():
     require(unit['active'] and unit['main_pid'] > 1, 'app_unit_not_active')
     require((Path('/proc') / str(unit['main_pid']) / 'cwd').resolve() == candidate.baseline['target'], 'unit_runtime_mismatch')
     values = (Path('/proc') / str(unit['main_pid']) / 'cmdline').read_bytes().split(b'\0')
-    require(str(candidate.baseline['target'] / 'scripts/run-hub.py').encode() in values, 'unit_supervisor_mismatch')
+    require(supervisor_matches(values, candidate.baseline['target']), 'unit_supervisor_mismatch')
     def checked_unit():
         current = read_unit('pysh.service')
         if current['active'] and current['main_pid'] > 1:
@@ -319,7 +330,7 @@ def main():
             if process.joinpath('cwd').resolve() != candidate.baseline['target']:
                 raise Invalidated('unit_runtime_changed')
             arguments = process.joinpath('cmdline').read_bytes().split(b'\0')
-            if str(candidate.baseline['target'] / 'scripts/run-hub.py').encode() not in arguments:
+            if not supervisor_matches(arguments, candidate.baseline['target']):
                 raise Invalidated('unit_supervisor_changed')
         return current
     folder = create_output(args.output)
