@@ -20,4 +20,8 @@ Meteorii decorativi au capul în direcția vitezei și coada în urmă. Traseele
 
 Rerun proaspăt integrat:18/18probe din audio-sizing-styles,home-free-placement șihome-anchored-placement au trecut în1.3min; cele opt eșecuri inițiale sunt rezolvate în probele actuale. Împreună cu246probe neafectate trecute, acoperă cele254cazuri. Sursele aplicației nu s-au modificat în timpul acestor rulări; fișierele de test actualizate au fost reîncărcate pentru rerun.
 
-Nu este încă dovadă de instalare pe Pi, gest tactil fizic, performanță sau acceptare de produs. Planul complet, inclusiv restanțele mai vechi, este în ../UI_DELIVERY_PLAN.md. Home ambient takeover și erorile Bluetooth/locație rămân pași separați OPEN.
+Această verificare nu certifică gestul tactil fizic, performanța sau acceptarea completă de produs. Planul complet, inclusiv restanțele mai vechi, este în ../UI_DELIVERY_PLAN.md. Home ambient takeover și erorile Bluetooth/locație rămân pași separați OPEN.
+
+## Instalare nativă
+
+Publicat sourcec1b96cc85e6489c0f0dde5e4c48303362589bc5c; activat94ca6c6baf22 pe SD identificat, cu43bbb099a8b6 păstrat. Backup separat verificat pe PC, SHA25625cd218b8d2762a2c8da600b6bddebdb634dafcd2df9f4d64c54ec32a3e715f4. Verificarea independentă confirmă41hashes/noPending și4probe audioReady/radioPlaying cu poziții13.960→16.986→20.016→23.002s. Captura privată800×480 a panoului a fost inspectată; preferințele și pozițiile proprietarului păstrate. Nu s-a flashat SD-ul și nu s-a deschis CDP sau vreun viewer public.
