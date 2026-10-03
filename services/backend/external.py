@@ -25,8 +25,10 @@ def _group_snapshot(pgid):
         try:
             fields = path.read_text().rpartition(")")[2].split()
             if int(fields[2]) == pgid:
-                members[int(path.parent.name)] = (int(fields[19]), path.stat().st_uid)
-        except (OSError, ValueError, IndexError):
+                status = (path.parent / "status").read_text()
+                uid = int(next(line for line in status.splitlines() if line.startswith("Uid:")).split()[1])
+                members[int(path.parent.name)] = (int(fields[19]), uid)
+        except (OSError, ValueError, IndexError, StopIteration):
             pass
     return members
 

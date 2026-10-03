@@ -3,6 +3,7 @@ import asyncio
 import json
 from pathlib import Path
 import sys
+from unittest.mock import Mock
 
 import pytest
 
@@ -250,6 +251,26 @@ def test_reused_dead_leader_group_never_signalled(tmp_path, launches, monkeypatc
         assert launches[1] == []
         assert process.waits == 1 and process.returncode == 0
     asyncio.run(scenario())
+
+
+def test_group_generation_uses_task_uid_not_proc_inode_owner(tmp_path, monkeypatch):
+    directory = tmp_path / "12345"
+    directory.mkdir()
+    fields = ["0"] * 20
+    fields[0], fields[1], fields[2], fields[3], fields[19] = "Z", "88", "333", "333", "777"
+    path = directory / "stat"
+    path.write_text("12345 (owned zombie) " + " ".join(fields))
+    (directory / "status").write_text("Name:\towned\nUid:\t1001\t1001\t1001\t1001\n")
+    class StatFile:
+        parent = directory
+        def read_text(self):
+            return path.read_text()
+        def stat(self):
+            raise AssertionError("A root-owned proc inode is not task identity")
+    root = Mock()
+    root.glob.return_value = [StatFile()]
+    monkeypatch.setattr(external, "Path", lambda argument: root)
+    assert external._group_snapshot(333) == {12345: (777, 1001)}
 
 
 @pytest.mark.parametrize("corruption", ["bad_hint", "oversized", "relative", "outside", "wrong_version", "empty_library"])

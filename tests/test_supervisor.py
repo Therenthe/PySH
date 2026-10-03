@@ -7,6 +7,7 @@ import signal
 import subprocess
 import sys
 import time
+from unittest.mock import Mock
 
 import pytest
 
@@ -124,6 +125,26 @@ def test_reused_session_id_never_signalled(supervisor, monkeypatch):
         raise AssertionError("Reused session ID must never be signalled")
     monkeypatch.setattr(os, "killpg", forbidden)
     supervisor.terminate(worker, grace=.15)
+
+
+def test_zombie_generation_uses_task_uid_not_proc_inode_owner(supervisor, tmp_path, monkeypatch):
+    directory = tmp_path / "12345"
+    directory.mkdir()
+    fields = ["0"] * 20
+    fields[0], fields[1], fields[2], fields[3], fields[19] = "Z", str(os.getpid()), "333", "333", "777"
+    path = directory / "stat"
+    path.write_text("12345 (owned zombie) " + " ".join(fields))
+    (directory / "status").write_text("Name:\towned\nUid:\t1001\t1001\t1001\t1001\n")
+    class StatFile:
+        parent = directory
+        def read_text(self):
+            return path.read_text()
+        def stat(self):
+            raise AssertionError("A root-owned proc inode is not task identity")
+    root = Mock()
+    root.glob.return_value = [StatFile()]
+    monkeypatch.setattr(supervisor, "Path", lambda argument: root)
+    assert supervisor.session_snapshot(333) == {12345: {"generation": (777, 1001), "ppid": os.getpid(), "pgid": 333}}
 
 
 def test_cleanup_never_signals_an_unowned_or_unrelated_group(supervisor):

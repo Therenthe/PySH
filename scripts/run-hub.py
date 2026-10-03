@@ -53,9 +53,14 @@ def session_snapshot(sid):
         try:
             fields = path.read_text().rpartition(")")[2].split()
             if int(fields[3]) == sid:
-                members[int(path.parent.name)] = {"generation": (int(fields[19]), path.stat().st_uid),
+                # proc inode ownership can become root for nondumpable/zombie
+                # tasks. The task's real UID remains in status; inode UID is not
+                # part of a PID generation and must not prevent zombie reaping.
+                status = (path.parent / "status").read_text()
+                uid = int(next(line for line in status.splitlines() if line.startswith("Uid:")).split()[1])
+                members[int(path.parent.name)] = {"generation": (int(fields[19]), uid),
                                                    "ppid": int(fields[1]), "pgid": int(fields[2])}
-        except (OSError, ValueError, IndexError):
+        except (OSError, ValueError, IndexError, StopIteration):
             pass
     return members
 
