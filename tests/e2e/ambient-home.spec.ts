@@ -6,6 +6,8 @@ for(const theme of ['ink','night']) for(const scene of ['clear-day','clear-night
   await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname;await route.fulfill({json:path==='/api/session'?{token:'isolated-browser-fixture'}:path==='/api/state'?state:{ok:true}})});
   await page.goto('/');
   await expect(page.locator('.ambient-home')).toBeVisible();
+  const headerBounds=await page.locator('.topbar').evaluate(header=>{const bounds=header.getBoundingClientRect();return [...header.querySelectorAll('.eyebrow,.navigation-toggle,.date-label')].map(el=>el.getBoundingClientRect()).every(r=>r.top>=bounds.top&&r.bottom<=bounds.bottom&&r.left>=bounds.left&&r.right<=bounds.right);});
+  expect(headerBounds).toBe(true);
   await expect(page.locator('.forecast-day')).toHaveCount(5);
   await expect(page.locator('.forecast-day svg')).toHaveCount(5);
   await expect(page.locator('.forecast-day strong')).toHaveCount(5);

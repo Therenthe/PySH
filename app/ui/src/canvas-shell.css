@@ -45,6 +45,6 @@
 .app .rail{transition:width 220ms ease,flex-basis 220ms ease,padding 220ms ease;overflow:hidden}
 .app .rail.rail-retracted{width:0;flex-basis:0;padding-left:0;padding-right:0;border-width:0;pointer-events:none}
 .app .topbar{grid-template-columns:190px minmax(0,1fr) auto}
-.app .topbar-title{display:flex;flex-direction:row;align-items:center;gap:8px;white-space:nowrap}
+.app .topbar .topbar-title{display:flex;flex-direction:row;align-items:center;gap:8px;white-space:nowrap}
 .app .navigation-toggle{display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;border:1px solid var(--line-dark);border-radius:12px;background:transparent;color:var(--ink)}
 @media(prefers-reduced-motion:reduce){.app .rail{transition:none}}
