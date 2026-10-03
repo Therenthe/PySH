@@ -1,5 +1,5 @@
 {
-  "candidate": "115cb4173f52",
+  "candidate": "a32c29065d6d",
   "preparation": [
     {
       "id": "PREP-01",
@@ -258,11 +258,11 @@
     {
       "id": "REL-02",
       "status": "PASS",
-      "candidate": "115cb4173f52",
+      "candidate": "a32c29065d6d",
       "evidence": [
-        "docs/evidence/os-performance-recovery-2026-10-03.md"
+        "docs/evidence/os-a32c29065d6d-acceptance-2026-10-03.md"
       ],
-      "reason": "Observed dedicated OS owned API/kiosk recovery2.396s/1.179s, preferences SHA unchanged, zero zombies, one live mpv and scoped exit-code journal causes."
+      "reason": "Fresh image: observed owned API/kiosk recovery2.650s/0.885s, exact preferences hash unchanged, zero zombies and one live mpv. Process recovery timing does not certify rendered-page latency."
     },
     {
       "id": "PERF-01",

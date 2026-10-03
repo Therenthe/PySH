@@ -4,6 +4,10 @@ Updated: 2026-10-03 (Europe/Bucharest). GitHub is canonical: https://github.com/
 
 ## Current candidate
 
+Fresh corrected PySH OS runtime `a32c29065d6d`, image source `d61ec8d23c4c025167bd009a67e9cfcab4193a72`, is physically booted from the verified USB. Recovery SSH, automatic root growth, all33 installed runtime hashes, native800×480/rotation180, network label, Bluetooth plugin and zero failed services verified. Owner confirmed touch Continue→Connectivity and audible Bluetooth tone after pairing from scratch. Original SD retained; no post-boot repair needed. Native UI48-screen survey, audio/video controls, radio recovery and service-mode flows revalidated; REL-02 passes for this candidate. Complete product acceptance remains OPEN. See [fresh-candidate evidence](docs/evidence/os-a32c29065d6d-acceptance-2026-10-03.md).
+
+## Previous desktop candidate
+
 Main `4d28e523e87bb71b83614c53903d629f0e48757b` includes radio replay and media handoff/search/pairing-prompt repairs (PRs #10/#11). Original-desktop preview `df9d3777bdec` is deployed with all 33 runtime hashes verified; previous release and private backup retained. TypeScript/Vite/repository/package checks pass; 72 browser regressions pass with zero skips/failures/flaky tests; Windows Python 53 passed, five Linux-only skips. GitHub frontend/Python 3.12/3.13 run37064480391 passed.
 
 Actual Pi revalidation passed eight media handoffs, four city-empty states, 48-screen EN/RO/theme survey, selected audio/video encodings and media error recovery with no JavaScript errors. API/kiosk recovery took 2.425s/0.979s with unchanged preferences and zero owned zombies; saved audio restored in 3.235s. REL-02 passes for this preview. See [UI evidence](docs/evidence/ui-handoff-2026-10-03.md). Original SD/desktop unchanged; no appliance autostart enabled there.
