@@ -187,7 +187,7 @@ def main():
                 if browser is not None:
                     print(f"Kiosk exited code={browser.returncode}; restarting kiosk", file=sys.stderr, flush=True)
                 terminate(browser)
-                browser = start_owned(["chromium", "--ozone-platform=wayland", "--no-first-run", "--noerrdialogs", "--disable-session-crashed-bubble", "--password-store=basic", "--kiosk", "--user-data-dir=" + str(DATA / "hub-browser"), "--app=http://127.0.0.1:8765"], env=environment, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                browser = start_owned(["chromium", "--ozone-platform=wayland", "--no-first-run", "--disable-features=Translate", "--noerrdialogs", "--disable-session-crashed-bubble", "--password-store=basic", "--kiosk", "--user-data-dir=" + str(DATA / "hub-browser"), "--app=http://127.0.0.1:8765"], env=environment, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             time.sleep(1)
     finally:
         failures = []

@@ -97,7 +97,7 @@ class ExternalBrowser:
         url = "http://127.0.0.1:8765/service-prepare?" + urlencode({"job": self._job, "attempt": self._attempt, "lang": self._language, "theme": self._theme}) if preparing else URLS[self._service]
         try:
             self._process = await asyncio.create_subprocess_exec(
-                self._executable, "--ozone-platform=wayland", "--no-first-run", "--start-maximized",
+                self._executable, "--ozone-platform=wayland", "--no-first-run", "--disable-features=Translate", "--start-maximized",
                 "--class=pysh-service", "--user-data-dir=" + str(self.profile),
                 "--load-extension=" + str(self.extension), "--app=" + url,
                 stdin=asyncio.subprocess.DEVNULL, stdout=asyncio.subprocess.DEVNULL,
