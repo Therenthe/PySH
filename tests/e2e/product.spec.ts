@@ -304,7 +304,7 @@ for(const theme of ['ink','night'] as const) {
     const before=f.actions.filter(a=>a.path==='/api/preferences').length;
     await page.locator('.setting-value').tap();await page.locator('.keyboard-card header button').tap();
     expect(f.actions.filter(a=>a.path==='/api/preferences')).toHaveLength(before);
-    await page.locator('.settings-tabs button').nth(5).tap();await page.locator('.settings-panel button.switch').first().tap();
+    await page.locator('.settings-tabs button').nth(5).tap();await page.locator('.settings-panel button.switch[aria-label=Radio]').tap();
     await page.locator('.main-nav button').first().tap();await expect(page.locator('.shortcut')).toHaveCount(1);await expect(page.locator('.shortcut')).toContainText('Media');
     await page.reload();await expect(page.locator('.shortcut')).toHaveCount(1);
     expect(f.unexpected).toEqual([]);

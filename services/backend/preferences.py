@@ -33,6 +33,12 @@ class Station(BaseModel):
     homepage: str = Field(default="", max_length=2048)
 
 
+class HomePosition(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    x: float = Field(ge=0, le=1, allow_inf_nan=False)
+    y: float = Field(ge=0, le=1, allow_inf_nan=False)
+
+
 class Preferences(BaseModel):
     model_config = ConfigDict(extra="forbid")
     language: Literal["ro", "en"] = "ro"
@@ -43,7 +49,10 @@ class Preferences(BaseModel):
     nightStart: str = Field(default="22:00", pattern=r"^(?:[01]\d|2[0-3]):[0-5]\d$")
     nightEnd: str = Field(default="07:00", pattern=r"^(?:[01]\d|2[0-3]):[0-5]\d$")
     screensaverMinutes: int = Field(default=5, ge=0, le=120)
-    visualizerStyle: Literal["off", "wave", "bars", "orbit"] = "off"
+    visualizerStyle: Literal["off", "wave", "bars", "orbit", "ribbon", "mirror", "rings"] = "off"
+    visualizerSize: Literal["compact", "balanced", "large"] = "compact"
+    homeCards: list[Literal["weather", "forecast", "playback"]] = Field(default_factory=lambda:["weather", "forecast", "playback"], max_length=3)
+    homePositions: dict[Literal["weather", "forecast", "playback", "visualizer"], HomePosition] = Field(default_factory=dict, max_length=4)
     screensaverLayout: Literal["clock", "visualizer"] = "clock"
     navigationCollapsed: bool = False
     navigationAutoHide: bool = False

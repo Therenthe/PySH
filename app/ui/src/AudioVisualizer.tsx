@@ -1,7 +1,7 @@
 import { useEffect, useId, useState } from 'react';
 import './audio-visualizer.css';
 
-export type VisualizerStyle = 'off' | 'wave' | 'bars' | 'orbit';
+export type VisualizerStyle = 'off' | 'wave' | 'bars' | 'orbit' | 'ribbon' | 'mirror' | 'rings';
 type Signal = {available: boolean; status: string; waveform: number[]; bars: number[]; peak: number | null; rms: number | null; silent: boolean | null};
 const empty: Signal = {available: false, status: 'starting', waveform: [], bars: [], peak: null, rms: null, silent: null};
 export function validSignal(value: unknown): value is Signal {
@@ -69,11 +69,14 @@ export function AudioVisualizer({style, canVisualize, language, reducedMotion = 
   const wave = signal.waveform.map((value, index) => `${index ? 'L' : 'M'}${(index * 320 / 63).toFixed(1)},${(40 - value * 36).toFixed(1)}`).join(' ');
   const orbit = signal.bars.map((value, index) => {const angle = index / 16 * Math.PI * 2; const radius = 18 + value * 20; return `${index ? 'L' : 'M'}${(160 + Math.cos(angle) * radius).toFixed(1)},${(40 + Math.sin(angle) * radius).toFixed(1)}`;}).join(' ') + ' Z';
   return <div className="audio-visualizer" data-signal-status="ready" data-signal-style={style}>
-    <svg viewBox="0 0 320 80" preserveAspectRatio={style==='orbit'?'xMidYMid meet':'none'} role="img" aria-label={signal.silent ? `${label}: ${silence}` : label}>
+    <svg viewBox="0 0 320 80" preserveAspectRatio={['orbit','rings'].includes(style)?'xMidYMid meet':'none'} role="img" aria-label={signal.silent ? `${label}: ${silence}` : label}>
       <defs><linearGradient id={gradient}><stop stopColor="#a78bfa"/><stop offset=".5" stopColor="#34d399"/><stop offset="1" stopColor="#f59e0b"/></linearGradient></defs>
       {style === 'wave' && <path d={wave} fill="none" stroke={`url(#${gradient})`} strokeWidth="2" vectorEffect="non-scaling-stroke"/>}
       {style === 'bars' && signal.bars.map((value, index) => <rect key={index} x={index * 20 + 4} y={40 - value * 38} width="12" height={Math.max(1, value * 76)} rx="2" fill={`url(#${gradient})`}/>)}
       {style === 'orbit' && <path d={orbit} fill="none" stroke={`url(#${gradient})`} strokeWidth="2"/>}
+      {style === 'ribbon' && <><path d={`${wave} L320,40 L0,40 Z`} fill={`url(#${gradient})`} opacity=".3"/><path d={wave} fill="none" stroke={`url(#${gradient})`} strokeWidth="2" vectorEffect="non-scaling-stroke"/></>}
+      {style === 'mirror' && signal.bars.map((value,index)=><rect key={index} x={index*20+2} y={40-value*35} width="16" height={Math.max(1,value*70)} rx="4" fill={`url(#${gradient})`} opacity={.5+value*.5}/>)}
+      {style === 'rings' && [0,1,2].map(index=><circle key={index} cx="160" cy="40" r={8+index*7+(signal.rms??0)*(index+1)*10} fill="none" stroke={`url(#${gradient})`} strokeWidth="2" opacity={1-index*.22}/>)}
     </svg>
   </div>;
 }

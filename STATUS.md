@@ -2,6 +2,10 @@
 
 Updated: 2026-10-03 (Europe/Bucharest). GitHub is canonical: https://github.com/Therenthe/PySH. Work is on draft PR3, branch feat/pysh-os-image; main remains the earlier desktop delivery. The product is not complete; all30 required criteria remain OPEN in [acceptance.json](docs/acceptance.json).
 
+## Prepared UI update
+
+Application ec6a0b1fbd3f is built on PC with41 runtime files. Complete fresh browser run:224 passed in2.7min; backend:284 passed,22 platform skips. Includes transparent idle header, persistent draggable Home cards, card visibility, three signal sizes/six styles, station artwork recovery, distinct clouds and lit city windows. Not installed at this commit; native verification follows publication. [Personalization evidence](docs/evidence/personalized-ambient-canvas-2026-10-03.md).
+
 ## Installed application and device
 
 - Current physical SD application54a31cd7e182, source0a70da84185f6f79c1a7df01ba2cd984e78d0f36; all41 installed hashes independently verified. Previous37e229ac1e15 retained; PC backup SHA2562c4729c664e7263c9705da59577e27abfddc537ac5b1f1d608c9447a507b1416 verified before activation. Radio resumed and progressed. Current Home cards retract independently after15s, playback folds into an88px-high visualizer and wave uses its full660px width. Four native functional cases on37 and eight width cases on54 passed across EN/RO and both themes. Menus track the rail edge; city skyline170px. Diagnostics closed and preferences restored. [Retractable cards evidence](docs/evidence/retractable-ambient-cards-2026-10-03.md).

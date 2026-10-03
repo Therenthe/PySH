@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 import {textLegibility} from './legibility';
-for(const theme of ['ink','night'])for(const style of ['wave','bars','orbit']){
+for(const theme of ['ink','night'])for(const style of ['wave','bars','orbit','ribbon','mirror','rings']){
  test(`real output visualizer ${theme} ${style}: signal, pause, station controls and saver`,async({page},info)=>{
   const ro=info.project.name.endsWith('ro');
   const stations=[{uuid:'one',name:'Radio One',url:'https://example.com/one'},{uuid:'two',name:'Radio Two',url:'https://example.com/two'}];

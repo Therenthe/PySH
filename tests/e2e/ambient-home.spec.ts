@@ -43,7 +43,7 @@ for(const signal of ['off','wave']) for(const theme of ['ink','night']) for(cons
   await expect(page.locator('.ambient-dock')).toHaveClass(/card-compact/);
   await expect.poll(async()=>Math.round((await page.locator('.ambient-forecast').boundingBox())!.width)).toBe(186);
   await expect.poll(async()=>(await page.locator('.ambient-weather').boundingBox())!.width).toBeLessThanOrEqual(250);
-  if(signal==='wave'){await expect(page.locator('.ambient-dock')).toBeHidden();await expect(page.locator('.ambient-visualizer')).toBeVisible();expect((await page.locator('.ambient-visualizer').boundingBox())!.height).toBe(88);await expect(page.locator('.signal-station img')).toBeVisible();}else{await expect(page.locator('.playback-toggle')).toBeVisible();await expect(page.locator('.playback-expand .radio-artwork img')).toBeVisible();}
+  if(signal==='wave'){await expect(page.locator('.ambient-dock')).toBeHidden();await expect(page.locator('.ambient-visualizer')).toBeVisible();expect((await page.locator('.ambient-visualizer').boundingBox())!.height).toBe(64);await expect(page.locator('.signal-station img')).toBeVisible();}else{await expect(page.locator('.playback-toggle')).toBeVisible();await expect(page.locator('.playback-expand .radio-artwork img')).toBeVisible();}
   await page.screenshot({path:info.outputPath(`ambient-compact-${theme}-${scene}.png`)});
   await page.locator('.weather-heading').click();
   await expect(page.locator('.ambient-metrics')).toBeVisible();
@@ -55,6 +55,3 @@ for(const signal of ['off','wave']) for(const theme of ['ink','night']) for(cons
   await page.clock.fastForward(10000);await expect(page.locator('.ambient-metrics')).toBeHidden();
  });
 }
-
-
-

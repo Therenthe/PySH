@@ -116,3 +116,55 @@
 @media(prefers-reduced-motion:reduce){.app .ambient-home .ambient-visualizer{transition:none}}
 .ambient-city{height:170px;z-index:1}
 .ambient-clouds,.ambient-rain,.ambient-snow{z-index:2}
+/* Shared sky continues behind the idle header. Active controls keep their contrast. */
+.app>.ambient-sky{pointer-events:none}
+.app .main-area{position:relative;z-index:1;background:transparent}
+.app .rail{position:relative;z-index:2}
+.app .home-v2.ambient-home{background:transparent}
+.app>.ambient-sky .ambient-orb{top:85px}
+.app .topbar{transition:background-color 220ms ease,border-color 220ms ease,color 220ms ease}
+.app .topbar.topbar-idle{background:transparent;border-color:transparent;box-shadow:none}
+.app .topbar-idle.sky-header-night{--ink:#f4f7fb;--muted:#d0d9da;--soft:#203b35;color:var(--ink)}
+.app .topbar-idle .navigation-toggle{background:transparent;box-shadow:none}
+.app .ambient-home .ambient-weather{grid-row:1}
+.app .ambient-home .ambient-forecast{grid-row:2}
+.app .ambient-home .ambient-visualizer{grid-row:3;cursor:pointer}
+.app .ambient-home .ambient-dock{grid-row:4;height:80px;padding:7px 12px}
+.app .ambient-home [data-home-positioned=true]{margin:0}
+.app .ambient-home.playback-in-signal .ambient-visualizer{height:64px;min-height:64px;padding-bottom:28px;width:min(380px,100%)}
+.app .ambient-home.playback-in-signal[data-visualizer-size=balanced] .ambient-visualizer{height:88px;min-height:88px;width:min(520px,100%)}
+.app .ambient-home.playback-in-signal[data-visualizer-size=large] .ambient-visualizer{height:112px;min-height:112px;width:min(660px,100%)}
+.ambient-clouds{background:none;width:100%;height:250px;opacity:.85}
+.sky-mainly-clear .ambient-clouds{opacity:.7}
+.sky-overcast .ambient-clouds,.sky-rain .ambient-clouds,.sky-snow .ambient-clouds{opacity:1}
+.ambient-city .city-windows{fill:#ffd599}
+.ambient-city .city-windows rect:nth-child(23n){animation:city-light 19s ease-in-out infinite alternate}
+@keyframes city-light{from{fill:#ffd599}to{fill:#b9d7de}}
+.ambient-meteor.meteor-transient{animation:meteor-flight 1.8s ease-out both}
+@keyframes meteor-flight{0%{opacity:0;transform:translate(0,0) rotate(-30deg)}15%{opacity:.8}100%{opacity:0;transform:translate(-230px,130px) rotate(-30deg)}}
+.app .home-layout-toolbar{position:absolute;top:3px;left:8px;right:8px;z-index:8;display:flex;align-items:center;gap:8px;padding:5px 8px;background:var(--paper);border:1px solid var(--line-dark);border-radius:12px;color:var(--ink);box-shadow:0 3px 12px #0003}
+.app .home-layout-toolbar>span{font-size:14px;flex:1}
+.app .home-layout-toolbar button{min-height:48px;min-width:48px;padding:0 12px}
+.app .home-layout-toolbar [role=alert]{position:absolute;top:100%;left:0;right:0;padding:8px;background:var(--paper);border-radius:8px}
+.app .ambient-home .home-drag-handle{position:absolute;right:4px;top:4px;z-index:4;width:48px;height:48px;min-width:48px;min-height:48px;border:1px solid var(--ambient-edge);border-radius:10px;background:var(--ambient-panel);color:var(--ambient-text);font-size:28px;touch-action:none;cursor:grab}
+.app .ambient-home .home-drag-handle:active{cursor:grabbing}
+.app .ambient-home[data-layout-editing=true] .ambient-weather{margin-top:64px}
+.app .ambient-home[data-layout-editing=true] .weather-top .icon-button,
+.app .ambient-home[data-layout-editing=true] .ambient-shortcuts,
+.app .ambient-home[data-layout-editing=true] .mini-controls{visibility:hidden}
+.app .ambient-home[data-layout-editing=true] .weather-heading{padding-right:50px}
+.app .ambient-home[data-layout-editing=true] .ambient-forecast header{padding-right:48px}
+.app .ambient-home[data-layout-editing=true] .weather-attribution{display:none}
+@media(prefers-reduced-motion:reduce){.app .topbar{transition:none}.city-windows rect{animation:none}.meteor-transient{display:none}}
+.app .home-layout-toolbar{position:fixed;top:0;left:70px;right:8px;min-height:58px}
+.app .ambient-home[data-layout-editing=true] .ambient-weather{margin-top:0}
+/* The fixed edge handle must remain above the rail it controls. */
+.app .rail{z-index:1}
+.app .topbar{background:var(--bg)}
+.app>.home-layout-toolbar{position:fixed;z-index:30;top:0;left:70px;right:8px;min-height:58px}
+.app .topbar-idle .icon-button{background:transparent}
+.app[data-theme=night]>.ambient-sky:not(.sky-night){filter:brightness(.4)}
+.app .ambient-home .playback-caption .eyebrow,.app .ambient-home .playback-caption .player-state{line-height:17px}
+.app .ambient-home .playback-source{line-height:22px;margin:2px 0}
+.app .ambient-home .playback-metadata{line-height:17px;margin:1px 0 0}
+.app .home-v2.ambient-home .ambient-dock{padding:7px 12px}
