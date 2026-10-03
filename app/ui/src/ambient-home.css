@@ -195,3 +195,23 @@
 .meteor-transient .meteor-head{position:absolute;left:0;top:0;width:calc(var(--meteor-thickness) + 2px);height:calc(var(--meteor-thickness) + 2px);transform:translate(-50%,-50%);border-radius:50%;background:#f6fbff;box-shadow:0 0 4px 1px rgb(193 225 245 / .55)}
 @keyframes meteor-flight{0%{opacity:0;transform:translate(0,0) rotate(var(--meteor-angle))}10%,68%{opacity:var(--meteor-brightness)}100%{opacity:0;transform:translate(var(--meteor-dx),var(--meteor-dy)) rotate(var(--meteor-angle))}}
 @media(prefers-reduced-motion:reduce){.ambient-meteor.meteor-transient{display:none;animation:none}}
+
+/* Home rests in place: only the clock, current signal and sky remain. No preference writes or repositioning. */
+.app[data-home-phase=ambient] .rail,
+.app[data-home-phase=ambient] .topbar-title,
+.app[data-home-phase=ambient] .topbar-right,
+.app[data-home-phase=ambient] .date-label,
+.app[data-home-phase=ambient] .ambient-weather,
+.app[data-home-phase=ambient] .ambient-forecast,
+.app[data-home-phase=ambient] .ambient-dock,
+.app[data-home-phase=ambient] .signal-station,
+.app[data-home-phase=ambient] .toast{visibility:hidden;pointer-events:none}
+.app[data-home-phase=ambient] .topbar{background:transparent;border-color:transparent;box-shadow:none}
+.app[data-home-phase=ambient] .top-clock{color:var(--ink)}
+.app[data-home-phase=ambient]:has(>.ambient-sky.sky-night) .top-clock{color:#f4f7fb}
+.app[data-home-phase=ambient] .ambient-visualizer{pointer-events:none;cursor:default}
+@media(prefers-reduced-motion:reduce){.app[data-home-phase=ambient] .topbar{transition:none}}
+/* Fade the controls together, retaining their saved geometry throughout wake. */
+.app[data-home-phase] :is(.rail,.topbar-title,.topbar-right,.date-label,.ambient-weather,.ambient-forecast,.ambient-dock,.signal-station,.toast){opacity:1;transition:width 300ms ease,height 300ms ease,flex-basis 220ms ease,padding 220ms ease,opacity 220ms ease,visibility 0s}
+.app[data-home-phase=ambient] :is(.rail,.topbar-title,.topbar-right,.date-label,.ambient-weather,.ambient-forecast,.ambient-dock,.signal-station,.toast){opacity:0;transition-delay:0s,0s,0s,0s,0s,220ms}
+@media(prefers-reduced-motion:reduce){.app[data-home-phase] :is(.rail,.topbar-title,.topbar-right,.date-label,.ambient-weather,.ambient-forecast,.ambient-dock,.signal-station,.toast){transition:none}}

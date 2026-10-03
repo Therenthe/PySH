@@ -9,7 +9,7 @@ import { WeatherIcon } from './WeatherIcon';
 import {Moon} from './Moon';
 import { weatherCondition, weatherIsNight } from './weatherCondition';
 type Props = {
- time:string;date:string;language:'en'|'ro';timezone:string;greeting:string;
+ wakeEpoch?:number;time:string;date:string;language:'en'|'ro';timezone:string;greeting:string;
  weather:any;temperature:unknown;condition:string;location:string;stale:boolean;
  player:any;stationName:string;station?:any;trackTitle:string;audioReady:boolean;canPlay:boolean;pauses:boolean;
  homeCards:string[];visualizerSize:'compact'|'balanced'|'large';positions:HomePositions;layoutEditing:boolean;onSaveLayout:(positions:HomePositions)=>Promise<boolean>;onCancelLayout:()=>void;shortcuts:string[];t:(key:string)=>string;icon:(name:string,size?:number)=>ReactNode;
@@ -18,9 +18,9 @@ type Props = {
 const degrees=(v:unknown)=>typeof v==='number'&&Number.isFinite(v)?`${Math.round(v)}°`:'—';
 const measured=(v:unknown,u:string)=>typeof v==='number'&&Number.isFinite(v)?`${Math.round(v)} ${u}`:'—';
 // Interaction renews only this card's timer; API/clock updates must not keep it open.
-function useAmbientCard(editing:boolean){
+function useAmbientCard(editing:boolean,wakeEpoch:number){
  const [expanded,setExpanded]=useState(true),[activity,setActivity]=useState(0);
- useEffect(()=>{if(editing)setExpanded(false);},[editing]);
+ useEffect(()=>{if(editing||wakeEpoch>0)setExpanded(false);},[editing,wakeEpoch]);
  useEffect(()=>{if(!expanded)return;const timer=window.setTimeout(()=>setExpanded(false),15000);return()=>window.clearTimeout(timer);},[expanded,activity]);
  return {expanded,toggle:()=>{setExpanded(v=>!v);setActivity(v=>v+1);},touch:()=>setActivity(v=>v+1)};
 }
@@ -34,8 +34,8 @@ export function AmbientSky({code,isDay,stale}:{code:unknown;isDay:unknown;stale:
  <svg className="ambient-city" viewBox="0 0 694 120" preserveAspectRatio="none"><defs><clipPath id={'city-'+skyId}><path d="M0 120V71h25V53h14V44h4v9h14v28h21V66h19V43h7v-8h3v8h8v23h13v24h25V46h15V30h28v-8h3v8h17v50h20V60h25V44h22v-9h3v9h16v33h18V91h26V67h22V55h5V28h3v27h19v23h23V60h26V39h18V26h3v13h18v50h19V69h26V52h12v-9h3v9h20v26h25V62h16V45h23V31h3v14h17v39h24V72h25V58h17v-7h3v7h18v62Z"/></clipPath></defs><path d="M0 120V71h25V53h14V44h4v9h14v28h21V66h19V43h7v-8h3v8h8v23h13v24h25V46h15V30h28v-8h3v8h17v50h20V60h25V44h22v-9h3v9h16v33h18V91h26V67h22V55h5V28h3v27h19v23h23V60h26V39h18V26h3v13h18v50h19V69h26V52h12v-9h3v9h20v26h25V62h16V45h23V31h3v14h17v39h24V72h25V58h17v-7h3v7h18v62Z" fill="currentColor"/>{night&&<g className="city-windows" clipPath={`url(#city-${skyId})`}>{Array.from({length:480},(_,i)=>{const col=i%80,row=Math.floor(i/80);return (i*19%11)<5?<rect key={i} x={col*8.7+3} y={row*13+40} width="2.2" height="3.5" opacity={.3+(i%5)*.12}/>:null;})}</g>}</svg>
  </div>;
 }
-export function Home({language,timezone,weather:w,temperature,condition,location,stale,player,stationName,station,trackTitle,audioReady,canPlay,pauses,homeCards,visualizerSize,positions,layoutEditing,onSaveLayout,onCancelLayout,shortcuts,t,icon,onWeather,onToggle,onStop,onNavigate,visualizer}:Props){
- const weatherCard=useAmbientCard(layoutEditing),forecastCard=useAmbientCard(layoutEditing),playbackCard=useAmbientCard(layoutEditing);
+export function Home({wakeEpoch=0,language,timezone,weather:w,temperature,condition,location,stale,player,stationName,station,trackTitle,audioReady,canPlay,pauses,homeCards,visualizerSize,positions,layoutEditing,onSaveLayout,onCancelLayout,shortcuts,t,icon,onWeather,onToggle,onStop,onNavigate,visualizer}:Props){
+ const weatherCard=useAmbientCard(layoutEditing,wakeEpoch),forecastCard=useAmbientCard(layoutEditing,wakeEpoch),playbackCard=useAmbientCard(layoutEditing,wakeEpoch);
  const layout=useHomeLayout(positions,layoutEditing),[savingLayout,setSavingLayout]=useState(false),[layoutError,setLayoutError]=useState(false);
  const weatherExpanded=!layoutEditing&&weatherCard.expanded,forecastExpanded=!layoutEditing&&forecastCard.expanded,playbackExpanded=!layoutEditing&&playbackCard.expanded;
  const showWeather=homeCards.includes('weather'),showForecast=homeCards.includes('forecast'),showPlayback=homeCards.includes('playback');

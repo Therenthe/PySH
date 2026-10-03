@@ -28,7 +28,10 @@ for(const theme of ['ink','night'])for(const style of ['wave','bars','orbit','ri
   await page.locator('.radio-filter-pills .favorites-filter').tap();await expect(page.locator('.radio-favorites .station-row')).toHaveCount(2);
   await page.getByRole('button',{name:ro?'Fără sunet':'Mute',exact:true}).tap();await expect(page.locator('.radio-side .audio-visualizer svg')).toHaveCount(0);
   await page.getByRole('button',{name:ro?'Activează sunetul':'Unmute',exact:true}).tap();
-  await page.clock.fastForward(61000);await expect(page.locator('.saver-visualizer')).toBeVisible();await page.clock.runFor(1200);
+  await expect(page.getByRole('button',{name:ro?'Fără sunet':'Mute',exact:true})).toBeVisible();
+  // Pending mutations suspend idle. Advance chronologically after Unmute's
+  // real state update, allowing its finally/effect to arm the full interval.
+  await page.clock.runFor(62000);await expect(page.locator('.saver-visualizer')).toBeVisible();await page.clock.runFor(1200);
   await expect(page.locator('.saver-visualizer svg')).toBeVisible();
   const bad=await page.locator('.pysh-screensaver button,.pysh-screensaver svg').evaluateAll(elements=>elements.filter(el=>{const r=el.getBoundingClientRect();return r.right>800||r.bottom>480||r.left<0||r.top<0}).map(el=>el.className.toString()));expect(bad).toEqual([]);
   expect(await textLegibility(page)).toEqual([]);

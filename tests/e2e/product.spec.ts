@@ -81,7 +81,7 @@ for(const theme of ['ink','night'] as const){
   const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
   f.state.preferences.screensaverMinutes=1;f.state.preferences.favorites=[{name:'Radio One',url:'https://example.com/one'},{name:'Radio Two',url:'https://example.com/two'}];
   f.state.player={state:'playing',kind:'radio',station_name:'Radio One',title:'Artist — Song',url:'https://example.com/one'};
-  await page.clock.install();await page.goto('/');await expect(page.locator('.home-v2')).toBeVisible();await page.clock.fastForward(61000);
+  await page.clock.install();await page.goto('/');await expect(page.locator('.home-v2')).toBeVisible();await page.locator('.main-nav button').nth(1).tap();await page.clock.runFor(62000);
   const saver=page.locator('.pysh-screensaver');await expect(saver).toBeVisible();await expect(saver.locator('h1')).toHaveText('Radio One');
   const defects:string[]=[];await capture(page,info,'screensaver-radio',defects);expect(defects).toEqual([]);
   await saver.getByRole('button',{name:ro?'Pauză':'Pause',exact:true}).tap();await expect(saver).toBeVisible();await expect(saver.getByRole('button',{name:ro?'Redă':'Play',exact:true})).toBeVisible();
@@ -158,10 +158,10 @@ for(const theme of ['ink','night'] as const) {
   });
   test(`pairing prompt wakes and suspends idle screensaver ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);f.state.preferences.screensaverMinutes=1;await page.clock.install();
-    await page.goto('/');await expect(page.locator('.home-layout')).toBeVisible();await page.clock.fastForward(61000);await expect(page.locator('.pysh-screensaver')).toBeVisible();
+    await page.goto('/');await expect(page.locator('.home-layout')).toBeVisible();await page.locator('.main-nav button').nth(3).tap();await page.clock.runFor(62000);await expect(page.locator('.pysh-screensaver')).toBeVisible();
     f.state.bluetooth.prompts=[{id:'wake-prompt',name:'Test speaker',kind:'confirmation',value:'123456'}];await page.clock.runFor(2600);
     await expect(page.locator('.pair-code')).toBeVisible();await expect(page.locator('.pysh-screensaver')).toHaveCount(0);await page.clock.fastForward(120000);await expect(page.locator('.pysh-screensaver')).toHaveCount(0);
-    await page.locator('.dialog-actions button').first().tap();await expect(page.locator('.pair-code')).toHaveCount(0);await page.clock.fastForward(61000);await expect(page.locator('.pysh-screensaver')).toBeVisible();expect(f.unexpected).toEqual([]);
+    await page.locator('.dialog-actions button').first().tap();await expect(page.locator('.pair-code')).toHaveCount(0);await page.clock.runFor(62000);await expect(page.locator('.pysh-screensaver')).toBeVisible();expect(f.unexpected).toEqual([]);
   });
   test(`city search explains empty results and ignores late old results ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);let release!:()=>void,oldDone=false;const gate=new Promise<void>(resolve=>release=resolve);
