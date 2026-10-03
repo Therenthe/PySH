@@ -41,11 +41,48 @@ def reap_adopted_children(*leaders):
 def start_owned(*args, **kwargs):
     child = subprocess.Popen(*args, **kwargs, start_new_session=True)
     child._pysh_owned_pgid = child.pid
+    child._pysh_owned_members = session_snapshot(child.pid)
+    child._pysh_owned_generation = child._pysh_owned_members.get(child.pid, {}).get("generation")
     return child
 
 
+def session_snapshot(sid):
+    """Capture kernel PID generations and groups within one Linux session."""
+    members = {}
+    for path in Path("/proc").glob("[0-9]*/stat"):
+        try:
+            fields = path.read_text().rpartition(")")[2].split()
+            if int(fields[3]) == sid:
+                members[int(path.parent.name)] = {"generation": (int(fields[19]), path.stat().st_uid),
+                                                   "ppid": int(fields[1]), "pgid": int(fields[2])}
+        except (OSError, ValueError, IndexError):
+            pass
+    return members
+
+
+def owned_session_members(child):
+    current = session_snapshot(child.pid)
+    recorded = getattr(child, "_pysh_owned_members", {})
+    generation = getattr(child, "_pysh_owned_generation", None)
+    if not generation:
+        return {}
+    if child.pid in current and current[child.pid]["generation"] != generation:
+        return {}  # The numeric session leader PID has been reused.
+    proven = any(value["generation"] == current.get(pid, {}).get("generation") for pid, value in recorded.items())
+    if not proven and child.pid not in current:
+        # A dead worker's live children are adopted by this subreaper. Independent
+        # sessions cannot acquire this parent relationship merely by PID reuse.
+        proven = any(value["ppid"] == os.getpid() and value["generation"][1] == generation[1]
+                     and value["generation"][0] >= generation[0] for value in current.values())
+    if not proven:
+        return {}
+    recorded.update(current)
+    child._pysh_owned_members = recorded
+    return current
+
+
 def terminate(child, grace=5, kill_grace=2):
-    """Clean a session we created, including descendants of a dead leader."""
+    """Clean all groups in our session, including a crashed API's service browser."""
     if child is None or getattr(child, "_pysh_owned_cleaned", False):
         return
     pgid = getattr(child, "_pysh_owned_pgid", None)
@@ -55,27 +92,27 @@ def terminate(child, grace=5, kill_grace=2):
     def reap():
         # Popen owns its direct child's return code; only reap descendants after it.
         if child.poll() is not None:
-            while True:
-                try:
-                    pid, _ = os.waitpid(-pgid, os.WNOHANG)
-                    if pid == 0:
+            groups = {value["pgid"] for value in owned_session_members(child).values()}
+            for group in groups:
+                while True:
+                    try:
+                        pid, _ = os.waitpid(-group, os.WNOHANG)
+                        if pid == 0:
+                            break
+                    except ChildProcessError:
                         break
-                except ChildProcessError:
-                    break
 
     def exists():
         reap()
-        try:
-            os.killpg(pgid, 0)
-            return True
-        except ProcessLookupError:
-            return False
+        return bool(owned_session_members(child))
 
     def signal_group(sig):
-        try:
-            os.killpg(pgid, sig)
-        except ProcessLookupError:
-            pass
+        groups = {value["pgid"] for value in owned_session_members(child).values()}
+        for group in groups:
+            try:
+                os.killpg(group, sig)
+            except ProcessLookupError:
+                pass
 
     def wait_group(timeout):
         deadline = time.monotonic() + timeout

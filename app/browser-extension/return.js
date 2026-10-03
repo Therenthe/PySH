@@ -85,7 +85,7 @@
   document.addEventListener('pointerup', event => {
     // Replaced fullscreen elements do not paint appended controls. The same
     // 48px edge gesture exits only HTML fullscreen, then reveals our controls;
-    // the browser window remains fullscreen and the official player is intact.
+    // the browser app keeps its frameless panel window; the player is intact.
     if (!['VIDEO', 'AUDIO', 'IFRAME', 'IMG', 'CANVAS', 'OBJECT', 'EMBED'].includes(document.fullscreenElement?.tagName) ||
         event.clientX < window.innerWidth - 48 || event.clientX > window.innerWidth ||
         event.clientY < 0 || event.clientY > 48) return;

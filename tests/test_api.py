@@ -32,6 +32,55 @@ def test_mutation_requires_token(client):
     assert app.state.hub.store.value.language == 'ro'
 
 
+@pytest.mark.parametrize('operation,body', [
+    ('report', {'job':'fixture', 'attempt':'attempt', 'ready':True}),
+    ('retry', {'job':'fixture'}), ('cancel', {'job':'fixture'}),
+])
+def test_preparation_mutations_keep_token_origin_boundary(client, operation, body):
+    handler = AsyncMock(return_value={'state':'checking'})
+    app.state.hub.external = SimpleNamespace(**{operation:handler})
+    path = '/api/external/' + operation
+    assert client.post(path, json=body).status_code == 403
+    assert client.post(path, headers={'X-Hub-Token':app.state.hub.token,'Origin':'https://evil.example'},json=body).status_code == 403
+    handler.assert_not_awaited()
+    assert client.post(path, headers={'X-Hub-Token':app.state.hub.token},json=body).status_code == 200
+    if operation == 'report': handler.assert_awaited_once_with('fixture','attempt',True)
+    else: handler.assert_awaited_once_with('fixture')
+
+
+def test_preparation_report_strict_boolean_and_extra_data_redacted(client):
+    handler = AsyncMock()
+    app.state.hub.external = SimpleNamespace(report=handler)
+    headers={'X-Hub-Token':app.state.hub.token}
+    for body in [ {'job':'fixture','attempt':'attempt','ready':'true'},
+                  {'job':'fixture','attempt':'attempt','ready':True,'password':'secret-never-return'} ]:
+        response=client.post('/api/external/report',headers=headers,json=body)
+        assert response.status_code == 422
+        assert response.json() == {'error':'invalid_request'}
+    handler.assert_not_awaited()
+
+
+def test_external_launch_reports_preparation_instead_of_opened(client, monkeypatch):
+    import services.backend.app as backend
+    monkeypatch.setattr(backend.sys,'platform','linux')
+    monkeypatch.setattr(backend.shutil,'which',lambda _: '/usr/bin/chromium')
+    app.state.hub.store.update({'language':'en','theme':'night'})
+    handler=AsyncMock(return_value={'opened':False,'preparing':True,'jobId':'fixture','service':'netflix'})
+    app.state.hub.external=SimpleNamespace(start=handler)
+    response=client.post('/api/external',headers={'X-Hub-Token':app.state.hub.token},json={'service':'netflix'})
+    assert response.status_code == 202 and response.json()['opened'] is False
+    handler.assert_awaited_once_with('netflix','/usr/bin/chromium','en','night')
+
+
+@pytest.mark.parametrize('path', ['/service-prepare','/service-prepare.js','/service-prepare.css'])
+def test_owned_preparation_assets_keep_browser_security_headers(client, path):
+    response=client.get(path)
+    assert response.status_code == 200
+    assert response.headers['X-Frame-Options'] == 'DENY'
+    assert "script-src 'self'" in response.headers['Content-Security-Policy']
+    assert "frame-ancestors 'none'" in response.headers['Content-Security-Policy']
+
+
 def test_validation_never_reflects_submitted_credentials(client):
     token = client.get('/api/session').json()['token']
     secret = 'private-network-password-do-not-return'

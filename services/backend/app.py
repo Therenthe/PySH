@@ -13,6 +13,7 @@ import shutil
 import sys
 from typing import Literal
 from urllib.parse import urlsplit
+from zoneinfo import ZoneInfo
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -24,6 +25,7 @@ from .preferences import PreferenceStore, Station
 from .device import Device, DeviceError
 from .content import Content, ContentError
 from .player import Player, PlayerError
+from .external import ExternalBrowser, ExternalError
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = Path(os.environ.get("PI_HUB_DATA", str(Path.home() / ".local/share/pi-smart-hub")))
@@ -88,6 +90,15 @@ class External(StrictBody):
     service: Literal["youtube", "netflix", "spotify"]
 
 
+class PreparationJob(StrictBody):
+    job: str = Field(min_length=1, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+
+
+class PreparationReport(PreparationJob):
+    attempt: str = Field(min_length=1, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+    ready: bool = Field(strict=True)
+
+
 def validate_stream_url(url):
     parsed = urlsplit(url)
     # mpv supports powerful protocols; only explicit public web URLs are accepted.
@@ -107,7 +118,7 @@ class Hub:
         self.token = secrets.token_urlsafe(32)
         self.weather = None
         self.tasks = []
-        self.external = None
+        self.external = ExternalBrowser(directory, ROOT / "app" / "browser-extension")
         self.appliance = os.environ.get("PI_HUB_APPLIANCE") == "1"
         self.service_mode = False
         self.snapshots = {"network": {"available": False, "state": "initializing"}, "bluetooth": {"available": False, "devices": [], "prompts": []}, "audio": {"available": False, "outputs": []}}
@@ -212,8 +223,7 @@ class Hub:
         for operation in (self.player.close, self.device.close):
             with contextlib.suppress(Exception):
                 await operation()
-        if self.external and self.external.returncode is None:
-            self.external.terminate()
+        await self.external.close()
 
 
 @contextlib.asynccontextmanager
@@ -273,6 +283,7 @@ async def invalid_request(request, error):
 @app.exception_handler(DeviceError)
 @app.exception_handler(ContentError)
 @app.exception_handler(PlayerError)
+@app.exception_handler(ExternalError)
 async def integration_error(request, error):
     code = getattr(error, "code", "operation_failed")
     log.info("Integration result=%s", code)
@@ -451,13 +462,49 @@ async def external(request: Request, body: External):
     executable = shutil.which("chromium")
     if sys.platform != "linux" or not executable:
         return JSONResponse({"error": "browser_unavailable"}, status_code=409)
-    if hub.external and hub.external.returncode is None:
-        return JSONResponse({"error": "service_already_open"}, status_code=409)
     with contextlib.suppress(Exception):
         await hub.player.command("pause")
-    urls = {"youtube": "https://www.youtube.com", "netflix": "https://www.netflix.com", "spotify": "https://open.spotify.com"}
-    hub.external = await asyncio.create_subprocess_exec(executable, "--ozone-platform=wayland", "--no-first-run", "--start-maximized", "--class=pysh-service", "--user-data-dir=" + str(DATA / "services-browser"), "--load-extension=" + str(ROOT / "app" / "browser-extension"), "--app=" + urls[body.service], stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
-    return {"opened": True, "service": body.service}
+    prefs = hub.store.value
+    local = datetime.now(ZoneInfo(prefs.timezone)).strftime("%H:%M")
+    scheduled_night = prefs.nightEnabled and (prefs.nightStart <= local < prefs.nightEnd if prefs.nightStart <= prefs.nightEnd else local >= prefs.nightStart or local < prefs.nightEnd)
+    theme = "night" if prefs.theme == "night" or scheduled_night else "ink"
+    result = await hub.external.start(body.service, executable, prefs.language, theme)
+    return JSONResponse(result, status_code=202 if result.get("preparing") else 200)
+
+
+@app.get("/api/external/preparation")
+async def preparation_status(request: Request, job: str):
+    return await request.app.state.hub.external.status(job)
+
+
+@app.post("/api/external/report")
+async def preparation_report(request: Request, body: PreparationReport):
+    return await request.app.state.hub.external.report(body.job, body.attempt, body.ready)
+
+
+@app.post("/api/external/retry")
+async def preparation_retry(request: Request, body: PreparationJob):
+    return await request.app.state.hub.external.retry(body.job)
+
+
+@app.post("/api/external/cancel")
+async def preparation_cancel(request: Request, body: PreparationJob):
+    return await request.app.state.hub.external.cancel(body.job)
+
+
+@app.get("/service-prepare")
+async def preparation_page():
+    return FileResponse(ROOT / "services/backend/preparation/index.html", headers={"Cache-Control": "no-store"})
+
+
+@app.get("/service-prepare.js")
+async def preparation_script():
+    return FileResponse(ROOT / "services/backend/preparation/prepare.js", media_type="text/javascript")
+
+
+@app.get("/service-prepare.css")
+async def preparation_style():
+    return FileResponse(ROOT / "services/backend/preparation/prepare.css", media_type="text/css")
 
 
 @app.post("/api/exit")
@@ -469,13 +516,7 @@ async def exit_hub(request: Request):
         playback = await hub.player.status()
         if playback.get("state") not in {"idle", "ended", "error"}:
             await hub.player.command("stop")
-        if hub.external and hub.external.returncode is None:
-            hub.external.terminate()
-            try:
-                await asyncio.wait_for(hub.external.wait(), timeout=3)
-            except asyncio.TimeoutError:
-                hub.external.kill()
-                await hub.external.wait()
+        await hub.external.close()
         hub.service_mode = True
         return {"exiting": False, "mode": "service"}
     if not os.environ.get("PI_HUB_SUPERVISED"):

@@ -26,6 +26,8 @@ Windows wrapper passed inspection-only for the intended USB inventory. Explicit 
 
 ## Remaining delivery work
 
+Prepared protected-playback candidate6d8f3ba32706 adds real per-profile EME preparation, EN/RO waiting/cancel/retry and bounded component restart, plus owned-session recovery.39 runtime files packaged;109 Python tests pass on Windows with13 Linux-only skips, eight focused preparation UI tests pass. Linux process tests and native fresh/prepared-profile observations are still required before activation/acceptance. The installed candidate remains8ede2b86f53a. [Preparation evidence](docs/evidence/protected-playback-preparation-2026-10-03.md).
+
 Netflix account playback/resolution and first-use DRM preparation; eight-hour stability; complete Bluetooth pair/forget/reconnect and real network-disconnection recovery; native resource/performance acceptance; external-account playback and DRM support; clean installation/rollback. Known paired-speaker appearance and a previously heard WAV are evidence of those observations only. Full product acceptance remains OPEN and the project is not complete.
 
 ## Historical first physical USB boot

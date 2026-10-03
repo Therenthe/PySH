@@ -85,6 +85,47 @@ def test_live_api_and_descendant_are_stopped(supervisor, tmp_path):
         supervisor.terminate(worker, grace=.15)
 
 
+def test_dead_api_external_group_in_owned_session_is_stopped(supervisor, tmp_path):
+    ready = tmp_path / "external-group.pid"
+    external_code = (
+        "import os,signal,time; from pathlib import Path; "
+        "signal.signal(signal.SIGTERM, signal.SIG_IGN); "
+        f"Path({str(ready)!r}).write_text(str(os.getpid())); time.sleep(60)"
+    )
+    api_code = (
+        "import subprocess,sys,time,os; from pathlib import Path; "
+        f"subprocess.Popen([sys.executable,'-c',{external_code!r}], process_group=0); "
+        f"ready=Path({str(ready)!r}); "
+        "exec('while not ready.exists(): time.sleep(.01)'); os._exit(23)"
+    )
+    unrelated = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"], start_new_session=True)
+    worker = supervisor.start_owned([sys.executable, "-c", api_code])
+    descendant = wait_for_file(ready)
+    try:
+        assert worker.wait(timeout=5) == 23
+        assert os.getpgid(descendant) == descendant
+        assert os.getsid(descendant) == worker.pid
+        supervisor.terminate(worker, grace=.15, kill_grace=2)
+        assert_gone(descendant)
+        assert unrelated.poll() is None
+    finally:
+        supervisor.terminate(worker, grace=.15)
+        unrelated.terminate()
+        unrelated.wait(timeout=5)
+
+
+def test_reused_session_id_never_signalled(supervisor, monkeypatch):
+    worker = supervisor.start_owned([sys.executable, "-c", "import time; time.sleep(60)"])
+    supervisor.terminate(worker, grace=1)
+    worker._pysh_owned_cleaned = False  # Test the generation guard, not the cleaned shortcut.
+    original = worker._pysh_owned_generation
+    monkeypatch.setattr(supervisor, "session_snapshot", lambda sid: {sid: {"generation": (original[0] + 1, original[1]), "ppid": os.getpid(), "pgid": sid}})
+    def forbidden(*args):
+        raise AssertionError("Reused session ID must never be signalled")
+    monkeypatch.setattr(os, "killpg", forbidden)
+    supervisor.terminate(worker, grace=.15)
+
+
 def test_cleanup_never_signals_an_unowned_or_unrelated_group(supervisor):
     unrelated = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"], start_new_session=True)
     owned = supervisor.start_owned([sys.executable, "-c", "import time; time.sleep(60)"])
