@@ -1,5 +1,5 @@
 {
-  "candidate": "6012a2bda401",
+  "candidate": "8ede2b86f53a",
   "preparation": [
     {
       "id": "PREP-01",
@@ -65,11 +65,11 @@
     {
       "id": "UX-01",
       "status": "OPEN",
-      "candidate": "6012a2bda401",
+      "candidate": "8ede2b86f53a",
       "evidence": [
         "docs/evidence/service-keyboard-2026-10-03.md"
       ],
-      "reason": "Native frameless keyboard/control hide/reveal and EME capability passed on installed runtime; full physical tactile/account playback/resolution and first-use DRM preparation remain open."
+      "reason": "Actual Pi fixture verifies keyboard geometry, submit/navigation cleanup and native touch-event recovery of Return from video fullscreen. Full physical touch inventory remains incomplete."
     },
     {
       "id": "UX-02",
@@ -219,11 +219,11 @@
     {
       "id": "EXT-02",
       "status": "OPEN",
-      "candidate": "6012a2bda401",
+      "candidate": "8ede2b86f53a",
       "evidence": [
         "docs/evidence/service-keyboard-2026-10-03.md"
       ],
-      "reason": "Native frameless keyboard/control hide/reveal and EME capability passed on installed runtime; full physical tactile/account playback/resolution and first-use DRM preparation remain open."
+      "reason": "Widevine4.10.3057.0 EME access/key creation passed on Pi; retained owner profile reopened and actual panel shows profile selection. Real film playback/resolution and fresh-image preparation remain unverified."
     },
     {
       "id": "EXT-03",
