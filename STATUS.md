@@ -1,3 +1,9 @@
+# Current runtime — ambient material
+
+Installed `7d525cef84cb`, source `cd1ff4282ebd0142639978b82d110040cbef4d45`. Mature sky, NASA Moon material with calculated phase, bounded optional decorative encounters and guarded settings saves. Compact arrangement and edge anchors remain.42 native file hashes verified; radio continued1.520→10.596s; actual private panel capture inspected. Previous98385 retained and PC backup verified.326 full UI cases passed before the isolated pending-save fix, then88 targeted cases passed after it;314 backend tests passed with22 Windows skips. See [evidence](docs/evidence/ambient-material-2026-10-04.md). All30 product criteria remain OPEN.
+
+Following entries are historical.
+
 # Current runtime — visible action recovery
 
 Installed `98385a22787c`, source `9e919486c66561e8cad76b1a7886f2136af24e84`. Bluetooth/location recovery remains accessible across context closure and navigation, pending/errors block idle, and retries do not repeat accepted mutations. Compact arrangement/edge anchors and Home ambient rest are retained.316browser cases passed,41native file hashes and continuing radio verified. See [evidence](docs/evidence/action-recovery-2026-10-04.md). All30product criteria remain OPEN.

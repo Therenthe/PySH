@@ -15,3 +15,5 @@ Independent visual review covered20 Moon phase cases and eight800×480 captures 
 Compact Arrange, edge anchoring, deliberate overlap and forecast1↔5 semantics are retained. All30 product acceptance criteria remain OPEN. Native performance, physical touch and final image acceptance require their own evidence.
 
 Post-fix anchor/Home ambient/action recovery/idle guard suite:68/68 passed in38.8s, EN/RO and both themes. Repository structural check passed; extension keyboard suite26/26 passed after enabling its child-process execution.
+
+Installed source cd1ff4282ebd0142639978b82d110040cbef4d45 on SD as7d525cef84cb; previous98385a22787c retained. Before activation, readable PC backup verified:SHA25610f8b5024f2f232cb9d4ddb099f4ee7785d4674b0fb6e6c179170e0e306cc513. After activation all42 hashes matched, no pending transaction; radio/audio ready at1.520,4.551,7.579,10.596s. Actual private800×480 compositor capture inspected. This verifies deployment/integrity/continuing playback, not a full physical acceptance tour.
