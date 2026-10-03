@@ -156,7 +156,7 @@ def verify_backup(path, record, receipt):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['inspect', 'backup', 'verify-backup', 'flash'], nargs='?', default='inspect')
+    parser.add_argument('action', choices=['inspect', 'backup', 'hash', 'verify-backup', 'flash'], nargs='?', default='inspect')
     parser.add_argument('--ssh', default='ssh')
     parser.add_argument('--host')
     parser.add_argument('--user')
@@ -186,6 +186,9 @@ def main():
     require(re.fullmatch('[0-9a-f]{32}', args.cid or '') and args.size and args.size > 0,
             'Expected physical CID and exact size required')
     values = {'target': args.target, 'cid': args.cid, 'size': args.size}
+    if args.action == 'hash':
+        print(json.dumps(run_remote(args, 'hash', values), indent=2), flush=True)
+        return
     if args.action == 'backup':
         require(args.backup and args.backup_record and not args.backup_record.exists(), 'New backup and record destinations required')
         record = run_remote(args, 'backup', values, backup_path=args.backup)

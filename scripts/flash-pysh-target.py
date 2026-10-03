@@ -213,7 +213,7 @@ def provision(device, expected, boot, key):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['inspect', 'backup', 'flash'])
+    parser.add_argument('action', choices=['inspect', 'backup', 'hash', 'flash'])
     parser.add_argument('--target', required=True)
     parser.add_argument('--cid')
     parser.add_argument('--size', type=int)
@@ -230,16 +230,21 @@ def main():
             print(json.dumps(snapshot(args.target)), flush=True)
             return
         expected = validated(args.target, args.cid, args.size)
-        if args.action == 'backup':
+        if args.action in {'backup', 'hash'}:
             fd = open_target(args.target, expected)
             try:
                 def read(count):
                     data = os.read(fd, count)
-                    write_all(sys.stdout.buffer.write, data)
+                    if args.action == 'backup':
+                        write_all(sys.stdout.buffer.write, data)
                     return data
-                sha = read_hash(read, args.size, 'backup')
-                sys.stdout.buffer.flush()
-                progress('backup-complete', args.size, args.size, sha256=sha, **expected)
+                sha = read_hash(read, args.size, args.action)
+                require(snapshot(args.target) == expected, 'Target changed during full read')
+                if args.action == 'backup':
+                    sys.stdout.buffer.flush()
+                    progress('backup-complete', args.size, args.size, sha256=sha, **expected)
+                else:
+                    print(json.dumps({**expected, 'sha256': sha, 'bytes': args.size}), flush=True)
             finally:
                 os.close(fd)
             return

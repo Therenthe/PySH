@@ -21,6 +21,14 @@ python scripts/flash-pysh-ssh.py verify-backup --backup <PC-private/sd-original.
 
 Backupul trece prin SSH către PC, cu progres bytes/procent și hash remote comparat cu streamul local. Un transfer întrerupt rămâne `.partial`, fără receipt și fără a deveni backup valid. Fișierul este creat exclusiv, fără suprascriere. `verify-backup` recitește **independent** backupul complet pe PC, verifică lungimea și SHA-256 și emite receipt legat de CID, capacitate și host. Acesta este un document administrativ generat de operator, nu o atestare criptografică nefalsificabilă. Păstrează backupul și receipt-ul privat; backupul poate conține conturi și date personale.
 
+Modul `hash` recitește întregul SD inactiv fără să transfere conținutul și fără scriere. Cere același CID/capacitate, claim exclusiv și verifică din nou identitatea și mount-urile după citire. Poate compara o copie completă rămasă după o eroare de finalizare cu sursa originală încă neschimbată; un `.partial` nu devine valid doar pentru că are lungimea corectă. Publicarea copiei și emiterea receipt-ului se fac numai după egalitatea hash-urilor și recitirea independentă pe PC.
+
+```text
+python scripts/flash-pysh-ssh.py hash --host 192.168.100.127 --user pysh-admin --key <cheie> --known-hosts <known-hosts> --target /dev/mmcblk0 --cid <CID> --size <bytes-exacți>
+```
+
+Pe Windows, dacă directorul privat este protejat prin ACL pentru proprietar, consola trebuie să ruleze sub acel cont cu acces la director. Un proces pornit anterior cu token restricționat poate pierde accesul după întărirea ACL; verificați codul de ieșire și receipt-ul, nu doar progresul 100%.
+
 Folosește imaginea **raw `.img` decomprimată**, SHA-256 confirmat separat față de artefactul GitHub verificat și exact o cheie **publică Ed25519**. Cheia privată SSH nu este cheia publică de provisioning și nu se transmite. Tool-ul verifică și MBR-ul PySH: FAT la sector16384, 524288 sectoare, urmată de Linux fără suprapunere și în limitele imaginii.
 
 ```text
