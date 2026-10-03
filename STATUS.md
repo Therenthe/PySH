@@ -4,7 +4,7 @@ Updated: 2026-10-03 (Europe/Bucharest). GitHub is canonical: https://github.com/
 
 ## Installed application and device
 
-- Current physical SD applicationadb2f3a42a42, sourcebd618cda103d864ef8f522a51615796b95e95c6c, all40 files checked by the public update tool. Previous5aef8c81c90b retained. Separately verified PC backup and activation passed; radio resumed. [Functional evidence](docs/evidence/functional-recovery-2026-10-03.md).
+- Current physical SD applicationebd9af386290, sourcefea1235932618fdeb458fa6dfe5f1517a1ce3909, all40 installed file hashes independently verified. Previousadb2f3a42a42 retained. Separately verified PC backup and activation passed; radio resumed. [Functional evidence](docs/evidence/functional-recovery-2026-10-03.md).
 - Pi4/4GB, Debian13 ARM64, DSI800×480, rotation180 with identity touch calibration. Active SD root UUID4d41b42c-d61a-4052-8898-94191aaa18fc, expanded root15,685,627,904 bytes. Original SD has a complete verified PC backup; corrected USB is retained separately for recovery. [SD boot evidence](docs/evidence/sd-boot-2026-10-03.md).
 - Dedicated greetd/labwc session, user pysh.service, /opt/pysh/current and /opt/pysh/venv. API is loopback8765. Administrative SSH uses the provisioned key; secrets, profiles and backups stay outside Git. Desktop deployment scripts do not operate this appliance.
 
@@ -44,4 +44,4 @@ New SD Bluetooth audio is now observed: owner confirmed the local tone and is li
 
 ## UI polish in progress
 
-Candidateadb2f3a42a42 is packaged and locally verified:114 browser,164 backend and26 extension tests passed;3 weather mapping tests, TypeScript, build and structure passed. Home duplication/source/weather icons, hidden bars with real touch scrolling and screensaver transport are implemented. Native activation passed with radio resumed and compositor Home inspected. A forecast/attribution spacing correction is packaged as ebd9af386290 with16 focused browser checks passed, pending activation; audio visualizers and full UI acceptance remain OPEN. [Evidence](docs/evidence/ui-polish-2026-10-03.md).
+Candidateadb2f3a42a42 is packaged and locally verified:114 browser,164 backend and26 extension tests passed;3 weather mapping tests, TypeScript, build and structure passed. Home duplication/source/weather icons, hidden bars with real touch scrolling and screensaver transport are implemented. Native activation passed with radio resumed and compositor Home inspected. The forecast/attribution correction ebd9af386290 is installed;16 affected browser checks passed, all40 native hashes passed, no pending update and advancing radio playback verified in4 samples; audio visualizers and full UI acceptance remain OPEN. [Evidence](docs/evidence/ui-polish-2026-10-03.md).
