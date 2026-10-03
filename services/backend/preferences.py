@@ -56,6 +56,8 @@ class Preferences(BaseModel):
     visualizerStyle: Literal["off", "wave", "bars", "orbit", "ribbon", "mirror", "rings"] = "off"
     visualizerSize: Literal["compact", "balanced", "large"] = "compact"
     homeCards: list[Literal["weather", "forecast", "playback"]] = Field(default_factory=lambda:["weather", "forecast", "playback"], max_length=3)
+    decorativeAircraft: bool = Field(default=True, strict=True)
+    decorativeLunarDust: bool = Field(default=False, strict=True)
     homePositions: dict[Literal["weather", "forecast", "playback", "visualizer"], HomePosition] = Field(default_factory=dict, max_length=4)
     screensaverLayout: Literal["clock", "visualizer"] = "clock"
     navigationCollapsed: bool = False

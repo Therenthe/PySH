@@ -138,7 +138,7 @@
 .sky-mainly-clear .ambient-clouds{opacity:.7}
 .sky-overcast .ambient-clouds,.sky-rain .ambient-clouds,.sky-snow .ambient-clouds{opacity:1}
 .ambient-city .city-windows{fill:#ffd599}
-.ambient-city .city-windows rect:nth-child(23n){animation:city-light 19s ease-in-out infinite alternate}
+.ambient-city .city-windows rect{animation:none}
 @keyframes city-light{from{fill:#ffd599}to{fill:#b9d7de}}
 .ambient-meteor.meteor-transient{animation:meteor-flight 1.8s ease-out both}
 @keyframes meteor-flight{0%{opacity:0;transform:translate(0,0) rotate(-30deg)}15%{opacity:.8}100%{opacity:0;transform:translate(-230px,130px) rotate(-30deg)}}
@@ -215,3 +215,10 @@
 .app[data-home-phase] :is(.rail,.topbar-title,.topbar-right,.date-label,.ambient-weather,.ambient-forecast,.ambient-dock,.signal-station,.toast){opacity:1;transition:width 300ms ease,height 300ms ease,flex-basis 220ms ease,padding 220ms ease,opacity 220ms ease,visibility 0s}
 .app[data-home-phase=ambient] :is(.rail,.topbar-title,.topbar-right,.date-label,.ambient-weather,.ambient-forecast,.ambient-dock,.signal-station,.toast){opacity:0;transition-delay:0s,0s,0s,0s,0s,220ms}
 @media(prefers-reduced-motion:reduce){.app[data-home-phase] :is(.rail,.topbar-title,.topbar-right,.date-label,.ambient-weather,.ambient-forecast,.ambient-dock,.signal-station,.toast){transition:none}}
+
+/* Static distant architecture and sparse warm windows preserve a quiet horizon. */
+.ambient-city .city-backdrop{fill:#59706e;opacity:.46}
+.ambient-city .city-front{opacity:.94}
+.app[data-theme=night] .ambient-city .city-backdrop{fill:#355260;opacity:.52}
+.ambient-city .city-windows{fill:#dcc69b}
+.ambient-clouds{overflow:visible}
