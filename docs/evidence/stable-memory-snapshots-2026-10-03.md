@@ -1,5 +1,11 @@
 # Stable memory snapshot collection — 2026-10-03
 
+## Full-process profile probe — 2026-10-04
+
+The corrected collector SHA256 `22c0eeaf4f5cd7e71b5d0177591e4e81aa6d3893d6cbb093498261f4abf42676` was executed in memory as nonroot UID1000, on guarded runtime `94ca6c6baf22` and the existing SD. All six fresh snapshots completed on the first attempt with16members, using the union of cgroup membership and verified supervisor descendants. Summed PSS:731178,729819,730571,731348,731620,732632KiB (approximately713–715MiB) during active radio playback. Private raw result: `.runtime/observer-full-profile-native-probe.json`.
+
+This is an active-playback diagnostic on the previous runtime, not idle-budget acceptance or an eight-hour session. It does not certify the newer Home ambient runtime. Whole-application idle, video and same-candidate stability remain OPEN. The smaller historical cgroup-only sums below cannot be used as whole-application memory evidence.
+
 Scope correction2026-10-04: a later native full-profile audit found Chromium's browser leader moved into a sibling systemd app scope while its children remain in pysh.service. The earlier complete records below mean complete collection of the app cgroup only; they exclude that leader and do not establish whole-application memory. The60s/7sample lifecycle probe completed normally (inactive/MainPID0/Resultsuccess) but has the same coverage limitation. Source is now corrected to union same-UID verified supervisor descendants with cgroup members and to pin parent/start ticks/group across discovery and reads. See free-card-placement-2026-10-04.md for test and native performance findings. Native full-set and8h evidence remain pending.
 
 Historical e546 observer evidence had17 incomplete samples among79 before a runtime change invalidated that session. A later root/nonroot audit on54a31cd7e182 found the same15 actual application-cgroup members readable by user pysh. Transient unrelated process disappearance and child-group changes were recorded, rather than a permissions deficit. No idle-memory or8h acceptance follows from those samples.
