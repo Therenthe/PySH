@@ -1,3 +1,9 @@
+# Current runtime — complete material notices and measured idle
+
+Installed `931b8d206a00`, source `559cd184537dce4026cc7785649228de0cbc138a`. NASA credit now ships in runtime notices; UI JS/CSS match7d525. All42 native hashes and continuing radio verified; prior7d525 retained and PC backup checked. Five app service relaunches reached actual800×480Home in4.701–5.089s; complete idle PSS598.951MiB atHome+120.0156s. Preferences/audio restored and debugger closed after that probe. These are scoped measurements, not cold boots, physical latency or8-hour acceptance. See [evidence](docs/evidence/native-material-performance-2026-10-04.md). All30 product criteria remain OPEN.
+
+Following entries are historical.
+
 # Current runtime — ambient material
 
 Installed `7d525cef84cb`, source `cd1ff4282ebd0142639978b82d110040cbef4d45`. Mature sky, NASA Moon material with calculated phase, bounded optional decorative encounters and guarded settings saves. Compact arrangement and edge anchors remain.42 native file hashes verified; radio continued1.520→10.596s; actual private panel capture inspected. Previous98385 retained and PC backup verified.326 full UI cases passed before the isolated pending-save fix, then88 targeted cases passed after it;314 backend tests passed with22 Windows skips. See [evidence](docs/evidence/ambient-material-2026-10-04.md). All30 product criteria remain OPEN.

@@ -33,7 +33,7 @@ Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4def
 | QA-03 | Vizualizare întregului panou exclusiv privată, prin PC loopback/SSH; fără publicare sau înregistrare | Există viewer privat; nu expunem API/viewer în internet |
 | OS-01 | Flasher SSH cu progres în consolă, identificare disc, backup înainte de scriere, verificare și recuperare | Migrare SD făcută anterior; final UI nu cere reflash la fiecare corecție; release final OPEN |
 | OS-02 | GitHub canonic, repo agent-friendly, documente/ADR/source/teste/manifest/CI și rollback | Structură existentă; sincronizare și CI pentru fiecare candidat |
-| PERF-01 | Memorie întregului arbore incl.Chromium separat;5lansări, latență tactilă,8ore pe același candidat | Collector corectat22e7; validare nativă nouă OPEN; vechile sume cgroup-only invalide pentru total |
+| PERF-01 | Memorie întregului arbore incl.Chromium separat;5lansări, latență tactilă,8ore pe același candidat | Collector corectat22e7;931b8:5relansări aplicație4.701–5.089s și idle complet598.951MiB laHome+120s; coldboot/latency/media/8h OPEN; vechile sume cgroup-only invalide pentru total |
 | DELIVERY-01 | Toate30DoD:hardware,Wi-Fi/offline,radio/local media,BT,streaming,boot,recovery,secrete,licențe și imagine finală bootată | OPEN; acceptance.json rămâne inventarul obligatoriu, nu se substituie cu teste UI |
 
 Pentru fiecare remediere se consemnează: sursă/candidat, test executat, rezultat real, captură inspectată, publicare și instalare. Utilizatorul primește o actualizare când remedierea este verificată; nu numim implementarea locală drept instalată. Preferințele și aranjarea utilizatorului se păstrează. Auditorii nu schimbă dispozitivul sau conturile pentru a produce un PASS.
