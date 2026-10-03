@@ -17,7 +17,6 @@ mmdebstrap:
     - python3
     - python3-venv
     - chromium
-    - libwidevinecdm0
     - wvkbd
     - mpv
     - labwc

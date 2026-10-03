@@ -78,7 +78,7 @@ package_records = [dict(line.split(': ', 1) for line in record.splitlines()
                    for record in packages.decode().split('\n\n')]
 assert any(p.get('Package') == 'libspa-0.2-bluetooth' and
            p.get('Status') == 'install ok installed' for p in package_records), 'Bluetooth audio plugin missing'
-for required in ('wvkbd', 'libwidevinecdm0'):
+for required in ('wvkbd',):
     assert any(p.get('Package') == required and p.get('Status') == 'install ok installed'
                for p in package_records), f'Service-browser dependency missing: {required}'
 keyboard_manifest = json.loads(read_root('/etc/chromium/native-messaging-hosts/org.pysh.keyboard.json'))

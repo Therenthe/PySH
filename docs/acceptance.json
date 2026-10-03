@@ -1,5 +1,5 @@
 {
-  "candidate": "4b56d5150640",
+  "candidate": "ccb25a3bdf10",
   "preparation": [
     {
       "id": "PREP-01",
@@ -65,11 +65,11 @@
     {
       "id": "UX-01",
       "status": "OPEN",
-      "candidate": "4b56d5150640",
+      "candidate": "ccb25a3bdf10",
       "evidence": [
         "docs/evidence/service-keyboard-2026-10-03.md"
       ],
-      "reason": "Missing service-browser keyboard unblocked and owner confirmed typing; durable control/native viewport and full tactile checklist remain pending."
+      "reason": "Native keyboard and DRM integration follow-up pending; isolated EME passed after official component update, but full current-candidate tactile/account playback remains unverified."
     },
     {
       "id": "UX-02",
@@ -219,11 +219,11 @@
     {
       "id": "EXT-02",
       "status": "OPEN",
-      "candidate": "4b56d5150640",
+      "candidate": "ccb25a3bdf10",
       "evidence": [
         "docs/evidence/service-keyboard-2026-10-03.md"
       ],
-      "reason": "Owner has account; missing keyboard repaired temporarily. Permanent control and real DRM playback/resolution remain unverified."
+      "reason": "Native keyboard and DRM integration follow-up pending; isolated EME passed after official component update, but full current-candidate tactile/account playback remains unverified."
     },
     {
       "id": "EXT-03",
@@ -260,12 +260,12 @@
     },
     {
       "id": "REL-02",
-      "status": "PASS",
+      "status": "OPEN",
       "candidate": "4b56d5150640",
       "evidence": [
         "docs/evidence/home-weather-layout-2026-10-03.md"
       ],
-      "reason": "Actual identified Pi measurements: recovery preserves preferences; complete idle PSS586.819MiB at Home+120s and separate usable audio/radio/video scenarios. New keyboard candidate must revalidate affected measurements."
+      "reason": "Historical4b measurements retained; changed external-browser/keyboard candidate must revalidate affected recovery/resources."
     },
     {
       "id": "PERF-01",
@@ -279,12 +279,12 @@
     },
     {
       "id": "PERF-02",
-      "status": "PASS",
+      "status": "OPEN",
       "candidate": "4b56d5150640",
       "evidence": [
         "docs/evidence/home-weather-layout-2026-10-03.md"
       ],
-      "reason": "Actual identified Pi measurements: recovery preserves preferences; complete idle PSS586.819MiB at Home+120s and separate usable audio/radio/video scenarios. New keyboard candidate must revalidate affected measurements."
+      "reason": "Historical4b measurements retained; changed external-browser/keyboard candidate must revalidate affected recovery/resources."
     },
     {
       "id": "DIAG-01",

@@ -9,7 +9,7 @@ const source = name => readFileSync(new URL(name, directory), 'utf8');
 const manifest = JSON.parse(source('manifest.json'));
 const extensionId = createHash('sha256').update(Buffer.from(manifest.key, 'base64')).digest('hex')
   .slice(0, 32).replace(/[0-9a-f]/g, digit => String.fromCharCode(97 + parseInt(digit, 16)));
-const tick = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
+const tick = async () => { for (let i = 0; i < 30; i++) await Promise.resolve(); };
 const copy = value => JSON.parse(JSON.stringify(value));
 function event() {
   const listeners = new Set();
@@ -17,7 +17,7 @@ function event() {
     emit: value => { for (const listener of [...listeners]) listener(value); }, listeners };
 }
 function background() {
-  const ports = [], timers = new Map(), removed = [];
+  const ports = [], timers = new Map(), removed = [], updates = [];
   let timerId = 0, failConnect = false;
   const onMessage = event();
   const chrome = { runtime: { id: extensionId, onMessage, connectNative(name) {
@@ -27,7 +27,8 @@ function background() {
       postMessage(message) { if (this.failPost) throw new Error('closed'); this.sent.push(copy(message)); },
       disconnect() { this.closed = true; this.onDisconnect.emit(); } };
     ports.push(port); return port;
-  } }, windows: { remove: id => removed.push(id) } };
+  } }, windows: { remove: id => removed.push(id),
+    update: async (id, options) => { updates.push({ id, ...copy(options) }); } } };
   vm.runInNewContext(source('background.js'), { chrome, URL,
     setTimeout: (fn, ms) => { assert.equal(ms, 3000); timers.set(++timerId, fn); return timerId; },
     clearTimeout: id => timers.delete(id) });
@@ -39,7 +40,7 @@ function background() {
     const keepAlive = listener(message, from, result => replies.push(copy(result)));
     return { replies, keepAlive };
   }
-  return { ports, timers, removed, sender, request, failConnection: () => { failConnect = true; } };
+  return { ports, timers, removed, updates, chrome, sender, request, failConnection: () => { failConnect = true; } };
 }
 
 test('manifest has stable public-key ID and only native messaging permission', () => {
@@ -125,6 +126,60 @@ test('Return closes owning window and cancels queued keyboard requests', async (
   assert.deepEqual(first.replies, [{ ok: false, error: 'keyboard_unavailable' }]);
   assert.deepEqual(queued.replies, [{ ok: false, error: 'keyboard_unavailable' }]);
   assert.equal(h.timers.size, 0);
+});
+
+test('keyboard resizes the service window before showing and restores fullscreen after hiding', async () => {
+  const h = background(); h.request({ action: 'status' }); await tick();
+  assert.deepEqual(h.updates, []); h.ports[0].onMessage.emit({ ok: true }); await tick();
+  const show = h.request({ action: 'show' }); await tick();
+  assert.deepEqual(h.updates, [{ id: 7, state: 'maximized' }]);
+  assert.deepEqual(h.ports[0].sent.at(-1), { action: 'show' });
+  h.ports[0].onMessage.emit({ ok: true }); await tick(); assert.deepEqual(show.replies, [{ ok: true }]);
+  const hide = h.request({ action: 'hide' }); await tick();
+  assert.equal(h.updates.length, 1); // Wait for native hide to finish.
+  h.ports[0].onMessage.emit({ ok: true }); await tick();
+  assert.deepEqual(h.updates.at(-1), { id: 7, state: 'fullscreen' });
+  assert.deepEqual(hide.replies, [{ ok: true }]);
+});
+
+test('unsuccessful show and host disconnect restore fullscreen', async () => {
+  const h = background(), show = h.request({ action: 'show' }); await tick();
+  h.ports[0].onMessage.emit({ ok: false }); await tick();
+  assert.deepEqual(show.replies, [{ ok: false }]);
+  assert.deepEqual(h.updates.at(-1), { id: 7, state: 'fullscreen' });
+  h.request({ action: 'show' }); await tick(); h.ports[0].onMessage.emit({ ok: true }); await tick();
+  h.ports[0].disconnect(); await tick();
+  assert.deepEqual(h.updates.slice(-2), [{ id: 7, state: 'maximized' }, { id: 7, state: 'fullscreen' }]);
+});
+
+test('show timeout restores fullscreen and host connection failure restores fullscreen', async () => {
+  const h = background(), show = h.request({ action: 'show' }); await tick();
+  [...h.timers.values()][0](); await tick();
+  assert.deepEqual(show.replies, [{ ok: false, error: 'keyboard_unavailable' }]);
+  assert.deepEqual(h.updates.at(-1), { id: 7, state: 'fullscreen' });
+  h.failConnection(); const failed = h.request({ action: 'show' }); await tick();
+  assert.deepEqual(failed.replies, [{ ok: false, error: 'keyboard_unavailable' }]);
+  assert.deepEqual(h.updates.at(-1), { id: 7, state: 'fullscreen' });
+});
+
+test('Return during an awaited maximize never launches keyboard afterward', async () => {
+  const h = background(); let finishResize;
+  h.chrome.windows.update = () => new Promise(resolve => { finishResize = resolve; });
+  const show = h.request({ action: 'show' }); await tick();
+  h.request({ action: 'return' }); finishResize(); await tick();
+  assert.deepEqual(h.removed, [7]); assert.equal(h.ports.length, 0);
+  assert.deepEqual(show.replies, [{ ok: false, error: 'keyboard_unavailable' }]);
+});
+
+test('failed window resize attempts fullscreen recovery without starting a host', async () => {
+  const h = background(), updates = [];
+  h.chrome.windows.update = async (id, options) => {
+    updates.push({ id, ...copy(options) }); throw new Error('window unavailable');
+  };
+  const show = h.request({ action: 'show' }); await tick();
+  assert.deepEqual(updates, [{ id: 7, state: 'maximized' }, { id: 7, state: 'fullscreen' }]);
+  assert.deepEqual(show.replies, [{ ok: false, error: 'keyboard_unavailable' }]);
+  assert.equal(h.ports.length, 0);
 });
 
 function content(language = 'en') {

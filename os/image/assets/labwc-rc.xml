@@ -6,4 +6,7 @@
       <calibrationMatrix>1 0 0 0 1 0</calibrationMatrix>
     </device>
   </libinput>
+  <windowRules>
+    <windowRule identifier="pysh-service" serverDecoration="no" />
+  </windowRules>
 </labwc_config>
