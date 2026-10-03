@@ -116,7 +116,7 @@ for(const theme of ['ink','night'] as const) {
         const defects:string[]=[];
         if(el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1)defects.push(`${el.className} scrolls: ${el.scrollWidth}×${el.scrollHeight} / ${el.clientWidth}×${el.clientHeight}`);
         const bounds=el.getBoundingClientRect();
-        for(const child of el.querySelectorAll('.forecast-line span,.weather-place,.stale-mark,button')){
+        for(const child of el.querySelectorAll('.forecast-line span,.weather-attribution,.weather-place,.stale-mark,button')){
           const r=child.getBoundingClientRect();if(!r.width||!r.height)continue;
           if(r.left<bounds.left||r.right>bounds.right||r.top<bounds.top||r.bottom>bounds.bottom)defects.push(`clipped ${child.className||child.textContent}`);
         }
