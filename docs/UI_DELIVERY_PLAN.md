@@ -28,7 +28,7 @@ Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4def
 | UI-20 | Bluetooth: pending/eroare/retry în dialogul activ, fără eroare ascunsă în spate | Instalat98385/source9e91;52probe recovery+316regresie browser; hardware final OPEN |
 | UI-21 | Salvare locație eșuată păstrează rezultatele și permite retry | Instalat98385/source9e91;52probe recovery+316regresie browser; hardware final OPEN |
 | UI-22 | Animații/microanimații explică acțiunile, aspect matur apropiat de referințe, fără ornament care ascunde UI | Revizie continuă pe800×480; fără autoevaluare10/10 |
-| UI-23 | Atribuire meteo cu link sursă/licență lângă date, revenire la hub fără întreruperea radioului | Instalat d56dd/sourceee423;338inițiale apoi146afectate și30extensie;28probe native/208eșantioane radio trecute; profil conturi/physical/full acceptance OPEN |
+| UI-23 | Atribuire meteo informativă în Setări, fără link apăsabil în Acasă/prognoză; revenire la hub fără întreruperea radioului | Instalat d56dd/sourceee423;338inițiale apoi146afectate și30extensie;28probe native/208eșantioane radio trecute; profil conturi/physical/full acceptance OPEN |
 | UI-24 | Media: după eșecul deschiderii unui folder sau al revenirii, retry repetă exact destinația; răspunsurile vechi nu înlocuiesc navigarea nouă | Instalat d56dd/sourceee423;20probe noi incluse în146regresii afectate trecute; Media native error tour OPEN |
 | UI-25 | Prima intrare Arrange fără poziții salvate: toate cardurile și mânerele compacte încap, fără suprapunere accidentală, la fiecare dimensiune audio | Instalat d56dd/sourceee423;22regresii existente și12probe inițiale;36native edge/persistence și12first-entry trecute; preferințe restaurate; physical touch OPEN |
 | UI-26 | În Arrange, numele București · Sector 5 complet vizibil fără padding redundant; sursa și mânerul rămân independente | Instalat48561/source9eb5;26probe afectate și12native full-text/bounds trecute; preferințe restaurate/porturi închise; physical touch OPEN |
@@ -44,6 +44,8 @@ Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4def
 | UI-36 | Tema solară prin setările reale și interfața randată la apus/răsărit, miezul nopții, lipsa orelor și override manual | 8probe locale Settings solare randate PASS în setul20UI-36/37. Persistență/acceptare hardware și integrarea finală OPEN. |
 | UI-37 | Schimbarea efectivă EN↔RO și Ink↔Night păstrează navigarea/redarea, aplică formate și persistă; save eșuat păstrează alegerea anterioară | 12probe locale EN↔RO/Ink↔Night randate PASS în setul20UI-36/37. Setări/save failure/reload verificate în fixture; hardware OPEN. |
 | UI-38 | Back to PySH închide efectiv fereastra externă, păstrează hubul/radio-ul, arată pending/eroare/Retry în EN/RO | Instalat52c/source73cc:74contracte PASS; defect worker vechi confirmat în profil zilnic și remediat prin nou URL worker. Return actual --app Wayland în același profil PASS; toate serviciile/touch fizic complet OPEN. [Dovadă](evidence/external-return-2026-10-04.md) |
+| UI-39 | Soare și Lună la poziția calculată pentru timp/locație; est dreapta, vest stânga; corpuri sub orizont ascunse | Corecție pregătită și teste astronomice/browser; publicare și verificare nativă urmărite în celestial-scene-2026-10-04. |
+| UI-40 | Supereroi, semnal Batman și Batplane | ANULAT la cererea utilizatorului. Codul, assetul și setarea retrase înainte de publicare/instalare. |
 | INTEGRATION-01 | Radio Browser: semnal best-effort numai la porniri explicite cu UUID catalog valid | Instalat24b268/source152f;327backend și110browser teste trecute; actual upstream counter reply not claimed |
 | QA-01 | Auditor uzabilitate execută fiecare comandă, inclusiv eșec/retry/cancel | Raport user-ui-audit-2026-10-04:232existente+12probe+4lifecycle; fixture≠hardware |
 | QA-02 | Auditor aspect inspectează capturi EN/RO×Ink/Noapte și stări expand/collapse/idle | Raport visual-ui-audit-2026-10-04:72combinații+4Arrange; retest nou candidat OPEN |
@@ -62,3 +64,5 @@ Actualizare2026-10-04: linkurile meteo Acasă/prognoză eliminate; credit inform
 
 
 Instalat52c/source73cc: linkuri meteo eliminate, avioane corectate; arbore canonic build TypeScript/Vite și28probe repetate PASS;49hashuri/nouă preferințe/radio verificate. UI-38 Return: profilul zilnic încărca worker vechi chiar cu manifest1.2.1; noul URL de worker1.2.2 a trecut proba reală --app Wayland în același profil. Nu este un PASS pentru toate serviciile ori turul fizic complet. Diagnosticul/tunelul oprite.
+
+Actualizare 2026-10-04: UI-40 anulat explicit; continuă UI-39 și toate restanțele anterioare. Mențiunile Return740d de mai sus sunt istorice; corecția instalată52c/source73cc a trecut proba profilului zilnic descrisă în UI-38.

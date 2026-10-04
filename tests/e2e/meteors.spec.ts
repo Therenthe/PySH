@@ -11,7 +11,8 @@ test('meteor geometry follows a descending direction with independently varied t
 async function night(page:Page,lang:string,theme:string){
  const state={preferences:{language:lang,theme,setupComplete:true,nightEnabled:false,screensaverMinutes:0,visualizerStyle:'off',timezone:'Europe/Bucharest',favorites:[],shortcuts:[]},network:{state:'connected'},bluetooth:{devices:[],prompts:[]},audio:{ready:false},player:{state:'idle'},weather:{stale:false,current:{temperature_c:13,weather_code:0,is_day:0},daily:[]}};
  await page.route('**/api/**',r=>r.fulfill({json:new URL(r.request().url()).pathname==='/api/state'?state:{token:'test'}}));
- await page.clock.install();await page.goto('/');await expect(page.locator('.ambient-moon')).toBeVisible();
+ (state.preferences as any).location={name:'București',latitude:44.4,longitude:26.1};
+ await page.clock.install({time:new Date('2026-10-04T23:00:00Z')});await page.goto('/');await expect(page.locator('.ambient-moon')).toBeVisible();
 }
 async function awaitMeteor(page:Page){for(let i=0;i<200;i++){await page.clock.runFor(100);if(await page.locator('.meteor-transient').count())return;}throw new Error('No decorative meteor appeared within the allowed initial delay');}
 for(const theme of ['ink','night'])test(`leading meteor head moves down with its tail behind it in ${theme}`,async({page},info)=>{

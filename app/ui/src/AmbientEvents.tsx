@@ -19,7 +19,7 @@ export function createLunarDust(id:number,rng:()=>number=random):Dust{
 /** Decorative encounters, never a representation of tracked flights or lunar impacts.
  * Mount inside the full-scene sky. Lunar dust shares Moon's 90px/23px/85px anchor.
  */
-export function AmbientEvents({enabled,night,moonVisible=false,lunarDust=false,aircraft=true}:{enabled:boolean;night:boolean;moonVisible?:boolean;lunarDust?:boolean;aircraft?:boolean}){
+export function AmbientEvents({enabled,night,moonVisible=false,lunarDust=false,aircraft=true,moonPosition}:{enabled:boolean;night:boolean;moonVisible?:boolean;lunarDust?:boolean;aircraft?:boolean;moonPosition?:{x:number;y:number}}){
  const [events,setEvents]=useState<AmbientEvent[]>([]);
  useEffect(()=>{
   const media=window.matchMedia('(prefers-reduced-motion: reduce)'),timers=new Set<ReturnType<typeof setTimeout>>();let disposed=false,id=0;
@@ -40,7 +40,7 @@ export function AmbientEvents({enabled,night,moonVisible=false,lunarDust=false,a
     <path d="M38 10C38 9 35 8.3 32 8.3H24L15 2H11L18 8.3H7L4 5H2L4 9H2V11H4L2 15H4L7 11.7H18L11 18H15L24 11.7H32C35 11.7 38 11 38 10Z"/>
     <circle className="aircraft-navigation" cx="13" cy="2" r=".7"/><circle className="aircraft-navigation aircraft-navigation-secondary" cx="13" cy="18" r=".7"/>
    </svg>
-  </div>:<div key={event.id} className="ambient-lunar-event" data-ambient-event="lunar-dust" style={{'--dust-duration':`${event.duration}ms`,'--dust-radius':`${event.radius}px`} as CSSProperties}>
+  </div>:<div key={event.id} className="ambient-lunar-event" data-ambient-event="lunar-dust" style={{left:moonPosition?`${moonPosition.x}%`:undefined,top:moonPosition?`${moonPosition.y}%`:undefined,right:moonPosition?'auto':undefined,transform:moonPosition?'translate(-50%,-50%)':undefined,'--dust-duration':`${event.duration}ms`,'--dust-radius':`${event.radius}px`} as CSSProperties}>
    <svg viewBox="0 0 90 90"><g transform={`translate(${event.x} ${event.y})`}>
     <circle className="lunar-contact" r="1.6"/>
     {[0,1,2].map(index=><ellipse key={index} className={`lunar-dust dust-${index}`} cx={index*2-2} cy={-index*2} rx={event.radius*(.65+index*.2)} ry={event.radius*(.45+index*.15)}/>) }

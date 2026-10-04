@@ -92,3 +92,8 @@ Source: https://www.geonames.org/search.html?country=RO&q=Bucharest
 License: https://creativecommons.org/licenses/by/4.0/
 Names adapted to Romanian UI labels; coordinates retained as representative locality points.
 
+
+
+Ambient illustration assets (night-starfield-v1.png, city-facades-v1.png): generated for PySH using the built-in imagegen tool, 2026-10-04. Exact prompts and output hashes: docs/AMBIENT_GRAPHICS.md. Star/city artwork is decorative, not live or astronomical data.
+
+Sun/Moon orbital calculations: original implementation of published mathematical equations by Paul Schlyter, https://stjarnhimlen.se/comp/ppcomp.html . Standard refraction: NOAA, https://gml.noaa.gov/grad/solcalc/calcdetails.html . Independent numerical references: US Naval Observatory celestial navigation API, https://aa.usno.navy.mil/data/api .

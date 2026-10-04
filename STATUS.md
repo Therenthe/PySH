@@ -17,6 +17,8 @@ The installed application update is distinct from the OS image. There is no newl
 
 ## Latest evidence and its scope
 
+- Natural celestial scene prepared locally: Sun/Moon position follows UTC time and selected coordinates, east on the right and west on the left. Below-horizon bodies are hidden; daytime Moon is supported. Ambient preference Retry repeats the failed write. Superheroes, Bat signal, Batplane and related settings/animations were cancelled by the owner and removed before publication or device installation. 100 affected browser cases passed initially, plus all four corrected settings cases; native verification is pending. See [celestial evidence](docs/evidence/celestial-scene-2026-10-04.md).
+
 - Weather provider links removed from Home/forecast; Settings credit is noninteractive. Aircraft wings and wingtip lights corrected. 92 affected browser cases passed across separate runs; exact edge placement and initial Arrange retained. Canonical tree TypeScript/Vite build and28 repeated browser cases PASS. Installed52c verified49 hashes, nine preferences and continuing radio. [Weather/aircraft evidence](docs/evidence/weather-aircraft-2026-10-04.md).
 
 - Urgent external Return correction:74 local contract cases PASS; window-close acknowledgement, keyboard-port cleanup failure, pending/timeout and EN/RO Retry are covered. Installed52c/source73cc: new worker registration replaces stale code retained by the existing Chromium profile. Actual existing-profile Wayland app Return PASS: trusted sender, new code loaded, exact app window closed with no callback error. Profile/preferences retained; all external service/physical-finger acceptance remains OPEN. [Return evidence](docs/evidence/external-return-2026-10-04.md).

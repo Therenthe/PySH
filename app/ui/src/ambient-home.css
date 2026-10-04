@@ -2,20 +2,31 @@
 .app .home-v2.ambient-home{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(176px,1fr) 92px 100px;gap:10px;padding:14px 18px;overflow:hidden;background:var(--bg);animation:ambient-arrive 180ms ease-out both}
 .app .ambient-home>*:not(.ambient-sky){position:relative;z-index:1;min-width:0;min-height:0}
 .ambient-sky{position:absolute;inset:0;z-index:0;overflow:hidden;background:linear-gradient(170deg,#e7edf0,#b8ccd0 65%,#889e9c);color:#fff}
-.ambient-sky.sky-night{background:radial-gradient(ellipse at 85% 10%,#213747,transparent 65%),linear-gradient(#080e19,#142d39 72%,#344341)}
+.ambient-sky.sky-night{background:radial-gradient(ellipse at 65% 8%,#23345038,transparent 65%),radial-gradient(ellipse at 28% 38%,#697b9d12,transparent 48%),linear-gradient(#030710,#091422 65%,#1c303b)}
 .ambient-sky.sky-neutral{background:linear-gradient(135deg,#d8dedb,#a9b7b3)}
 .ambient-sky.sky-overcast,.ambient-sky.sky-fog{background:linear-gradient(#8b9ca5,#c7d0cc)}
 .ambient-sky.sky-night.sky-overcast,.ambient-sky.sky-night.sky-fog{background:linear-gradient(#19232c,#344344)}
-.ambient-stars{position:absolute;inset:0;width:100%;height:100%;opacity:.65}
+.ambient-stars{position:absolute;inset:0;width:100%;height:100%;opacity:.88}
+.ambient-star-texture{position:absolute;inset:0;background:url('/ambient/night-starfield-v1.png') center center/cover no-repeat;opacity:.72;mask-image:linear-gradient(#000 0%,#000 62%,transparent 96%)}
+.sky-partly-cloudy .ambient-star-texture,.sky-mainly-clear .ambient-star-texture{opacity:.45}
+.sky-night:has(.ambient-star-texture) .ambient-stars{opacity:.36}
+.city-material{opacity:.72}
 .ambient-orb{position:absolute;right:23px;top:23px;width:90px;height:90px;border-radius:50%}
 .ambient-moon{background:none;filter:drop-shadow(0 0 12px #a8cbd320)}
 .ambient-sun{background:radial-gradient(circle at 35% 30%,#fff8d9,#e8c98a);box-shadow:0 0 24px #e4ba7940}
+.celestial-anchor{position:absolute;width:90px;height:90px;transform:translate(-50%,-50%);pointer-events:none}
+.app>.ambient-sky .celestial-anchor .ambient-orb{position:relative;top:auto;right:auto;display:block}
+.sky-day .celestial-anchor .ambient-moon{opacity:.55;filter:none}
 .ambient-clouds{position:absolute;inset:0;background:radial-gradient(ellipse at 80% 15%,#f7fbff65 0 10%,transparent 27%),radial-gradient(ellipse at 95% 27%,#ecf1f74a 0 15%,transparent 37%)}
 .ambient-rain{position:absolute;inset:0;background:repeating-linear-gradient(110deg,transparent 0 42px,#adc2d722 43px 44px,transparent 45px 90px);opacity:.45}
 .ambient-snow{position:absolute;inset:0;background-image:radial-gradient(circle,#fff9 1px,transparent 2px);background-size:47px 53px;opacity:.5}
 .ambient-city{position:absolute;bottom:0;left:0;width:100%;height:115px;color:#203735;opacity:.33}
 .app[data-theme=night] .ambient-sky:not(.sky-night){filter:brightness(.55)}
 .app[data-theme=night] .ambient-city{color:#03090e;opacity:.8}
+.app>.ambient-sky.sky-night .ambient-city{color:#050b12;opacity:1}
+.app>.ambient-sky.sky-night .ambient-city .city-backdrop{fill:#2a4153;opacity:.48}
+.app>.ambient-sky.sky-night .ambient-city .city-front{stroke:#68809538;stroke-width:.45}
+.app>.ambient-sky.sky-night .ambient-city .city-windows{fill:#f0ca8a}
 .app .ambient-home{--ambient-panel:#fbfaf5ef;--ambient-text:#23251f;--ambient-secondary:#4b554e;--ambient-edge:#65786c;--ambient-divider:#68786b40;--ambient-button:#375e47;--ambient-button-text:#fff}
 .app[data-theme=night] .ambient-home{--ambient-panel:#0c1720b8;--ambient-text:#f1f3ee;--ambient-secondary:#d0d9da;--ambient-edge:#91a8a6;--ambient-divider:#a8bbb32b;--ambient-button:#67cba4;--ambient-button-text:#081611}
 .app .ambient-home .ambient-weather,.app .ambient-home .ambient-forecast,.app .ambient-home .ambient-dock{background:var(--ambient-panel);color:var(--ambient-text);border:1px solid var(--ambient-divider);border-radius:16px;box-shadow:0 5px 18px #05101a20}
@@ -66,8 +77,8 @@
 .ambient-visualizer .audio-visualizer{height:100%}
 @keyframes ambient-arrive{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.app .home-v2.ambient-home{animation:none}}
-.ambient-stars circle:nth-child(13n){animation:ambient-twinkle 9s ease-in-out infinite alternate}
-.ambient-stars circle:nth-child(17n){animation:ambient-twinkle 13s 4s ease-in-out infinite alternate}
+.ambient-stars circle:nth-child(37n){animation:ambient-twinkle 11s ease-in-out infinite alternate}
+.ambient-stars circle:nth-child(53n){animation:ambient-twinkle 17s 4s ease-in-out infinite alternate}
 .ambient-meteor{position:absolute;top:17%;left:65%;width:90px;height:1px;opacity:0;background:linear-gradient(90deg,transparent,#cbdde4);transform:rotate(-30deg);animation:ambient-meteor 37s 12s linear infinite}
 @keyframes ambient-twinkle{from{opacity:.28}to{opacity:.95}}
 @keyframes ambient-meteor{0%,94%,100%{opacity:0;transform:translate(0,0) rotate(-30deg)}95%{opacity:.7}98%{opacity:0;transform:translate(-170px,98px) rotate(-30deg)}}
