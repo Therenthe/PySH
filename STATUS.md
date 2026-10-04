@@ -1,6 +1,10 @@
+# Local audio recovery correction — not installed
+
+Audio output/volume/mute now retain exact pending/failure intent in active dialogs and after navigation. Accepted POST plus failed state read retries GET only. Shared volume dragging previews without mutation and commits once on release; Settings retains the slider across clock/poll updates.48new browser cases passed, including four Settings drag cases that failed before the final helper correction. Final complete594browser regression passed (11.6m), TypeScript/build/repository checks passed after the helper correction;347Python cases (22platform skips) and27keyboard cases passed. Prepared48file runtime aa288e1a375f, not installed. Installed670c/sourcebeab remains unchanged. Video recovery geometry and interrupted video-volume lifecycle, setup/service-mode recovery visibility and native acceptance remain OPEN. [Evidence](docs/evidence/audio-output-recovery-2026-10-04.md).
+
 # Current native performance — scoped measurements
 
-On installed670c/sourcebeab, five app service relaunches reached Home in4.894–4.982s. Complete idle PSS at Home+120s:598.896484MiB across15processes, below700MiB, with diagnostic overhead included. Exact preferences/audio/radio restored; independent teardown and subsequent48hash/audio/radio/no-listener preflight passed. [Evidence](docs/evidence/native-performance-2026-10-04.md). Graphical-session startup, interaction latency, media-load usability and eight-hour stability remain OPEN;29complete product gates remain OPEN. No final image or new runtime was installed.
+On installed670c/sourcebeab, five app service relaunches reached Home in4.894–4.982s. Complete idle PSS at Home+120s:598.896484MiB across15processes, below700MiB, with diagnostic overhead included. Exact preferences/audio/radio restored; independent teardown and subsequent48hash/audio/radio/no-listener preflight passed. [Evidence](docs/evidence/native-performance-2026-10-04.md). A subsequent480sample injected-touch local-navigation probe had zero failures, feedback style/frame proxy maximum21.7ms and worst navigation p95146.8ms. Graphical-session startup, physical feedback/full action inventory, media-load usability and eight-hour stability remain OPEN;29complete product gates remain OPEN. No final image or new runtime was installed.
 
 # Prepared image tooling — provenance inventory
 

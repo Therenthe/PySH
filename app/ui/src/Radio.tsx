@@ -1,3 +1,4 @@
+import {AudioVolume} from './AudioVolume';
 import { MarqueeText } from './MarqueeText';
 import { useState, type ReactNode } from 'react';
 import './radio.css';
@@ -118,7 +119,7 @@ export function Radio(props: RadioProps) {
           </div>
           <div className="radio-volume">
             <button aria-label={muted ? t('unmute') : t('mute')} aria-pressed={muted} disabled={busy || !audioReady} onClick={onMute}>{icon('speaker', 19)}</button>
-            <input type="range" min="0" max="100" value={Number.isFinite(volume) ? Math.max(0, Math.min(100, volume)) : 0} disabled={busy || !audioReady} aria-label={t('volume')} onChange={event => onVolume(Number(event.target.value))} />
+            <AudioVolume label={t('volume')} value={volume} disabled={busy || !audioReady} onChange={onVolume}/>
             <small className="radio-volume-value">{Math.round(Number.isFinite(volume) ? Math.max(0, Math.min(100, volume)) : 0)}%</small>
           </div>
           {!audioReady && <small className="radio-output-warning">{ro ? 'Alege o ieșire audio pentru redare.' : 'Select an audio output to play.'}</small>}

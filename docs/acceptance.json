@@ -333,7 +333,7 @@
         "docs/evidence/content-recovery-2026-10-02.md",
         "docs/evidence/native-performance-2026-10-04.md"
       ],
-      "reason": "Current670c/sourcebeab: five app service relaunches4.894–4.982s; not graphical-session starts. Still OPEN:30interactions/type, first feedback, navigation p95 and five graphical-session starts.",
+      "reason": "Current670c/sourcebeab:480injected touch navigation samples (16groups of30) allvalid, feedback style/frame proxy maximum21.7ms, worst localnavigation p95146.8ms; exact restore/diagnostic teardown verified. Full action inventory, physical feedback and five graphical-session starts remain OPEN. Current670c/sourcebeab: five app service relaunches4.894–4.982s; not graphical-session starts. Still OPEN:30interactions/type, first feedback, navigation p95 and five graphical-session starts.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
