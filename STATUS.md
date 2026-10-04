@@ -1,3 +1,9 @@
+# Current runtime — native local-media recovery verified
+
+Installed `3e4e9d6d1b07`, source `84618b3de5d2b73442e78fc00ee03d7ec49bde2f`. All48native hashes and nine saved preferences match; no pending transaction; radio advanced35.333→44.389s. Previous6676 and readable PC backup retained.526full UI,336backend and27keyboard cases passed. Native muted audio UI:32encoding/context selections,4control,4corrupt,4missing,4EOF flows and navigation recovery passed; native video:5encodings,4control/recovery contexts and720p sample passed. Actual valid-video captures show Cast removed. Exact preferences/audio/radio restored and diagnostics closed. Physical touch/audibility, full product acceptance and final OS image remain OPEN. [Native media evidence](docs/evidence/native-local-media-2026-10-04.md).
+
+Following prepared/runtime entries are historical.
+
 # Prepared update — immediate audio decoder recovery and local video clarity
 
 Prepared `3e4e9d6d1b07` (48files), not installed. The native audio UI probe on6676 found that an HTTP200 already-failed decoder snapshot becomes a generic API banner; the correction preserves the actionable audio notice while409errors retain exact retry. Local video disables the unwanted Cast affordance and gives truthful EN/RO recovery guidance.44affected browser,336backend and27keyboard checks plus TypeScript/build passed; full526case UI regression passed. Native five-video decode/control/resource probes passed on6676 but identified presentation issues; native audio UI remains incomplete. Preferences/audio/radio restored and diagnostic ports closed. [Native media evidence](docs/evidence/native-local-media-2026-10-04.md). All30product gates remain OPEN.

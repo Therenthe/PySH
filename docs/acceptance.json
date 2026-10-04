@@ -1,5 +1,5 @@
 {
-  "candidate": "6676b558fe06",
+  "candidate": "3e4e9d6d1b07",
   "preparation": [
     {
       "id": "PREP-01",
@@ -55,13 +55,13 @@
     {
       "id": "HW-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/HARDWARE.md",
         "docs/evidence/hardware-configuration-2026-10-04.md",
         "docs/evidence/arrange-location-2026-10-04.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Prior48561 configuration/active viewport proof is retained. Current942427 runtime/source/all48 hashes and radio are verified; refresh native active Home/Media viewport and hardware evidence before current-candidate PASS. No hardware regression is claimed.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Prior48561 configuration/active viewport proof is retained. Current942427 runtime/source/all48 hashes and radio are verified; refresh native active Home/Media viewport and hardware evidence before current-candidate PASS. No hardware regression is claimed.",
       "historical_evidence_candidate": "c8ac9c709acb",
       "prior_configuration_pass": {
         "candidate": "48561d4e7ead",
@@ -71,7 +71,7 @@
     {
       "id": "UX-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/service-keyboard-2026-10-03.md",
         "docs/evidence/protected-playback-preparation-2026-10-03.md",
@@ -79,129 +79,129 @@
         "docs/evidence/free-card-placement-2026-10-04.md",
         "docs/evidence/anchored-cards-audio-meteors-2026-10-04.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. SD candidatec8ac9c709acb has verified first boot, all40 runtime hashes, root expansion, recovery SSH and owner-confirmed orientation/Continue touch. The complete criterion remains OPEN; prior USB evidence is historical. Current41hashes, saved arrangement and radio recovery verified; full physical/visual/integration acceptance remains OPEN.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. SD candidatec8ac9c709acb has verified first boot, all40 runtime hashes, root expansion, recovery SSH and owner-confirmed orientation/Continue touch. The complete criterion remains OPEN; prior USB evidence is historical. Current41hashes, saved arrangement and radio recovery verified; full physical/visual/integration acceptance remains OPEN.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "UX-02",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/home-weather-layout-2026-10-03.md",
         "docs/evidence/free-card-placement-2026-10-04.md",
         "docs/evidence/anchored-cards-audio-meteors-2026-10-04.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Owner assessment2026-10-03: UI3.5/10 and UX5/10, unsatisfactory. Major improvement required after SSH flasher/SD milestone; same-candidate EN/RO physical visual/touch acceptance remains OPEN. Current41hashes, saved arrangement and radio recovery verified; full physical/visual/integration acceptance remains OPEN.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Owner assessment2026-10-03: UI3.5/10 and UX5/10, unsatisfactory. Major improvement required after SSH flasher/SD milestone; same-candidate EN/RO physical visual/touch acceptance remains OPEN. Current41hashes, saved arrangement and radio recovery verified; full physical/visual/integration acceptance remains OPEN.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "UX-03",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/pi-legibility-2026-10-02.md",
         "docs/evidence/content-recovery-2026-10-02.md",
         "docs/evidence/free-card-placement-2026-10-04.md",
         "docs/evidence/anchored-cards-audio-meteors-2026-10-04.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Owner assessment2026-10-03: UI3.5/10 and UX5/10, unsatisfactory. Major improvement required after SSH flasher/SD milestone; same-candidate EN/RO physical visual/touch acceptance remains OPEN. Current41hashes, saved arrangement and radio recovery verified; full physical/visual/integration acceptance remains OPEN.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Owner assessment2026-10-03: UI3.5/10 and UX5/10, unsatisfactory. Major improvement required after SSH flasher/SD milestone; same-candidate EN/RO physical visual/touch acceptance remains OPEN. Current41hashes, saved arrangement and radio recovery verified; full physical/visual/integration acceptance remains OPEN.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "I18N-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/ui-audit-2026-10-02.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Home/Radio headings and idle/error states translated; 20 browser tests passed. Complete error/integration locale inventory and Pi restart remain incomplete.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Home/Radio headings and idle/error states translated; 20 browser tests passed. Complete error/integration locale inventory and Pi restart remain incomplete.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "I18N-02",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "HOME-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "HOME-02",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/audio-weather-controls-2026-10-02.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Delayed old-location weather results guarded against overwriting a newer location; asynchronous regression passes, real offline/recovery provider matrix pending.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Delayed old-location weather results guarded against overwriting a newer location; asynchronous regression passes, real offline/recovery provider matrix pending.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "SET-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/audio-weather-controls-2026-10-02.md",
         "docs/evidence/free-card-placement-2026-10-04.md",
         "docs/evidence/anchored-cards-audio-meteors-2026-10-04.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Saved output/volume/mute restoration and restart regression repaired; actual device restoration and full final preference matrix pending. Current41hashes, saved arrangement and radio recovery verified; full physical/visual/integration acceptance remains OPEN.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Saved output/volume/mute restoration and restart regression repaired; actual device restoration and full final preference matrix pending. Current41hashes, saved arrangement and radio recovery verified; full physical/visual/integration acceptance remains OPEN.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "SET-02",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "NET-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "NET-02",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "NET-03",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "MEDIA-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/ui-audit-2026-10-02.md",
         "docs/evidence/sd-audio-radio-2026-10-03.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "MEDIA-02",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
         "docs/evidence/content-recovery-2026-10-02.md",
@@ -210,147 +210,147 @@
         "docs/evidence/sd-audio-radio-2026-10-03.md",
         "docs/evidence/native-local-media-2026-10-04.md"
       ],
-      "reason": "Installed6676/source204ff: eight native API audio encodings and five Chromium video encodings plus video control/error recovery passed within the scoped muted probes. Native audio UI found immediate decoder snapshot generic-error defect. Prepared3e4e9d6d1b07 fixes snapshot handling and video presentation but is not installed or accepted. Native corrected-candidate UI, audible file playback, physical touch and complete format/failure acceptance remain OPEN.",
+      "reason": "Current3e4e9d6d1b07/source84618b3: native muted audio UI32encoding/context selections,4control,4corrupt,4missing,4EOF flows plus navigation recovery passed; native video5encodings/4control-recovery contexts and720p bounded sample passed. Exact preferences/audio/radio restored. Complete criterion remains OPEN: physical touch, audible file playback, remaining source/route/volume failures and final same-candidate acceptance. Immediate decoder-response branch is covered by browser response regression; current native corrupt responses were asynchronous snapshots.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "MEDIA-03",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
         "docs/evidence/sd-audio-radio-2026-10-03.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "BT-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
         "docs/evidence/ui-audit-2026-10-02.md",
         "docs/evidence/sd-audio-radio-2026-10-03.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "BT-02",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/pi-preview-2026-10-02.md",
         "docs/evidence/ui-audit-2026-10-02.md",
         "docs/evidence/sd-audio-radio-2026-10-03.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "EXT-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "EXT-02",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/service-keyboard-2026-10-03.md",
         "docs/evidence/protected-playback-preparation-2026-10-03.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Current native empty/prepared profiles pass real EME/key preparation, restart and cancel; retained owner profile reaches ready and Netflix Home is visible. Real authenticated film playback/resolution and real timeout/retry remain unverified.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Current native empty/prepared profiles pass real EME/key preparation, restart and cancel; retained owner profile reaches ready and Netflix Home is visible. Real authenticated film playback/resolution and real timeout/retry remain unverified.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "EXT-03",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "BOOT-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/os-cold-boots-2026-10-03.md",
         "docs/evidence/os-a32c29065d6d-acceptance-2026-10-03.md",
         "docs/evidence/sd-boot-2026-10-03.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. SD candidatec8ac9c709acb has verified first boot, all40 runtime hashes, root expansion, recovery SSH and owner-confirmed orientation/Continue touch. The complete criterion remains OPEN; prior USB evidence is historical.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. SD candidatec8ac9c709acb has verified first boot, all40 runtime hashes, root expansion, recovery SSH and owner-confirmed orientation/Continue touch. The complete criterion remains OPEN; prior USB evidence is historical.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "BOOT-02",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/os-a32c29065d6d-acceptance-2026-10-03.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Historical a32 evidence retained; current4b candidate needs affected boot/service revalidation. Five app launches are not five physical cold boots.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Historical a32 evidence retained; current4b candidate needs affected boot/service revalidation. Five app launches are not five physical cold boots.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "REL-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/appliance-tools-2026-10-03.md",
         "docs/evidence/appliance-update-and-sd-image-2026-10-03.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Earlier934 observation ended on candidate change at2291.115s/76 samples; no eight-hour PASS. Final same-candidate interactive stability remains pending after SD installation.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Earlier934 observation ended on candidate change at2291.115s/76 samples; no eight-hour PASS. Final same-candidate interactive stability remains pending after SD installation.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "REL-02",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/home-weather-layout-2026-10-03.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Historical4b measurements retained; changed external-browser/keyboard candidate must revalidate affected recovery/resources.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Historical4b measurements retained; changed external-browser/keyboard candidate must revalidate affected recovery/resources.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "PERF-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/pi-legibility-2026-10-02.md",
         "docs/evidence/content-recovery-2026-10-02.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. 120 real navigation samples aggregate p95 163.5 ms; first-feedback and five launches remain unmeasured.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. 120 real navigation samples aggregate p95 163.5 ms; first-feedback and five launches remain unmeasured.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "PERF-02",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/home-weather-layout-2026-10-03.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Historical4b measurements retained; changed external-browser/keyboard candidate must revalidate affected recovery/resources.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Historical4b measurements retained; changed external-browser/keyboard candidate must revalidate affected recovery/resources.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "DIAG-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Implementation imported; acceptance on a single identified Raspberry Pi candidate has not been completed.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "DEL-01",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/appliance-tools-2026-10-03.md",
         "docs/evidence/appliance-update-and-sd-image-2026-10-03.md",
@@ -360,20 +360,20 @@
         "docs/evidence/free-card-placement-2026-10-04.md",
         "docs/evidence/anchored-cards-audio-meteors-2026-10-04.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. SD candidatec8ac9c709acb has verified first boot, all40 runtime hashes, root expansion, recovery SSH and owner-confirmed orientation/Continue touch. The complete criterion remains OPEN; prior USB evidence is historical. Full original SD backup and actual physical flash/readback/provisioning passed; restore and complete final delivery remain pending. Current41hashes, saved arrangement and radio recovery verified; full physical/visual/integration acceptance remains OPEN.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. SD candidatec8ac9c709acb has verified first boot, all40 runtime hashes, root expansion, recovery SSH and owner-confirmed orientation/Continue touch. The complete criterion remains OPEN; prior USB evidence is historical. Full original SD backup and actual physical flash/readback/provisioning passed; restore and complete final delivery remain pending. Current41hashes, saved arrangement and radio recovery verified; full physical/visual/integration acceptance remains OPEN.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {
       "id": "DEL-02",
       "status": "OPEN",
-      "candidate": "6676b558fe06",
+      "candidate": "3e4e9d6d1b07",
       "evidence": [
         "docs/evidence/appliance-tools-2026-10-03.md",
         "docs/evidence/appliance-update-and-sd-image-2026-10-03.md",
         "docs/evidence/free-card-placement-2026-10-04.md",
         "docs/evidence/anchored-cards-audio-meteors-2026-10-04.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Full browser MIT notices installed on4a133 and independently verified in successor imagec8ac9c709acb. Final licensing/source review, delivery artifacts and remaining backup/restore evidence remain OPEN. Current41hashes, saved arrangement and radio recovery verified; full physical/visual/integration acceptance remains OPEN.",
+      "reason": "Current3e4e9d6d1b07/source84618b3:48runtime hashes, radio and nine saved preferences verified. Complete criterion remains OPEN; previous scoped notes are historical: Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Prior runtime evidence is historical; full fresh-SD acceptance remains OPEN. Full browser MIT notices installed on4a133 and independently verified in successor imagec8ac9c709acb. Final licensing/source review, delivery artifacts and remaining backup/restore evidence remain OPEN. Current41hashes, saved arrangement and radio recovery verified; full physical/visual/integration acceptance remains OPEN.",
       "historical_evidence_candidate": "c8ac9c709acb"
     }
   ]
