@@ -1,7 +1,7 @@
 {
-  "candidate": "48561d4e7ead",
-  "source": "9eb5d3b3fb57e32139eec033978cc006f623bec8",
-  "collected_at_utc": "2026-10-04T00:54:01.594843+00:00",
+  "candidate": "670c8155227b",
+  "source": "beab133f81aa3de7d09c4901faef64efb952c0bb",
+  "collected_at_utc": "2026-10-04T03:59:35.075164+00:00",
   "scope": "Installed software versions and retained notice hashes only; no hardware UUID/profile/account data. Notice retention does not certify source-offer fulfilment or redistribution rights.",
   "dependency_inventory": {
     "os_packages": [

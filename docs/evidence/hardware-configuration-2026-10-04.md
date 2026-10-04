@@ -1,4 +1,16 @@
-# Current hardware configuration — 2026-10-04
+# Current hardware configuration670c — 2026-10-04
+
+Candidate `670c8155227b`, source `beab133f81aa3de7d09c4901faef64efb952c0bb`. Fresh read-only collection at `2026-10-04T03:59:35.075164+00:00`–`2026-10-04T03:59:36.001783+00:00` verified source/current release, all48runtime hashes, SD identity and no pending transaction before/after collection. Manifest SHA256 `519ddf29caf91565fa7372e4a6c46b8bfd273d97cf9ee3ab809f7a136e73501d`. Raw facts SHA256 `9bb26a4e872ef07bf29728283154255070fdd8e1fa74147cf88e96653fb66f47`; actual compositor PNG800×480 SHA256 `f9b6a231ee3a39c20a10732365ab93d352eb9bc4e24dc1bbcb4fd1b2137e0cd3`. Reports and capture remain private in `.runtime/hw01-670c/`.
+
+Observed model Pi4B Rev1.5/c03115,4096MiB firmware memory, MemTotal3886824KiB, Debian13/aarch64, kernel6.18.50+rpt-rpi-v8 and firmwarea86983925695a7e63166327d7c002d64040ed31d. Base-image source3ca7e4e/runtimec8ac is distinguished from current application/source. DSI-1 is connected/enabled800×480@60.028999Hz, scale1, transform180, position0,0. Panel/simple-panel, vc4DSI, edt_ft5x06 and panel regulator driver bindings and identity touch calibration were observed. Commercial make/model/serial remain null. [Current table](../HARDWARE.md).
+
+Root and independent auditor viewed the actual fresh whole-compositor capture: upright clock, Moon/sky, complete skyline and audio waveform in the ambient Home state, with no visible clipping or browser chrome. Current native Media captures also show the800×480 application viewport. This accepts only HW-01 configuration/viewport; it does not certify a physical finger, every interactive Home control, UX-02, audible playback or whole product delivery.
+
+The current571OS package and15Python distribution records exactly equal the previous inventory, including versions/source identifiers and retained-notice hashes. All571copyright records remain observed/nonempty; Python notices are unchanged. [Inventory](../licenses/runtime-inventory-2026-10-04.json) now identifies this collection/candidate. Retention is not proof of redistribution permission, source/source-offer obligations, a PySH code license or final-image compliance. Those delivery gates remain OPEN.
+
+## Earlier evidence
+
+# Historical hardware configuration48561 — 2026-10-04
 
 Candidate `48561d4e7ead`, source `9eb5d3b3fb57e32139eec033978cc006f623bec8`. Read-only collection ran at00:54:01–00:54:03 UTC; root announced and executed the reviewed collector. Runtime identity, activated source, all48 manifest hashes, active SD UUID and absence of an update transaction were checked before collection; current release/transaction identity was checked again afterwards. Manifest SHA256 `72e50524c8fd9edcb876323512812b56f7c590bb0185031ca45fb3c045bb9ea8`.
 

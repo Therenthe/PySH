@@ -2,7 +2,7 @@
 
 ## Configurație actuală observată — 4 octombrie 2026
 
-Runtime instalat `48561d4e7ead`, sursă `9eb5d3b3fb57e32139eec033978cc006f623bec8`. Colectorul read-only a verificat48 hash-uri, sursa din tranzacția activată, absența unei tranzacții în curs și rădăcina SD. Inventarul este observat pe dispozitiv; nu este o presupunere din imaginea de build. [Dovadă hardware](evidence/hardware-configuration-2026-10-04.md).
+Runtime instalat `670c8155227b`, sursă `beab133f81aa3de7d09c4901faef64efb952c0bb`. Colectorul read-only a verificat48 hash-uri, sursa din tranzacția activată, absența unei tranzacții în curs și rădăcina SD. Inventarul este observat pe dispozitiv; nu este o presupunere din imaginea de build. [Dovadă hardware](evidence/hardware-configuration-2026-10-04.md).
 
 | Componentă | Observat pe candidatul actual |
 |---|---|
@@ -22,7 +22,7 @@ Runtime instalat `48561d4e7ead`, sursă `9eb5d3b3fb57e32139eec033978cc006f623bec
 | Python | pachet OS `3.13.5-1`; 14 distribuții runtime corespund requirements.lock, plus pip 25.1.1 în venv |
 | Stocare activă | `/dev/mmcblk0p2`, ext4 |
 
-Captura compositorului real este 800 × 480 și afișează o stare PySH în landscape, cu text orientat corect. Maparea și driverul touch sunt configurație observată; nu echivalează cu acceptarea turului tactil. Nici inventarul, nici captura nu acceptă audio/media, stabilitatea, instalarea finală sau produsul complet. Marcajul original EXPERIMENTAL al imaginii de bază este păstrat ca proveniență; nu se confundă cu runtime-ul actual actualizat.
+Captura nouă a compositorului real pe670c este 800 × 480 și afișează o stare PySH în landscape, cu text orientat corect. Maparea și driverul touch sunt configurație observată; nu echivalează cu acceptarea turului tactil. Nici inventarul, nici captura nu acceptă audio/media, stabilitatea, instalarea finală sau produsul complet. Marcajul original EXPERIMENTAL al imaginii de bază este păstrat ca proveniență; nu se confundă cu runtime-ul actual actualizat.
 
 ## Referință desktop istorică
 

@@ -1,6 +1,8 @@
 # Current runtime — missing-file identity and owned transport recovery
 
-Installed `670c8155227b`, source `beab133f81aa3de7d09c4901faef64efb952c0bb`.48native hashes, no pending transaction, continuing radio41.207→50.248s and all nine preferences verified; previous3e4 and readable PC backup retained. Missing-file selections identify basename without private paths; Retry follows the latest failed file or transport intent, and abandoned responses cannot revive errors.244affected browser cases,336backend and27keyboard checks plus TypeScript/build passed; eight captures audited. Native audio32formats/4controls/4corrupt/4missing/4transport/4EOF+navigation and video5formats/4contexts/720p passed; exact restoration and closed diagnostics verified. Physical touch/audibility and all30full product gates remain OPEN. [Evidence](docs/evidence/media-missing-target-2026-10-04.md).
+Installed `670c8155227b`, source `beab133f81aa3de7d09c4901faef64efb952c0bb`.48native hashes, no pending transaction, continuing radio41.207→50.248s and all nine preferences verified; previous3e4 and readable PC backup retained. Missing-file selections identify basename without private paths; Retry follows the latest failed file or transport intent, and abandoned responses cannot revive errors.244affected browser cases,336backend and27keyboard checks plus TypeScript/build passed; eight captures audited. Native audio32formats/4controls/4corrupt/4missing/4transport/4EOF+navigation and video5formats/4contexts/720p passed; exact restoration and closed diagnostics verified. Fresh current-candidate HW-01 configuration/viewport PASS; physical touch/audibility and29complete product gates remain OPEN. [Evidence](docs/evidence/media-missing-target-2026-10-04.md).
+
+Current HW-01 evidence is in [hardware configuration](docs/evidence/hardware-configuration-2026-10-04.md); notice inventory refreshed from actual571OS/15Python records.
 
 Following entries are historical.
 
