@@ -1,3 +1,7 @@
+# Prepared update — Media opening ownership and file sizes
+
+Prepared runtime `9424277cdab1` (48 files), not yet installed. Local audio/video and service opening admit one intent; replaced navigation/listing cannot restore a stale video or retry. Byte sizes use localized units and preserve zero. 438root UI cases passed before the presentation-only feedback adjustment;192affected cases and8supplemental layout cases passed afterward. Installed48561 and its scoped HW-01 evidence remain unchanged. [Media evidence](docs/evidence/media-opening-ownership-2026-10-04.md). All remaining product and final-image gates stay tracked.
+
 # Current runtime — full district name and current hardware configuration
 
 Installed `48561d4e7ead`, source `9eb5d3b3fb57e32139eec033978cc006f623bec8`. Full district name visible in compact Arrange;26affected browser cases and12native contexts passed, user positions/preferences restored, diagnostic ports closed. All48 native hashes verified, radio progressing, previousd56dd and readable PC backup retained. [Location evidence](docs/evidence/arrange-location-2026-10-04.md).
