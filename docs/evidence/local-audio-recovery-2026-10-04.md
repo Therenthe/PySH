@@ -1,4 +1,8 @@
-# Local audio recovery notice — prepared, not installed
+# Local audio recovery notice — installed
+
+Installed `6676b558fe06`, source `204ff1b2117fcf4b07394ad660912edbf5e7acd6`. Its48manifest files passed independent native hash verification, with no pending transaction. Previous942427 is retained. The separate PC backup was verified for hash and readable contents before activation. Radio was restarted after the controlled relaunch and independently advanced41.099→50.139seconds. Nine saved layout/visual/location/navigation preference hashes matched that backup. This does not prove a physical audio error recovery gesture or audibility test; native Media acceptance remains OPEN.
+
+The following describes preparation and the pre-update baseline.
 
 The local audio error now identifies the file by basename, explains that playback failed without guessing a codec cause, and offers Replay using the existing single-intent selection flow. Failed Replay uses one existing API error notice. Radio errors remain separate. All app-owned text is EN/RO.
 

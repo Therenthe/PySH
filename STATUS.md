@@ -1,4 +1,10 @@
-# Current runtime — Media opening ownership and file sizes
+# Current runtime — local audio recovery
+
+Installed `6676b558fe06`, source `204ff1b2117fcf4b07394ad660912edbf5e7acd6`. All48native hashes verified; no pending transaction. Previous942427 and verified readable PC backup retained; radio resumed and advanced41.099→50.139s. Nine layout/visual/location/navigation preference hashes match the pre-update backup.474browser,336backend and27keyboard tests passed. [Recovery evidence](docs/evidence/local-audio-recovery-2026-10-04.md).
+
+Arrange still uses compact cards and saves their nearest edges. An independent real-time48case browser matrix passed exact-right/bottom placement for all four card types, all three visualizer sizes, both languages and both themes. Source Home files are unchanged from942427; no layout fix was warranted. Saved user positions were preserved. Physical gestures and all30full product criteria remain OPEN.
+
+# Previous runtime — Media opening ownership and file sizes
 
 Installed `9424277cdab1`, source `060d57be00472fa7c1c81b77ad87ab7473e01e44`. All48native hashes verified; no pending transaction. Previous48561 and verified readable PC backup retained; radio resumed and advanced33.605→42.608s. Nine layout/visual/location/navigation preference hashes match the pre-update backup.438UI checks before the presentation-only adjustment,192affected checks and8supplemental checks after it passed. [Evidence](docs/evidence/media-opening-ownership-2026-10-04.md).
 
