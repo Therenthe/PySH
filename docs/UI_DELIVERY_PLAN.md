@@ -1,6 +1,6 @@
 # Plan urmărit de livrare UI/UX — 2026-10-04
 
-Acest inventar păstrează cerințele din conversație, inclusiv cele vechi. Nu acordă note sau acceptare din descrieri. GitHub este sursa canonică; implementările nepublicate sunt lucru local. Candidatul instalat actual: c1e2e6049fec/source4de7386. Documentele pot avansa separat de sursa runtime-ului. Toate30criteriile complete rămân OPEN în acceptance.json; dovada HW-01 de pe670c este istorică. O probă veche nu certifică un candidat nou.
+Acest inventar păstrează cerințele din conversație, inclusiv cele vechi. Nu acordă note sau acceptare din descrieri. GitHub este sursa canonică; implementările nepublicate sunt lucru local. Candidatul instalat actual: 5c76b8aff50d/source012ca8d; schimbare exclusivă a stelelor, funcțiile c1e2 păstrate. Documentele pot avansa separat de sursa runtime-ului. Toate30criteriile complete rămân OPEN în acceptance.json; dovada HW-01 de pe670c este istorică. O probă veche nu certifică un candidat nou.
 
 Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4defectele auditorilor și tur complet →5acceptare nativă și imagine finală. Cerințele noi se adaugă; nu înlocuiesc restanțele.
 
@@ -71,3 +71,5 @@ Instalat52c/source73cc: linkuri meteo eliminate, avioane corectate; arbore canon
 Actualizare 2026-10-04: UI-40 anulat explicit; continuă UI-39 și toate restanțele anterioare. Mențiunile Return740d de mai sus sunt istorice; corecția instalată52c/source73cc a trecut proba profilului zilnic descrisă în UI-38.
 
 Dovada finală pentru UI-34/35/41/42/43: [media-confetti-2026-10-04](evidence/media-confetti-2026-10-04.md). Verificate 51 hashuri, nouă preferințe față de backup și radio reluat. Toate cele 14 preferințe schimbate de audit restaurate; diagnosticul privat oprit. Turul a folosit acțiuni injectate în Chromium, nu certifică gestul fizic ori toate criteriile de produs. Restanțele anterioare rămân în inventar; UI-40 rămâne anulat.
+
+Restaurare limitată cerută de utilizator: stelele SVG și gradientul original din4bb708b, fără textura fotografică. Instalat5c76/source012;34probe afectate PASS, captură nativă inspectată,51hashuri/nouă preferințe/radio verificate. Nicio altă cerință nouă implementată în acest pas. Vezi [dovada](evidence/original-stars-2026-10-04.md).

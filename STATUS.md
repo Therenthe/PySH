@@ -6,10 +6,10 @@ Updated: 2026-10-04. GitHub is canonical: [Therenthe/PySH](https://github.com/Th
 
 | Item | Verified state |
 |---|---|
-| Installed SD application | Runtime `c1e2e6049fec`, source `4de7386dac7a1f51c4eb955844e178af1b6d0503`; previous `536e1332a260` retained |
-| Published application source | Installed application source `4de7386dac7a1f51c4eb955844e178af1b6d0503` verified in GitHub; subsequent documentation-only commits do not change this runtime |
+| Installed SD application | Runtime `5c76b8aff50d`, source `012ca8da0f465ddffb15c2e6b7889448afc48097`; previous `c1e2e6049fec` retained |
+| Published application source | Installed application source `012ca8da0f465ddffb15c2e6b7889448afc48097` verified in GitHub; subsequent documentation-only commits do not change this runtime |
 | Superseded packages | `aa288e1a375f` and `358b4892b275`, never installed |
-| Current update | UI-34/35/41/42/43 installed together in c1e2. All 51 runtime hashes and nine saved preferences verified after activation and after native audit; radio resumed and diagnostic listeners closed. Native Media navigation/search/confirmation/deletion passed in EN/RO × Ink/Night using injected user actions. Ambient confetti visibly fell and expired; OS clock unchanged. Earlier natural scene policy and raised sky arc retained. |
+| Current update | Only the original sparse stars and blue night gradient restored, per owner reference. Installed5c76/source012; all51 runtime files, nine saved preference comparisons and continuing radio verified; native800×480 capture inspected. Previous c1e2 functionality retained. |
 | Device | Raspberry Pi 4 / 4 GB, Debian 13 ARM64, DSI 800×480, 180° display rotation; existing SD boot. USB and independently verified PC backups remain recovery assets. |
 | Product acceptance | 30 complete product criteria OPEN for the new candidate. Prior HW-01 configuration PASS on670c is retained as historical evidence pending current viewport refresh. |
 
@@ -17,7 +17,9 @@ The installed application update is distinct from the OS image. There is no newl
 
 ## Latest evidence and its scope
 
-- Installed c1e2/source4de: **970 complete browser cases passed**, 176 affected cases after the queued-selection correction, 349 backend cases /32 Windows platform skips, 12 isolated Linux deletion cases /zero skips and 92 extension/astronomy cases. Native Media tour passed in four language/theme contexts; four audit-owned files were deleted, no pre-existing user files. Thirteen native captures plus the final restored Home capture were collected; key captures inspected. Fourteen audit-owned preferences restored, nine backup comparison keys match, radio/audio ready and diagnostic ports closed. [Final scoped evidence](docs/evidence/media-confetti-2026-10-04.md). Physical touch, external streaming and full product acceptance remain OPEN.
+- Installed5c76/source012: original 170 SVG stars/opacity/night gradient restored; photographic star layer removed from rendering.34 affected browser cases, TypeScript/build/repository checks PASS; actual800×480 panel screenshot inspected,51 files and nine preferences verified, radio resumed. Only three built UI files differ from c1e2. [Scoped restoration evidence](docs/evidence/original-stars-2026-10-04.md).
+
+- Previous c1e2/source4de: **970 complete browser cases passed**, 176 affected cases after the queued-selection correction, 349 backend cases /32 Windows platform skips, 12 isolated Linux deletion cases /zero skips and 92 extension/astronomy cases. Native Media tour passed in four language/theme contexts; four audit-owned files were deleted, no pre-existing user files. Thirteen native captures plus the final restored Home capture were collected; key captures inspected. Fourteen audit-owned preferences restored, nine backup comparison keys match, radio/audio ready and diagnostic ports closed. [Final scoped evidence](docs/evidence/media-confetti-2026-10-04.md). Physical touch, external streaming and full product acceptance remain OPEN.
 
 - Natural celestial scene prepared locally: Sun/Moon position follows UTC time and selected coordinates, east on the right and west on the left. Below-horizon bodies are hidden; owner now requests Moon only at night and Sun only by day. Ambient preference Retry repeats the failed write. Superheroes, Bat signal, Batplane and related settings/animations were cancelled by the owner and removed before publication or device installation. 100 affected browser cases passed initially, plus all four corrected settings cases; 9e51 installed,51 hashes/nine preferences/radio verified and native800×480 screenshot inspected; day/night-only policy and raised arc subsequently installed in536e. See [celestial evidence](docs/evidence/celestial-scene-2026-10-04.md).
 
@@ -56,4 +58,4 @@ Final affected browser suite:122 passed on the integrated source, including22 co
 
 Candidate c1e2e6049fec:970 final complete browser checks PASS on a frozen Git tree,176 affected after the queue correction,349 backend/32 Windows platform skips and12 Linux temporary deletion cases PASS,92 extension/astronomy PASS. Canonical TypeScript/build/repository/package PASS. Publish and install the combined UI-34/35/41/42/43 candidate next; installed identity remains536e until activation is verified.
 
-Final activation: c1e2/source4de is installed and verified. The pending statements above describe earlier checkpoints only. Backup was independently read and hash-verified on PC before activation; previous536e remains available. No final OS image or complete product acceptance is implied.
+Historical activation: c1e2/source4de was installed and verified; superseded only by the star restoration described above. The pending statements above describe earlier checkpoints only. Backup was independently read and hash-verified on PC before activation; previous536e remains available. No final OS image or complete product acceptance is implied.
