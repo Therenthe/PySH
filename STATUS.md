@@ -6,10 +6,10 @@ Updated: 2026-10-04. GitHub is canonical: [Therenthe/PySH](https://github.com/Th
 
 | Item | Verified state |
 |---|---|
-| Installed SD application | Runtime `52c30559af5f`, source `73cc24bbd19617b106d803d452dd345a643bb0ca`; previous `f94cfa04558b` retained |
-| Published application source | Installed runtime source `73cc24bbd19617b106d803d452dd345a643bb0ca` verified in GitHub |
+| Installed SD application | Runtime `9e51d0a3439d`, source `7c1ab770d896ef543787cb21ff886573b8197671`; previous `52c30559af5f` retained |
+| Published application source | Installed runtime source `7c1ab770d896ef543787cb21ff886573b8197671` verified in GitHub |
 | Superseded packages | `aa288e1a375f` and `358b4892b275`, never installed |
-| Current update | Published and installed. All 49 runtime hashes and nine saved preferences verified; audio ready, radio resumed, no debug listener. UI-34/35 implementations remain local, with scoped tests executed; they are not installed. |
+| Current update | Natural scene published and installed. All51 runtime hashes and nine saved preferences verified; audio ready, radio resumed, no debug listener. Day-only Sun/night-only Moon correction is being prepared after owner feedback. UI-34/35 implementations remain local, with scoped tests executed; they are not installed. |
 | Device | Raspberry Pi 4 / 4 GB, Debian 13 ARM64, DSI 800×480, 180° display rotation; existing SD boot. USB and independently verified PC backups remain recovery assets. |
 | Product acceptance | 30 complete product criteria OPEN for the new candidate. Prior HW-01 configuration PASS on670c is retained as historical evidence pending current viewport refresh. |
 
@@ -17,7 +17,7 @@ The installed application update is distinct from the OS image. There is no newl
 
 ## Latest evidence and its scope
 
-- Natural celestial scene prepared locally: Sun/Moon position follows UTC time and selected coordinates, east on the right and west on the left. Below-horizon bodies are hidden; daytime Moon is supported. Ambient preference Retry repeats the failed write. Superheroes, Bat signal, Batplane and related settings/animations were cancelled by the owner and removed before publication or device installation. 100 affected browser cases passed initially, plus all four corrected settings cases; native verification is pending. See [celestial evidence](docs/evidence/celestial-scene-2026-10-04.md).
+- Natural celestial scene prepared locally: Sun/Moon position follows UTC time and selected coordinates, east on the right and west on the left. Below-horizon bodies are hidden; owner now requests Moon only at night and Sun only by day. Ambient preference Retry repeats the failed write. Superheroes, Bat signal, Batplane and related settings/animations were cancelled by the owner and removed before publication or device installation. 100 affected browser cases passed initially, plus all four corrected settings cases; 9e51 installed,51 hashes/nine preferences/radio verified and native800×480 screenshot inspected; latest day/night-only policy still pending activation. See [celestial evidence](docs/evidence/celestial-scene-2026-10-04.md).
 
 - Weather provider links removed from Home/forecast; Settings credit is noninteractive. Aircraft wings and wingtip lights corrected. 92 affected browser cases passed across separate runs; exact edge placement and initial Arrange retained. Canonical tree TypeScript/Vite build and28 repeated browser cases PASS. Installed52c verified49 hashes, nine preferences and continuing radio. [Weather/aircraft evidence](docs/evidence/weather-aircraft-2026-10-04.md).
 

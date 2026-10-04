@@ -53,7 +53,9 @@ function horizontal(v:Vector,latitude:number,lst:number,semidiameter:number):Cel
  const azimuth=wrap(atan2(west,south)+180);
  const apparentAltitude=altitude+refraction(altitude);
  // A 360° panorama, not an AR camera projection. North wraps at the edges.
- return {altitude,apparentAltitude,azimuth,x:100-azimuth/3.6,y:84-70*Math.max(0,Math.min(90,apparentAltitude))/90,visible:apparentAltitude+semidiameter>=0};
+ // Project elevation onto the visible sky above the skyline. Sine spacing
+ // gives the midday arc room while keeping rise/set close to the horizon.
+ return {altitude,apparentAltitude,azimuth,x:100-azimuth/3.6,y:78-64*sin(Math.max(0,Math.min(90,apparentAltitude))),visible:apparentAltitude+semidiameter>=0};
 }
 export function getCelestialScene(now:Date,latitude:unknown,longitude:unknown):CelestialScene|null{
  if(!(now instanceof Date)||!Number.isFinite(now.getTime())||now.getUTCFullYear()<1900||now.getUTCFullYear()>2100||typeof latitude!=='number'||typeof longitude!=='number'||!Number.isFinite(latitude)||!Number.isFinite(longitude)||Math.abs(latitude)>90||Math.abs(longitude)>180)return null;
