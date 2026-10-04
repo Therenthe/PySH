@@ -1,6 +1,9 @@
-# Prepared update — missing-file identity and exact transport retry
+# Current runtime — missing-file identity and owned transport recovery
 
-Prepared `670c8155227b` (48files), not installed. Missing selections identify the basename without a private path; transport failures replace stale selected-file retry, and abandoned responses cannot revive Media errors.244affected browser cases,336backend and27keyboard checks plus TypeScript/build passed. Native activation/recovery remains OPEN. [Evidence](docs/evidence/media-missing-target-2026-10-04.md). Installed runtime remains3e4 below; all30full product criteria stay OPEN.
+Installed `670c8155227b`, source `beab133f81aa3de7d09c4901faef64efb952c0bb`.48native hashes, no pending transaction, continuing radio41.207→50.248s and all nine preferences verified; previous3e4 and readable PC backup retained. Missing-file selections identify basename without private paths; Retry follows the latest failed file or transport intent, and abandoned responses cannot revive errors.244affected browser cases,336backend and27keyboard checks plus TypeScript/build passed; eight captures audited. Native missing-file UI recovery on this candidate and all30full product gates remain OPEN. [Evidence](docs/evidence/media-missing-target-2026-10-04.md).
+
+Following entries are historical.
+
 # Current runtime — native local-media recovery verified
 
 Installed `3e4e9d6d1b07`, source `84618b3de5d2b73442e78fc00ee03d7ec49bde2f`. All48native hashes and nine saved preferences match; no pending transaction; radio advanced35.333→44.389s. Previous6676 and readable PC backup retained.526full UI,336backend and27keyboard cases passed. Native muted audio UI:32encoding/context selections,4control,4corrupt,4missing,4EOF flows and navigation recovery passed; native video:5encodings,4control/recovery contexts and720p sample passed. Actual valid-video captures show Cast removed. Exact preferences/audio/radio restored and diagnostics closed. Physical touch/audibility, full product acceptance and final OS image remain OPEN. [Native media evidence](docs/evidence/native-local-media-2026-10-04.md).
