@@ -39,6 +39,11 @@ find /workspace/.runtime/os-build -type f -name 'pysh-pi4-candidate.img' -print 
 image="$(cat /workspace/.runtime/os-build/image-path.txt)"
 test -n "$image" && test -s "$image"
 python3 os/image/inspect-image.py "$image"
+python3 os/image/collect-provenance.py \
+  --root-image "$(dirname "$image")/root.ext4" \
+  --boot-image "$(dirname "$image")/boot.vfat" \
+  --manifest os/image/payload/manifest.json --source os/image/payload/source.json \
+  --output /workspace/.runtime/os-build/software-provenance.json
 mkdir -p /workspace/.runtime/os-artifact
 gzip -1 -c "$image" > /workspace/.runtime/os-artifact/pysh-pi4-candidate.img.gz
 cp os/image/payload/source.json /workspace/.runtime/os-artifact/source.json
@@ -49,4 +54,5 @@ split -b 300M -d pysh-pi4-candidate.img.gz pysh-pi4-candidate.img.gz.part-
 sha256sum pysh-pi4-candidate.img.gz.part-* > PART-SHA256SUMS
 cp /workspace/.runtime/os-build/image-inspection.json image-inspection.json
 cp /workspace/.runtime/os-build/image-layout.json image-layout.json
+cp /workspace/.runtime/os-build/software-provenance.json software-provenance.json
 printf '%s\n' 'EXPERIMENTAL: do not flash. Recovery provisioning, real boot and full product acceptance are pending.' > NOT-FLASH-READY.txt

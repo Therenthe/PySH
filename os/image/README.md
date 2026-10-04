@@ -6,7 +6,9 @@ The config and layers use actual rpi-image-gen v2.8.0 metadata. `prepare-payload
 
 The `Build experimental PySH OS` workflow runs on the experimental branch, using a standard ARM64 runner and ephemeral Debian container. Normal Windows development needs no container or system dependency changes. Generated payload/build/image files are ignored; checksums and manifests accompany successful private build artifacts.
 
-Current gates include fresh-image first-use DRM preparation, complete media/network/Bluetooth flows, sustained stability and acceptance on one final candidate. CI builds and offline image checks, provisioning, physical boot and product acceptance are distinct evidence. SSH intentionally does not start without a provisioned recovery administrator key. The original SD remains the owner's offline recovery medium; the installed appliance boots from the USB drive.
+Current gates include fresh-image first-use DRM preparation, complete media/network/Bluetooth flows, sustained stability and acceptance on one final candidate. CI builds and offline image checks, provisioning, physical boot and product acceptance are distinct evidence. SSH intentionally does not start without a provisioned recovery administrator key. The installed appliance now boots from SD; the retained USB and verified backups provide recovery. See STATUS for the exact installed runtime.
+
+`collect-provenance.py` reads the generated `root.ext4` and `boot.vfat` without mounting or modifying them. After inspection, CI packages `software-provenance.json` with the source/runtime identities, verified runtime files, installed OS/Python inventory, retained notice hashes, cached APT metadata and kernel/firmware/overlay hashes. Package ownership uses an exact package path or byte-identical relocated file. Missing notices, checksums and ownership remain explicit gaps. Cached metadata is not authenticated by this collector; it does not certify source offers, redistribution rights or reproducibility. Eleven focused tests pass locally; execution against a newly generated Linux image remains pending.
 
 ## Recovery provisioning for an experimental test card
 
