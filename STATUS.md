@@ -2,7 +2,7 @@
 
 Installed `9424277cdab1`, source `060d57be00472fa7c1c81b77ad87ab7473e01e44`. All48native hashes verified; no pending transaction. Previous48561 and verified readable PC backup retained; radio resumed and advanced33.605→42.608s. Nine layout/visual/location/navigation preference hashes match the pre-update backup.438UI checks before the presentation-only adjustment,192affected checks and8supplemental checks after it passed. [Evidence](docs/evidence/media-opening-ownership-2026-10-04.md).
 
-All30current-candidate product gates remain OPEN pending native/full acceptance. Prior48561 HW-01 PASS is retained as historical configuration evidence; refreshing it for942427 is not a hardware regression. Final Media encoding/control probes, UI-29 error clarity, physical touch and final OS image remain tracked.
+All30current-candidate product gates remain OPEN pending native/full acceptance. Prior48561 HW-01 PASS is retained as historical configuration evidence; refreshing it for942427 is not a hardware regression. Final Media encoding/control probes, physical touch and final OS image remain tracked. UI-29 now has a prepared EN/RO recovery notice, reviewed at 800×480, with474browser cases,336backend cases and27keyboard cases passed; it is not installed yet. [Prepared recovery evidence](docs/evidence/local-audio-recovery-2026-10-04.md).
 
 Following entries are historical.
 
