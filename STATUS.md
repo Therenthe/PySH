@@ -1,3 +1,9 @@
+# Current runtime — compact Arrange at the edges
+
+Installed `d56dd2feb5c5`, source `ee423b931ee7e3460b969a1d4358c34ec286367f`. All48 native files verified; previous24b retained and readable PC backup verified.36actual Chromium checks verify compact placement/right-bottom expansion/persistence;12first-entry contexts fit all cards/grips. Audited user preferences restored and debug ports closed. Physical touch and complete product acceptance remain OPEN; all30DoD preserved. [Evidence](docs/evidence/weather-source-media-recovery-2026-10-04.md).
+
+Following entries are historical.
+
 # Prepared update — compact Arrange, attribution and Media recovery
 
 Prepared runtime `d56dd2feb5c5` (48files), not yet installed. Compact Arrange initial cards/grips fit; nearest-edge saved anchors preserve right/bottom alignment through growth and collapse. Local22placement/personalization and12initial-entry cases passed after the editor correction; weather source/license and exact Media retry also verified locally. See [evidence](docs/evidence/weather-source-media-recovery-2026-10-04.md). Installed runtime remains24b below. GitHub Actions runner admission requires account billing correction; old green image is superseded. All30product criteria remain OPEN.
