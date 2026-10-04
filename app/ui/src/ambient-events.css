@@ -2,8 +2,8 @@
 .ambient-flight{position:absolute;width:40px;height:20px;animation:ambient-flight-traverse var(--flight-duration) linear both;will-change:transform}
 .ambient-flight svg{display:block;width:40px;height:20px;fill:#334956;opacity:.75}
 .ambient-events[data-night=true] .ambient-flight svg{fill:#bbcbd0;opacity:.64}
-.aircraft-navigation{fill:#b7d3c7;animation:aircraft-navigation 2800ms steps(1,end) infinite}
-.aircraft-navigation-secondary{fill:#d6a6a2;animation-delay:1400ms}
+.aircraft-navigation{fill:#d6a6a2;animation:aircraft-navigation 2800ms steps(1,end) infinite}
+.aircraft-navigation-secondary{fill:#b7d3c7;animation-delay:1400ms}
 .ambient-lunar-event{position:absolute;right:23px;top:85px;width:90px;height:90px}
 .ambient-lunar-event svg{display:block;width:90px;height:90px;overflow:visible}
 .lunar-contact{fill:#e8efdc;animation:lunar-contact var(--dust-duration) ease-out both}

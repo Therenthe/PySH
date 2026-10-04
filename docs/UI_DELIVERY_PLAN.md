@@ -1,6 +1,6 @@
 # Plan urmărit de livrare UI/UX — 2026-10-04
 
-Acest inventar păstrează cerințele din conversație, inclusiv cele vechi. Nu acordă note sau acceptare din descrieri. GitHub este sursa canonică; implementările nepublicate sunt lucru local. Candidatul instalat actual:670c8155227b/sourcebeab133. HW-01 are dovadă actuală PASS; celelalte29criterii complete rămân OPEN în acceptance.json. O probă veche nu certifică un candidat nou.
+Acest inventar păstrează cerințele din conversație, inclusiv cele vechi. Nu acordă note sau acceptare din descrieri. GitHub este sursa canonică; implementările nepublicate sunt lucru local. Candidatul instalat actual:740d405c6cd7/sourceda25a50. Toate30criteriile complete rămân OPEN în acceptance.json; dovada HW-01 de pe670c este istorică. O probă veche nu certifică un candidat nou.
 
 Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4defectele auditorilor și tur complet →5acceptare nativă și imagine finală. Cerințele noi se adaugă; nu înlocuiesc restanțele.
 
@@ -56,3 +56,6 @@ Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4def
 Pentru fiecare remediere se consemnează: sursă/candidat, test executat, rezultat real, captură inspectată, publicare și instalare. Utilizatorul primește o actualizare când remedierea este verificată; nu numim implementarea locală drept instalată. Preferințele și aranjarea utilizatorului se păstrează. Auditorii nu schimbă dispozitivul sau conturile pentru a produce un PASS.
 
 Verificarea sursei152/fc4 și build-ul OS nu au pornit runner-ele GitHub din cauza setărilor de plăți/limită ale contului. [Dovada și poarta rămasă](evidence/actions-runner-not-started-2026-10-04.md). Nu se substituie CI/imaginea actuală cu rezultatele verzi ale surseicd1ff. Testele locale și native independente continuă.
+
+
+Actualizare2026-10-04: linkurile meteo Acasă/prognoză eliminate; credit informativ în Setări; aripi orientate spre coadă și lumini corecte.92probe browser afectate PASS; instalarea acestei corecții se urmărește separat. UI-34 local144, UI-35 local16, UI-36/37 local20 probe PASS în scopurile documentate, încă nepublicate/neinstalate. Return740d: profil diagnostic nou --app Wayland PASS; eșecul profilului zilnic rămâne OPEN, fără resetare de profil. Vezi evidence/weather-aircraft-2026-10-04.md.

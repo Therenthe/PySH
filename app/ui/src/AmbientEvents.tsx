@@ -36,8 +36,9 @@ export function AmbientEvents({enabled,night,moonVisible=false,lunarDust=false,a
  return <div className="ambient-events" data-night={night} aria-hidden="true">
   {events.map(event=>event.kind==='aircraft'?<div key={event.id} className="ambient-flight" data-ambient-event="aircraft" style={{left:`${event.fromX}%`,top:`${event.fromY}%`,'--flight-dx':`${event.toX-event.fromX}cqw`,'--flight-dy':`${event.toY-event.fromY}cqh`,'--flight-duration':`${event.duration}ms`} as CSSProperties}>
    <svg viewBox="0 0 40 20" style={{transform:`rotate(${event.heading}deg) scale(${event.scale})`}}>
-    <path d="M2 9l10-1 8-6 3 1-4 5 14 1q6 1 3 2l-17 1 4 5-3 1-8-6-10-1 3-1-4-5 2-1 5 5z"/>
-    <circle className="aircraft-navigation" cx="21" cy="3" r=".7"/><circle className="aircraft-navigation aircraft-navigation-secondary" cx="21" cy="17" r=".7"/>
+    {/* Nose points +X; both main wings and tailplanes sweep back toward -X. */}
+    <path d="M38 10C38 9 35 8.3 32 8.3H24L15 2H11L18 8.3H7L4 5H2L4 9H2V11H4L2 15H4L7 11.7H18L11 18H15L24 11.7H32C35 11.7 38 11 38 10Z"/>
+    <circle className="aircraft-navigation" cx="13" cy="2" r=".7"/><circle className="aircraft-navigation aircraft-navigation-secondary" cx="13" cy="18" r=".7"/>
    </svg>
   </div>:<div key={event.id} className="ambient-lunar-event" data-ambient-event="lunar-dust" style={{'--dust-duration':`${event.duration}ms`,'--dust-radius':`${event.radius}px`} as CSSProperties}>
    <svg viewBox="0 0 90 90"><g transform={`translate(${event.x} ${event.y})`}>
