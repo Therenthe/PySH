@@ -6,10 +6,10 @@ Updated: 2026-10-04. GitHub is canonical: [Therenthe/PySH](https://github.com/Th
 
 | Item | Verified state |
 |---|---|
-| Installed SD application | Runtime `740d405c6cd7`, source `da25a504f8dafcbc8c28451acc0cff0a215d649b`; previous `32b5c92bbaf6` retained |
-| Published application source | Installed runtime source `da25a504f8dafcbc8c28451acc0cff0a215d649b` verified in GitHub |
+| Installed SD application | Runtime `52c30559af5f`, source `73cc24bbd19617b106d803d452dd345a643bb0ca`; previous `f94cfa04558b` retained |
+| Published application source | Installed runtime source `73cc24bbd19617b106d803d452dd345a643bb0ca` verified in GitHub |
 | Superseded packages | `aa288e1a375f` and `358b4892b275`, never installed |
-| Current update | Published and installed. All 48 runtime hashes and nine saved preferences verified; audio ready, radio resumed, no debug listener. UI-34/35 implementations remain local, with scoped tests executed; they are not installed. |
+| Current update | Published and installed. All 49 runtime hashes and nine saved preferences verified; audio ready, radio resumed, no debug listener. UI-34/35 implementations remain local, with scoped tests executed; they are not installed. |
 | Device | Raspberry Pi 4 / 4 GB, Debian 13 ARM64, DSI 800×480, 180° display rotation; existing SD boot. USB and independently verified PC backups remain recovery assets. |
 | Product acceptance | 30 complete product criteria OPEN for the new candidate. Prior HW-01 configuration PASS on670c is retained as historical evidence pending current viewport refresh. |
 
@@ -17,9 +17,9 @@ The installed application update is distinct from the OS image. There is no newl
 
 ## Latest evidence and its scope
 
-- Weather provider links removed from Home/forecast; Settings credit is noninteractive. Aircraft wings and wingtip lights corrected. 92 affected browser cases passed across separate runs; exact edge placement and initial Arrange retained. Canonical build/device installation tracked separately. [Weather/aircraft evidence](docs/evidence/weather-aircraft-2026-10-04.md).
+- Weather provider links removed from Home/forecast; Settings credit is noninteractive. Aircraft wings and wingtip lights corrected. 92 affected browser cases passed across separate runs; exact edge placement and initial Arrange retained. Canonical tree TypeScript/Vite build and28 repeated browser cases PASS. Installed52c verified49 hashes, nine preferences and continuing radio. [Weather/aircraft evidence](docs/evidence/weather-aircraft-2026-10-04.md).
 
-- Urgent external Return correction:74 local contract cases PASS; window-close acknowledgement, keyboard-port cleanup failure, pending/timeout and EN/RO Retry are covered. Installed740d source da25;48 hashes, nine preferences and continuing radio verified. Fresh-profile actual Wayland app Return passed, while the existing-profile failure remains OPEN. The owner's Open-Meteo failure remains a tracked hardware defect. [Return evidence](docs/evidence/external-return-2026-10-04.md).
+- Urgent external Return correction:74 local contract cases PASS; window-close acknowledgement, keyboard-port cleanup failure, pending/timeout and EN/RO Retry are covered. Installed52c/source73cc: new worker registration replaces stale code retained by the existing Chromium profile. Actual existing-profile Wayland app Return PASS: trusted sender, new code loaded, exact app window closed with no callback error. Profile/preferences retained; all external service/physical-finger acceptance remains OPEN. [Return evidence](docs/evidence/external-return-2026-10-04.md).
 
 - Previous installed 670c (historical): all 48 runtime hashes, activation identity, saved preferences, continuing radio and closed diagnostic endpoints were checked. Native local audio/video format and recovery probes passed within their stated scope; physical touch/audibility and complete media acceptance remain OPEN. [Media evidence](docs/evidence/media-missing-target-2026-10-04.md).
 - Previous installed 670c (historical): five app service relaunches reached Home in 4.894–4.982 s; complete idle PSS at Home +120 s was 598.896 MiB across 15 processes, including diagnostic overhead. The 480 injected-touch navigation samples had zero failures; feedback style/frame proxy maximum 21.7 ms and worst navigation p95 146.8 ms. These do not establish physical display latency, all action types or graphical-session startup. [Performance evidence](docs/evidence/native-performance-2026-10-04.md).

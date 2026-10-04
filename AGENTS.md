@@ -11,3 +11,7 @@ Read STATUS.md first, then docs/PRODUCT.md, docs/ARCHITECTURE.md, docs/DEVELOPME
 - Show exact remote commands before execution and useful results afterwards. No secrets, private logs, browser profiles or device backups in Git.
 - Apply the versioned skills under skills/ when relevant. Current STATUS and accepted ADRs override historical phase/architecture statements in imported references or skills.
 - Do not replay historical cleanup scripts. Do not flash storage, alter active networking or activate autostart as part of a repository migration.
+
+## Unpacked Chromium extension updates
+
+When background.js or its imported scripts change, migrate the manifest service_worker entry URL as well as its version. The appliance existing profile retained an old MV3 worker after file-path and version changes; a fresh profile concealed that failure. Verify the actually loaded worker and trusted Return in the existing service profile. Never reset browser profiles or inspect accounts to repair this. See docs/evidence/external-return-2026-10-04.md.
