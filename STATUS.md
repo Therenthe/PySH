@@ -6,10 +6,10 @@ Updated: 2026-10-04. GitHub is canonical: [Therenthe/PySH](https://github.com/Th
 
 | Item | Verified state |
 |---|---|
-| Installed SD application | Runtime `9e51d0a3439d`, source `7c1ab770d896ef543787cb21ff886573b8197671`; previous `52c30559af5f` retained |
-| Published application source | Installed runtime source `7c1ab770d896ef543787cb21ff886573b8197671` verified in GitHub |
+| Installed SD application | Runtime `536e1332a260`, source `f5cf8c7d35e00b226a2ae2a26a517abf847e4b0d`; previous `9e51d0a3439d` retained |
+| Published application source | Installed runtime source `f5cf8c7d35e00b226a2ae2a26a517abf847e4b0d` verified in GitHub |
 | Superseded packages | `aa288e1a375f` and `358b4892b275`, never installed |
-| Current update | Natural scene published and installed. All51 runtime hashes and nine saved preferences verified; audio ready, radio resumed, no debug listener. Day-only Sun/night-only Moon correction is being prepared after owner feedback. UI-34/35 implementations remain local, with scoped tests executed; they are not installed. |
+| Current update | Natural scene published and installed. All51 runtime hashes and nine saved preferences verified; audio ready, radio resumed, no debug listener. Sun-only daylight/Moon-only night and raised sky arc installed, native800×480 ambient capture inspected. UI-34/35 implementations remain local; final integration/full browser regression is being prepared and they are not installed. |
 | Device | Raspberry Pi 4 / 4 GB, Debian 13 ARM64, DSI 800×480, 180° display rotation; existing SD boot. USB and independently verified PC backups remain recovery assets. |
 | Product acceptance | 30 complete product criteria OPEN for the new candidate. Prior HW-01 configuration PASS on670c is retained as historical evidence pending current viewport refresh. |
 
@@ -41,3 +41,7 @@ Every earlier UI request remains in [UI_DELIVERY_PLAN.md](docs/UI_DELIVERY_PLAN.
 4. Resolve runner/build-host admission, build and inspect the final image, retain software/license/source provenance and redistribution evidence, then prove clean installation, backup/restore, cold boot/offline behavior and all delivery requirements. Historical green CI/images do not accept the final candidate.
 
 Use [acceptance.json](docs/acceptance.json) and [Definition of Done](docs/DEFINITION_OF_DONE.md) as the requirement-by-requirement release gate. Tests, source publication, successful deployment and product acceptance are separate states. Continue all open work; do not mark the project complete from a targeted test result.
+
+Current536e/sourcef5cf: day-only Sun/night-only Moon and raised arc verified in native15:06 ambient capture.51 hashes/nine preferences retained, radio resumed and debug listeners closed. Previous policy124 browser cases and final arc38 cases/18 astronomy cases PASS. UI-34/35 are being integrated as a separate candidate; no acceptance is transferred automatically.
+
+UI-34/35 final integration:888 complete browser cases passed on canonical snapshot, then12 cross-reader/failed-remove screenshot cases passed without runtime changes. Exact Bluetooth prompt/PIN generation, cancellation, accepted-write/status-read recovery and favorites identity/GET ownership are covered in EN/RO×palettes. Native installation still pending at this source checkpoint. Heart confetti, Media deletion and Media layout requests are now tracked as UI-41/42/43.

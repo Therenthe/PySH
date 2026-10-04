@@ -13,7 +13,7 @@ export type RadioStation = {
 export type RadioProps = {
   language: 'en' | 'ro'; stations: RadioStation[]; favorites: RadioStation[];
   query: string; country: string; radioLanguage: string; favoritesOnly: boolean;
-  loading: boolean; error?: string | null; busy: boolean;
+  loading: boolean; error?: string | null; busy: boolean; favoriteBusy?: boolean;
   currentStation?: RadioStation | null; currentUrl?: string | null;
   stationName: string; trackTitle: string; playerState: string; playerKind?: string;
   pauses: boolean; canPlay: boolean; canStop: boolean; canPrevious: boolean; canNext: boolean; audioReady: boolean;
@@ -53,7 +53,7 @@ export function StationArtwork({ station, name, large = false }: { station?: Rad
 }
 
 export function Radio(props: RadioProps) {
-  const { language, stations, favorites, query, country, radioLanguage, favoritesOnly, loading, error, busy,
+  const { language, stations, favorites, query, country, radioLanguage, favoritesOnly, loading, error, busy, favoriteBusy = false,
     currentStation, currentUrl, stationName, trackTitle, playerState, playerKind = 'radio', pauses, canPlay, canStop, canPrevious, canNext,
     audioReady, volume, muted, visualizer, t, icon, isFavorite, isStationPausing,
     onSearch, onCountry, onLanguage, onFavoritesFilter, onRetry, onPlayStation, onFavorite,
@@ -94,7 +94,7 @@ export function Radio(props: RadioProps) {
                   <span className="station-txt"><b>{station.name}</b><small>{[station.country, station.language, station.codec].filter(Boolean).join(' · ') || (ro ? 'Post de radio' : 'Radio station')}</small></span>
                   {selected && <span className="station-play" aria-hidden="true">{icon(isStationPausing(station) ? 'pause' : 'play', 17)}</span>}
                 </button>
-                <button className={`favorite-button ${favorite ? 'favorited' : ''}`} disabled={busy} onClick={() => onFavorite(station)} aria-label={`${favorite ? t('removeFavorite') : t('addFavorite')}: ${station.name}`} aria-pressed={favorite}><span aria-hidden="true">♥</span></button>
+                <button className={`favorite-button ${favorite ? 'favorited' : ''}`} disabled={busy || favoriteBusy} aria-busy={favoriteBusy} onClick={() => onFavorite(station)} aria-label={`${favorite ? t('removeFavorite') : t('addFavorite')}: ${station.name}`} aria-pressed={favorite}><span aria-hidden="true">♥</span></button>
               </div>;
             }) : <div className={`empty-state ${favoritesOnly ? 'favorites-empty' : ''}`}>
               {icon('radio', 28)}<b>{favoritesOnly ? t('favoritesEmpty') : t('noStations')}</b>

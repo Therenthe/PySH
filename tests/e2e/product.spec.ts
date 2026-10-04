@@ -36,7 +36,7 @@ async function fixture(page: Page, language: 'en'|'ro', theme: 'ink'|'night', se
       if(path==='/api/bluetooth/reply')state.bluetooth.prompts=[];
       if(path==='/api/exit'&&state.appliance){state.serviceMode=true;state.player={state:'idle'};}
       if(path==='/api/service/return')state.serviceMode=false;
-      json={ok:true};
+      json=path==='/api/favorites'?state.preferences:path==='/api/bluetooth/reply'?{available:true,replied:true,id:body.id,error:null}:{ok:true};
     } else {f.unexpected.push(`${method} ${path}`);status=500;json={error:'unexpected_test_request'};}
     await route.fulfill({status,json});
   });

@@ -71,6 +71,7 @@
 .app .keys{gap:3px}
 .app .key-row button{height:48px;flex-shrink:0}
 .app .error-strip{flex-shrink:0;padding:4px 12px;gap:6px}
+.app .network-feedback+.pairing-input{margin-top:8px}
 .app .error-strip>span:not(.error-dot){flex:1;line-height:1.25}
 .app .device-row>div{flex-wrap:wrap;justify-content:flex-end}
 .app .download-link{min-height:48px;max-width:100%;white-space:normal}

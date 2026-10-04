@@ -1,10 +1,12 @@
 # Hardware de referință
 
-## Configurație actuală observată — 4 octombrie 2026
+Runtime-ul instalat curent și verificările update-ului sunt în [STATUS](../STATUS.md). Un inventar vechi nu certifică acceptarea candidatului nou.
 
-Runtime instalat `670c8155227b`, sursă `beab133f81aa3de7d09c4901faef64efb952c0bb`. Colectorul read-only a verificat48 hash-uri, sursa din tranzacția activată, absența unei tranzacții în curs și rădăcina SD. Inventarul este observat pe dispozitiv; nu este o presupunere din imaginea de build. [Dovadă hardware](evidence/hardware-configuration-2026-10-04.md).
+## Ultimul inventar hardware complet — 4 octombrie 2026
 
-| Componentă | Observat pe candidatul actual |
+Inventarul următor aparține runtime-ului istoric `670c8155227b`, sursă `beab133f81aa3de7d09c4901faef64efb952c0bb`. Colectorul read-only a verificat48 hash-uri, sursa din tranzacția activată, absența unei tranzacții în curs și rădăcina SD. Inventarul este observat pe dispozitiv; nu este o presupunere din imaginea de build. [Dovadă hardware](evidence/hardware-configuration-2026-10-04.md).
+
+| Componentă | Observat pe candidatul inventariat670c |
 |---|---|
 | Placă | Raspberry Pi 4 Model B Rev 1.5, revizie `c03115` |
 | Memorie | Firmware `total_mem=4096`; Linux MemTotal 3,886,824 KiB |
