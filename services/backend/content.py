@@ -3,18 +3,23 @@
 from __future__ import annotations
 
 import asyncio
+import ctypes
+import errno
+import hashlib
 import json
 import math
 import os
 import queue
 import random
 import socket
+import stat as stat_module
 import sys
 import tempfile
 import threading
 import time
 import re
 import unicodedata
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, ClassVar
@@ -380,7 +385,10 @@ class Content:
                 kind = "directory" if is_dir else "audio" if suffix in self.AUDIO_EXTENSIONS else "video" if suffix in self.VIDEO_EXTENSIONS else None
                 if not is_dir and kind is None:
                     continue
-                items.append({"name": entry.name, "path": str(canonical), "kind": kind, "is_dir": is_dir, "size": stat.st_size, "modified": stat.st_mtime})
+                deletable = (sys.platform == 'linux' and not entry.is_symlink() and not is_dir
+                             and stat_module.S_ISREG(stat.st_mode) and stat.st_uid == os.geteuid() and stat.st_nlink == 1)
+                items.append({"name": entry.name, "path": str(canonical), "kind": kind, "is_dir": is_dir, "size": stat.st_size, "modified": stat.st_mtime,
+                              "deletable": deletable, "delete_token": self._delete_token(canonical, stat) if deletable else None})
         items.sort(key=lambda item: (not item["is_dir"], item["name"].casefold()))
         if scan_roots and len(warnings) == len(scan_roots):
             raise ContentError("media_unavailable", "The media folders cannot be read. Try again.")
@@ -396,6 +404,107 @@ class Content:
         if not target.is_file():
             raise ContentError("media_not_file", "Choose a media file.")
         return target
+
+    @staticmethod
+    def _delete_token(path: Path, info: os.stat_result) -> str:
+        value = [str(path), info.st_dev, info.st_ino, info.st_mtime_ns, info.st_ctime_ns, info.st_size, info.st_uid]
+        return hashlib.sha256(json.dumps(value, separators=(',', ':')).encode()).hexdigest()
+
+    async def delete_media(self, path: str, token: str, blocked_identity: tuple[int, int] | None = None) -> str:
+        return await asyncio.to_thread(self._delete_media, path, token, blocked_identity)
+
+    def _delete_media(self, path: str, token: str, blocked_identity: tuple[int, int] | None = None) -> str:
+        if not isinstance(path, str) or not 1 <= len(path) <= 4096 or '\x00' in path or not re.fullmatch('[0-9a-f]{64}', token or ''):
+            raise ContentError('media_delete_invalid')
+        target = Path(path)
+        if not target.is_absolute() or str(target) != path or any(p in {'.', '..'} for p in path.split('/')):
+            raise ContentError('media_path_not_allowed')
+        if target.suffix.lower() not in self.AUDIO_EXTENSIONS | self.VIDEO_EXTENSIONS:
+            raise ContentError('media_delete_not_supported')
+        if not self._within_any(target, self._media_roots()):
+            raise ContentError('media_path_not_allowed')
+        if sys.platform != 'linux':
+            raise ContentError('media_delete_unavailable')
+        # Hold every ancestor by nofollow dirfd. Rename captures the directory
+        # entry atomically; identity is rechecked inside a private quarantine
+        # before unlink, so replacing the displayed name cannot delete a new file.
+        parent_fd = quarantine_fd = file_fd = None
+        quarantine = '.pysh-delete-' + uuid.uuid4().hex
+        captured = uuid.uuid4().hex + target.suffix.lower()
+        moved = False
+        quarantine_created = False
+        try:
+            parent_fd = os.open('/', os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+            for component in target.parent.parts[1:]:
+                next_fd = os.open(component, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=parent_fd)
+                os.close(parent_fd)
+                parent_fd = next_fd
+            file_fd = os.open(target.name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=parent_fd)
+            info = os.fstat(file_fd)
+            if not stat_module.S_ISREG(info.st_mode) or info.st_uid != os.geteuid() or info.st_nlink != 1:
+                raise ContentError('media_delete_not_supported')
+            if blocked_identity == (info.st_dev, info.st_ino):
+                raise ContentError('media_in_use')
+            if self._delete_token(target, info) != token:
+                raise ContentError('media_changed')
+            # An unplug/remount or parent rename must not redirect the approved root.
+            if Path('/proc/self/fd', str(parent_fd)).resolve() != target.parent:
+                raise ContentError('media_changed')
+            os.mkdir(quarantine, mode=0o700, dir_fd=parent_fd)
+            quarantine_created = True
+            quarantine_fd = os.open(quarantine, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=parent_fd)
+            os.rename(target.name, captured, src_dir_fd=parent_fd, dst_dir_fd=quarantine_fd)
+            moved = True
+            actual = os.stat(captured, dir_fd=quarantine_fd, follow_symlinks=False)
+            # Rename can change ctime, so compare stable observed identity fields;
+            # the pre-rename fingerprint already required the complete list token.
+            fields = ('st_dev', 'st_ino', 'st_mtime_ns', 'st_size', 'st_uid', 'st_nlink', 'st_mode')
+            if any(getattr(actual, key) != getattr(info, key) for key in fields) or not stat_module.S_ISREG(actual.st_mode):
+                raise ContentError('media_changed')
+            os.unlink(captured, dir_fd=quarantine_fd)
+            moved = False
+            # Unlink has completed. A removable filesystem rejecting directory
+            # fsync must not report failure and invite a retry of another entry.
+            try:
+                os.fsync(parent_fd)
+            except OSError:
+                pass
+            return str(target)
+        except ContentError:
+            raise
+        except FileNotFoundError as exc:
+            raise ContentError('media_not_found') from exc
+        except PermissionError as exc:
+            raise ContentError('media_delete_denied') from exc
+        except OSError as exc:
+            code = 'media_path_not_allowed' if exc.errno in {errno.ELOOP, errno.ENOTDIR} else 'media_delete_failed'
+            raise ContentError(code) from exc
+        finally:
+            recovery_required = False
+            if moved and quarantine_fd is not None:
+                # RENAME_NOREPLACE restores a raced/failed capture without ever
+                # overwriting a newly created original name. On conflict preserve
+                # the captured file in its private quarantine for recovery.
+                try:
+                    libc = ctypes.CDLL(None, use_errno=True)
+                    restore = libc.renameat2
+                    restore.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
+                    restore.restype = ctypes.c_int
+                    recovery_required = restore(quarantine_fd, os.fsencode(captured), parent_fd, os.fsencode(target.name), 1) != 0
+                except (AttributeError, OSError):
+                    recovery_required = True  # Preserve capture rather than overwrite another entry.
+            for descriptor in (file_fd, quarantine_fd):
+                if descriptor is not None:
+                    os.close(descriptor)
+            if parent_fd is not None and quarantine_created:
+                try:
+                    os.rmdir(quarantine, dir_fd=parent_fd)
+                except OSError:
+                    pass  # Never recursively delete a preserved recovery entry.
+            if parent_fd is not None:
+                os.close(parent_fd)
+            if recovery_required:
+                raise ContentError('media_delete_recovery_required')
 
     def _resolve_approved_path(self, path: str | Path) -> Path:
         try:

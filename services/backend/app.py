@@ -1,5 +1,6 @@
 """Loopback API. No shell, credentials in logs, or network-visible admin port."""
 import asyncio
+from functools import wraps
 import contextlib
 from datetime import datetime, timezone
 import hmac
@@ -13,7 +14,7 @@ import shutil
 import sys
 import time
 from typing import Literal
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, unquote
 from zoneinfo import ZoneInfo
 
 from fastapi import FastAPI, Request
@@ -39,6 +40,11 @@ log = logging.getLogger("hub")
 
 class StrictBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
+
+
+class MediaDelete(StrictBody):
+    path: str = Field(min_length=1, max_length=4096, pattern=r'^[^\x00]+$', strict=True)
+    token: str = Field(pattern=r'^[0-9a-f]{64}$', strict=True)
 
 
 class Power(StrictBody):
@@ -138,6 +144,8 @@ class Hub:
         self._weather_generation = 0
         self.queue = []
         self.queue_index = -1
+        self.media_lock = asyncio.Lock()
+        self.media_identity = None
         self.started = datetime.now(timezone.utc).isoformat()
         self._playback_snapshot = {}
         self._playback_sampled = 0
@@ -472,7 +480,36 @@ async def media_file(request: Request, path: str):
     return FileResponse(canonical)
 
 
+def serialized_media(function):
+    @wraps(function)
+    async def guarded(request: Request, *args, **kwargs):
+        async with request.app.state.hub.media_lock:
+            return await function(request, *args, **kwargs)
+    return guarded
+
+
+@app.delete('/api/media')
+@serialized_media
+async def delete_media(request: Request, body: MediaDelete):
+    hub = request.app.state.hub
+    playback = await hub.player.status()
+    active = playback.get('kind') in {'audio', 'video', 'local'} and playback.get('state') in {'playing', 'paused', 'buffering', 'connecting'}
+    source = playback.get('url', '')
+    if active and isinstance(source, str):
+        parsed = urlsplit(source)
+        local = unquote(parsed.path) if parsed.scheme == 'file' else source if not parsed.scheme else ''
+        if local and Path(local).resolve() == Path(body.path).resolve():
+            raise ContentError('media_in_use')
+    deleted = await hub.content.delete_media(body.path, body.token, hub.media_identity if active else None)
+    previous_index = hub.queue_index
+    before_index = sum(i <= previous_index and item.get('path') == deleted for i, item in enumerate(hub.queue))
+    hub.queue = [item for item in hub.queue if item.get('path') != deleted]
+    hub.queue_index = min(previous_index - before_index, len(hub.queue) - 1) if previous_index >= 0 else -1
+    return {'deleted': True}
+
+
 @app.post("/api/play")
+@serialized_media
 async def play(request: Request, body: Play):
     hub = request.app.state.hub
     await hub.refresh_device()
@@ -480,6 +517,10 @@ async def play(request: Request, body: Play):
         return JSONResponse({"error": "no_audio_output"}, status_code=409)
     await hub.player.select_output(hub.snapshots["audio"]["output"])
     source = validate_stream_url(body.url) if body.source == "radio" else str(hub.content.resolve_media(body.path))
+    try:
+        media_stat = Path(source).stat() if body.source == 'local' else None
+    except OSError as exc:
+        raise ContentError('media_not_found') from exc
     if body.source == "local":
         listing = await hub.content.media_list(str(Path(source).parent))
         hub.queue = [item for item in listing["items"] if item["kind"] == "audio"]
@@ -494,6 +535,7 @@ async def play(request: Request, body: Play):
     hub.cache_playback({})
     await hub.visualizer.close()
     result = hub.cache_playback(await hub.player.play(source, title=body.title, kind=body.source))
+    hub.media_identity = (media_stat.st_dev, media_stat.st_ino) if media_stat is not None else None
     # Only the explicit UI start sends a catalog UUID; failed/local/automatic
     # playback, polling and existing-stream pause/resume produce no signal.
     if body.source == "radio" and body.station_uuid and result.get("state") not in {"error", "idle"}:
@@ -502,6 +544,7 @@ async def play(request: Request, body: Play):
 
 
 @app.post("/api/player")
+@serialized_media
 async def player(request: Request, body: Transport):
     hub = request.app.state.hub
     hub.cache_playback({})
@@ -518,10 +561,18 @@ async def player(request: Request, body: Transport):
             return JSONResponse({"error": "no_more_tracks"}, status_code=409)
         item = hub.queue[next_index]
         target = str(hub.content.resolve_media(item["path"]))
+        try:
+            media_stat = Path(target).stat()
+        except OSError as exc:
+            raise ContentError('media_not_found') from exc
         result = await hub.player.play(target, title=item["name"], kind="local")
+        hub.media_identity = (media_stat.st_dev, media_stat.st_ino)
         hub.queue_index = next_index
         return hub.cache_playback(result)
-    return hub.cache_playback(await hub.player.command(body.action, body.value))
+    result = hub.cache_playback(await hub.player.command(body.action, body.value))
+    if body.action == 'stop':
+        hub.media_identity = None
+    return result
 
 
 @app.post("/api/documentation")

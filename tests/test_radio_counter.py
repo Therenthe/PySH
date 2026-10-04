@@ -45,10 +45,15 @@ def test_async_deadline_does_not_wait_for_worker(tmp_path, monkeypatch):
 
 @pytest.mark.parametrize("identifier,source,state,expected",[(UUID,"radio","playing",1),(None,"radio","playing",0),(UUID,"radio","error",0),(UUID,"local","playing",0)])
 def test_signal_only_after_successful_explicit_catalog_start(tmp_path,identifier,source,state,expected):
+    # Local playback records the actual file identity under the shared media
+    # lock; keep this fixture consistent with Hub without starting hardware.
+    (tmp_path / "fixture.wav").write_bytes(b"fixture media")
     queued=[]
     def background(coro):queued.append(coro);coro.close()
     stored=[]
     hub=SimpleNamespace(refresh_device=AsyncMock(),audio_selected=True,snapshots={"audio":{"output":"fixture"}},player=SimpleNamespace(select_output=AsyncMock(),play=AsyncMock(return_value={"state":state})),content=SimpleNamespace(resolve_media=Mock(return_value=tmp_path/"fixture.wav"),media_list=AsyncMock(return_value={"items":[]}),radio_click=AsyncMock()),store=SimpleNamespace(value=SimpleNamespace(lastStation=None),update=stored.append),cache_playback=lambda x:x,visualizer=SimpleNamespace(close=AsyncMock()),background=background)
+    hub.media_lock = asyncio.Lock()
+    hub.media_identity = None
     req=SimpleNamespace(app=SimpleNamespace(state=SimpleNamespace(hub=hub)))
     body=Play(source=source,url="https://radio.example.org/stream",path="fixture.wav",station_uuid=identifier)
     result=asyncio.run(play(req,body))

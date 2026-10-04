@@ -325,8 +325,8 @@ for(const theme of ['ink','night'] as const) {
     f.radio='error';await page.locator('.radio-refresh').tap();await expect(page.locator('.error-strip')).toBeVisible();await capture(page,info,'radio-error',defects);
     await nav(2); await expect(page.locator('.media-item')).toHaveCount(2);await capture(page,info,'media-populated',defects);
     await page.locator('.media-item').first().tap();expect(f.actions.some(a=>a.path==='/api/play'&&a.body.source==='local')).toBeTruthy();
-    f.media='empty';await page.locator('.crumb-actions button').first().tap();await expect(page.locator('.media-item')).toHaveCount(0);await capture(page,info,'media-empty',defects);
-    f.media='error';await page.locator('.crumb-actions button').first().tap();await expect(page.locator('.error-strip')).toBeVisible();await capture(page,info,'media-error',defects);
+    f.media='empty';await nav(0);await nav(2);await expect(page.locator('.media-item')).toHaveCount(0);await capture(page,info,'media-empty',defects);
+    f.media='error';await nav(0);await nav(2);await expect(page.locator('.error-strip')).toBeVisible();await capture(page,info,'media-error',defects);
     await nav(3);
     for(let i=0;i<7;i++){await page.locator('.settings-tabs button').nth(i).tap();await capture(page,info,`settings-${['appearance','weather','network','bluetooth','audio','home','diagnostics'][i]}`,defects);}
     await page.locator('.settings-tabs button').nth(7).tap();await capture(page,info,'exit-dialog',defects);await page.locator('.dialog-actions button').first().tap();expect(f.actions.some(a=>a.path==='/api/exit')).toBeFalsy();
