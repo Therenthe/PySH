@@ -207,9 +207,10 @@
         "docs/evidence/content-recovery-2026-10-02.md",
         "docs/evidence/video-process-recovery-2026-10-02.md",
         "docs/evidence/audio-weather-controls-2026-10-02.md",
-        "docs/evidence/sd-audio-radio-2026-10-03.md"
+        "docs/evidence/sd-audio-radio-2026-10-03.md",
+        "docs/evidence/native-local-media-2026-10-04.md"
       ],
-      "reason": "Current6676b558fe06/source204ff1b: all48runtime hashes, radio recovery and saved layout preference hashes verified; complete native acceptance remains OPEN. Current48561d4e7ead; listed earlier evidence remains historical and does not accept this criterion. Current SDc8ac9c709acb has owner-confirmed local test tone and radio audibility on Bluetooth, with native route/player observation. Complete criterion remains OPEN: all required flows, source/format/volume failures and physical EN/RO UI have not been accepted.",
+      "reason": "Installed6676/source204ff: eight native API audio encodings and five Chromium video encodings plus video control/error recovery passed within the scoped muted probes. Native audio UI found immediate decoder snapshot generic-error defect. Prepared3e4e9d6d1b07 fixes snapshot handling and video presentation but is not installed or accepted. Native corrected-candidate UI, audible file playback, physical touch and complete format/failure acceptance remain OPEN.",
       "historical_evidence_candidate": "c8ac9c709acb"
     },
     {

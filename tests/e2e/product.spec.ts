@@ -230,7 +230,7 @@ for(const theme of ['ink','night'] as const) {
     // MediaRecorder WebM initially exposes infinite duration; a normal local seekable file has a finite duration.
     await page.locator('video').evaluate(async(v:HTMLVideoElement)=>{await new Promise<void>(resolve=>{if(v.readyState>=2)resolve();else v.addEventListener('loadeddata',()=>resolve(),{once:true});});if(!Number.isFinite(v.duration)){v.currentTime=1e6;await new Promise<void>(resolve=>v.addEventListener('seeked',()=>resolve(),{once:true}));v.currentTime=0;}});
     await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>Number.isFinite(v.duration)&&v.duration>0)).toBe(true);
-    await expect(page.locator('video')).not.toHaveAttribute('controls');await expect(page.locator('.video-controls')).toBeVisible();
+    await expect(page.locator('video')).not.toHaveAttribute('controls');await expect(page.locator('video')).toHaveJSProperty('disableRemotePlayback',true);await expect(page.locator('video')).toHaveJSProperty('disablePictureInPicture',true);await expect(page.locator('.video-controls')).toBeVisible();
     await page.locator('video').evaluate((v:HTMLVideoElement)=>v.pause());await expect(page.locator('.video-play')).toHaveText(ro?'Redă':'Play');
     const seek=page.getByRole('slider',{name:ro?'Progres':'Progress',exact:true}),rect=await seek.boundingBox();await seek.tap({position:{x:rect!.width*.5,y:rect!.height*.5}});
     await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(.5);
@@ -246,7 +246,7 @@ for(const theme of ['ink','night'] as const) {
     await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Test video folder',items:[{name:'Broken video.mp4',path:'/test/broken.mp4',kind:'video'}]}}));
     await page.route('**/api/media/file?**',route=>{attempts++;return route.fulfill({contentType:'video/mp4',body:'invalid video test content'});});
     await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.locator('.media-item').tap();
-    await expect(page.locator('.video-error')).toBeVisible();await expect(page.locator('.video-audio-warning')).toBeVisible();await capture(page,info,'invalid-video',defects);
+    await expect(page.locator('.video-error')).toBeVisible();await expect(page.locator('.video-error')).toContainText(ro?'Acest video nu a putut fi redat.':'This video could not be played.');await expect(page.locator('.video-error')).toContainText(ro?'Reîncearcă sau revino la bibliotecă':'Try again or return to the library');await expect(page.locator('.video-audio-warning')).toBeVisible();await capture(page,info,'invalid-video',defects);
     const before=attempts;await page.locator('.video-error button').tap();await expect.poll(()=>attempts).toBeGreaterThan(before);await expect(page.locator('.video-error')).toBeVisible();await page.locator('.video-back').tap();await expect(page.locator('.video-overlay')).toHaveCount(0);await expect(page.locator('.media-page')).toBeVisible();expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
   });
   test(`weather, radio and media retry target the failed operation ${theme}`,async({page},info)=>{

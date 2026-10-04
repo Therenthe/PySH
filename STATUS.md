@@ -1,3 +1,7 @@
+# Prepared update — immediate audio decoder recovery and local video clarity
+
+Prepared `3e4e9d6d1b07` (48files), not installed. The native audio UI probe on6676 found that an HTTP200 already-failed decoder snapshot becomes a generic API banner; the correction preserves the actionable audio notice while409errors retain exact retry. Local video disables the unwanted Cast affordance and gives truthful EN/RO recovery guidance.44affected browser,336backend and27keyboard checks plus TypeScript/build passed; full526case UI regression passed. Native five-video decode/control/resource probes passed on6676 but identified presentation issues; native audio UI remains incomplete. Preferences/audio/radio restored and diagnostic ports closed. [Native media evidence](docs/evidence/native-local-media-2026-10-04.md). All30product gates remain OPEN.
+
 # Current runtime — local audio recovery
 
 Installed `6676b558fe06`, source `204ff1b2117fcf4b07394ad660912edbf5e7acd6`. All48native hashes verified; no pending transaction. Previous942427 and verified readable PC backup retained; radio resumed and advanced41.099→50.139s. Nine layout/visual/location/navigation preference hashes match the pre-update backup.474browser,336backend and27keyboard tests passed. [Recovery evidence](docs/evidence/local-audio-recovery-2026-10-04.md).
