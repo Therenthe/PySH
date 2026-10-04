@@ -1,3 +1,11 @@
+# Current runtime — Media opening ownership and file sizes
+
+Installed `9424277cdab1`, source `060d57be00472fa7c1c81b77ad87ab7473e01e44`. All48native hashes verified; no pending transaction. Previous48561 and verified readable PC backup retained; radio resumed and advanced33.605→42.608s. Nine layout/visual/location/navigation preference hashes match the pre-update backup.438UI checks before the presentation-only adjustment,192affected checks and8supplemental checks after it passed. [Evidence](docs/evidence/media-opening-ownership-2026-10-04.md).
+
+All30current-candidate product gates remain OPEN pending native/full acceptance. Prior48561 HW-01 PASS is retained as historical configuration evidence; refreshing it for942427 is not a hardware regression. Final Media encoding/control probes, UI-29 error clarity, physical touch and final OS image remain tracked.
+
+Following entries are historical.
+
 # Prepared update — Media opening ownership and file sizes
 
 Prepared runtime `9424277cdab1` (48 files), not yet installed. Local audio/video and service opening admit one intent; replaced navigation/listing cannot restore a stale video or retry. Byte sizes use localized units and preserve zero. 438root UI cases passed before the presentation-only feedback adjustment;192affected cases and8supplemental layout cases passed afterward. Installed48561 and its scoped HW-01 evidence remain unchanged. [Media evidence](docs/evidence/media-opening-ownership-2026-10-04.md). All remaining product and final-image gates stay tracked.
