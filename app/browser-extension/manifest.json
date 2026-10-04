@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Pi Smart Hub \u2014 Return",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Touch controls for returning to PySH and opening the system keyboard. No account data is collected.",
   "background": {
     "service_worker": "background.js"
