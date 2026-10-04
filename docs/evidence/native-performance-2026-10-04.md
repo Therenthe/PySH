@@ -1,0 +1,13 @@
+# Current-candidate scoped native performance
+
+Runtime670c8155227b, sourcebeab133f81aa3de7d09c4901faef64efb952c0bb. Five measured relaunches of the user app service within the existing graphical session reached visible native Home with fonts loaded at800x480 in4.929185,4.894435,4.904389,4.981712 and4.941366seconds. These are app relaunches, not graphical-session starts or cold boots.
+
+At fifth Home+120.000122seconds, complete whole-tree PSS was613270KiB /598.896484MiB across15processes, including verified same-UID descendants in Chromium sibling scopes and diagnostic overhead. Collection ended at+120.182964seconds; no unreadable members, membership changes or zombies were observed. Playback was stopped for idle. This satisfies the measured idle<=700MiB subcondition; it does not accept all PERF-02 media/system usability requirements.
+
+Each phase verified the48current runtime files, activation source, SD UUID and absence of an update transaction. The kiosk-only debugger listened exclusively on loopback. Unknown playback was rejected before preparation. The original preferences, audio volume/mute/output and radio state were restored. The independent original diagnostic teardown completed with preferences/audio/radio restored and ports closed; subsequent preflight reconfirmed48hashes, audio ready, playing radio and no diagnostic listener.
+
+Private report `.runtime/perf670c-output-3/report.json` SHA256`c6c5c148c9c7daa58a493e88b47ab667115bcc11abfd38649d038c05d878bd28`; terminal run exit0. Private runner SHA256`3c7930bae2b14a791932d581cbf069a1904fb11e2115d2908cf3b4a84572f5ee`; native phase SHA256`e75d517adfb234a573b6feadccf3ba6629670596197a6d0c20874064efde87de`. Canonical collector SHA256`22c0eeaf4f5cd7e71b5d0177591e4e81aa6d3893d6cbb093498261f4abf42676` was unchanged. Raw preferences and reports remain private.
+
+Two earlier attempts failed baseline before measured launches: unreadable descriptors in an unrelated nondumpable same-UID process. Each was followed by independently verified teardown/restoration. The harness now skips inaccessible unrelated descriptors while still rejecting an unidentified diagnostic owner or owner outside the app tree. Six local synthetic tests passed, including the owner-found and fail-closed cases. Failed attempts are not measurements.
+
+PERF-01 remains OPEN:30interactions per action type, first-feedback<=100ms, navigation p95<=300ms and five actual graphical-session starts remain unmeasured on this candidate. PERF-02 remains OPEN pending complete media-load/system usability evidence. REL-01 requires eight hours plus periodic interaction evidence. No final image, physical touch latency or product completion is claimed.

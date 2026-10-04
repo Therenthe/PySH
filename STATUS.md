@@ -1,3 +1,7 @@
+# Current native performance — scoped measurements
+
+On installed670c/sourcebeab, five app service relaunches reached Home in4.894–4.982s. Complete idle PSS at Home+120s:598.896484MiB across15processes, below700MiB, with diagnostic overhead included. Exact preferences/audio/radio restored; independent teardown and subsequent48hash/audio/radio/no-listener preflight passed. [Evidence](docs/evidence/native-performance-2026-10-04.md). Graphical-session startup, interaction latency, media-load usability and eight-hour stability remain OPEN;29complete product gates remain OPEN. No final image or new runtime was installed.
+
 # Prepared image tooling — provenance inventory
 
 The image build now prepares software-provenance.json from actual generated ext4/VFAT inputs, with strict source/runtime identity, retained notice and firmware hashes and explicit evidence gaps. Eleven focused tests passed; Linux reader execution against a fresh image remains pending. No new image was built or flashed and installed670c remains unchanged. [Evidence](docs/evidence/image-provenance-2026-10-04.md). Final OS and remaining29product gates stay OPEN.
