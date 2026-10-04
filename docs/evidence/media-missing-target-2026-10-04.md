@@ -1,0 +1,9 @@
+# Missing-file identity and transport retry ownership
+
+Native audit of runtime `3e4e9d6d1b07` found that the missing-file banner did not identify the selected filename. Local correction displays only the selected basename, truncates long names visually and does not expose its parent path. EN/RO messages and Retry/Close remain accessible at800×480.
+
+The usability review additionally found stale retry ownership: a failed selection B could remain associated with a later failed Next command. The correction stores either the selected file or the transport command, invalidates older Media intents, and guards queued operations and responses against navigation or a replacement selection. Retry repeats the failed operation; it does not invent a filename for a queue failure whose API response provides none. Replaying ended/error local audio in Media uses the same selected-file recovery path.
+
+Candidate runtime `670c8155227b` contains48 files and is prepared locally, not installed. TypeScript and production build passed;336backend tests passed with22platform skips,27keyboard tests passed. Final affected browser regression passed236cases, and the additional eight delayed-response ownership cases passed. Publication and activation remain pending. Prior intermediate test runs are not acceptance of this final source: one used an incorrect footer/RO label selector, another was invalidated by a temporary source edit during Vite execution.
+
+Regression coverage includes exact selected-file retry, long names without private paths, transport superseding a failed selection, delayed Next after navigation, and delayed selection failure after a newer Next intent. Browser fixtures do not prove physical finger gestures, audible output or native missing-file recovery. Native verification and full product acceptance remain OPEN; installed runtime stays `3e4e9d6d1b07` until activation and independent identity checks succeed.

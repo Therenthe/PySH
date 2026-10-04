@@ -1,3 +1,6 @@
+# Prepared update — missing-file identity and exact transport retry
+
+Prepared `670c8155227b` (48files), not installed. Missing selections identify the basename without a private path; transport failures replace stale selected-file retry, and abandoned responses cannot revive Media errors.244affected browser cases,336backend and27keyboard checks plus TypeScript/build passed. Native activation/recovery remains OPEN. [Evidence](docs/evidence/media-missing-target-2026-10-04.md). Installed runtime remains3e4 below; all30full product criteria stay OPEN.
 # Current runtime — native local-media recovery verified
 
 Installed `3e4e9d6d1b07`, source `84618b3de5d2b73442e78fc00ee03d7ec49bde2f`. All48native hashes and nine saved preferences match; no pending transaction; radio advanced35.333→44.389s. Previous6676 and readable PC backup retained.526full UI,336backend and27keyboard cases passed. Native muted audio UI:32encoding/context selections,4control,4corrupt,4missing,4EOF flows and navigation recovery passed; native video:5encodings,4control/recovery contexts and720p sample passed. Actual valid-video captures show Cast removed. Exact preferences/audio/radio restored and diagnostics closed. Physical touch/audibility, full product acceptance and final OS image remain OPEN. [Native media evidence](docs/evidence/native-local-media-2026-10-04.md).
