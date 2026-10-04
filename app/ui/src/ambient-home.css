@@ -153,7 +153,7 @@
 .app .ambient-home[data-layout-editing=true] .weather-top .icon-button,
 .app .ambient-home[data-layout-editing=true] .ambient-shortcuts,
 .app .ambient-home[data-layout-editing=true] .mini-controls{visibility:hidden}
-.app .ambient-home[data-layout-editing=true] .weather-heading{padding-right:50px}
+.app .ambient-home[data-layout-editing=true] .weather-heading{padding-right:0}
 .app .ambient-home[data-layout-editing=true] .ambient-forecast header{padding-right:48px}
 .app .ambient-home[data-layout-editing=true] .weather-attribution{display:none}
 @media(prefers-reduced-motion:reduce){.app .topbar{transition:none}.city-windows rect{animation:none}.meteor-transient{display:none}}
