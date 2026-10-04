@@ -1,3 +1,4 @@
+import {AudioVolume} from './AudioVolume';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 function TouchRange({label,min=0,max,value,disabled=false,step=1,onCommit}:{label:string;min?:number;max:number;value:number;disabled?:boolean;step?:number;onCommit:(value:number)=>void}){
@@ -28,7 +29,7 @@ export function LocalVideo({item,t,audio,audioPending=false,audioFeedback,onAudi
   </div>
   <div className="video-controls">
    <div className="video-transport"><button className="outline video-play" disabled={failed||!audio.ready} onClick={()=>state.paused?play():element.current?.pause()}>{t(state.paused?'play':'pause')}</button><label className="video-progress"><span>{t('progress')} · {timestamp(state.position)} / {state.duration?timestamp(state.duration):t('unknown')}</span><TouchRange label={t('progress')} max={state.duration||1} step={0.1} value={Math.min(state.position,state.duration||1)} disabled={failed||!state.duration} onCommit={value=>{if(element.current)element.current.currentTime=value;sync();}}/></label><span className="video-state" role="status">{!audio.ready?t('audioLostVideo'):audioInterrupted?t('audioRestoredVideo'):t(failed?'errorState':state.ended?'ended':state.waiting?'loading':state.paused?'paused':'playing')}</span></div>
-   <div className="video-audio"><button className="outline" disabled={!audio.ready||audioPending} onClick={()=>updateAudio({mute:!audio.mute})}>{t(audio.mute?'unmute':'mute')}</button><label className="video-volume"><span>{t('volume')} · {Math.round(audio.volume||0)}%</span><TouchRange label={t('volume')} max={100} value={audio.volume||0} disabled={!audio.ready||audioPending} onCommit={volume=>updateAudio({volume})}/></label>{!audio.ready?<span className="video-audio-warning" role="status">{t('noOutput')}</span>:<span className="video-output">{audioPending?t('updating'):(output?.description||output?.name||t('audioOutput'))}</span>}</div>
+   <div className="video-audio"><button className="outline" disabled={!audio.ready||audioPending} onClick={()=>updateAudio({mute:!audio.mute})}>{t(audio.mute?'unmute':'mute')}</button><label className="video-volume"><span>{t('volume')} · {Math.round(audio.volume||0)}%</span><AudioVolume label={t('volume')} value={audio.volume||0} disabled={!audio.ready||audioPending} onChange={volume=>updateAudio({volume})}/></label>{!audio.ready?<span className="video-audio-warning" role="status">{t('noOutput')}</span>:<span className="video-output">{audioPending?t('updating'):(output?.description||output?.name||t('audioOutput'))}</span>}</div>
    {audioFeedback&&<div className="video-audio-recovery">{audioFeedback}</div>}
   </div>
  </section>;

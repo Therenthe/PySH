@@ -1,0 +1,18 @@
+/* Retained audio intent can contain a long output name; never let it escape. */
+.app [data-recovery=audio]{min-width:0;overflow-wrap:anywhere}
+.app :is(.volume-line,.volume-settings,.radio-volume) input[type=range]{touch-action:none}
+.app .video-audio-recovery{min-width:0;max-height:144px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y;flex-shrink:0;padding:0 2px}
+.app .video-audio-recovery .network-feedback{display:flex;flex-wrap:wrap;gap:6px}
+.app .video-audio-recovery .network-feedback>p{flex-basis:100%;margin:4px 0;line-height:1.4}
+.app .video-audio-recovery>p{margin:4px 0;line-height:1.4}
+.app .video-audio-recovery button{min-height:48px;min-width:48px}
+.app .video-controls:has(.video-audio-recovery){flex-shrink:0;max-height:calc(100% - 64px);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+.app .video-controls :is(.video-transport,.video-audio){flex-shrink:0}
+.app .video-output{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;max-height:3.9em}
+.app .setup-card:has(.setup-audio-recovery){min-height:0;max-height:calc(100vh - 100px);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+.app .setup-audio-recovery,.app .service-audio-recovery{min-width:0;flex-shrink:0;max-height:144px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y}
+.app :is(.setup-audio-recovery,.service-audio-recovery) .network-feedback{display:flex;flex-wrap:wrap;gap:6px}
+.app :is(.setup-audio-recovery,.service-audio-recovery) .network-feedback>p{flex-basis:100%;margin:4px 0;line-height:1.4}
+.app :is(.setup-audio-recovery,.service-audio-recovery)>p{margin:4px 0;line-height:1.4}
+/* Keep primary navigation available even when recovery text needs touch scrolling. */
+.app .setup-card:has(.setup-audio-recovery)>.setup-actions{position:sticky;bottom:0;z-index:2;flex-shrink:0;min-height:64px;padding-top:8px;padding-bottom:8px;background:var(--paper)}

@@ -8,4 +8,14 @@ The complete pre-change browser baseline was546PASS; it does not certify this ne
 
 The device remains on670c8155227b/sourcebeab133. No new release is installed by these local results. This is controlled adapter/browser coverage, not speaker audibility, physical touch, full product acceptance or final image verification.
 
-Remaining UI-33 audit work is explicitly OPEN: interrupted LocalVideo volume lifecycle, very long video recovery text at800x480, setup/service-mode visibility of retained recovery, stale-poll race coverage and a guarded native audio command tour. UI-34–37 and all other rows in the delivery plan remain preserved. No10/10 or full acceptance is assigned.
+## Terminal recovery follow-on
+
+LocalVideo volume uses the shared final-release control; seek is unchanged. Forty new EN/RO/theme cases cover held video dragging through clock/poll, cancellation/blur/close with zero mutation, delayed old background state after confirmed sink/volume, very long video recovery with actual trusted touch panning and exact Retry, and pending/late recovery in Setup and service mode. Service/Setup omit the dead Open Audio shortcut and keep exact mutation versus GET-only retry ownership. These fixtures do not establish media decoding or audibility.
+
+The first affected run had150PASS/4FAIL: React reused the prior Continue button as Skip, carrying transition contrast into the next Setup step. A keyed step fragment repaired all four;154affected cases then passed. Long video output labels initially crossed controls; the active label is now bounded to three lines while full intent remains touch-scrollable. All40new cases passed. The complete634case regression passed in11.6minutes with exit0 **before** the last scoped Setup footer CSS change.
+
+Independent visual review of20stress screenshots found video/service controls fitting, but Continue partly clipped in all eight Setup captures. Eight additional tests reproduced4PASS/4FAIL: outer-card touch scroll could expose Continue, but it was not initially fully visible. The recovery-only sticky footer repaired this; all8cases passed, checking top/center/bottom hit tests across the full48px target, real touch pan and back/revisit. Final192affected cases passed after this last CSS adjustment. A second full642case run was not performed: the scoped CSS change was covered by these affected checks. TypeScript/Vite build passed; packaged runtime32b5c92bbaf6 has48allowlisted files. Earlier aa288e1a375f/358b4892b275 packages are superseded and were never installed.
+
+The video pan test uses actual frame-paced movement and a stationary finger hold until measured native scrolling settles, then a genuine tap. A rapid earlier gesture produced touch events without a click before the handler; neither an API retry fault nor a particular inertia cause was established. Fast-fling behavior remains unverified. No programmatic scroll/click substituted for this probe.
+
+Device remains670c/sourcebeab until separately documented activation. Guarded native audio command acceptance, physical touch/audibility, UI-34–37 and all other product gates remain OPEN. No10/10 or final image acceptance is assigned.
