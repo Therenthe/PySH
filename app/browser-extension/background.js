@@ -92,6 +92,24 @@ async function serviceKeyboard(action, windowId, requestedGeneration) {
     return { ok: false, error: 'keyboard_unavailable' };
   }
 }
+function removeOwnedWindow(windowId) {
+  return new Promise(resolve => {
+    let finished = false;
+    const finish = result => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      resolve(result);
+    };
+    const timer = setTimeout(() => finish({ ok: false, error: 'return_unavailable' }), 4000);
+    try {
+      chrome.windows.remove(windowId, () => {
+        const failed = Boolean(chrome.runtime.lastError);
+        finish(failed ? { ok: false, error: 'return_unavailable' } : { ok: true });
+      });
+    } catch { finish({ ok: false, error: 'return_unavailable' }); }
+  });
+}
 chrome.runtime.onMessage.addListener((message, sender, respond) => {
   if (!allowed(sender) || !message || typeof message !== 'object' ||
       Array.isArray(message) || Object.keys(message).length !== 1 ||
@@ -99,9 +117,11 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
   if (message.action === 'return') {
     generation += 1;
     keyboardWindow = undefined;
-    keyboardPort?.disconnect();
+    const oldPort = keyboardPort;
     keyboardPort = undefined;
-    chrome.windows.remove(sender.tab.windowId);
+    try { oldPort?.disconnect(); } catch {}
+    removeOwnedWindow(sender.tab.windowId).then(respond);
+    return true;
   } else if (['status', 'show', 'hide'].includes(message.action)) {
     const requestedGeneration = generation;
     pending = pending.then(() => serviceKeyboard(message.action, sender.tab.windowId, requestedGeneration)).then(respond).catch(() => {

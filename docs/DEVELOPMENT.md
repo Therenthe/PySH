@@ -18,7 +18,7 @@ node node_modules/typescript/bin/tsc -b --pretty false
 node node_modules/vite/bin/vite.js build --configLoader native
 python scripts/check_repository.py
 python scripts/package-release.py
-node --test tests/extension-keyboard.test.mjs
+node --test tests/extension-keyboard.test.mjs tests/extension-return.test.mjs tests/extension-return-content.test.mjs
 ```
 
 În medii unde ensurepip este restricționat se poate folosi `uv venv --python 3.12 .venv`, apoi `uv pip sync --python .venv/Scripts/python.exe requirements-dev.lock` pe Windows. Nu înlocui Python-ul sistemului pe Pi.

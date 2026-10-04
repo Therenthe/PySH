@@ -28,10 +28,10 @@ function background() {
       postMessage(message) { if (this.failPost) throw new Error('closed'); this.sent.push(copy(message)); },
       disconnect() { this.closed = true; this.onDisconnect.emit(); } };
     ports.push(port); return port;
-  } }, windows: { remove: id => removed.push(id),
+  } }, windows: { remove: (id, callback) => { removed.push(id); callback?.(); },
     update: async (id, options) => { updates.push({ id, ...copy(options) }); } } };
   vm.runInNewContext(source('background.js').replace("importScripts('documentation-navigation.js');", source('documentation-navigation.js')), { chrome, URL,
-    setTimeout: (fn, ms) => { assert.equal(ms, 3000); timers.set(++timerId, fn); return timerId; },
+    setTimeout: (fn, ms) => { assert.ok([3000,4000].includes(ms)); timers.set(++timerId, fn); return timerId; },
     clearTimeout: id => timers.delete(id) });
   const listener = [...onMessage.listeners][0];
   const sender = (url = 'https://www.netflix.com/login') =>
@@ -122,6 +122,15 @@ test('disconnect responds once and subsequent request reconnects', async () => {
   const next = h.request({ action: 'show' }); await tick(); assert.equal(h.ports.length, 2);
   h.ports[1].onMessage.emit({ ok: true }); await tick(); assert.deepEqual(next.replies, [{ ok: true }]);
   assert.equal(h.timers.size, 0);
+});
+
+test('Return still closes the owned window when an expired keyboard port throws', async () => {
+ const h=background();h.request({action:'status'});await tick();
+ h.ports[0].onMessage.emit({ok:true,language:'en'});await tick();
+ h.ports[0].disconnect=()=>{throw new Error('expired native port');};
+ const result=h.request({action:'return'});assert.equal(result.keepAlive,true);await tick();
+ assert.deepEqual(h.removed,[7]);assert.deepEqual(result.replies,[{ok:true}]);
+ assert.equal(h.timers.size,0);
 });
 
 test('timeout closes host, removes listeners and allows reconnect', async () => {

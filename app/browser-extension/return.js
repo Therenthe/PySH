@@ -20,13 +20,47 @@
   message.style.display = 'none';
   message.setAttribute('role', 'status');
   let ro = false, keyboardShown = false, retractTimer, blurTimer, revealAfterFullscreen = false;
+  let returnPending = false, returnFailed = false, returnSequence = 0;
+  function requestReturn() {
+    if (returnPending) return;
+    returnPending = true; returnFailed = false;
+    const sequence = ++returnSequence;
+    localize();
+    const finish = result => {
+      if (sequence !== returnSequence || !returnPending) return;
+      clearTimeout(timer);
+      returnPending = false;
+      returnFailed = !result?.ok;
+      localize();
+      showReturnResult();
+    };
+    const timer = setTimeout(() => finish({ ok: false }), 5000);
+    try {
+      chrome.runtime.sendMessage({ action: 'return' }, result => {
+        const failed = Boolean(chrome.runtime.lastError);
+        finish(failed ? { ok: false } : result);
+      });
+    } catch { finish({ ok: false }); }
+  }
+  function showReturnResult() {
+    message.textContent = returnFailed ? (ro ? 'Revenirea la PySH nu a reușit. Reîncearcă.' : 'Could not return to PySH. Try again.') : '';
+    message.style.display = returnFailed ? 'block' : 'none';
+    expose();
+  }
   function localize() {
+    back.disabled = returnPending;
+    back.setAttribute('aria-busy', String(returnPending));
+    back.style.opacity = returnPending ? '0.65' : '1';
+    back.textContent = returnPending ? (ro ? 'Se revine…' : 'Returning…') : returnFailed ? (ro ? 'Reîncearcă revenirea' : 'Retry return') : '← Pi Smart Hub';
+    back.title = back.textContent;
+    if (returnFailed) message.textContent = ro ? 'Revenirea la PySH nu a reușit. Reîncearcă.' : 'Could not return to PySH. Try again.';
     keyboard.textContent = keyboardShown ? (ro ? 'Închide tastatura' : 'Hide keyboard') : (ro ? 'Tastatură' : 'Keyboard');
     keyboard.title = keyboard.textContent;
     reveal.setAttribute('aria-label', ro ? 'Afișează comenzile PySH' : 'Show PySH controls');
     hint.textContent = ro ? 'Atinge colțul din dreapta sus pentru comenzi.' : 'Tap the top-right corner for controls.';
   }
   function retract() {
+    if (returnPending || returnFailed) return;
     controls.style.display = hint.style.display = message.style.display = 'none';
     reveal.style.display = 'block';
     clearTimeout(retractTimer);
@@ -42,7 +76,7 @@
       const failed = Boolean(chrome.runtime.lastError || !result?.ok);
       if (!failed) keyboardShown = show;
       localize();
-      if (reportError) {
+      if (reportError && !returnPending && !returnFailed) {
         message.textContent = failed ? (ro ? 'Tastatura nu este disponibilă. Reîncearcă.' : 'Keyboard unavailable. Try again.') : '';
         message.style.display = failed ? 'block' : 'none';
         expose();
@@ -51,7 +85,7 @@
   }
   for (const button of [keyboard, back, reveal]) button.addEventListener('pointerdown', event => event.preventDefault());
   keyboard.addEventListener('click', () => keyboardAction(!keyboardShown, true));
-  back.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'return' }));
+  back.addEventListener('click', () => { requestReturn(); expose(); });
   reveal.addEventListener('click', expose);
   controls.addEventListener('pointerdown', expose);
   controls.append(keyboard, back);

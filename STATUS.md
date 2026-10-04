@@ -17,6 +17,8 @@ The installed application update is distinct from the OS image. There is no newl
 
 ## Latest evidence and its scope
 
+- Urgent external Return correction:74 local contract cases PASS; window-close acknowledgement, keyboard-port cleanup failure, pending/timeout and EN/RO Retry are covered. Publication/deployment and actual corrected-candidate hardware return are separate. The owner's Open-Meteo failure remains a tracked hardware defect. [Return evidence](docs/evidence/external-return-2026-10-04.md).
+
 - Previous installed 670c (historical): all 48 runtime hashes, activation identity, saved preferences, continuing radio and closed diagnostic endpoints were checked. Native local audio/video format and recovery probes passed within their stated scope; physical touch/audibility and complete media acceptance remain OPEN. [Media evidence](docs/evidence/media-missing-target-2026-10-04.md).
 - Previous installed 670c (historical): five app service relaunches reached Home in 4.894–4.982 s; complete idle PSS at Home +120 s was 598.896 MiB across 15 processes, including diagnostic overhead. The 480 injected-touch navigation samples had zero failures; feedback style/frame proxy maximum 21.7 ms and worst navigation p95 146.8 ms. These do not establish physical display latency, all action types or graphical-session startup. [Performance evidence](docs/evidence/native-performance-2026-10-04.md).
 - Earlier local audio correction: complete **594-case browser regression passed before the follow-on changes**; TypeScript/build/repository checks passed, with 347 Python cases /22 platform skips and 27 keyboard cases. Prepared aa288 belongs to that checkpoint. [Audio evidence](docs/evidence/audio-output-recovery-2026-10-04.md).
