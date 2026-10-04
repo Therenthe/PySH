@@ -18,4 +18,10 @@ Independent visual review of20stress screenshots found video/service controls fi
 
 The video pan test uses actual frame-paced movement and a stationary finger hold until measured native scrolling settles, then a genuine tap. A rapid earlier gesture produced touch events without a click before the handler; neither an API retry fault nor a particular inertia cause was established. Fast-fling behavior remains unverified. No programmatic scroll/click substituted for this probe.
 
-Device remains670c/sourcebeab until separately documented activation. Guarded native audio command acceptance, physical touch/audibility, UI-34–37 and all other product gates remain OPEN. No10/10 or final image acceptance is assigned.
+Current activation is documented below; earlier device statements describe the prior checkpoint. Guarded native audio command acceptance, physical touch/audibility, UI-34–37 and all other product gates remain OPEN. No10/10 or final image acceptance is assigned.
+
+## Verified SD runtime update
+
+Runtime `32b5c92bbaf6`, application source `296f3d75302167d3c161433d7d1d42b011318351`, published Git tree `7e2ec135941b6d138ecabc3ccaa1e0757175e106`. Guarded preparation verified a separate readable PC backup, SHA256 `202e3430a5637ca9c5b65d72e8181ab0b17ce4ef3845c35c7802e0e0b11984aa`. Activation retained previous670c and resumed the previously playing radio. Independent post-check verified48manifest hashes, activation source, expected SD UUID, no pending transaction, audio ready, player playing and no diagnostic listener. Nine preference hashes match the pre-update backup: homePositions, homeCards, visualizerStyle, visualizerSize, theme, language, location, navigationCollapsed and navigationAutoHide.
+
+This is application deployment evidence. No storage was flashed, no final OS image accepted, and no current-candidate physical gesture/audibility or full native command tour is claimed. All30product gates are OPEN for this candidate; prior670c HW-01 evidence remains historical pending refresh. Compact/right-edge source files are unchanged from installedbeab and66relevant browser cases were included in the634full run.
