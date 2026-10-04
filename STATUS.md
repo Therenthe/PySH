@@ -1,3 +1,7 @@
+# Prepared update — compact Arrange, attribution and Media recovery
+
+Prepared runtime `d56dd2feb5c5` (48files), not yet installed. Compact Arrange initial cards/grips fit; nearest-edge saved anchors preserve right/bottom alignment through growth and collapse. Local22placement/personalization and12initial-entry cases passed after the editor correction; weather source/license and exact Media retry also verified locally. See [evidence](docs/evidence/weather-source-media-recovery-2026-10-04.md). Installed runtime remains24b below. GitHub Actions runner admission requires account billing correction; old green image is superseded. All30product criteria remain OPEN.
+
 # Current runtime — idle handle contrast and radio catalog signal
 
 Installed `24b26865a2d5`, source `152f7567ff95c2b043a9c813a70552474314e9f5`. Ink idle/open-rail handle contrast corrected; valid explicit catalog starts report best-effort without changing the selected audio source.42 native hashes verified, radio progressing1.584→10.672s; previous931b8 retained and readable PC backup checked.327backend/110browser tests passed for radio changes;18Home tests and16rendered contrast states passed after CSS correction. Weather attribution links remain in implementation. See [evidence](docs/evidence/idle-handle-radio-catalog-2026-10-04.md). All30 product criteria remain OPEN.

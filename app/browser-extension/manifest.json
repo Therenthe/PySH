@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Pi Smart Hub — Return",
-  "version": "1.1.0",
+  "name": "Pi Smart Hub \u2014 Return",
+  "version": "1.2.0",
   "description": "Touch controls for returning to PySH and opening the system keyboard. No account data is collected.",
   "background": {
     "service_worker": "background.js"
@@ -17,12 +17,26 @@
       "js": [
         "return.js"
       ],
-      "css": ["immersive.css"],
+      "css": [
+        "immersive.css"
+      ],
       "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://open-meteo.com/*",
+        "https://creativecommons.org/*"
+      ],
+      "js": [
+        "documentation.js"
+      ],
+      "css": ["immersive.css"],
+      "run_at": "document_start"
     }
   ],
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAke4Fda/2yQ4Cc+UjZauwTeRb3RnTcC6zqHWopz2cNZYaxrI//Cje3Eqw2L1I1LT6dc6s04Ta+Qcf30ukHEjp5NkFpJmmuyMDezhpBbVAAygl+S0hhjGBOoedALM4FdfR/z71ZWrmg+uXCADyvvcimzxYNK8JAxPoVlYGkIyx4DrkPEGP1EFHaz2prjAVatI0fybcoBXRmFdKwK+JwkEDp3kTyVrcTZ3O7GayGZ5DtFX5CBswSPWBkOSk0eYV2qyscWqfC86LEOeXSAau1BdmYh0ka1APlf56Kg9warpoScbnyeDajSMWdfsYOPqFONPUnYkGVuixqpfHoVkPIH0oowIDAQAB",
   "permissions": [
-    "nativeMessaging"
+    "nativeMessaging",
+    "webNavigation"
   ]
 }

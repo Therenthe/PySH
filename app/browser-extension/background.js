@@ -1,3 +1,4 @@
+importScripts('documentation-navigation.js');
 // Only trusted extension content scripts on the explicitly supported services.
 let keyboardPort;
 let pending = Promise.resolve();
@@ -23,7 +24,7 @@ function allowed(sender) {
       !Number.isInteger(sender.tab?.windowId) || sender.tab.windowId < 0) return false;
   try {
     const url = new URL(sender.url);
-    return url.protocol === 'https:' && ['youtube.com', 'netflix.com', 'spotify.com'].some(
+    return documentationURL(url.href) || documentationRecoveryURL(url.href) || url.protocol === 'https:' && ['youtube.com', 'netflix.com', 'spotify.com'].some(
       domain => url.hostname === domain || url.hostname.endsWith(`.${domain}`)
     ) || url.protocol === 'https:' && url.hostname === 'accounts.google.com';
   } catch { return false; }

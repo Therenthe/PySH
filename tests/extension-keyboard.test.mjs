@@ -20,7 +20,8 @@ function background() {
   const ports = [], timers = new Map(), removed = [], updates = [];
   let timerId = 0, failConnect = false;
   const onMessage = event();
-  const chrome = { runtime: { id: extensionId, onMessage, connectNative(name) {
+  const chrome = { runtime: { id: extensionId, onMessage,
+    getURL: path => `chrome-extension://${extensionId}/${path}`, connectNative(name) {
     assert.equal(name, 'org.pysh.keyboard');
     if (failConnect) { failConnect = false; throw new Error('unavailable'); }
     const port = { onMessage: event(), onDisconnect: event(), sent: [], closed: false,
@@ -29,7 +30,7 @@ function background() {
     ports.push(port); return port;
   } }, windows: { remove: id => removed.push(id),
     update: async (id, options) => { updates.push({ id, ...copy(options) }); } } };
-  vm.runInNewContext(source('background.js'), { chrome, URL,
+  vm.runInNewContext(source('background.js').replace("importScripts('documentation-navigation.js');", source('documentation-navigation.js')), { chrome, URL,
     setTimeout: (fn, ms) => { assert.equal(ms, 3000); timers.set(++timerId, fn); return timerId; },
     clearTimeout: id => timers.delete(id) });
   const listener = [...onMessage.listeners][0];
@@ -43,9 +44,9 @@ function background() {
   return { ports, timers, removed, updates, chrome, sender, request, failConnection: () => { failConnect = true; } };
 }
 
-test('manifest has stable public-key ID and only native messaging permission', () => {
+test('manifest has stable public-key ID and only native messaging and documentation navigation permissions', () => {
   assert.match(extensionId, /^[a-p]{32}$/);
-  assert.deepEqual(manifest.permissions, ['nativeMessaging']);
+  assert.deepEqual(manifest.permissions, ['nativeMessaging','webNavigation']);
   assert.deepEqual(manifest.content_scripts[0].matches, [
     'https://*.youtube.com/*', 'https://*.netflix.com/*', 'https://*.spotify.com/*',
     'https://accounts.google.com/*']);
@@ -87,6 +88,31 @@ test('allows supported main frames and serializes native responses without cross
   }
   assert.equal(h.timers.size, 0);
   assert.equal(h.ports[0].onMessage.listeners.size, 0);
+});
+
+test('documentation status and Return accept exact provider and owned recovery pages only', async () => {
+  for (const url of ['https://open-meteo.com/en/licence',
+    'https://creativecommons.org/licenses/by/4.0/',
+    `chrome-extension://${extensionId}/documentation-return.html`]) {
+    const h = background(), from = h.sender(url);
+    const status = h.request({ action: 'status' }, from);
+    assert.equal(status.keepAlive, true);
+    await tick(); assert.equal(h.ports.length, 1);
+    h.ports[0].onMessage.emit({ ok: true, language: 'ro' }); await tick();
+    assert.deepEqual(status.replies, [{ ok: true, language: 'ro' }]);
+    h.request({ action: 'return' }, from);
+    assert.deepEqual(h.removed, [7]);
+    assert.equal(h.ports[0].closed, true);
+  }
+  const h = background();
+  for (const url of ['http://open-meteo.com/', 'https://open-meteo.com.evil.example/',
+    'https://www.open-meteo.com/', 'https://creativecommons.org.evil.example/',
+    `chrome-extension://foreign/documentation-return.html`,
+    `chrome-extension://${extensionId}/other.html`]) {
+    h.request({ action: 'status' }, h.sender(url));
+    h.request({ action: 'return' }, h.sender(url));
+  }
+  await tick(); assert.equal(h.ports.length, 0); assert.deepEqual(h.removed, []);
 });
 
 test('disconnect responds once and subsequent request reconnects', async () => {

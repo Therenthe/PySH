@@ -91,6 +91,10 @@ class Favorite(StrictBody):
     remove: bool = False
 
 
+class Documentation(StrictBody):
+    provider: Literal["open-meteo", "cc-by"]
+
+
 class External(StrictBody):
     service: Literal["youtube", "netflix", "spotify"]
 
@@ -518,6 +522,17 @@ async def player(request: Request, body: Transport):
         hub.queue_index = next_index
         return hub.cache_playback(result)
     return hub.cache_playback(await hub.player.command(body.action, body.value))
+
+
+@app.post("/api/documentation")
+async def documentation(request: Request, body: Documentation):
+    # Documentation is read-only: no player pause, cache reset, visualizer closure or DRM preparation.
+    hub = request.app.state.hub
+    executable = shutil.which("chromium")
+    if sys.platform != "linux" or not executable:
+        return JSONResponse({"error": "browser_unavailable"}, status_code=409)
+    prefs = hub.store.value
+    return await hub.external.start(body.provider, executable, prefs.language, prefs.theme)
 
 
 @app.post("/api/external")

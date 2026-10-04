@@ -15,6 +15,8 @@ import time
 from urllib.parse import urlencode
 
 
+DOCUMENT_URLS = {"open-meteo": "https://open-meteo.com/", "cc-by": "https://creativecommons.org/licenses/by/4.0/"}
+PROTECTED_SERVICES = {"netflix", "spotify"}
 URLS = {"youtube": "https://www.youtube.com", "netflix": "https://www.netflix.com", "spotify": "https://open.spotify.com"}
 
 
@@ -81,7 +83,7 @@ class ExternalBrowser:
         result = {"state": self._state, "service": self._service, "attempt": self._attempt,
                   "language": self._language, "theme": self._theme}
         if self._state == "ready":
-            result["url"] = URLS[self._service]
+            result["url"] = (URLS | DOCUMENT_URLS)[self._service]
         if self._error:
             result["error"] = self._error
         return result
@@ -94,7 +96,7 @@ class ExternalBrowser:
 
     async def _spawn(self, preparing):
         self._attempt = secrets.token_urlsafe(24)
-        url = "http://127.0.0.1:8765/service-prepare?" + urlencode({"job": self._job, "attempt": self._attempt, "lang": self._language, "theme": self._theme}) if preparing else URLS[self._service]
+        url = "http://127.0.0.1:8765/service-prepare?" + urlencode({"job": self._job, "attempt": self._attempt, "lang": self._language, "theme": self._theme}) if preparing else (URLS | DOCUMENT_URLS)[self._service]
         try:
             self._process = await asyncio.create_subprocess_exec(
                 self._executable, "--ozone-platform=wayland", "--no-first-run", "--disable-features=Translate", "--start-maximized",
@@ -190,7 +192,7 @@ class ExternalBrowser:
             return None
 
     async def start(self, service, executable, language="en", theme="ink"):
-        if service not in URLS:
+        if service not in URLS and service not in DOCUMENT_URLS:
             raise ExternalError("invalid_request")
         async with self._lock:
             if self.running:
@@ -202,11 +204,11 @@ class ExternalBrowser:
             self._language = language if language in ("en", "ro") else "en"
             self._theme = theme if theme in ("ink", "night") else "ink"
             self._error, self._restarted = None, False
-            self._state = "opened" if service == "youtube" else "checking"
+            self._state = "checking" if service in PROTECTED_SERVICES else "opened"
             self._deadline = time.monotonic() + self.timeout
-            await self._spawn(service != "youtube")
+            await self._spawn(service in PROTECTED_SERVICES)
             self._monitor = asyncio.create_task(self._watch(self._job))
-            return {"opened": service == "youtube", "preparing": service != "youtube", "jobId": self._job, "service": service}
+            return {"opened": service not in PROTECTED_SERVICES, "preparing": service in PROTECTED_SERVICES, "jobId": self._job, "service": service}
 
     async def status(self, job_id):
         async with self._lock:
@@ -220,7 +222,7 @@ class ExternalBrowser:
             raise ExternalError("invalid_request")
         async with self._lock:
             self._check_job(job_id, attempt)
-            if not self.running or self._service == "youtube" or self._state not in {"checking", "waiting_component"}:
+            if not self.running or self._service not in PROTECTED_SERVICES or self._state not in {"checking", "waiting_component"}:
                 raise ExternalError("stale_preparation")
             if ready:
                 self._state, self._error = "ready", None
@@ -233,7 +235,7 @@ class ExternalBrowser:
     async def retry(self, job_id):
         async with self._lock:
             self._check_job(job_id)
-            if not self.running or self._state != "error" or self._service == "youtube":
+            if not self.running or self._state != "error" or self._service not in PROTECTED_SERVICES:
                 raise ExternalError("stale_preparation")
             self._state, self._error = "checking", None
             self._deadline = time.monotonic() + self.timeout

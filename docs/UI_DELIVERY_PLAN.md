@@ -28,7 +28,9 @@ Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4def
 | UI-20 | Bluetooth: pending/eroare/retry în dialogul activ, fără eroare ascunsă în spate | Instalat98385/source9e91;52probe recovery+316regresie browser; hardware final OPEN |
 | UI-21 | Salvare locație eșuată păstrează rezultatele și permite retry | Instalat98385/source9e91;52probe recovery+316regresie browser; hardware final OPEN |
 | UI-22 | Animații/microanimații explică acțiunile, aspect matur apropiat de referințe, fără ornament care ascunde UI | Revizie continuă pe800×480; fără autoevaluare10/10 |
-| UI-23 | Atribuire meteo cu link sursă/licență lângă date, revenire la hub fără întreruperea radioului | OPEN; audit furnizor identifică lipsă; implementare izolată în lucru |
+| UI-23 | Atribuire meteo cu link sursă/licență lângă date, revenire la hub fără întreruperea radioului | Integrat local;338regresii inițiale apoi146afectate și30extensie trecute; publicare/instalare/probe native OPEN |
+| UI-24 | Media: după eșecul deschiderii unui folder sau al revenirii, retry repetă exact destinația; răspunsurile vechi nu înlocuiesc navigarea nouă | Integrat local;20probe noi incluse în146regresii afectate trecute; probe native OPEN |
+| UI-25 | Prima intrare Arrange fără poziții salvate: toate cardurile și mânerele compacte încap, fără suprapunere accidentală, la fiecare dimensiune audio | Corectat editor-only: toate cardurile/mânerele încap, credit meteo lizibil și mâner Ink contrastant;22regresii existente și12probe inițiale trecute; instalare/nativ în curs |
 | INTEGRATION-01 | Radio Browser: semnal best-effort numai la porniri explicite cu UUID catalog valid | Instalat24b268/source152f;327backend și110browser teste trecute; actual upstream counter reply not claimed |
 | QA-01 | Auditor uzabilitate execută fiecare comandă, inclusiv eșec/retry/cancel | Raport user-ui-audit-2026-10-04:232existente+12probe+4lifecycle; fixture≠hardware |
 | QA-02 | Auditor aspect inspectează capturi EN/RO×Ink/Noapte și stări expand/collapse/idle | Raport visual-ui-audit-2026-10-04:72combinații+4Arrange; retest nou candidat OPEN |
@@ -39,3 +41,5 @@ Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4def
 | DELIVERY-01 | Toate30DoD:hardware,Wi-Fi/offline,radio/local media,BT,streaming,boot,recovery,secrete,licențe și imagine finală bootată | OPEN; acceptance.json rămâne inventarul obligatoriu, nu se substituie cu teste UI |
 
 Pentru fiecare remediere se consemnează: sursă/candidat, test executat, rezultat real, captură inspectată, publicare și instalare. Utilizatorul primește o actualizare când remedierea este verificată; nu numim implementarea locală drept instalată. Preferințele și aranjarea utilizatorului se păstrează. Auditorii nu schimbă dispozitivul sau conturile pentru a produce un PASS.
+
+Verificarea sursei152/fc4 și build-ul OS nu au pornit runner-ele GitHub din cauza setărilor de plăți/limită ale contului. [Dovada și poarta rămasă](evidence/actions-runner-not-started-2026-10-04.md). Nu se substituie CI/imaginea actuală cu rezultatele verzi ale surseicd1ff. Testele locale și native independente continuă.

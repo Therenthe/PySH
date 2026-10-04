@@ -224,3 +224,12 @@
 .ambient-clouds{overflow:visible}
 /* The open Ink rail keeps its own foreground when the header reveals a night sky. */
 .app[data-theme=ink][data-navigation=open] .topbar-idle.sky-header-night .navigation-toggle{color:#23251f}
+
+/* First-entry Arrange keeps every unpositioned compact card and grip on canvas.
+   Saved cards retain their absolute edge anchors and intentional overlap. */
+.app .home-v2.ambient-home[data-layout-editing=true]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.app .home-v2.ambient-home[data-layout-editing=true] .ambient-weather.card-compact{grid-column:1;grid-row:1;align-self:start;margin-left:0;width:min(250px,calc((100cqw - 16px)/2))}
+.app .ambient-home[data-layout-editing=true] .ambient-forecast{grid-column:2;grid-row:1;align-self:start}
+.app .ambient-home[data-layout-editing=true] .ambient-visualizer{grid-column:1/-1;grid-row:2}
+.app .ambient-home[data-layout-editing=true] .ambient-dock{grid-column:1/-1;grid-row:3}
+.app[data-theme=ink] .ambient-home[data-layout-editing=true] .ambient-visualizer .home-drag-handle{color:var(--ink)}

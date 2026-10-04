@@ -1,0 +1,2 @@
+document.getElementById('return').addEventListener('click',()=>chrome.runtime.sendMessage({action:'return'}));
+chrome.runtime.sendMessage({action:'status'},result=>{if(!chrome.runtime.lastError&&result?.language==='ro'){document.documentElement.lang='ro';document.getElementById('title').textContent='Documentația nu este disponibilă';document.getElementById('message').textContent='Pagina nu a putut fi deschisă în siguranță. Revino la PySH sau încearcă o sursă acceptată.';document.getElementById('return').textContent='Înapoi la PySH';}});

@@ -11,7 +11,7 @@ for(const theme of ['ink','night'])test(`Home ${theme}: compact placement preser
  const edges=async(card:typeof weather)=>{const r=(await card.boundingBox())!;return {right:r.x+r.width,bottom:r.y+r.height,width:r.width,height:r.height};};
  await arrange();const root=(await canvas.boundingBox())!,w=(await weather.boundingBox())!,f=(await forecast.boundingBox())!;
  // Swap vertical regions first: placement is free, not tied to a CSS grid row.
- await drag('weather',w.x,f.y);await drag('forecast',f.x,w.y);expect((await weather.boundingBox())!.y).toBeGreaterThan((await forecast.boundingBox())!.y);
+ const upperY=root.y+12,lowerY=root.y+root.height-w.height-12;await drag('weather',w.x,lowerY);await drag('forecast',f.x,upperY);expect((await weather.boundingBox())!.y).toBeGreaterThan((await forecast.boundingBox())!.y);
  const right=root.x+root.width-12,bottom=root.y+root.height-12;
  // Selecting a grid item removes row stretching; use its actual positioned size.
  await choose('weather');const placedWeather=(await weather.boundingBox())!;await drag('weather',right-placedWeather.width,bottom-placedWeather.height);
