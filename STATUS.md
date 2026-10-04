@@ -1,3 +1,11 @@
+# Current runtime — full district name and current hardware configuration
+
+Installed `48561d4e7ead`, source `9eb5d3b3fb57e32139eec033978cc006f623bec8`. Full district name visible in compact Arrange;26affected browser cases and12native contexts passed, user positions/preferences restored, diagnostic ports closed. All48 native hashes verified, radio progressing, previousd56dd and readable PC backup retained. [Location evidence](docs/evidence/arrange-location-2026-10-04.md).
+
+HW-01 configuration/viewport criterion PASS on this candidate from actual model/RAM/OS/firmware/panel/touch-driver facts and reviewed800×480 captures;29other mandatory product criteria remain OPEN. [Hardware evidence](docs/evidence/hardware-configuration-2026-10-04.md). This does not certify physical touch, audio, DRM or the final OS image. GitHub Actions admission/billing remains an external image gate. New local-media selection race is tracked for correction before acceptance.
+
+Following entries are historical.
+
 # Current runtime — compact Arrange at the edges
 
 Installed `d56dd2feb5c5`, source `ee423b931ee7e3460b969a1d4358c34ec286367f`. All48 native files verified; previous24b retained and readable PC backup verified.36actual Chromium checks verify compact placement/right-bottom expansion/persistence;12first-entry contexts fit all cards/grips. Audited user preferences restored and debug ports closed. Physical touch and complete product acceptance remain OPEN; all30DoD preserved. [Evidence](docs/evidence/weather-source-media-recovery-2026-10-04.md).
