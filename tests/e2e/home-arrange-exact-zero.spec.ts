@@ -1,0 +1,38 @@
+import {writeFile} from 'node:fs/promises';
+import {test,expect} from '@playwright/test';
+
+for(const theme of ['ink','night'])for(const size of ['compact','balanced','large'])for(const key of ['weather','forecast','playback','visualizer'] as const)test(`max-right/bottom ${key} ${size} ${theme}`,async({page},info)=>{
+ test.setTimeout(60000);
+ const ro=info.project.name.endsWith('ro');
+ const state:any={preferences:{language:ro?'ro':'en',theme,setupComplete:true,nightEnabled:false,navigationCollapsed:false,navigationAutoHide:false,screensaverMinutes:0,visualizerStyle:'wave',visualizerSize:'compact',homeCards:['weather','forecast','playback'],homePositions:{},timezone:'Europe/Bucharest',shortcuts:['radio','media']},network:{state:'connected'},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{state:'playing',kind:'radio',station_name:'Radio One',url:'https://example.org/stream'},weather:{current:{temperature_c:13,weather_code:2,is_day:0,feels_like_c:11},daily:Array.from({length:5},(_,i)=>({date:`2026-10-0${i+3}`,weather_code:0,max_c:22,min_c:11})),stale:false}};
+ await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname;let json:any={ok:true};if(path==='/api/session')json={token:'fixture'};else if(path==='/api/state')json=state;else if(path==='/api/preferences'){Object.assign(state.preferences,route.request().postDataJSON());json=state.preferences;}else if(path==='/api/audio/visualization')json={available:true,status:'ready',waveform:Array(64).fill(.2),bars:Array(16).fill(.3),peak:.3,rms:.2,silent:false};await route.fulfill({json});});
+
+ state.preferences.visualizerSize=size;
+ await page.goto('/');await expect(page.locator('.ambient-weather')).toBeVisible();
+ await page.locator('.main-nav button').nth(3).tap();await page.locator('.settings-tabs button').filter({hasText:ro?'Acasă':'Home'}).tap();await page.getByRole('button',{name:ro?'Aranjează Acasă':'Arrange Home',exact:true}).tap();
+ const labels={weather:ro?'Vreme':'Weather',forecast:ro?'Prognoză':'Forecast',playback:ro?'În redare':'Now playing',visualizer:ro?'Vizualizator':'Visualizer'},selectors={weather:'.ambient-weather',forecast:'.ambient-forecast',playback:'.ambient-dock',visualizer:'.ambient-visualizer'};
+ await page.getByRole('button',{name:ro?'Selectează cardul':'Choose card',exact:true}).tap();await page.getByRole('dialog').getByRole('radio',{name:labels[key],exact:true}).tap();
+ const card=page.locator(selectors[key]),root=page.locator('.ambient-home'),c=(await card.boundingBox())!,canvas=(await root.boundingBox())!,grip=(await page.locator(`[data-layout-handle=${key}]`).boundingBox())!;
+ await page.mouse.move(grip.x+24,grip.y+24);await page.mouse.down();await page.mouse.move(grip.x+24+canvas.x+canvas.width-c.width-c.x,grip.y+24+canvas.y+canvas.height-c.height-c.y,{steps:10});await page.mouse.up();
+ const edges=()=>card.evaluate(el=>{const c=el.getBoundingClientRect(),r=el.closest('.ambient-home')!.getBoundingClientRect();return {right:r.right-c.right,bottom:r.bottom-c.bottom,left:c.left-r.left,top:c.top-r.top};});
+ await expect.poll(async()=>Math.abs((await edges()).right)).toBeLessThan(2);await expect.poll(async()=>Math.abs((await edges()).bottom)).toBeLessThan(2);
+ await page.getByRole('button',{name:ro?'Gata':'Done',exact:true}).tap();expect(state.preferences.homePositions[key].anchorX).toBe('right');expect(state.preferences.homePositions[key].anchorY).toBe('bottom');const saved=JSON.stringify(state.preferences.homePositions);
+ // Weather/forecast stay compact; playback deliberately retracts into signal after Done.
+ await expect(page.locator('[data-layout-editing=true]')).toHaveCount(0);
+ if(key==='playback'){
+  await expect(card).toBeHidden(); // Expected: compact now-playing retracts into the signal.
+  if(!await card.isVisible())await page.locator('.ambient-visualizer').tap();
+ }else await expect(card).toBeVisible();
+ await page.waitForTimeout(400);const afterDone=await edges();expect(Math.abs(afterDone.right)).toBeLessThan(2);expect(Math.abs(afterDone.bottom)).toBeLessThan(2);
+ const expansionControl=key==='weather'?card.locator('.weather-heading'):key==='playback'?card.locator('.playback-expand'):card;const toggle=async()=>{const expanded=await expansionControl.getAttribute('aria-expanded');await expansionControl.tap();await expect(expansionControl).toHaveAttribute('aria-expanded',expanded==='true'?'false':'true');await page.waitForTimeout(400);await page.waitForTimeout(80);};
+ // Expansion goes inward; the right edge stays exactly on the canvas boundary.
+ if(key!=='playback')await toggle();const grown=await edges();await page.screenshot({path:info.outputPath(`expanded-zero-${key}-${size}-${theme}.png`)});expect(Math.abs(grown.right)).toBeLessThan(2);expect(Math.abs(grown.bottom)).toBeLessThan(2);expect(grown.left).toBeGreaterThanOrEqual(-1);
+ await page.reload();await expect(card).toBeVisible();await page.waitForTimeout(400);await page.waitForTimeout(80);
+ const expanded=await edges();expect(Math.abs(expanded.right)).toBeLessThan(2);expect(Math.abs(expanded.bottom)).toBeLessThan(2);expect(expanded.left).toBeGreaterThanOrEqual(-1);expect(expanded.top).toBeGreaterThanOrEqual(-1);expect(JSON.stringify(state.preferences.homePositions)).toBe(saved);
+ // Both growth and shrinking must retain the selected edges, including new signal sizes.
+ // Real time is intentional: mocked RAF/clock can freeze CSS resize transitions.
+ await page.waitForTimeout(16000);
+ if(key!=='playback'){await expect(card).toBeVisible();await expect(expansionControl).toHaveAttribute('aria-expanded','false');await toggle();await toggle();const diagnostic=await card.evaluate(el=>{const root=el.closest('.ambient-home')! as HTMLElement,c=getComputedStyle(el),r=getComputedStyle(root);return {root:root.getBoundingClientRect().toJSON(),card:el.getBoundingClientRect().toJSON(),rootMetrics:{offsetHeight:root.offsetHeight,clientHeight:root.clientHeight,scrollHeight:root.scrollHeight},rootStyle:{rows:r.gridTemplateRows,gap:r.gap,padding:r.padding,height:r.height,transform:r.transform},cardStyle:{inline:el.getAttribute('style'),bottom:c.bottom,margin:c.margin,transform:c.transform,gridArea:c.gridArea},homePhase:document.querySelector('.app')?.getAttribute('data-home-phase'),transportExpanded:root.classList.contains('transport-expanded'),compact:el.classList.contains('card-compact')};});await writeFile(info.outputPath('post-toggle-geometry.json'),JSON.stringify(diagnostic,null,2));await info.attach('post-toggle-geometry',{body:JSON.stringify(diagnostic),contentType:'application/json'});await expect.poll(async()=>Math.abs((await edges()).right)).toBeLessThan(2);await expect.poll(async()=>Math.abs((await edges()).bottom)).toBeLessThan(2);}
+ if(key==='playback'){await page.locator('.main-nav button').nth(3).tap();await page.locator('.settings-tabs button').filter({hasText:ro?'Acasă':'Home'}).tap();await page.getByRole('button',{name:ro?'Aranjează Acasă':'Arrange Home',exact:true}).tap();await expect(card).toBeVisible();await expect(card).toHaveClass(/card-compact/);await expect.poll(async()=>Math.abs((await edges()).right)).toBeLessThan(2);await expect.poll(async()=>Math.abs((await edges()).bottom)).toBeLessThan(2);expect(JSON.stringify(state.preferences.homePositions)).toBe(saved);}
+ await page.screenshot({path:info.outputPath(`exact-edge-${key}-${size}-${theme}.png`)});const report={key,size,theme,language:ro?'ro':'en',afterDone,grown,expanded,final:await edges(),saved};await writeFile(info.outputPath('max-edge-report.json'),JSON.stringify(report,null,2));await info.attach('max-edge-report',{body:JSON.stringify(report),contentType:'application/json'});
+});

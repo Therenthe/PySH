@@ -1,0 +1,9 @@
+# Dedicated OS performance and recovery — 2026-10-03
+
+Target runtime115cb4173f52/sourcea6f61ec, USB base59fcd319 with session04d1792 assets and Bluetooth plugin1.4.2-1+rpt3. Probes operated on the installed pysh.service, exact release and native Chromium profile, retaining the existing labwc session. No auxiliary browser context or desktop-browser result is substituted.
+
+Five app service launches reached native Home with fonts loaded at800×480 in4.2330,4.0414,4.1019,4.0374,4.1117 seconds. Timing starts at systemd's monotonic app-unit activation and ends at observed Home visibility. All are below10s. These are qualified app relaunches, not cold boots or five starts of the full graphical session.
+
+Complete owned-process PSS sampled120.0001s after the fifth native Home, finished120.1375s. Stable membership15 processes, total563.487MiB, zero zombies; includes supervisor/API/mpv, native kiosk, Chromium workers and crashpad processes. Exact-profile checks found no Chromium escaping the descendant tree. This passes the700MiB idle budget, but media-load memory and UI responsiveness still require their separate scenarios. Temporary debugger removed from the launch configuration; normal unit and exact preferences restored.
+
+Separate recovery probe killed only the single owned API, then the single owned kiosk. API replacement observed in2.396s; kiosk replacement in1.179s. These timings establish process/API recovery, not the final rendered-page latency. After cleanup grace, zero owned zombies and one live mpv remained. Preferences file SHA256 stayed identical throughout. Actual administrative journal records `API exited code=-9; restarting API and kiosk` and `Kiosk exited code=-9; restarting kiosk`, without credentials. REL-02 passes for this identified dedicated-OS runtime; other release, cold-boot and stability criteria remain OPEN.

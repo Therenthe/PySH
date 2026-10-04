@@ -2,6 +2,8 @@
 
 ## Scop și stare
 
+Aranjarea Acasă se face cu cardurile restrânse. Cardurile aliniate la dreapta sau jos păstrează acea margine când se extind spre spațiul liber; pozițiile și straturile se salvează. HomePosition fără ancore explicite rămâne compatibil cu vechile coordonate stânga/sus. Inventarul urmărit al cerințelor și restanțelor este în UI_DELIVERY_PLAN.md.
+
 Pi Smart Hub este un dispozitiv de uz zilnic pentru Raspberry Pi 4 (4 GB) și ecran tactil DSI de 7 inchi, 800 × 480, în orientare landscape. Reunește ceasul, vremea, comenzile uzuale și accesul la audio/video într-o interfață dedicată, fluentă și ușor de folosit prin atingere. Produsul final trebuie să fie complet, configurabil și recuperabil în utilizare reală; un shell demonstrativ nu îndeplinește definiția.
 
 Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că funcțiile sunt implementate sau că serviciile externe au fost validate pe Pi. Implementarea locală a fost importată în structura PySH. Starea verificată și restanțele sunt în STATUS.md; această specificație nu certifică funcțiile implementate.
@@ -13,15 +15,20 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 - Toate ecranele, dialogurile, erorile și configurările sunt disponibile în română și engleză. Limba poate fi schimbată din setări și alegerea persistă după repornire.
 - Interfața este proiectată întâi pentru 800 × 480, landscape și atingere. Ținta tactilă minimă este 48 × 48 px, cu spațiere între acțiuni riscante. Textul, dialogurile și tastatura virtuală nu se taie la rezoluția țintă.
 - Mișcarea și efectele vizuale sunt discrete și nu ascund starea sau comenzile. Contrastul și lizibilitatea au prioritate față de ornament.
+- Microanimațiile explică acțiunile și tranzițiile: atingere, schimbarea paginii, încărcare, asociere și schimbarea redării. Respectă reducerea mișcării și bugetele de performanță pe Pi.
 
 ## Zone și capabilități
 
 ### Acasă și navigare
 
-- Ceas mare, dată localizată, vreme curentă și prognoză utilă, cu oră de actualizare și stare clară pentru date indisponibile sau expirate.
+- Un singur ceas și o singură dată în bara de sus, fără salut/profil fictiv. Ambient Canvas urmărește condiția reală și zi/noapte; datele expirate folosesc o scenă neutră. Prognoza cuprinde cinci coloane vizibile cu icoana condiției și maximă/minimă, fără scroll. Umiditatea, presiunea, vântul și UV provin din date reale; valorile absente rămân indisponibile.
 - Card principal dinamic (de exemplu, redarea activă, radio sau un mesaj de stare) și scurtături configurabile spre funcțiile folosite frecvent.
 - Bară de stare pentru rețea, Bluetooth și audio; navigare coerentă către Acasă, media și setări.
 - Aspect echilibrat, fără suprapuneri, zone moarte disproporționate sau text care cere scroll accidental pe panourile de bază.
+- Navigarea laterală se poate retrage și redeschide printr-o comandă tactilă permanent accesibilă; opțional se retrage după schimbarea paginii. Fundalul rămâne vizibil prin panouri discrete, fără a compromite lizibilitatea. Luna reflectă faza calculată pentru moment; efectele de stele sunt decorative și respectă reducerea mișcării.
+- Barele de scroll nu sunt vizibile în nicio zonă PySH; conținutul derulabil rămâne accesibil prin atingere. Aceasta include liste, setări, dialoguri și serviciile externe gestionate de hub.
+- Acasă prezintă o singură zonă principală pentru redarea curentă, fără repetarea acelorași informații într-un card și o bară. La radio, numele postului rămâne clar, separat de artist/melodie și stările de flux.
+- Pictograma meteo corespunde codului condiției reale și etichetei localizate: senin folosește simbolul de soare, iar stările fără date au un simbol distinct.
 
 ### Media și audio
 
@@ -36,8 +43,11 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 
 - Prima pornire: întâmpinare, selecția limbii, verificarea rețelei și ghid Wi-Fi/Ethernet cu progres, confirmarea rezultatului și cale de revenire. Configurarea trebuie să poată fi reluată ulterior.
 - Setări rapide și pagină dedicată pentru limbă, rețea, audio, teme, mod de noapte, screensaver, sursa/vizualizarea vremii și comportament la pornire.
+- Vremea se actualizează automat, cu reluare după indisponibilitate; utilizatorul nu face refresh manual. Căutarea locației include București și sectoarele1–6, fără a confunda orașul cu Bucureștii Noi. Filtrele radio acceptă diferențe de majuscule/minuscule și aliasurile localizate suportate.
+- Screensaverul păstrează controale tactile pentru redare/pauză și anterior/următor când radioul este activ; la radio acestea aleg posturile, iar la fișiere locale piesele. Sunt disponibile stiluri de vizualizare audio configurabile; vizualizarea de nivel/undă trebuie să reflecte semnalul real, iar o animație decorativă să fie prezentată explicit astfel.
 - Teme: temă întunecată pentru utilizare nocturnă și temă vizuală inspirată de E-Ink pe LCD (paletă predominant alb-negru cu accente limitate; ecranul rămâne LCD). Temele schimbă o paletă și tokenuri comune, nu fragmentează comportamentul UI.
 - Preferințele supraviețuiesc repornirii. Datele sensibile de rețea și credențialele de servicii nu sunt afișate în jurnale sau în interfață după salvare.
+- Modul de noapte poate urma apusul/răsăritul locației meteo, un program orar sau selecția manuală. Lipsa orelor solare pentru ziua curentă este explicată și păstrează tema aleasă. Screensaverul poate afișa ceas/redare cu semnal între ele sau numai vizualizatorul ales pe întregul ecran; atingerea dezvăluie temporar comenzi și revenire. Listele de setări rămân deschise peste actualizările periodice ale stării și ceasului.
 - În runtime-ul cu desktop, utilizatorul poate părăsi aplicația și reveni la desktop printr-o acțiune vizibilă, protejată de atingere accidentală. În sesiunea dedicată PySH OS, aceeași zonă oferă explicit „Mod de service”: oprește redarea, păstrează diagnosticul accesibil și permite revenirea în hub fără pierderea setărilor. Recuperarea administrativă se validează separat înainte de instalarea OS (ADR-0004 și ADR-0007).
 
 ### Pornire, stare și recuperare
@@ -62,4 +72,15 @@ Implementarea existentă folosește Open-Meteo; decizia și intervalele sunt des
 
 ## Arhitectură și persistență
 
+Pe Acasă, comenzile se retrag pentru a lăsa scena ambientală vizibilă. Controlul de navigare urmează marginea barei și ajunge la4px de marginea ecranului când bara este închisă. După15secunde fără folosirea cardului, vremea ascunde coloana cu vânt/umiditate/presiune/UV și ajunge la jumătate din lățime; prognoza păstrează prima zi și se extinde/restrânge la atingere. Cu vizualizarea activată, cardul de redare se retrage în vizualizatorul mărit; atingerea vizualizatorului readuce cardul, iar reatingerea îl retrage. Fiecare card are temporizator independent. Pictograma postului folosește artwork-ul disponibil din catalog, cu monogramă de rezervă când lipsește. Scena combină luna în faza aproximativă cu norii pentru condiții nocturne parțial senine; precipitațiile discrete trec peste silueta orașului înaltă de170px. Datele meteo lipsă/expirate nu declanșează efecte prezentate ca actuale. Mișcarea redusă dezactivează animațiile.
+
 Preferințele utilizatorului și listele locale rămân disponibile fără internet; sursele externe au adaptoare separate; textul UI este separat de logică pentru EN/RO; setările sunt salvate atomic și fără secrete în loguri. Arhitectura folosește serviciile deja prezente pe Pi; compatibilitatea fiecărui flux se dovedește în bucla DoD, nu se deduce din alegerea frameworkului.
+## Personalizarea scenei Acasă
+
+După 10 secunde fără atingere sau tastare, bara de sus devine transparentă; ceasul și controlul meniului rămân vizibile și accesibile. O interacțiune readuce imediat fundalul solid. Textul se adaptează scenei nocturne și temei; animațiile respectă mișcarea redusă.
+
+Setări → Acasă permite alegerea cardurilor Vreme, Prognoză și Redare. „Aranjează Acasă” deschide un mod explicit în care mânerele tactile mută separat fiecare card și vizualizatorul, fără a declanșa comenzile lor. Gata salvează pozițiile proporțional cu spațiul disponibil; Anulează păstrează aranjarea salvată, iar Resetează revine la pozițiile implicite după salvare. Pozițiile sunt limitate la ecran când navigarea sau dimensiunile se schimbă. Utilizatorul poate suprapune deliberat carduri; nu există rearanjare automată a alegerilor sale.
+
+Vizualizatorul are dimensiuni Compact, Echilibrat și Mare, plus stilurile Undă, Bare, Orbită, Panglică, Oglindă și Inele. Stilurile folosesc semnalul real de ieșire, fără microfon; cu mișcare redusă arată nivelul numeric. Scenele nocturne includ ferestre luminate, nori cu contururi distincte și stele căzătoare decorative în grupuri cu intervale și poziții variabile. Aceste efecte nu sunt previziuni astronomice.
+
+În modul Aranjează Acasă, coordonatele sunt raportate la întreaga scenă, nu la rândurile aspectului implicit. Lista „Selectează cardul” aduce în față un card inclusiv când este acoperit; stratul de suprapunere se salvează împreună cu poziția. Limitele păstrează cardul integral pe suprafața Acasă.

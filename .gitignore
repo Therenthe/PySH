@@ -13,6 +13,7 @@ tests/_pytest-tmp/
 tests/pytest-run-*/
 test-results/
 playwright-report/
+os/image/payload/
 .env
 .env.*
 !.env.example

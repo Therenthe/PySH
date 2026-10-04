@@ -1,0 +1,31 @@
+# Current hardware configuration670c — 2026-10-04
+
+Candidate `670c8155227b`, source `beab133f81aa3de7d09c4901faef64efb952c0bb`. Fresh read-only collection at `2026-10-04T03:59:35.075164+00:00`–`2026-10-04T03:59:36.001783+00:00` verified source/current release, all48runtime hashes, SD identity and no pending transaction before/after collection. Manifest SHA256 `519ddf29caf91565fa7372e4a6c46b8bfd273d97cf9ee3ab809f7a136e73501d`. Raw facts SHA256 `9bb26a4e872ef07bf29728283154255070fdd8e1fa74147cf88e96653fb66f47`; actual compositor PNG800×480 SHA256 `f9b6a231ee3a39c20a10732365ab93d352eb9bc4e24dc1bbcb4fd1b2137e0cd3`. Reports and capture remain private in `.runtime/hw01-670c/`.
+
+Observed model Pi4B Rev1.5/c03115,4096MiB firmware memory, MemTotal3886824KiB, Debian13/aarch64, kernel6.18.50+rpt-rpi-v8 and firmwarea86983925695a7e63166327d7c002d64040ed31d. Base-image source3ca7e4e/runtimec8ac is distinguished from current application/source. DSI-1 is connected/enabled800×480@60.028999Hz, scale1, transform180, position0,0. Panel/simple-panel, vc4DSI, edt_ft5x06 and panel regulator driver bindings and identity touch calibration were observed. Commercial make/model/serial remain null. [Current table](../HARDWARE.md).
+
+Root and independent auditor viewed the actual fresh whole-compositor capture: upright clock, Moon/sky, complete skyline and audio waveform in the ambient Home state, with no visible clipping or browser chrome. Current native Media captures also show the800×480 application viewport. This accepts only HW-01 configuration/viewport; it does not certify a physical finger, every interactive Home control, UX-02, audible playback or whole product delivery.
+
+The current571OS package and15Python distribution records exactly equal the previous inventory, including versions/source identifiers and retained-notice hashes. All571copyright records remain observed/nonempty; Python notices are unchanged. [Inventory](../licenses/runtime-inventory-2026-10-04.json) now identifies this collection/candidate. Retention is not proof of redistribution permission, source/source-offer obligations, a PySH code license or final-image compliance. Those delivery gates remain OPEN.
+
+## Earlier evidence
+
+# Historical hardware configuration48561 — 2026-10-04
+
+Candidate `48561d4e7ead`, source `9eb5d3b3fb57e32139eec033978cc006f623bec8`. Read-only collection ran at00:54:01–00:54:03 UTC; root announced and executed the reviewed collector. Runtime identity, activated source, all48 manifest hashes, active SD UUID and absence of an update transaction were checked before collection; current release/transaction identity was checked again afterwards. Manifest SHA256 `72e50524c8fd9edcb876323512812b56f7c590bb0185031ca45fb3c045bb9ea8`.
+
+The [software version and retained-notice inventory](../licenses/runtime-inventory-2026-10-04.json) contains only software versions and notice hashes; raw hardware data and PNG remain private. Model Pi4B Rev1.5/revisionc03115, firmware total memory4096MiB, Linux MemTotal3886824KiB, Debian13/aarch64, kernel6.18.50+rpt-rpi-v8 and firmwarea86983925695a7e63166327d7c002d64040ed31d are observed. Image base source3ca7e4e/runtimec8ac9c709acb is distinguished from the updated application. The original image acceptance marker is recorded as provenance, not reclassified by this check.
+
+DSI-1 is connected/enabled800×480 at60.028999Hz, scale1, transform180, position0,0. DT identifies raspberrypi,7inch-dsi/simple-panel; actual panel-simple/panel_simple and vc4_dsi/vc4 bindings are observed. Commercial make/model/serial are null; no vendor identity is inferred. I²C edt-ft5506 is bound to edt_ft5x06, with the observed7inch regulator bound to rpi_touchscreen_attiny/rpi_panel_attiny_regulator. Touch mapping is DSI-1 with identity calibration and mouse emulation disabled. These are driver/configuration facts, not a physical touch acceptance tour.
+
+Actual whole-compositor PNG:800×480, SHA256 `0796a7984933f22e3ea382313b90dcfc7e13e357a7f27f503708d699d7c3ea51`. Independently reviewed ambient state: upright text, full landscape viewport, no visible clipping or browser chrome. Private rawfacts SHA256 `e6e51ce5f43f5ba260572f65266d6bf1be0cd02ee24de69938bd9307e54016ef`; raw facts and screenshot remain in ignored `.runtime/hw01-48561/`.
+
+Root reviewed actual interactive Home800×480 SHA256a60889097ca1a0b5ac6d7950064d991f752d247602736d53e8e5f082b9dddd43: upright clock, weather, forecast, station and controls fit the viewport. Root also reviewed initial RO/Night/Large800×480 SHA25624c2ac9bf62a9a4e192173ca0a3da911d3d79c62559ca3bbc4ec5439bbed6b8e: all four compact cards/grips and full district name fit. Twelve native EN/RO×themes×sizes cases passed with exact preference restoration and cleanup; these injected-input probes do not prove physical finger response. No observer has claimed a physical touch pass, a complete UI matrix, audio acceptance or whole-product delivery from this hardware record.
+
+## Current dependency retention
+
+Native dpkg inventory has571 installed packages. Every package has a successfully read, nonempty copyright file, with resolved path/hash recorded. Compared with the historical569-package image inventory, normalizing Debian multiarch names shows only libpulsedsp and pulseaudio-utils17.0+dfsg1-2+rpt1 added; all remaining package versions are unchanged.
+
+Native venv has15 distributions: all14 runtime distributions match current requirements.lock and each has a nonempty retained license/notice group; pip25.1.1 is the additional installer and retains two notices. Independently opened current48-file runtime archive: complete archive checksum and all48 member hashes match. Full upstream React/react-dom/scheduler MIT texts, NASA and GeoNames provenance, three font notices and separate dist/licenses/open-meteo.txt provider/CC-BY4/transformation text are present. No concrete retained-notice omission was found in this scope.
+
+Notice retention and exact dependency inventory are now current-candidate evidence. They do not establish redistribution permission, source/source-offer fulfilment, a project license, CDM terms or clean-install/update/rollback completion. DEL-01/DEL-02 remain separate gates; do not infer their PASS from the inventory.

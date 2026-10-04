@@ -1,0 +1,138 @@
+[
+  {
+    "url": "https://aa.usno.navy.mil/api/celnav?date=2026-10-04&time=06:00:00&coords=44.4,26.1",
+    "latitude": 44.4,
+    "longitude": 26.1,
+    "bodies": [
+      {
+        "azimuth": 114.161088,
+        "body": "sun",
+        "geocentricAltitude": 16.920848,
+        "parallax": 0.002331
+      },
+      {
+        "azimuth": 220.763538,
+        "body": "moon",
+        "geocentricAltitude": 66.43687,
+        "parallax": 0.397209
+      }
+    ],
+    "utc": "2026-10-04T06:00:00Z"
+  },
+  {
+    "url": "https://aa.usno.navy.mil/api/celnav?date=2026-10-04&time=10:00:00&coords=44.4,26.1",
+    "latitude": 44.4,
+    "longitude": 26.1,
+    "bodies": [
+      {
+        "azimuth": 178.564087,
+        "body": "sun",
+        "geocentricAltitude": 41.159386,
+        "parallax": 0.00183
+      },
+      {
+        "azimuth": 278.223664,
+        "body": "moon",
+        "geocentricAltitude": 27.776651,
+        "parallax": 0.877022
+      }
+    ],
+    "utc": "2026-10-04T10:00:00Z"
+  },
+  {
+    "url": "https://aa.usno.navy.mil/api/celnav?date=2026-10-04&time=15:00:00&coords=44.4,26.1",
+    "latitude": 44.4,
+    "longitude": 26.1,
+    "bodies": [
+      {
+        "azimuth": 255.415532,
+        "body": "sun",
+        "geocentricAltitude": 8.169987,
+        "parallax": 0.002413
+      }
+    ],
+    "utc": "2026-10-04T15:00:00Z"
+  },
+  {
+    "url": "https://aa.usno.navy.mil/api/celnav?date=2026-10-04&time=22:00:00&coords=44.4,26.1",
+    "latitude": 44.4,
+    "longitude": 26.1,
+    "bodies": [
+      {
+        "azimuth": 58.43411,
+        "body": "moon",
+        "geocentricAltitude": 1.059108,
+        "parallax": 0.981331
+      }
+    ],
+    "utc": "2026-10-04T22:00:00Z"
+  },
+  {
+    "url": "https://aa.usno.navy.mil/api/celnav?date=2026-10-04&time=23:00:00&coords=44.4,26.1",
+    "latitude": 44.4,
+    "longitude": 26.1,
+    "bodies": [
+      {
+        "azimuth": 68.224215,
+        "body": "moon",
+        "geocentricAltitude": 10.145243,
+        "parallax": 0.968799
+      }
+    ],
+    "utc": "2026-10-04T23:00:00Z"
+  },
+  {
+    "url": "https://aa.usno.navy.mil/api/celnav?date=2026-10-04&time=11:00:00&coords=44.4,26.1",
+    "latitude": 44.4,
+    "longitude": 26.1,
+    "bodies": [
+      {
+        "azimuth": 198.129374,
+        "body": "sun",
+        "geocentricAltitude": 39.58012,
+        "parallax": 0.001874
+      },
+      {
+        "azimuth": 287.266985,
+        "body": "moon",
+        "geocentricAltitude": 17.651516,
+        "parallax": 0.94182
+      }
+    ],
+    "utc": "2026-10-04T11:00:00Z"
+  },
+  {
+    "url": "https://aa.usno.navy.mil/api/celnav?date=2026-06-21&time=00:00:00&coords=69.65,18.96",
+    "latitude": 69.65,
+    "longitude": 18.96,
+    "bodies": [
+      {
+        "azimuth": 16.998699,
+        "body": "sun",
+        "geocentricAltitude": 4.03739,
+        "parallax": 0.002391
+      }
+    ],
+    "utc": "2026-06-21T00:00:00Z"
+  },
+  {
+    "url": "https://aa.usno.navy.mil/api/celnav?date=2026-12-21&time=12:00:00&coords=69.65,18.96",
+    "latitude": 69.65,
+    "longitude": 18.96,
+    "bodies": [
+      {
+        "azimuth": 197.831179,
+        "body": "sun",
+        "geocentricAltitude": -4.13156,
+        "parallax": "---"
+      },
+      {
+        "azimuth": 53.695497,
+        "body": "moon",
+        "geocentricAltitude": 12.266113,
+        "parallax": 0.98094
+      }
+    ],
+    "utc": "2026-12-21T12:00:00Z"
+  }
+]

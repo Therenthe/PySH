@@ -1,0 +1,11 @@
+# Immersive-service successor OS image
+
+Image CI37125060698 succeeded for source20f19b907359da5aede58b933888c0eb7a5f5be6, after its full application CI passed. This image has not been written to storage or physically booted. The device remains on the previously installed corrected USB image with updated application934d0d338e66; original SD is retained.
+
+All five artifact ZIPs were downloaded to a separate PC destination and their SHA256 digests verified against GitHub artifact metadata. The three compressed-image parts were independently checked against PART-SHA256SUMS, assembled in order and checked against SHA256SUMS. Gzip decompression completed, checking its stream checksum and exact reported raw size. Raw image4,571,791,360 bytes, SHA256 `dcc40256ff08ee195bc39616a3829d7773c1402bfb0409ee680f973f347790eb`; gzip SHA256 `67a46fada9f55aed8ba90153a10881af69a3ec36d78d27a0cb8cc8b0d13cac4c`. MBR signature, two expected nonoverlapping partitions and bounds match the published inspection.
+
+A separate read-only ext4 parser on the PC verified the actual raw-image filesystem, root UUIDcbcdc99d-5390-4a19-94ff-6d793f448ed2, embedded build provenance and all39 installed runtime files against the image manifest. It also inspected the user service, exact native keyboard extension origin, touch identity calibration, decoration suppression and Translate-disabling flags in both browser launchers. No filesystem mount or block-device write was involved.
+
+The image runtime is4ce1a5fe6390. The application installed earlier from the PC package is934d0d338e66. Comparing all39 manifest entries finds only three differences: dist/fonts/fonts.css, dist/fonts/dmmono-LICENSE.txt and dist/fonts/dmsans-LICENSE.txt. Reading their actual image bytes proves exact equality with the PC copies after CRLF→LF conversion. All other entries are byte-identical. These different artifact identities are preserved; physical acceptance of the installed runtime is not relabeled as an image boot test.
+
+Offline public recovery-key provisioning, complete image boot/installation/rollback and all current-candidate hardware/product gates remain OPEN. Artifact integrity and inspection do not establish a flash-ready product.

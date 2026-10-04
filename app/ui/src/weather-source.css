@@ -1,0 +1,9 @@
+.weather-source{display:inline-flex;align-items:center;gap:4px;min-width:0;color:inherit}
+.weather-source a{display:flex;align-items:center;justify-content:center;min-width:68px;min-height:48px;padding:4px;box-sizing:border-box;font-family:inherit;font-size:14px;font-weight:500;line-height:18px;color:inherit;text-decoration:underline;text-underline-offset:3px;white-space:normal;overflow-wrap:normal;text-align:center;touch-action:manipulation;border-radius:8px}
+.weather-source a:focus-visible{outline:3px solid currentColor;outline-offset:2px}
+.weather-source a:active{background:var(--ambient-panel,var(--saver-button,#ffffff10))}
+.weather-source a[aria-disabled=true]{opacity:.65;cursor:wait}
+
+.weather-top>.weather-source{flex:0 0 68px}.weather-top .weather-heading{min-width:0}.weather-top .weather-location{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ambient-forecast header .weather-source{margin-left:auto;flex-shrink:0}.ambient-forecast header .weather-source a{max-width:68px}.app .ambient-home[data-layout-editing=true] .weather-source{position:relative;z-index:5}.weather-provenance{font-size:14px;line-height:21px}
+.app .ambient-home .weather-source a{min-width:48px;width:48px;max-width:48px}.weather-top>.weather-source{flex-basis:48px}.app .ambient-home .ambient-forecast{min-height:116px}.app .ambient-home .ambient-forecast.card-compact .forecast-line{margin-top:5px}
+.app .ambient-home .weather-top .weather-location{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;text-overflow:clip;font-size:14px;line-height:16px;overflow:hidden}

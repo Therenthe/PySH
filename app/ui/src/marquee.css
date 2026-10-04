@@ -1,0 +1,6 @@
+.marquee-text{display:block;max-width:100%;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.marquee-content{display:inline-block;white-space:nowrap;max-width:none;vertical-align:top}
+.marquee-moving .marquee-content{animation:metadata-read var(--marquee-duration) linear infinite;will-change:transform}
+@keyframes metadata-read{0%,12%{transform:translateX(0)}45%,62%{transform:translateX(var(--marquee-offset))}95%,100%{transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.marquee-moving .marquee-content{animation:none;will-change:auto}}
+@media(prefers-reduced-motion:reduce){.marquee-text{overflow-x:auto;touch-action:pan-x;scrollbar-width:none}.marquee-text::-webkit-scrollbar{display:none}}

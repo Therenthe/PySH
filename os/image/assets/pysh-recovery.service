@@ -1,0 +1,13 @@
+[Unit]
+Description=Provision PySH recovery public key
+After=local-fs.target
+Before=ssh.service
+ConditionPathExists=/boot/firmware/pysh-recovery.pub
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/pysh-provision-recovery
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

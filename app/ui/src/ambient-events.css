@@ -1,0 +1,16 @@
+.ambient-events{position:absolute;inset:0;overflow:hidden;pointer-events:none;container-type:size}
+.ambient-flight{position:absolute;width:40px;height:20px;animation:ambient-flight-traverse var(--flight-duration) linear both;will-change:transform}
+.ambient-flight svg{display:block;width:40px;height:20px;fill:#334956;opacity:.75}
+.ambient-events[data-night=true] .ambient-flight svg{fill:#bbcbd0;opacity:.64}
+.aircraft-navigation{fill:#d6a6a2;animation:aircraft-navigation 2800ms steps(1,end) infinite}
+.aircraft-navigation-secondary{fill:#b7d3c7;animation-delay:1400ms}
+.ambient-lunar-event{position:absolute;right:23px;top:85px;width:90px;height:90px}
+.ambient-lunar-event svg{display:block;width:90px;height:90px;overflow:visible}
+.lunar-contact{fill:#e8efdc;animation:lunar-contact var(--dust-duration) ease-out both}
+.lunar-dust{fill:#d7d7c9;transform-box:fill-box;transform-origin:center;animation:lunar-dust var(--dust-duration) ease-out both}
+.dust-1{fill:#c7cbbf;animation-delay:40ms}.dust-2{fill:#adb9b3;animation-delay:80ms}
+@keyframes ambient-flight-traverse{from{transform:translate(0,0)}to{transform:translate(var(--flight-dx),var(--flight-dy))}}
+@keyframes aircraft-navigation{0%,8%{opacity:.8}9%,100%{opacity:0}}
+@keyframes lunar-contact{0%{opacity:0}3%{opacity:.65}12%,100%{opacity:0}}
+@keyframes lunar-dust{0%{opacity:0;transform:translate(0,0) scale(.2)}15%{opacity:.22}100%{opacity:0;transform:translate(-3px,-6px) scale(1.6)}}
+@media(prefers-reduced-motion:reduce){.ambient-flight,.ambient-lunar-event{display:none}.ambient-flight,.aircraft-navigation,.lunar-contact,.lunar-dust{animation:none}}

@@ -36,7 +36,7 @@ async function fixture(page: Page, language: 'en'|'ro', theme: 'ink'|'night', se
       if(path==='/api/bluetooth/reply')state.bluetooth.prompts=[];
       if(path==='/api/exit'&&state.appliance){state.serviceMode=true;state.player={state:'idle'};}
       if(path==='/api/service/return')state.serviceMode=false;
-      json={ok:true};
+      json=path==='/api/favorites'?state.preferences:path==='/api/bluetooth/reply'?{available:true,replied:true,id:body.id,error:null}:{ok:true};
     } else {f.unexpected.push(`${method} ${path}`);status=500;json={error:'unexpected_test_request'};}
     await route.fulfill({status,json});
   });
@@ -66,7 +66,67 @@ async function capture(page:Page, info:TestInfo, name:string, defects:string[]) 
 }
 async function closeModal(page:Page, ro:boolean){await page.locator('.modal-card header').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();}
 
+for(const theme of ['ink','night'] as const){
+ test(`Home separates radio source and song without duplicated transport ${theme}`,async({page},info)=>{
+  const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
+  f.state.player={state:'playing',kind:'radio',station_name:'Radio București',title:'An artist — A very long song title '.repeat(6),url:'https://example.com/test.mp3'};
+  await page.goto('/');await expect(page.locator('.playback-source')).toHaveText('Radio București');
+  await expect(page.locator('.playback-metadata')).toHaveText(f.state.player.title);await expect(page.locator('.now-bar')).toHaveCount(0);await expect(page.locator('.top-clock')).toHaveCount(1);
+  await expect(page.locator('.ambient-current svg')).toHaveAttribute('data-weather-condition','clear');
+  const defects:string[]=[];await capture(page,info,'home-polished-radio',defects);
+  const overflow=await page.locator('.home-v2,.home-playback').evaluateAll(elements=>elements.some(el=>el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1));
+  expect(overflow).toBe(false);expect(defects).toEqual([]);
+ });
+ test(`screensaver station controls preserve the screen and Return wakes ${theme}`,async({page},info)=>{
+  const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
+  f.state.preferences.screensaverMinutes=1;f.state.preferences.favorites=[{name:'Radio One',url:'https://example.com/one'},{name:'Radio Two',url:'https://example.com/two'}];
+  f.state.player={state:'playing',kind:'radio',station_name:'Radio One',title:'Artist — Song',url:'https://example.com/one'};
+  await page.clock.install();await page.goto('/');await expect(page.locator('.home-v2')).toBeVisible();await page.locator('.main-nav button').nth(1).tap();await page.clock.runFor(62000);
+  const saver=page.locator('.pysh-screensaver');await expect(saver).toBeVisible();await expect(saver.locator('h1')).toHaveText('Radio One');
+  const defects:string[]=[];await capture(page,info,'screensaver-radio',defects);expect(defects).toEqual([]);
+  await saver.getByRole('button',{name:ro?'Pauză':'Pause',exact:true}).tap();await expect(saver).toBeVisible();await expect(saver.getByRole('button',{name:ro?'Redă':'Play',exact:true})).toBeVisible();
+  await saver.getByRole('button',{name:ro?'Postul următor':'Next station',exact:true}).tap();
+  expect(f.actions.filter(a=>a.path==='/api/play').at(-1)?.body).toEqual({source:'radio',url:'https://example.com/two',title:'Radio Two'});await expect(saver).toBeVisible();
+  f.state.audio.ready=false;await page.clock.runFor(2600);await expect(saver.getByRole('button',{name:ro?'Postul anterior':'Previous station',exact:true})).toBeDisabled();
+  await saver.getByRole('button',{name:ro?'Revino în hub':'Back to hub',exact:true}).tap();await expect(saver).toHaveCount(0);
+ });
+ test(`hidden scrollbars retain real touch scrolling ${theme}`,async({page},info)=>{
+  const ro=info.project.name==='touch-ro';await fixture(page,ro?'ro':'en',theme);
+  await page.route('**/api/radio?**',route=>route.fulfill({json:{stations:Array.from({length:30},(_,i)=>({name:`Station ${i}`,stationuuid:`station-${i}`,url:`https://example.com/${i}`}))}}));
+  await page.goto('/');await page.locator('.main-nav button').nth(1).tap();const list=page.locator('.scroll-list');await expect(list.locator('.station-row')).toHaveCount(30);
+  expect(await list.evaluate(el=>getComputedStyle(el).scrollbarWidth)).toBe('none');
+  expect(await list.evaluate(el=>getComputedStyle(el,'::-webkit-scrollbar').display)).toBe('none');
+  const r=(await list.boundingBox())!,cdp=await page.context().newCDPSession(page),x=r.x+r.width/2,y=r.y+r.height-20;
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
+  for(let i=1;i<=8;i++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y:y-i*15}]});
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await expect.poll(()=>list.evaluate(el=>el.scrollTop)).toBeGreaterThan(30);
+ });
+}
+
 for(const theme of ['ink','night'] as const) {
+  test(`populated Home forecast fits without scrolling ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
+    f.state.weather.daily=Array.from({length:5},(_,i)=>({date:`2026-10-0${i+2}`,max_c:23-i,min_c:8-i}));
+    f.state.preferences.location.name='Drobeta-Turnu Severin, Mehedinți';
+    for(const playing of [false,true])for(const stale of [false,true]){
+      f.state.player=playing?{state:'playing',kind:'radio',title:'Test station',url:'https://example.com/test.mp3'}:{state:'idle'};
+      f.state.weather.stale=stale;
+      await page.goto('/');await expect(page.locator('.forecast-day')).toHaveCount(5);await expect(page.locator('.forecast-day svg')).toHaveCount(5);
+      const issues=await page.locator('.home-weather,.home-shortcuts,.home-layout').evaluateAll(elements=>elements.flatMap(el=>{
+        const defects:string[]=[];
+        if(el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1)defects.push(`${el.className} scrolls: ${el.scrollWidth}×${el.scrollHeight} / ${el.clientWidth}×${el.clientHeight}`);
+        const bounds=el.getBoundingClientRect();
+        for(const child of el.querySelectorAll('.forecast-line span,.weather-attribution,.weather-place,.stale-mark,button')){
+          const r=child.getBoundingClientRect();if(!r.width||!r.height)continue;
+          if(r.left<bounds.left||r.right>bounds.right||r.top<bounds.top||r.bottom>bounds.bottom)defects.push(`clipped ${child.className||child.textContent}`);
+        }
+        return defects;
+      }));
+      expect(issues).toEqual([]);expect(await textLegibility(page)).toEqual([]);
+      await page.screenshot({path:info.outputPath(`forecast-${playing?'playing':'idle'}-${stale?'saved':'fresh'}.png`)});
+    }
+    expect(f.unexpected).toEqual([]);
+  });
   test(`video handoff queues behind an in-flight radio play ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
     await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Video test folder',items:[{name:'Test video.mp4',path:'/test/video.mp4',kind:'video'}]}}));
@@ -98,10 +158,10 @@ for(const theme of ['ink','night'] as const) {
   });
   test(`pairing prompt wakes and suspends idle screensaver ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);f.state.preferences.screensaverMinutes=1;await page.clock.install();
-    await page.goto('/');await expect(page.locator('.home-layout')).toBeVisible();await page.clock.fastForward(61000);await expect(page.locator('.screensaver')).toBeVisible();
+    await page.goto('/');await expect(page.locator('.home-layout')).toBeVisible();await page.locator('.main-nav button').nth(3).tap();await page.clock.runFor(62000);await expect(page.locator('.pysh-screensaver')).toBeVisible();
     f.state.bluetooth.prompts=[{id:'wake-prompt',name:'Test speaker',kind:'confirmation',value:'123456'}];await page.clock.runFor(2600);
-    await expect(page.locator('.pair-code')).toBeVisible();await expect(page.locator('.screensaver')).toHaveCount(0);await page.clock.fastForward(120000);await expect(page.locator('.screensaver')).toHaveCount(0);
-    await page.locator('.dialog-actions button').first().tap();await expect(page.locator('.pair-code')).toHaveCount(0);await page.clock.fastForward(61000);await expect(page.locator('.screensaver')).toBeVisible();expect(f.unexpected).toEqual([]);
+    await expect(page.locator('.pair-code')).toBeVisible();await expect(page.locator('.pysh-screensaver')).toHaveCount(0);await page.clock.fastForward(120000);await expect(page.locator('.pysh-screensaver')).toHaveCount(0);
+    await page.locator('.dialog-actions button').first().tap();await expect(page.locator('.pair-code')).toHaveCount(0);await page.clock.runFor(62000);await expect(page.locator('.pysh-screensaver')).toBeVisible();expect(f.unexpected).toEqual([]);
   });
   test(`city search explains empty results and ignores late old results ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);let release!:()=>void,oldDone=false;const gate=new Promise<void>(resolve=>release=resolve);
@@ -122,18 +182,18 @@ for(const theme of ['ink','night'] as const) {
     const slider=bar.getByRole('slider',{name:ro?'Progres':'Progress',exact:true}),rect=await slider.boundingBox();await slider.tap({position:{x:rect!.width*.5,y:rect!.height*.5}});
     await expect.poll(()=>f.actions.filter(a=>a.path==='/api/player'&&a.body.action==='seek').at(-1)?.body.value).toBeGreaterThan(55);expect(f.state.player.position).toBeLessThan(65);await expect(bar.locator('.audio-time')).toContainText('/ 2:00');
     await bar.getByRole('button',{name:ro?'Redă':'Play',exact:true}).tap();await next.tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('next');
-    f.state.player.canPrevious=true;f.state.player.canNext=false;await page.reload();await expect(previous).toBeEnabled();await expect(next).toBeDisabled();await previous.tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('previous');
+    f.state.player.canPrevious=true;f.state.player.canNext=false;await page.reload();await page.locator('.main-nav button').nth(2).tap();await expect(previous).toBeEnabled();await expect(next).toBeDisabled();await previous.tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('previous');
     await capture(page,info,'local-audio-transport',defects);await bar.getByRole('button',{name:ro?'Oprește':'Stop',exact:true}).tap();await expect(bar).toHaveCount(0);expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
   });
   test(`ended or failed local audio retains replay and queue controls ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
     for(const state of ['ended','error']){
       f.state.player={state,kind:'audio',title:'Completed local track',url:'/test/audio.mp3',duration:120,position:120,canPrevious:true,canNext:true};
-      await page.goto('/');const bar=page.locator('.local-audio-bar');await expect(bar).toBeVisible();await expect(page.locator('.home-focus .player-state')).toHaveText(ro?'Pregătit':'Ready');
+      await page.goto('/');await expect(page.locator('.home-focus .player-state')).toHaveText(state==='error'?(ro?'Problemă de redare':'Playback problem'):(ro?'Redare încheiată':'Playback finished'));await page.locator('.main-nav button').nth(2).tap();const bar=page.locator('.local-audio-bar');await expect(bar).toBeVisible();
       await expect(bar.locator('.audio-time')).toHaveText(state==='error'?(ro?'Problemă de redare':'Playback problem'):(ro?'Redare încheiată':'Playback finished'));await expect(bar.getByRole('slider')).toBeDisabled();
       await expect(bar.getByRole('button',{name:ro?'Următor':'Next',exact:true})).toBeEnabled();await capture(page,info,`local-audio-${state}`,defects);
       await bar.getByRole('button',{name:ro?'Redă':'Play',exact:true}).tap();expect(f.actions.filter(a=>a.path==='/api/play').at(-1)?.body).toEqual({source:'local',path:'/test/audio.mp3',title:'Completed local track'});await expect(bar.getByRole('button',{name:ro?'Pauză':'Pause',exact:true})).toBeVisible();
-      f.state.player={state,kind:'audio',title:'Completed local track',url:'/test/audio.mp3',canPrevious:true,canNext:true};await page.reload();await bar.getByRole('button',{name:ro?'Următor':'Next',exact:true}).tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('next');
+      f.state.player={state,kind:'audio',title:'Completed local track',url:'/test/audio.mp3',canPrevious:true,canNext:true};await page.reload();await page.locator('.main-nav button').nth(2).tap();await bar.getByRole('button',{name:ro?'Următor':'Next',exact:true}).tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('next');
     }
     expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
   });
@@ -142,7 +202,7 @@ for(const theme of ['ink','night'] as const) {
     await page.goto('/');await page.locator('.main-nav button').nth(1).tap();const controls=page.locator('.radio-side .player-controls'),play=()=>controls.getByRole('button',{name:ro?'Redă':'Play',exact:true});
     await expect(play()).toBeDisabled();await expect(controls.getByRole('button',{name:ro?'Anterior':'Previous',exact:true})).toHaveCount(0);await expect(controls.getByRole('button',{name:ro?'Oprește':'Stop',exact:true})).toBeDisabled();
     await page.locator('.station-main').tap();await controls.getByRole('button',{name:ro?'Oprește':'Stop',exact:true}).tap();expect(f.state.player.url).toBe('');await expect(play()).toBeEnabled();await play().tap();expect(f.actions.filter(a=>a.path==='/api/play')).toHaveLength(2);expect(f.actions.filter(a=>a.path==='/api/play').at(-1)?.body).toEqual({source:'radio',url:'https://example.com/test.mp3',title:'Test station'});
-    for(const state of ['error','ended']){f.state.player={state,kind:'radio',url:'https://example.com/failing.mp3',title:'Current failed station'};await page.reload();await page.locator('.main-nav button').nth(1).tap();await play().tap();expect(f.actions.filter(a=>a.path==='/api/play').at(-1)?.body).toEqual({source:'radio',url:'https://example.com/failing.mp3',title:'Current failed station'});}
+    for(const state of ['error','ended']){f.state.player={state,kind:'radio',url:'https://example.com/failing.mp3',title:'Current failed station',station_name:'Current failed station'};await page.reload();await page.locator('.main-nav button').nth(1).tap();await play().tap();expect(f.actions.filter(a=>a.path==='/api/play').at(-1)?.body).toEqual({source:'radio',url:'https://example.com/failing.mp3',title:'Current failed station'});}
     for(const state of ['buffering','connecting']){f.state.player={state,kind:'radio',url:'https://example.com/test.mp3',title:'Test station'};await page.reload();await page.locator('.main-nav button').nth(1).tap();await controls.getByRole('button',{name:ro?'Pauză':'Pause',exact:true}).tap();expect(f.actions.filter(a=>a.path==='/api/player').at(-1)?.body.action).toBe('pause');await expect(play()).toBeEnabled();}
     await capture(page,info,'radio-transport-recovery',defects);expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
   });
@@ -170,7 +230,7 @@ for(const theme of ['ink','night'] as const) {
     // MediaRecorder WebM initially exposes infinite duration; a normal local seekable file has a finite duration.
     await page.locator('video').evaluate(async(v:HTMLVideoElement)=>{await new Promise<void>(resolve=>{if(v.readyState>=2)resolve();else v.addEventListener('loadeddata',()=>resolve(),{once:true});});if(!Number.isFinite(v.duration)){v.currentTime=1e6;await new Promise<void>(resolve=>v.addEventListener('seeked',()=>resolve(),{once:true}));v.currentTime=0;}});
     await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>Number.isFinite(v.duration)&&v.duration>0)).toBe(true);
-    await expect(page.locator('video')).not.toHaveAttribute('controls');await expect(page.locator('.video-controls')).toBeVisible();
+    await expect(page.locator('video')).not.toHaveAttribute('controls');await expect(page.locator('video')).toHaveJSProperty('disableRemotePlayback',true);await expect(page.locator('video')).toHaveJSProperty('disablePictureInPicture',true);await expect(page.locator('.video-controls')).toBeVisible();
     await page.locator('video').evaluate((v:HTMLVideoElement)=>v.pause());await expect(page.locator('.video-play')).toHaveText(ro?'Redă':'Play');
     const seek=page.getByRole('slider',{name:ro?'Progres':'Progress',exact:true}),rect=await seek.boundingBox();await seek.tap({position:{x:rect!.width*.5,y:rect!.height*.5}});
     await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(.5);
@@ -186,13 +246,13 @@ for(const theme of ['ink','night'] as const) {
     await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Test video folder',items:[{name:'Broken video.mp4',path:'/test/broken.mp4',kind:'video'}]}}));
     await page.route('**/api/media/file?**',route=>{attempts++;return route.fulfill({contentType:'video/mp4',body:'invalid video test content'});});
     await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.locator('.media-item').tap();
-    await expect(page.locator('.video-error')).toBeVisible();await expect(page.locator('.video-audio-warning')).toBeVisible();await capture(page,info,'invalid-video',defects);
+    await expect(page.locator('.video-error')).toBeVisible();await expect(page.locator('.video-error')).toContainText(ro?'Acest video nu a putut fi redat.':'This video could not be played.');await expect(page.locator('.video-error')).toContainText(ro?'Reîncearcă sau revino la bibliotecă':'Try again or return to the library');await expect(page.locator('.video-audio-warning')).toBeVisible();await capture(page,info,'invalid-video',defects);
     const before=attempts;await page.locator('.video-error button').tap();await expect.poll(()=>attempts).toBeGreaterThan(before);await expect(page.locator('.video-error')).toBeVisible();await page.locator('.video-back').tap();await expect(page.locator('.video-overlay')).toHaveCount(0);await expect(page.locator('.media-page')).toBeVisible();expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
   });
   test(`weather, radio and media retry target the failed operation ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
     f.state.weather={available:false,error:'weather_unavailable'};
-    await page.goto('/');await expect(page.locator('.weather-empty')).toContainText(ro?'Meteo indisponibilă':'Weather is unavailable');await page.locator('.weather-empty').tap();expect(f.actions.some(a=>a.path==='/api/weather/refresh')).toBeTruthy();await expect(page.locator('.home-layout')).toBeVisible();
+    await page.goto('/');await expect(page.locator('.weather-empty')).toContainText(ro?'Meteo indisponibilă':'Weather is unavailable');await page.locator('.weather-empty').tap();expect(f.actions.some(a=>a.path==='/api/weather/refresh')).toBeFalsy();await expect(page.locator('.settings-page')).toBeVisible();
     f.radio='error';await page.locator('.main-nav button').nth(1).tap();await expect(page.locator('.error-strip')).toBeVisible();f.radio='populated';await page.locator('.error-strip').getByRole('button',{name:ro?'Încearcă din nou':'Try again',exact:true}).tap();await expect(page.locator('.station-main')).toHaveCount(1);await expect(page.locator('.error-strip')).toHaveCount(0);
     f.media='error';await page.locator('.main-nav button').nth(2).tap();await expect(page.locator('.error-strip')).toBeVisible();f.media='populated';await page.locator('.error-strip').getByRole('button',{name:ro?'Încearcă din nou':'Try again',exact:true}).tap();await expect(page.locator('.media-item')).toHaveCount(2);await expect(page.locator('.error-strip')).toHaveCount(0);expect(f.unexpected).toEqual([]);
   });
@@ -224,7 +284,7 @@ for(const theme of ['ink','night'] as const) {
     await capture(page,info,'service-mode',defects);
     f.backendDown=true;await expect(page.locator('.error-strip')).toBeVisible({timeout:6000});await capture(page,info,'service-backend-error',defects);
     f.backendDown=false;await page.locator('.error-strip button').tap();await expect(page.locator('.error-strip')).toHaveCount(0);
-    await page.clock.fastForward(120000);await expect(page.locator('.service-screen')).toBeVisible();await page.getByRole('button',{name:ro?'Revino în hub':'Return to hub',exact:true}).tap();await expect(page.locator('.screensaver')).toHaveCount(0);
+    await page.clock.fastForward(120000);await expect(page.locator('.service-screen')).toBeVisible();await page.getByRole('button',{name:ro?'Revino în hub':'Return to hub',exact:true}).tap();await expect(page.locator('.pysh-screensaver')).toHaveCount(0);
     await expect(page.locator('.service-screen')).toHaveCount(0);await expect(page.locator('.main-nav')).toBeVisible();
     expect(JSON.stringify(f.state.preferences)).toBe(prefs);expect(f.unexpected).toEqual([]);expect(defects).toEqual([]);
   });
@@ -244,7 +304,7 @@ for(const theme of ['ink','night'] as const) {
     const before=f.actions.filter(a=>a.path==='/api/preferences').length;
     await page.locator('.setting-value').tap();await page.locator('.keyboard-card header button').tap();
     expect(f.actions.filter(a=>a.path==='/api/preferences')).toHaveLength(before);
-    await page.locator('.settings-tabs button').nth(5).tap();await page.locator('.settings-panel button.switch').first().tap();
+    await page.locator('.settings-tabs button').nth(5).tap();await page.locator('.settings-panel button.switch[aria-label=Radio]').tap();
     await page.locator('.main-nav button').first().tap();await expect(page.locator('.shortcut')).toHaveCount(1);await expect(page.locator('.shortcut')).toContainText('Media');
     await page.reload();await expect(page.locator('.shortcut')).toHaveCount(1);
     expect(f.unexpected).toEqual([]);
@@ -257,16 +317,16 @@ for(const theme of ['ink','night'] as const) {
     await capture(page,info,'home-weather',defects);
     if(ro)expect.soft(await page.locator('.home-focus').innerText()).not.toContain('YOUR HUB');
     const nav=async(index:number)=>page.locator('.main-nav button').nth(index).tap();
-    await nav(1); await page.locator('.radio-toolbar button.primary').tap();
+    await nav(1); await page.locator('.radio-refresh').tap();
     await expect(page.locator('.station-main')).toHaveCount(1); await capture(page,info,'radio-populated',defects);
     if(ro)expect.soft(await page.locator('.radio-page').innerText()).not.toMatch(/LISTEN|DISCOVER|\bidle\b/);
     await page.locator('.station-main').tap(); await capture(page,info,'radio-playing',defects);
-    f.radio='empty';await page.locator('.radio-toolbar button.primary').tap();await expect(page.locator('.station-main')).toHaveCount(0);await capture(page,info,'radio-empty',defects);
-    f.radio='error';await page.locator('.radio-toolbar button.primary').tap();await expect(page.locator('.error-strip')).toBeVisible();await capture(page,info,'radio-error',defects);
+    f.radio='empty';await page.locator('.radio-refresh').tap();await expect(page.locator('.station-main')).toHaveCount(0);await capture(page,info,'radio-empty',defects);
+    f.radio='error';await page.locator('.radio-refresh').tap();await expect(page.locator('.error-strip')).toBeVisible();await capture(page,info,'radio-error',defects);
     await nav(2); await expect(page.locator('.media-item')).toHaveCount(2);await capture(page,info,'media-populated',defects);
     await page.locator('.media-item').first().tap();expect(f.actions.some(a=>a.path==='/api/play'&&a.body.source==='local')).toBeTruthy();
-    f.media='empty';await page.locator('.crumb-actions button').first().tap();await expect(page.locator('.media-item')).toHaveCount(0);await capture(page,info,'media-empty',defects);
-    f.media='error';await page.locator('.crumb-actions button').first().tap();await expect(page.locator('.error-strip')).toBeVisible();await capture(page,info,'media-error',defects);
+    f.media='empty';await nav(0);await nav(2);await expect(page.locator('.media-item')).toHaveCount(0);await capture(page,info,'media-empty',defects);
+    f.media='error';await nav(0);await nav(2);await expect(page.locator('.error-strip')).toBeVisible();await capture(page,info,'media-error',defects);
     await nav(3);
     for(let i=0;i<7;i++){await page.locator('.settings-tabs button').nth(i).tap();await capture(page,info,`settings-${['appearance','weather','network','bluetooth','audio','home','diagnostics'][i]}`,defects);}
     await page.locator('.settings-tabs button').nth(7).tap();await capture(page,info,'exit-dialog',defects);await page.locator('.dialog-actions button').first().tap();expect(f.actions.some(a=>a.path==='/api/exit')).toBeFalsy();
@@ -274,7 +334,7 @@ for(const theme of ['ink','night'] as const) {
     await page.getByRole('button',{name:ro?'Deschide setările':'Open settings',exact:true}).first().tap();await capture(page,info,'quick-settings',defects);
     for(const [index,name] of [[0,'network'],[1,'bluetooth'],[2,'audio']] as const) {
       await page.locator('.quick-modal>button').nth(index).tap();await capture(page,info,`${name}-dialog`,defects);await closeModal(page,ro);
-      if(index<2)await page.locator('.topbar-right button').tap();
+      if(index<2)await page.locator('.topbar-right .icon-button').tap();
     }
     await nav(1);await page.locator('.radio-toolbar .search-field').tap();await expect(page.locator('.keyboard-card')).toBeVisible();await capture(page,info,'keyboard',defects);
     await page.locator('.diacritics-row button').first().tap();await expect(page.locator('.keyboard-value')).toContainText('ă');await page.locator('.keyboard-card header button').tap();await expect(page.locator('.keyboard-card')).toHaveCount(0);
@@ -302,4 +362,53 @@ for(const theme of ['ink','night'] as const) {
     f.backendDown=false;await expect.poll(()=>page.locator('.error-strip').count(),{timeout:6000}).toBe(0);
     await capture(page,info,'backend-recovered',defects);await info.attach('layout-audit',{body:JSON.stringify(defects,null,2),contentType:'application/json'});expect.soft(defects).toEqual([]);
   });
+}
+for(const theme of ['ink','night'] as const){
+ test(`setup back and revisit preserve saved preferences ${theme}`,async({page},info)=>{
+  const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme,false);
+  f.state.preferences.favorites=[{uuid:'saved-station',name:'Saved station'}];f.state.preferences.accent='amber';
+  const original=JSON.parse(JSON.stringify(f.state.preferences));
+  await page.goto('/');
+  const wizard=page.locator('.setup-card'),next=()=>wizard.getByRole('button',{name:ro?'Continuă':'Continue',exact:false}).tap();
+  for(let i=1;i<=3;i++){
+   await next();const back=wizard.getByRole('button',{name:ro?'Înapoi':'Back',exact:true});
+   const box=await back.boundingBox();expect(box!.width).toBeGreaterThanOrEqual(48);expect(box!.height).toBeGreaterThanOrEqual(48);expect(box!.y+box!.height).toBeLessThanOrEqual(480);
+   await back.tap();await next();
+  }
+  await wizard.getByRole('button',{name:ro?'Finalizează':'Finish setup',exact:false}).tap();await expect(page.locator('.home-layout')).toBeVisible();
+  await page.locator('.main-nav button').nth(3).tap();
+  const rerun=ro?'Reia configurarea':'Run setup again',cancel=ro?'Anulează':'Cancel',leave=ro?'Ieși din configurare':'Leave setup';
+  await page.getByRole('button',{name:rerun,exact:true}).tap();await page.locator('.dialog-actions').getByRole('button',{name:cancel,exact:true}).tap();await expect(wizard).toHaveCount(0);
+  await page.getByRole('button',{name:rerun,exact:true}).tap();await page.locator('.dialog-actions').getByRole('button',{name:rerun,exact:true}).tap();await expect(wizard).toBeVisible();
+  await next();await next();await wizard.locator('.search-field button').tap();await expect(page.locator('.keyboard-card')).toBeVisible();
+  await page.locator('.keyboard-card header').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();await expect(wizard).toBeVisible();
+  const leaveButton=page.locator('.setup-cancel');await expect(leaveButton).toHaveText(leave);const leaveBox=await leaveButton.boundingBox();expect(leaveBox!.height).toBeGreaterThanOrEqual(48);expect(leaveBox!.y+leaveBox!.height).toBeLessThanOrEqual(480);
+  await page.screenshot({path:info.outputPath('setup-revisit-weather.png')});await leaveButton.tap();await page.locator('.dialog-actions').getByRole('button',{name:cancel,exact:true}).tap();await expect(wizard).toBeVisible();
+  await leaveButton.tap();await page.locator('.dialog-actions').getByRole('button',{name:leave,exact:true}).tap();await expect(wizard).toHaveCount(0);
+  expect(f.state.preferences).toEqual({...original,setupComplete:true});expect(f.actions.filter(a=>a.path==='/api/preferences')).toEqual([{path:'/api/preferences',body:{setupComplete:true}}]);
+  await page.reload();await expect(page.locator('.home-layout')).toBeVisible();expect(f.unexpected).toEqual([]);
+ });
+ test(`local video pauses on output loss and awaits deliberate resume ${theme}`,async({page},info)=>{
+  const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
+  await page.addInitScript(()=>{
+   const calls={play:0,pause:0,paused:true};(window as any).__videoCalls=calls;
+   Object.defineProperty(HTMLMediaElement.prototype,'paused',{get:()=>calls.paused});
+   HTMLMediaElement.prototype.play=function(){calls.play++;calls.paused=false;this.dispatchEvent(new Event('play'));this.dispatchEvent(new Event('playing'));return Promise.resolve();};
+   HTMLMediaElement.prototype.pause=function(){calls.pause++;calls.paused=true;this.dispatchEvent(new Event('pause'));};
+  });
+  await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Video folder',items:[{name:'Test video.mp4',path:'/test/video.mp4',kind:'video'}]}}));
+  await page.route('**/api/media/file?**',route=>route.fulfill({contentType:'video/mp4',body:''}));
+  await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).tap();
+  const v=page.locator('video'),play=page.locator('.video-play');await v.dispatchEvent('canplay');await expect.poll(()=>page.evaluate(()=>(window as any).__videoCalls.play)).toBe(1);
+  f.state.audio.ready=false;await expect(play).toBeDisabled();await expect(page.locator('.video-state')).toHaveText(ro?'Audio deconectat. Video în pauză.':'Audio disconnected. Video paused.');
+  await page.screenshot({path:info.outputPath('video-output-lost.png')});expect(await page.evaluate(()=>(window as any).__videoCalls.paused)).toBe(true);await v.dispatchEvent('canplay');expect(await page.evaluate(()=>(window as any).__videoCalls.play)).toBe(1);
+  f.state.audio.ready=true;await expect(play).toBeEnabled();await expect(page.locator('.video-state')).toHaveText(ro?'Audio pregătit. Apasă Redă pentru a continua.':'Audio ready. Press Play to resume.');expect(await page.locator('.video-state,.video-play,.video-back').evaluateAll(elements=>elements.flatMap(el=>{const r=el.getBoundingClientRect();return r.left<0||r.top<0||r.right>800||r.bottom>480||el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1?[el.className]:[]}))).toEqual([]);await v.dispatchEvent('canplay');expect(await page.evaluate(()=>(window as any).__videoCalls.play)).toBe(1);
+  await page.screenshot({path:info.outputPath('video-output-restored.png')});await play.tap();await expect.poll(()=>page.evaluate(()=>(window as any).__videoCalls.play)).toBe(2);await expect(play).toHaveText(ro?'Pauză':'Pause');expect(f.unexpected).toEqual([]);
+ });
+ test(`partial media library retains files and retry recovers ${theme}`,async({page},info)=>{
+  const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);let partial=true;
+  await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Library',partial,warnings:partial?[{path:'/missing',error:'media_unavailable'}]:[],items:[{name:'Available.mp3',path:'/test/available.mp3',kind:'audio'}]}}));
+  await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await expect(page.getByRole('button',{name:'Available.mp3',exact:false})).toBeVisible();await expect(page.locator('.media-partial')).toContainText(ro?'Unele directoare media sunt indisponibile':'Some media folders are unavailable');
+  partial=false;await page.locator('.media-partial button').tap();await expect(page.locator('.media-partial')).toHaveCount(0);await expect(page.getByRole('button',{name:'Available.mp3',exact:false})).toBeVisible();expect(f.unexpected).toEqual([]);
+ });
 }

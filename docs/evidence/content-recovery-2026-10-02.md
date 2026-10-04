@@ -18,3 +18,7 @@ An intentionally invalid MP3 returned idle without an error: MEDIA-02 FAIL on th
 - Service mode suppresses the idle screensaver and clears a latent overlay on return. Radio/media subtitles describe their actual page.
 
 Validation: 46 Python tests, 36 Playwright tests (EN/RO × themes, including stale catalog responses, weather/library/catalog retry, invalid video retry and service idle/return), TypeScript, production build and repository structure pass. Browser failures are simulated only in tests. The repaired runtime still requires deployment and a repeat of the real corrupt-file/recovery probe; no product acceptance is inferred from unit/browser results.
+
+## Repaired real runtime
+
+Published source `79bcc29892e49d780871f624c5d0fc3de3e68831` (PR #6; merged main `607496a042d9e57c81fd22f0909eb2a3d75a6810`) produced isolated Pi runtime `bfb3cdd16723`, archive SHA256 `53798c9663045792bb8cfa58967c3036722851da3e61c0aa586e4edacc7f0685`; all 33 hashes verified before launch. Existing preferences retained. Repeated all eight encodings on the real backend/selected output. Missing file rejected with HTTP 409, corrupt MP3 reached error `stream_failed`, subsequent WAV reached playing at position 0.49533 with no error, then natural end reached `ended`. Playback stopped in finally. Full MEDIA-02 stays OPEN until library touch controls/video/declared format matrix complete. Both GitHub validation runs 37050107798 and 37050121706 passed.

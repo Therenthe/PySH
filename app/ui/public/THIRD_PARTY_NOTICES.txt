@@ -1,0 +1,99 @@
+Third-party notices for the PySH frontend runtime
+
+These notices apply to bundled frontend dependencies and visual materials, not to the PySH project code.
+
+=== Moon surface material ===
+
+Credit: NASA's Scientific Visualization Studio.
+Visualizer: Ernie Wright (USRA); scientists: John Keller and Noah Petro (NASA/GSFC);
+producer: David Ladd (USRA).
+Source: Moon Phase and Libration, 2017, https://svs.gsfc.nasa.gov/4537/
+Unchanged JPEG: https://svs.gsfc.nasa.gov/vis/a000000/a004200/a004236/phase_full.0815_preview.jpg
+SHA256: 6ab80cb03da593930d21d29ba802480a5afc0a987f142e57d32e9ff255060a01
+NASA SVS content is public domain unless otherwise noted: https://svs.gsfc.nasa.gov/help/
+No NASA endorsement is implied. PySH uses this static surface with a separately
+computed approximate lunar phase; it is not a live observation or current libration.
+
+=== react-19.3.0-LICENSE.txt ===
+
+MIT License
+
+Copyright (c) Meta Platforms, Inc. and affiliates.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+=== react-dom-19.3.0-LICENSE.txt ===
+
+MIT License
+
+Copyright (c) Meta Platforms, Inc. and affiliates.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+=== scheduler-0.28.0-LICENSE.txt ===
+
+MIT License
+
+Copyright (c) Meta Platforms, Inc. and affiliates.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+București city/sector locality points: GeoNames, CC BY 4.0.
+Source: https://www.geonames.org/search.html?country=RO&q=Bucharest
+License: https://creativecommons.org/licenses/by/4.0/
+Names adapted to Romanian UI labels; coordinates retained as representative locality points.
+
+
+
+Ambient illustration assets (night-starfield-v1.png, city-facades-v1.png): generated for PySH using the built-in imagegen tool, 2026-10-04. Exact prompts and output hashes: docs/AMBIENT_GRAPHICS.md. Star/city artwork is decorative, not live or astronomical data.
+
+Sun/Moon orbital calculations: original implementation of published mathematical equations by Paul Schlyter, https://stjarnhimlen.se/comp/ppcomp.html . Standard refraction: NOAA, https://gml.noaa.gov/grad/solcalc/calcdetails.html . Independent numerical references: US Naval Observatory celestial navigation API, https://aa.usno.navy.mil/data/api .

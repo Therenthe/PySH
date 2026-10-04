@@ -1,0 +1,4 @@
+Weather data: Open-Meteo - https://open-meteo.com/
+Licence: Creative Commons Attribution 4.0 International - https://creativecommons.org/licenses/by/4.0/
+Provider licence: https://open-meteo.com/en/licence
+PySH formats and rounds values, translates labels and derives decorative sky states from forecasts. Readings are not independently measured by PySH.

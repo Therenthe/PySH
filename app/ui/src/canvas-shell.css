@@ -1,0 +1,57 @@
+.app[data-theme=night]{--bg:#0b0e14;--paper:#141824;--surface:#161b26;--surface-2:#222a37;--line:#303b48;--line-dark:#697b90;--ink:#f4f7fb;--muted:#b4c0cf;--accent:#6edbb3;--accent-strong:#8be8c6;--soft:#203b35}
+.app .topbar{height:58px;flex-basis:58px;padding:0 16px;display:grid;grid-template-columns:140px minmax(0,1fr) auto;gap:12px}
+.app .topbar-title .eyebrow{font-size:14px;letter-spacing:.04em}
+.app .topbar-time{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0}
+.app .top-clock{font-size:24px;line-height:27px}
+.app .date-label{font-size:14px;line-height:17px;white-space:nowrap}
+.app .topbar-right{gap:8px}
+.app .top-network{border:0;background:transparent;color:var(--muted);display:flex;align-items:center;gap:7px;min-height:48px;padding:0 4px;font-size:14px}
+.app .topbar .icon-button{width:48px;height:48px}
+.app .now-bar{bottom:0}
+.app .main-nav button{transition:background-color .16s,color .16s}
+.app .main-nav button:active,.app .top-network:active{background:var(--soft)}
+@media(prefers-reduced-motion:reduce){.app .main-nav button{transition:none}}
+/* Recovery replaces the header so a failure never clips Home transport. */
+.app .main-area:has(>.error-strip)>.topbar{display:none}
+.app .main-area>.error-strip{height:58px;min-height:58px;flex:0 0 58px;font-size:14px;padding:4px 12px}
+.app .main-area>.error-strip button:not(.icon-button){min-height:48px;min-width:48px;padding:0 8px}
+.app .radio-redesign button:active:not(:disabled){transform:none;background:var(--soft)}
+.app .radio-redesign .filter-button small,.app .radio-redesign .mini-player .eyebrow{font-size:14px}
+.app .radio-redesign .station-row.selected{background:var(--soft)}
+.app .pysh-screensaver.saver-with-signal{grid-template-rows:56px 128px 48px minmax(0,1fr) 28px}
+.app .saver-with-signal .saver-clock time{font-size:76px}
+.app .saver-visualizer{height:48px;width:min(640px,100%);overflow:hidden;justify-self:center}
+.app .saver-visualizer .audio-visualizer{height:100%}
+.app .pysh-screensaver .saver-playback{border-top:0}
+.app .pysh-screensaver[data-theme=night]{background:#0b0e14;color:#f4f7fb;--saver-muted:#b4c0cf;--saver-button:#161b26;--saver-primary:#8be8c6;--saver-on-primary:#0b0e14;--saver-active:#203b35;--saver-line:#566576}
+.app .pysh-screensaver.saver-full-signal{display:block;padding:0}
+.app .saver-full-signal .saver-clock{display:none}
+.app .saver-full-signal .saver-visualizer{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:24px}
+.app .saver-full-signal .audio-visualizer{height:100%}
+.app .saver-full-signal .saver-header{position:absolute;top:16px;left:24px;right:24px;z-index:2}
+.app .saver-full-signal .saver-playback{position:absolute;bottom:24px;left:24px;right:24px;padding:16px;border-radius:20px;background:var(--saver-button);z-index:2}
+.app .saver-full-signal .saver-header,.app .saver-full-signal .saver-playback{visibility:hidden;opacity:0;pointer-events:none;transition:opacity 160ms ease}
+.app .saver-full-signal.saver-controls-visible .saver-header,.app .saver-full-signal.saver-controls-visible .saver-playback{visibility:visible;opacity:1;pointer-events:auto}
+.app .saver-full-signal .saver-hint{display:none}
+.app .setting-help{font-size:14px;line-height:1.5;color:var(--muted);margin:8px 0 16px}
+@media(prefers-reduced-motion:reduce){.app .saver-full-signal .saver-header,.app .saver-full-signal .saver-playback{transition:none}}
+
+.app .main-nav{position:relative}
+.app .main-nav::before{content:'';position:absolute;left:-7px;top:10px;width:3px;height:36px;border-radius:3px;background:var(--accent);transform:translateY(calc(var(--nav-index,0)*59px));transition:transform 180ms ease-out;pointer-events:none}
+@media(prefers-reduced-motion:reduce){.app .main-nav::before{transition:none}}
+.app .radio-redesign .radio-station-name,.app .radio-redesign .radio-track-name{display:block;white-space:nowrap;text-overflow:ellipsis}
+
+.app button[data-pressed=true]:not(:disabled){box-shadow:inset 0 0 0 2px var(--accent-strong);transition:none}
+.app .rail{transition:width 220ms ease,flex-basis 220ms ease,padding 220ms ease;overflow:hidden}
+.app .rail.rail-retracted{width:0;flex-basis:0;padding-left:0;padding-right:0;border-width:0;pointer-events:none}
+.app .topbar{grid-template-columns:190px minmax(0,1fr) auto}
+.app .topbar .topbar-title{display:flex;flex-direction:row;align-items:center;gap:8px;white-space:nowrap}
+.app .navigation-toggle{display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;border:1px solid var(--line-dark);border-radius:12px;background:transparent;color:var(--ink)}
+@media(prefers-reduced-motion:reduce){.app .rail{transition:none}}
+.app .navigation-toggle{position:fixed;z-index:5;left:55px;top:5px;border:0;background:transparent;border-radius:10px;transition:left 220ms ease,background-color 160ms ease}
+.app[data-navigation=retracted] .navigation-toggle{left:4px}
+.app .navigation-toggle:active{background:var(--soft)}
+.app .rail-brand{visibility:hidden}
+.app .topbar{padding-left:8px}
+.app[data-navigation=retracted] .topbar-title{padding-left:48px}
+@media(prefers-reduced-motion:reduce){.app .navigation-toggle{transition:none}}

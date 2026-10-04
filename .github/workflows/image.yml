@@ -1,0 +1,90 @@
+name: Build experimental PySH OS
+on:
+  push:
+    branches: [feat/pysh-os-image]
+    paths: ['os/image/**', '.github/workflows/image.yml', 'app/**', 'services/**', 'scripts/run-hub.py', 'requirements.lock', 'pnpm-lock.yaml', 'package.json']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pysh-image-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  root-expansion:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install throwaway loop-image test tools
+        run: sudo apt-get update && sudo apt-get install -y cloud-guest-utils util-linux e2fsprogs dosfstools udev python3
+      - name: Verify guarded growth, failures and retry on owned loop images
+        run: sudo python3 os/image/tests/growfs-loop.py
+  image:
+    needs: root-expansion
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+      - run: npm install --global pnpm@11.19.0
+      - run: pnpm install --frozen-lockfile && pnpm build
+      - run: python3 os/image/prepare-payload.py
+      - name: Check shell syntax
+        run: |
+          for script in os/image/ci-build.sh os/image/bdebstrap/customize90-pysh os/image/assets/pysh-session os/image/assets/labwc-autostart os/image/assets/pysh-provision-recovery os/image/assets/image-setup.sh; do
+            bash -n "$script"
+          done
+      - name: Build in ephemeral Debian ARM64 environment
+        run: |
+          docker pull debian:trixie
+          mkdir -p .runtime/os-build
+          docker image inspect debian:trixie --format '{{json .RepoDigests}}' > .runtime/os-build/host-image.json
+          docker run --rm --privileged --platform linux/arm64 \
+            --mount type=bind,source="$GITHUB_WORKSPACE",target=/workspace \
+            --workdir /workspace --env DEBIAN_FRONTEND=noninteractive \
+            debian:trixie bash /workspace/os/image/ci-build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pysh-pi4-experimental-${{ github.sha }}
+          path: |
+            .runtime/os-artifact/*.json
+            .runtime/os-artifact/*SUMS
+            .runtime/os-artifact/*.txt
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pysh-image-part-00-${{ github.sha }}
+          path: .runtime/os-artifact/*.part-00
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pysh-image-part-01-${{ github.sha }}
+          path: .runtime/os-artifact/*.part-01
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pysh-image-part-02-${{ github.sha }}
+          path: .runtime/os-artifact/*.part-02
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pysh-image-build-evidence-${{ github.sha }}
+          path: |
+            .runtime/os-build/build.log
+            .runtime/os-build/host-image.json
+            os/image/payload/source.json
+            .runtime/os-build/image-inspection.json
+            .runtime/os-build/image-layout.json
+            .runtime/os-build/packages.txt
+          retention-days: 7

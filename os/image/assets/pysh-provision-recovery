@@ -1,0 +1,27 @@
+#!/bin/bash
+# First boot only: consumes a PUBLIC recovery key from the boot partition.
+set -euo pipefail
+key=/boot/firmware/pysh-recovery.pub
+test -f "$key" || exit 0
+python3 - "$key" <<'PY'
+import base64, sys
+from pathlib import Path
+data = Path(sys.argv[1]).read_bytes()
+assert len(data) <= 8192 and b'\x00' not in data
+lines = data.decode('ascii').splitlines()
+assert len(lines) == 1
+parts = lines[0].split()
+assert len(parts) >= 2 and parts[0] in {'ssh-ed25519', 'ssh-rsa', 'ecdsa-sha2-nistp256'}
+blob = base64.b64decode(parts[1], validate=True)
+size = int.from_bytes(blob[:4], 'big')
+assert blob[4:4+size].decode('ascii') == parts[0]
+PY
+ssh-keygen -l -f "$key" >/dev/null
+id pysh-admin >/dev/null 2>&1 || useradd --create-home --user-group --shell /bin/bash pysh-admin
+install -d -m 0700 -o pysh-admin -g pysh-admin /home/pysh-admin/.ssh
+install -m 0600 -o pysh-admin -g pysh-admin "$key" /home/pysh-admin/.ssh/authorized_keys
+printf '%s\n' 'pysh-admin ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/pysh-recovery
+chmod 0440 /etc/sudoers.d/pysh-recovery
+visudo -cf /etc/sudoers.d/pysh-recovery >/dev/null
+mv -- "$key" /boot/firmware/pysh-recovery.provisioned.pub
+printf '%s\n' 'Recovery administrator provisioned using a public key.'

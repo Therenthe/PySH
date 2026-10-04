@@ -3,19 +3,40 @@
 from __future__ import annotations
 
 import asyncio
+import ctypes
+import errno
+import hashlib
 import json
+import math
 import os
 import queue
 import random
 import socket
+import stat as stat_module
 import sys
 import tempfile
 import threading
 import time
+import re
+import unicodedata
+import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, ClassVar
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+
+
+def search_key(value: str) -> str:
+    return ' '.join(''.join(c for c in unicodedata.normalize('NFKD', value) if not unicodedata.combining(c)).casefold().split())
+
+
+# Representative GeoNames locality points, not street-level measurements.
+# https://www.geonames.org/search.html?country=RO&q=Bucharest (CC BY 4.0)
+BUCHAREST_POINTS = [("București",44.43224761932805,26.10626220703125),
+    ("București · Sector 1",44.49239,26.04831),("București · Sector 2",44.4528,26.13321),
+    ("București · Sector 3",44.4234,26.16874),("București · Sector 4",44.37571,26.12085),
+    ("București · Sector 5",44.38808,26.07144),("București · Sector 6",44.43579,26.01649)]
 
 
 class ContentError(Exception):
@@ -45,7 +66,14 @@ class Content:
         query = str(query).strip()
         if not query:
             raise ContentError("invalid_query", "Enter a city or postal code.")
-        params = {"name": query, "count": 8, "language": "en", "format": "json"}
+        key = search_key(query)
+        match = re.fullmatch(r'(?:bucuresti|bucharest|bucarest)(?:\s*[·,\-]?\s*(?:sector(?:ul)?\s*)?([1-6]))?', key)
+        sector = re.fullmatch(r'sector(?:ul)?\s*([1-6])(?:\s+(?:bucuresti|bucharest))?', key)
+        if match or sector:
+            index = int((sector or match).group(1) or 0)
+            points = BUCHAREST_POINTS[index:index+1] if index else BUCHAREST_POINTS
+            return [{'name':name,'admin1':'București','country':'Romania','latitude':lat,'longitude':lon,'timezone':'Europe/Bucharest'} for name,lat,lon in points]
+        params = {"name": query, "count": 20, "language": "ro", "format": "json"}
         try:
             data = await asyncio.to_thread(self._get_json, "https://geocoding-api.open-meteo.com/v1/search", params)
         except Exception as exc:
@@ -63,7 +91,7 @@ class Content:
             if isinstance(item, dict) and _number(item.get("latitude")) and _number(item.get("longitude"))
         ]
 
-    async def weather(self, location: dict[str, Any]) -> dict[str, Any]:
+    async def weather(self, location: dict[str, Any], *, force: bool = False) -> dict[str, Any]:
         try:
             latitude = float(location["latitude"])
             longitude = float(location["longitude"])
@@ -77,13 +105,14 @@ class Content:
         try:
             cached = await asyncio.to_thread(_read_json, cache_path, {})
             cached_entry = cached.get(key) if isinstance(cached, dict) else None
-            if cached_entry and time.time() - float(cached_entry.get("cached_epoch", 0)) < 900:
+            if not force and cached_entry and time.time() - float(cached_entry.get("cached_epoch", 0)) < 300:
                 return {**cached_entry["value"], "stale": False, "error": None}
             params = {
                 "latitude": latitude,
                 "longitude": longitude,
-                "current": "temperature_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m",
-                "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum",
+                "current": "temperature_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,relative_humidity_2m,pressure_msl,wind_direction_10m",
+                "hourly": "uv_index",
+                "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset",
                 "forecast_days": 5,
                 "timezone": "auto",
                 "temperature_unit": "celsius",
@@ -112,6 +141,17 @@ class Content:
         def day_value(key: str, index: int) -> Any:
             values = daily.get(key, [])
             return values[index] if index < len(values) else None
+        def solar_epoch(key: str, index: int) -> float | None:
+            value, offset = day_value(key, index), raw.get("utc_offset_seconds")
+            if not isinstance(value, str) or not _number(offset):
+                return None
+            try:
+                local = datetime.fromisoformat(value)
+                if local.tzinfo is not None:
+                    return local.timestamp()
+                return local.replace(tzinfo=timezone.utc).timestamp() - offset
+            except ValueError:
+                return None
         days = [
             {
                 "date": day,
@@ -119,6 +159,8 @@ class Content:
                 "min_c": day_value("temperature_2m_min", i),
                 "max_c": day_value("temperature_2m_max", i),
                 "precipitation_mm": day_value("precipitation_sum", i),
+                "sunrise_epoch": solar_epoch("sunrise", i),
+                "sunset_epoch": solar_epoch("sunset", i),
             }
             for i, day in enumerate(times[:5])
         ]
@@ -131,6 +173,10 @@ class Content:
             for day in days
         ):
             raise ContentError("invalid_weather_response", "Weather service returned incomplete data.")
+        # Optional model variables must not make otherwise usable weather fail.
+        # UV is an hourly forecast matched to the provider's current local hour,
+        # never a daily maximum, a neighbouring sample, or an inferred night zero.
+        uv_index, uv_time = _current_hour_uv(raw.get("hourly"), current.get("time"))
         return {
             "location": {k: location.get(k) for k in ("name", "admin1", "country", "latitude", "longitude", "timezone")},
             "current": {
@@ -141,8 +187,14 @@ class Content:
                 "is_day": current.get("is_day"),
                 "precipitation_mm": current.get("precipitation"),
                 "wind_kmh": current.get("wind_speed_10m"),
+                "humidity_pct": _optional_measurement(current.get("relative_humidity_2m"), minimum=0, maximum=100),
+                "pressure_hpa": _optional_measurement(current.get("pressure_msl"), minimum=0, exclusive_minimum=True),
+                "wind_direction_deg": _optional_measurement(current.get("wind_direction_10m"), minimum=0, maximum=360),
+                "uv_index": uv_index,
+                "uv_index_time": uv_time,
             },
             "daily": days,
+            "timezone": raw.get("timezone"),
             "updated_at": updated_at,
             "stale": False,
             "error": None,
@@ -158,9 +210,15 @@ class Content:
         if query:
             params["name"] = query
         if country:
-            params["country"] = country
+            normalized = search_key(country)
+            codes = {'romania':'RO','ro':'RO','germany':'DE','germania':'DE','de':'DE','france':'FR','franta':'FR','fr':'FR','italy':'IT','italia':'IT','it':'IT','united kingdom':'GB','marea britanie':'GB','uk':'GB','gb':'GB','united states':'US','usa':'US','us':'US'}
+            if normalized in codes or len(normalized)==2 and normalized.isalpha():
+                params['countrycode'] = codes.get(normalized, normalized.upper())
+            else:
+                params["country"] = normalized.title()
         if language:
-            params["language"] = language
+            normalized = search_key(language)
+            params["language"] = {'romana':'romanian','engleza':'english','germana':'german','franceza':'french'}.get(normalized, normalized)
         try:
             raw = await asyncio.to_thread(self._radio_request, params)
             stations = [self._station(item) for item in raw if isinstance(item, dict)]
@@ -194,6 +252,29 @@ class Content:
             "bitrate": item.get("bitrate", 0),
             "codec": item.get("codec", ""),
         }
+
+    async def radio_click(self, station_uuid: str) -> bool:
+        """Best-effort catalog signal after a successful explicit stream start.
+
+        Only a catalog UUID is accepted. The response is never used to choose a
+        stream, and the fixed Radio Browser hosts cannot be supplied by callers.
+        """
+        if not isinstance(station_uuid, str) or not re.fullmatch(r"[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}", station_uuid):
+            return False
+        servers = self._radio_servers_discovered or self.RADIO_SERVERS
+        server = servers[self._radio_server_index % len(servers)]
+        if not re.fullmatch(r"[a-zA-Z0-9-]+\.api\.radio-browser\.info", server):
+            return False
+        try:
+            result = await asyncio.wait_for(asyncio.to_thread(
+                self._get_json,
+                f"https://{server}/json/url/{station_uuid.lower()}",
+                headers={"User-Agent": self.RADIO_USER_AGENT, "Accept": "application/json"},
+                timeout=min(self.timeout, 2.0),
+            ), timeout=2.0)
+            return isinstance(result, dict) and result.get("ok") in (True, "true")
+        except (ContentError, OSError, ValueError, TypeError, TimeoutError):
+            return False
 
     def _radio_request(self, params: dict[str, Any]) -> Any:
         # Radio Browser recommends DNS resolution of all.api followed by reverse
@@ -282,10 +363,14 @@ class Content:
             current = None
         scan_roots = [current] if current else roots
         items: list[dict[str, Any]] = []
+        warnings: list[dict[str, str]] = []
         for root in scan_roots:
             try:
                 entries = await asyncio.to_thread(lambda p=root: list(p.iterdir()))
-            except (PermissionError, OSError):
+            except OSError as exc:
+                if current:
+                    raise ContentError("media_unavailable", "This media folder cannot be read. Try again.") from exc
+                warnings.append({"path": str(root), "error": "media_unavailable"})
                 continue
             for entry in entries:
                 try:
@@ -300,20 +385,126 @@ class Content:
                 kind = "directory" if is_dir else "audio" if suffix in self.AUDIO_EXTENSIONS else "video" if suffix in self.VIDEO_EXTENSIONS else None
                 if not is_dir and kind is None:
                     continue
-                items.append({"name": entry.name, "path": str(canonical), "kind": kind, "is_dir": is_dir, "size": stat.st_size, "modified": stat.st_mtime})
+                deletable = (sys.platform == 'linux' and not entry.is_symlink() and not is_dir
+                             and stat_module.S_ISREG(stat.st_mode) and stat.st_uid == os.geteuid() and stat.st_nlink == 1)
+                items.append({"name": entry.name, "path": str(canonical), "kind": kind, "is_dir": is_dir, "size": stat.st_size, "modified": stat.st_mtime,
+                              "deletable": deletable, "delete_token": self._delete_token(canonical, stat) if deletable else None})
         items.sort(key=lambda item: (not item["is_dir"], item["name"].casefold()))
+        if scan_roots and len(warnings) == len(scan_roots):
+            raise ContentError("media_unavailable", "The media folders cannot be read. Try again.")
         parent = None
         if current:
             root = next((candidate for candidate in roots if self._within_any(current, [candidate])), current)
             if current != root:
                 parent = str(current.parent)
-        return {"path": str(current) if current else "", "parent": parent, "roots": [str(root) for root in roots], "items": items}
+        return {"path": str(current) if current else "", "parent": parent, "roots": [str(root) for root in roots], "items": items, "partial": bool(warnings), "warnings": warnings}
 
     def resolve_media(self, path: str | Path) -> Path:
         target = self._resolve_approved_path(path)
         if not target.is_file():
             raise ContentError("media_not_file", "Choose a media file.")
         return target
+
+    @staticmethod
+    def _delete_token(path: Path, info: os.stat_result) -> str:
+        value = [str(path), info.st_dev, info.st_ino, info.st_mtime_ns, info.st_ctime_ns, info.st_size, info.st_uid]
+        return hashlib.sha256(json.dumps(value, separators=(',', ':')).encode()).hexdigest()
+
+    async def delete_media(self, path: str, token: str, blocked_identity: tuple[int, int] | None = None) -> str:
+        return await asyncio.to_thread(self._delete_media, path, token, blocked_identity)
+
+    def _delete_media(self, path: str, token: str, blocked_identity: tuple[int, int] | None = None) -> str:
+        if not isinstance(path, str) or not 1 <= len(path) <= 4096 or '\x00' in path or not re.fullmatch('[0-9a-f]{64}', token or ''):
+            raise ContentError('media_delete_invalid')
+        target = Path(path)
+        if not target.is_absolute() or str(target) != path or any(p in {'.', '..'} for p in path.split('/')):
+            raise ContentError('media_path_not_allowed')
+        if target.suffix.lower() not in self.AUDIO_EXTENSIONS | self.VIDEO_EXTENSIONS:
+            raise ContentError('media_delete_not_supported')
+        if not self._within_any(target, self._media_roots()):
+            raise ContentError('media_path_not_allowed')
+        if sys.platform != 'linux':
+            raise ContentError('media_delete_unavailable')
+        # Hold every ancestor by nofollow dirfd. Rename captures the directory
+        # entry atomically; identity is rechecked inside a private quarantine
+        # before unlink, so replacing the displayed name cannot delete a new file.
+        parent_fd = quarantine_fd = file_fd = None
+        quarantine = '.pysh-delete-' + uuid.uuid4().hex
+        captured = uuid.uuid4().hex + target.suffix.lower()
+        moved = False
+        quarantine_created = False
+        try:
+            parent_fd = os.open('/', os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+            for component in target.parent.parts[1:]:
+                next_fd = os.open(component, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=parent_fd)
+                os.close(parent_fd)
+                parent_fd = next_fd
+            file_fd = os.open(target.name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=parent_fd)
+            info = os.fstat(file_fd)
+            if not stat_module.S_ISREG(info.st_mode) or info.st_uid != os.geteuid() or info.st_nlink != 1:
+                raise ContentError('media_delete_not_supported')
+            if blocked_identity == (info.st_dev, info.st_ino):
+                raise ContentError('media_in_use')
+            if self._delete_token(target, info) != token:
+                raise ContentError('media_changed')
+            # An unplug/remount or parent rename must not redirect the approved root.
+            if Path('/proc/self/fd', str(parent_fd)).resolve() != target.parent:
+                raise ContentError('media_changed')
+            os.mkdir(quarantine, mode=0o700, dir_fd=parent_fd)
+            quarantine_created = True
+            quarantine_fd = os.open(quarantine, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=parent_fd)
+            os.rename(target.name, captured, src_dir_fd=parent_fd, dst_dir_fd=quarantine_fd)
+            moved = True
+            actual = os.stat(captured, dir_fd=quarantine_fd, follow_symlinks=False)
+            # Rename can change ctime, so compare stable observed identity fields;
+            # the pre-rename fingerprint already required the complete list token.
+            fields = ('st_dev', 'st_ino', 'st_mtime_ns', 'st_size', 'st_uid', 'st_nlink', 'st_mode')
+            if any(getattr(actual, key) != getattr(info, key) for key in fields) or not stat_module.S_ISREG(actual.st_mode):
+                raise ContentError('media_changed')
+            os.unlink(captured, dir_fd=quarantine_fd)
+            moved = False
+            # Unlink has completed. A removable filesystem rejecting directory
+            # fsync must not report failure and invite a retry of another entry.
+            try:
+                os.fsync(parent_fd)
+            except OSError:
+                pass
+            return str(target)
+        except ContentError:
+            raise
+        except FileNotFoundError as exc:
+            raise ContentError('media_not_found') from exc
+        except PermissionError as exc:
+            raise ContentError('media_delete_denied') from exc
+        except OSError as exc:
+            code = 'media_path_not_allowed' if exc.errno in {errno.ELOOP, errno.ENOTDIR} else 'media_delete_failed'
+            raise ContentError(code) from exc
+        finally:
+            recovery_required = False
+            if moved and quarantine_fd is not None:
+                # RENAME_NOREPLACE restores a raced/failed capture without ever
+                # overwriting a newly created original name. On conflict preserve
+                # the captured file in its private quarantine for recovery.
+                try:
+                    libc = ctypes.CDLL(None, use_errno=True)
+                    restore = libc.renameat2
+                    restore.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
+                    restore.restype = ctypes.c_int
+                    recovery_required = restore(quarantine_fd, os.fsencode(captured), parent_fd, os.fsencode(target.name), 1) != 0
+                except (AttributeError, OSError):
+                    recovery_required = True  # Preserve capture rather than overwrite another entry.
+            for descriptor in (file_fd, quarantine_fd):
+                if descriptor is not None:
+                    os.close(descriptor)
+            if parent_fd is not None and quarantine_created:
+                try:
+                    os.rmdir(quarantine, dir_fd=parent_fd)
+                except OSError:
+                    pass  # Never recursively delete a preserved recovery entry.
+            if parent_fd is not None:
+                os.close(parent_fd)
+            if recovery_required:
+                raise ContentError('media_delete_recovery_required')
 
     def _resolve_approved_path(self, path: str | Path) -> Path:
         try:
@@ -370,15 +561,59 @@ class Content:
             return []
         return []
 
-    def _get_json(self, url: str, params: dict[str, Any] | None = None, *, headers: dict[str, str] | None = None) -> Any:
+    def _get_json(self, url: str, params: dict[str, Any] | None = None, *, headers: dict[str, str] | None = None, timeout: float | None = None) -> Any:
         if params:
             url += ("&" if "?" in url else "?") + urlencode(params)
         request = Request(url, headers={"User-Agent": "PiSmartHub/1.0", "Accept": "application/json", **(headers or {})})
-        with urlopen(request, timeout=self.timeout) as response:
+        with urlopen(request, timeout=self.timeout if timeout is None else timeout) as response:
             data = json.loads(response.read().decode("utf-8"))
         if isinstance(data, dict) and data.get("error"):
             raise ContentError("upstream_error", str(data.get("reason", "Upstream service error")))
         return data
+
+
+def _optional_measurement(value: Any, *, minimum: float, maximum: float | None = None,
+                          exclusive_minimum: bool = False) -> int | float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    try:
+        if not math.isfinite(value):
+            return None
+    except OverflowError:
+        return None
+    if value < minimum or (exclusive_minimum and value == minimum) or (maximum is not None and value > maximum):
+        return None
+    return value
+
+
+def _current_hour_uv(hourly: Any, current_time: Any) -> tuple[int | float | None, str | None]:
+    from datetime import datetime
+    if not isinstance(hourly, dict) or not isinstance(current_time, str) or len(current_time) < 16 or current_time[10] != "T":
+        return None, None
+    times, values = hourly.get("time"), hourly.get("uv_index")
+    if not isinstance(times, list) or not isinstance(values, list) or len(times) != len(values):
+        return None, None
+    try:
+        current = datetime.fromisoformat(current_time)
+    except ValueError:
+        return None, None
+    target = current.replace(minute=0, second=0, microsecond=0)
+    matches = []
+    for index, stamp in enumerate(times):
+        if not isinstance(stamp, str) or len(stamp) < 16 or stamp[10] != "T":
+            continue
+        try:
+            sample = datetime.fromisoformat(stamp)
+        except ValueError:
+            continue
+        if sample.minute == 0 and sample.second == 0 and sample.microsecond == 0 and sample == target:
+            matches.append(index)
+    # Duplicate local timestamps around clock changes are ambiguous.
+    if len(matches) != 1:
+        return None, None
+    index = matches[0]
+    value = _optional_measurement(values[index], minimum=0)
+    return (value, times[index]) if value is not None else (None, None)
 
 
 def _number(value: Any) -> bool:

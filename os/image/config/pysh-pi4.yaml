@@ -1,0 +1,29 @@
+device:
+  layer: rpi4
+  hostname: pysh
+  user1: pysh
+  user1uid: 1000
+  # Retain the sudo package for recovery; customization removes hub privileges.
+  user1sudo: passwd
+
+image:
+  layer: image-rpios
+  # Generated from the pinned upstream layout by ci-build.sh before validation.
+  assetdir: ${@SRCROOT}/../../.runtime/pysh-image-layout
+  name: pysh-pi4-candidate
+  boot_part_size: 256M
+  root_part_size: 4096M
+
+layer:
+  base: pysh-base
+  app: pysh-runtime
+
+locale:
+  default: ro_RO.UTF-8
+  timezone: Europe/Bucharest
+
+ssh:
+  pubkey_only: y
+
+pysh:
+  payload: ${@SRCROOT}/payload

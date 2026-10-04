@@ -1,0 +1,9 @@
+{
+  "name": "org.pysh.keyboard",
+  "description": "PySH service-browser keyboard",
+  "path": "/opt/pysh/current/scripts/service-keyboard-host.py",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://mlodckeilbmpkenlijbbghpkobnocagc/"
+  ]
+}

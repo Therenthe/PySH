@@ -1,0 +1,243 @@
+/* Import after polish.css. Static condition-driven illustration; no GPU blur. */
+.app .home-v2.ambient-home{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(176px,1fr) 92px 100px;gap:10px;padding:14px 18px;overflow:hidden;background:var(--bg);animation:ambient-arrive 180ms ease-out both}
+.app .ambient-home>*:not(.ambient-sky){position:relative;z-index:1;min-width:0;min-height:0}
+.ambient-sky{position:absolute;inset:0;z-index:0;overflow:hidden;background:linear-gradient(170deg,#e7edf0,#b8ccd0 65%,#889e9c);color:#fff}
+.ambient-sky.sky-night{background:radial-gradient(ellipse at 85% 10%,#213747,transparent 65%),linear-gradient(#080e19,#142d39 72%,#344341)}
+.ambient-sky.sky-neutral{background:linear-gradient(135deg,#d8dedb,#a9b7b3)}
+.ambient-sky.sky-overcast,.ambient-sky.sky-fog{background:linear-gradient(#8b9ca5,#c7d0cc)}
+.ambient-sky.sky-night.sky-overcast,.ambient-sky.sky-night.sky-fog{background:linear-gradient(#19232c,#344344)}
+.ambient-stars{position:absolute;inset:0;width:100%;height:100%;opacity:.65}
+.city-material{opacity:.72}
+.ambient-orb{position:absolute;right:23px;top:23px;width:90px;height:90px;border-radius:50%}
+.ambient-moon{background:none;filter:drop-shadow(0 0 12px #a8cbd320)}
+.ambient-sun{background:radial-gradient(circle at 35% 30%,#fff8d9,#e8c98a);box-shadow:0 0 24px #e4ba7940}
+.celestial-anchor{position:absolute;width:90px;height:90px;transform:translate(-50%,-50%);pointer-events:none}
+.app>.ambient-sky .celestial-anchor .ambient-orb{position:relative;top:auto;right:auto;display:block}
+.sky-day .celestial-anchor .ambient-moon{opacity:.55;filter:none}
+.ambient-clouds{position:absolute;inset:0;background:radial-gradient(ellipse at 80% 15%,#f7fbff65 0 10%,transparent 27%),radial-gradient(ellipse at 95% 27%,#ecf1f74a 0 15%,transparent 37%)}
+.ambient-rain{position:absolute;inset:0;background:repeating-linear-gradient(110deg,transparent 0 42px,#adc2d722 43px 44px,transparent 45px 90px);opacity:.45}
+.ambient-snow{position:absolute;inset:0;background-image:radial-gradient(circle,#fff9 1px,transparent 2px);background-size:47px 53px;opacity:.5}
+.ambient-city{position:absolute;bottom:0;left:0;width:100%;height:115px;color:#203735;opacity:.33}
+.app[data-theme=night] .ambient-sky:not(.sky-night){filter:brightness(.55)}
+.app[data-theme=night] .ambient-city{color:#03090e;opacity:.8}
+.app>.ambient-sky.sky-night .ambient-city{color:#050b12;opacity:1}
+.app>.ambient-sky.sky-night .ambient-city .city-backdrop{fill:#2a4153;opacity:.48}
+.app>.ambient-sky.sky-night .ambient-city .city-front{stroke:#68809538;stroke-width:.45}
+.app>.ambient-sky.sky-night .ambient-city .city-windows{fill:#f0ca8a}
+.app .ambient-home{--ambient-panel:#fbfaf5ef;--ambient-text:#23251f;--ambient-secondary:#4b554e;--ambient-edge:#65786c;--ambient-divider:#68786b40;--ambient-button:#375e47;--ambient-button-text:#fff}
+.app[data-theme=night] .ambient-home{--ambient-panel:#0c1720b8;--ambient-text:#f1f3ee;--ambient-secondary:#d0d9da;--ambient-edge:#91a8a6;--ambient-divider:#a8bbb32b;--ambient-button:#67cba4;--ambient-button-text:#081611}
+.app .ambient-home .ambient-weather,.app .ambient-home .ambient-forecast,.app .ambient-home .ambient-dock{background:var(--ambient-panel);color:var(--ambient-text);border:1px solid var(--ambient-divider);border-radius:16px;box-shadow:0 5px 18px #05101a20}
+.app .home-v2.ambient-home .ambient-weather{padding:8px 14px;width:calc(100% - 112px);max-width:550px;overflow:hidden}
+.app .ambient-home .weather-top{min-height:48px;display:flex;align-items:center;gap:8px}
+.app .ambient-home .weather-heading h2{font-size:16px;line-height:1.2;margin:0;color:var(--ambient-text)}
+.app .ambient-home .weather-heading small{font-size:14px;color:var(--ambient-secondary)}
+.app .ambient-home .weather-top button{width:48px;height:48px;min-width:48px;min-height:48px;color:var(--ambient-text);border:1px solid var(--ambient-edge);border-radius:50%;background:transparent}
+.ambient-weather-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,1fr);gap:12px;align-items:center}
+.app .ambient-home .temp-row{display:flex;align-items:center;gap:12px;min-height:51px;margin:0}
+.app .ambient-home .temp{font-size:54px;line-height:1;letter-spacing:-2px}
+.app .ambient-home .ambient-condition{font-size:16px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app .ambient-home .weather-details{font-size:14px;color:var(--ambient-secondary);display:flex;flex-direction:column;gap:1px;line-height:1.3;margin-top:3px}
+.ambient-metrics{display:flex;flex-direction:column;gap:5px;margin:0;padding-left:12px;border-left:1px solid var(--ambient-divider)}
+.ambient-metrics div{display:flex;justify-content:space-between;gap:5px;font-size:14px;line-height:1.4}
+.ambient-metrics dt{color:var(--ambient-secondary)}
+.ambient-metrics dd{margin:0;white-space:nowrap;font-variant-numeric:tabular-nums}
+.app .ambient-home .ambient-forecast{padding:7px 12px;overflow:hidden}
+.ambient-forecast header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.app .ambient-forecast h2{font-size:14px;line-height:1.3;margin:0;color:var(--ambient-text);font-weight:500}
+.app .ambient-home .weather-attribution{font-size:14px;line-height:1.3;margin:0;color:var(--ambient-secondary)}
+.app .ambient-home .forecast-line{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:5px 0 0;padding:0;border:0}
+.forecast-day{display:grid;grid-template-columns:1fr auto;grid-template-rows:22px 25px;align-items:center;padding:0 7px;border-left:1px solid var(--ambient-divider)}
+.forecast-day:first-child{border-left:0}
+.forecast-day>b{font-size:14px;font-weight:500;text-transform:capitalize;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.forecast-day>svg{grid-column:2;grid-row:1/3}
+.app .ambient-home .forecast-day>span{display:flex;gap:5px;align-items:baseline;line-height:1.3;font-size:16px}
+.forecast-day strong{font-size:16px;font-weight:600}
+.app .ambient-home .forecast-day i{font-size:14px;font-style:normal;color:var(--ambient-secondary)}
+.forecast-unavailable{grid-column:1/-1;font-size:16px;color:var(--ambient-secondary);padding:12px 0}
+.app .home-v2.ambient-home .ambient-dock{grid-column:auto;display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;padding:9px 12px;overflow:hidden}
+.app .ambient-home .playback-caption{gap:9px}
+.app .ambient-home .playback-caption .eyebrow,.app .ambient-home .playback-caption .player-state{font-size:14px;color:var(--ambient-secondary);white-space:nowrap}
+.app .ambient-home .playback-source{font-size:18px;line-height:1.25;margin:3px 0;max-width:100%;color:var(--ambient-text)}
+.app .ambient-home .playback-metadata{font-size:14px;line-height:1.3;margin:2px 0 0;white-space:nowrap;display:block;text-overflow:ellipsis;overflow:hidden;color:var(--ambient-secondary)}
+.app .ambient-home .mini-controls{display:flex;align-items:center;gap:8px}
+.app .ambient-home .mini-controls button{width:48px;height:52px;min-width:48px;min-height:52px;border-radius:50%;border:1px solid var(--ambient-edge);background:transparent;color:var(--ambient-text)}
+.app .ambient-home .mini-controls .playback-toggle{width:64px;height:64px;min-width:64px;min-height:64px;border:0;background:var(--ambient-button);color:var(--ambient-button-text)}
+.ambient-shortcuts{display:flex;gap:6px;align-items:center;padding-left:10px;border-left:1px solid var(--ambient-divider)}
+.app .ambient-home .ambient-shortcuts .shortcut{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:4px;width:58px;height:64px;min-height:64px;border:1px solid var(--ambient-edge);border-radius:12px;background:transparent;color:var(--ambient-text)}
+.app .ambient-home .ambient-shortcuts b{font-size:14px;flex:0;font-weight:500}
+.app .ambient-home .weather-empty{min-height:100px;color:var(--ambient-text)}
+.app .home-v2.ambient-home{grid-template-rows:minmax(176px,1fr) 84px 96px;gap:8px;padding:12px 18px}
+.app .home-v2.ambient-home.ambient-has-signal{grid-template-rows:minmax(160px,1fr) 80px 32px 88px;gap:6px;padding:10px 18px}
+.app .ambient-home .ambient-forecast{width:min(460px,100%);justify-self:center;border-radius:18px}
+.app .home-v2.ambient-home .ambient-weather{align-self:start;margin-left:16px;width:calc(100% - 124px);max-width:500px;border-radius:20px}
+.ambient-visualizer{height:32px;width:min(560px,100%);justify-self:center;overflow:hidden}
+.ambient-visualizer .audio-visualizer{height:100%}
+@keyframes ambient-arrive{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.app .home-v2.ambient-home{animation:none}}
+.ambient-stars circle:nth-child(37n){animation:ambient-twinkle 11s ease-in-out infinite alternate}
+.ambient-stars circle:nth-child(53n){animation:ambient-twinkle 17s 4s ease-in-out infinite alternate}
+.ambient-meteor{position:absolute;top:17%;left:65%;width:90px;height:1px;opacity:0;background:linear-gradient(90deg,transparent,#cbdde4);transform:rotate(-30deg);animation:ambient-meteor 37s 12s linear infinite}
+@keyframes ambient-twinkle{from{opacity:.28}to{opacity:.95}}
+@keyframes ambient-meteor{0%,94%,100%{opacity:0;transform:translate(0,0) rotate(-30deg)}95%{opacity:.7}98%{opacity:0;transform:translate(-170px,98px) rotate(-30deg)}}
+@media(prefers-reduced-motion:reduce){.ambient-stars circle,.ambient-meteor{animation:none}.ambient-meteor{display:none}}
+
+/* Cards leave the sky visible after15s. Reopening renews their independent timer. */
+.app .ambient-home .ambient-weather{transition:width 300ms ease}
+.app .home-v2.ambient-home .ambient-weather.card-compact{width:min(250px,calc((100% - 124px)/2))}
+.app .ambient-home .weather-top .weather-heading{display:flex;flex-direction:column;align-items:flex-start;text-align:left;flex:1;min-width:0;width:auto;height:auto;min-height:48px;border:0;border-radius:8px;padding:0;background:transparent}
+.app .ambient-home .weather-location{display:block;max-width:100%;font-size:16px;line-height:1.2;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app .ambient-home .ambient-weather.card-compact .ambient-weather-body{grid-template-columns:minmax(0,1fr)}
+.app .ambient-home .ambient-metrics[hidden]{display:none}
+.app .ambient-home .ambient-forecast{display:block;text-align:left;min-height:80px;transition:width 300ms ease;padding:7px 12px;cursor:pointer}
+.app .ambient-home .ambient-forecast.card-compact{width:186px}
+.app .ambient-home .ambient-forecast.card-compact .forecast-line{grid-template-columns:1fr}
+.app .ambient-home .ambient-forecast.card-compact .forecast-day{padding:0}
+.app .ambient-home .ambient-forecast.card-compact .weather-attribution{font-size:14px}
+.app .home-v2.ambient-home{grid-template-rows:minmax(176px,1fr) 84px auto}
+.app .home-v2.ambient-home.ambient-has-signal{grid-template-rows:minmax(160px,1fr) 80px 32px auto}
+.app .ambient-home .ambient-dock{width:100%;height:88px;align-self:end;justify-self:center;transition:width 300ms ease,height 300ms ease;align-items:center}
+.app .ambient-home .playback-expand{display:flex;align-items:center;gap:10px;min-width:0;min-height:64px;width:100%;padding:0;border:0;background:transparent;text-align:left;color:var(--ambient-text);border-radius:8px}
+.app .ambient-home .playback-expand .playback-copy{min-width:0;flex:1}
+.app .ambient-home .playback-expand .radio-artwork{width:48px;height:48px;flex:0 0 48px}
+.app .ambient-home .ambient-dock.card-compact{width:min(440px,100%);height:64px;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:6px 10px}
+.app .ambient-home .ambient-dock.card-compact .playback-expand{min-height:48px}
+.app .ambient-home .ambient-dock.card-compact .playback-caption,.app .ambient-home .ambient-dock.card-compact .playback-metadata,.app .ambient-home .ambient-dock.card-compact .mini-controls .outline,.app .ambient-home .ambient-dock.card-compact .ambient-shortcuts{display:none}
+.app .ambient-home .ambient-dock.card-compact .mini-controls .playback-toggle{width:48px;height:48px;min-width:48px;min-height:48px}
+.app .ambient-home .ambient-dock.card-compact .playback-source{font-size:16px}
+.ambient-clouds{height:65%;inset:0 0 auto;opacity:.75;animation:ambient-cloud-drift 48s ease-in-out infinite alternate;background:radial-gradient(ellipse at 55% 20%,#e0e9ee40 0 14%,transparent 38%),radial-gradient(ellipse at 80% 37%,#d6e1e646 0 15%,transparent 42%),radial-gradient(ellipse at 8% 50%,#dce7ed35 0 9%,transparent 27%)}
+.sky-mainly-clear .ambient-clouds{opacity:.35}
+.sky-overcast .ambient-clouds,.sky-rain .ambient-clouds,.sky-snow .ambient-clouds{opacity:.9}
+.ambient-rain{inset:-40px 0 -40px;animation:ambient-rainfall 1.4s linear infinite}
+.ambient-snow{inset:-55px 0 -55px;animation:ambient-snowfall 8s linear infinite}
+@keyframes ambient-cloud-drift{from{transform:translateX(-12px)}to{transform:translateX(16px)}}
+@keyframes ambient-rainfall{from{background-position:0 0}to{background-position:-15px 80px}}
+@keyframes ambient-snowfall{from{background-position:0 0}to{background-position:15px 53px}}
+@media(prefers-reduced-motion:reduce){.app .ambient-home .ambient-weather,.app .ambient-home .ambient-forecast,.app .ambient-home .ambient-dock{transition:none}.ambient-clouds,.ambient-rain,.ambient-snow{animation:none}}
+.app .home-v2.ambient-home.ambient-has-signal{grid-template-rows:minmax(160px,1fr) 80px 48px auto}
+.app .ambient-home .ambient-visualizer{width:min(660px,100%);height:48px;min-height:48px;border:0;background:transparent;padding:0;position:relative;color:var(--ambient-text);border-radius:14px;transition:height 300ms ease}
+.app .home-v2.ambient-home.playback-in-signal{grid-template-rows:minmax(176px,1fr) 80px 88px}
+.app .ambient-home.playback-in-signal .ambient-visualizer{height:88px;min-height:88px;padding-bottom:30px}
+.app .ambient-home.playback-in-signal .ambient-dock{display:none}
+.app .ambient-home .signal-station{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:8px;height:30px;color:var(--ambient-text);font-size:14px}
+.app .ambient-home .signal-station>span:last-child{max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app .ambient-home .signal-station .radio-artwork{width:24px;height:24px;flex:0 0 24px;border-radius:6px}
+@media(prefers-reduced-motion:reduce){.app .ambient-home .ambient-visualizer{transition:none}}
+.ambient-city{height:170px;z-index:1}
+.ambient-clouds,.ambient-rain,.ambient-snow{z-index:2}
+/* Shared sky continues behind the idle header. Active controls keep their contrast. */
+.app>.ambient-sky{pointer-events:none}
+.app .main-area{position:relative;z-index:1;background:transparent}
+.app .rail{position:relative;z-index:2}
+.app .home-v2.ambient-home{background:transparent}
+.app>.ambient-sky .ambient-orb{top:85px}
+.app .topbar{transition:background-color 220ms ease,border-color 220ms ease,color 220ms ease}
+.app .topbar.topbar-idle{background:transparent;border-color:transparent;box-shadow:none}
+.app .topbar-idle.sky-header-night{--ink:#f4f7fb;--muted:#d0d9da;--soft:#203b35;color:var(--ink)}
+.app .topbar-idle .navigation-toggle{background:transparent;box-shadow:none}
+.app .ambient-home .ambient-weather{grid-row:1}
+.app .ambient-home .ambient-forecast{grid-row:2}
+.app .ambient-home .ambient-visualizer{grid-row:3;cursor:pointer}
+.app .ambient-home .ambient-dock{grid-row:4;height:80px;padding:7px 12px}
+.app .ambient-home [data-home-positioned=true]{margin:0}
+.app .ambient-home.playback-in-signal .ambient-visualizer{height:64px;min-height:64px;padding-bottom:28px;width:min(380px,100%)}
+.app .ambient-home.playback-in-signal[data-visualizer-size=balanced] .ambient-visualizer{height:88px;min-height:88px;width:min(520px,100%)}
+.app .ambient-home.playback-in-signal[data-visualizer-size=large] .ambient-visualizer{height:112px;min-height:112px;width:min(660px,100%)}
+.ambient-clouds{background:none;width:100%;height:250px;opacity:.85}
+.sky-mainly-clear .ambient-clouds{opacity:.7}
+.sky-overcast .ambient-clouds,.sky-rain .ambient-clouds,.sky-snow .ambient-clouds{opacity:1}
+.ambient-city .city-windows{fill:#ffd599}
+.ambient-city .city-windows rect{animation:none}
+@keyframes city-light{from{fill:#ffd599}to{fill:#b9d7de}}
+.ambient-meteor.meteor-transient{animation:meteor-flight 1.8s ease-out both}
+@keyframes meteor-flight{0%{opacity:0;transform:translate(0,0) rotate(-30deg)}15%{opacity:.8}100%{opacity:0;transform:translate(-230px,130px) rotate(-30deg)}}
+.app .home-layout-toolbar{position:absolute;top:3px;left:8px;right:8px;z-index:8;display:flex;align-items:center;gap:8px;padding:5px 8px;background:var(--paper);border:1px solid var(--line-dark);border-radius:12px;color:var(--ink);box-shadow:0 3px 12px #0003}
+.app .home-layout-toolbar>span{font-size:14px;flex:1}
+.app .home-layout-toolbar button{min-height:48px;min-width:48px;padding:0 12px}
+.app .home-layout-toolbar button{background:var(--soft);color:var(--ink);border:1px solid var(--line-dark);border-radius:10px}
+.app .home-layout-toolbar [role=alert]{position:absolute;top:100%;left:0;right:0;padding:8px;background:var(--paper);border-radius:8px}
+.app .ambient-home .home-drag-handle{position:absolute;right:4px;top:4px;z-index:4;width:48px;height:48px;min-width:48px;min-height:48px;border:1px solid var(--ambient-edge);border-radius:10px;background:var(--ambient-panel);color:var(--ambient-text);font-size:28px;touch-action:none;cursor:grab}
+.app .ambient-home .home-drag-handle:active{cursor:grabbing}
+.app .ambient-home[data-layout-editing=true] .ambient-weather{margin-top:64px}
+.app .ambient-home[data-layout-editing=true] .weather-top .icon-button,
+.app .ambient-home[data-layout-editing=true] .ambient-shortcuts,
+.app .ambient-home[data-layout-editing=true] .mini-controls{visibility:hidden}
+.app .ambient-home[data-layout-editing=true] .weather-heading{padding-right:0}
+.app .ambient-home[data-layout-editing=true] .ambient-forecast header{padding-right:48px}
+.app .ambient-home[data-layout-editing=true] .weather-attribution{display:none}
+@media(prefers-reduced-motion:reduce){.app .topbar{transition:none}.city-windows rect{animation:none}.meteor-transient{display:none}}
+.app .home-layout-toolbar{position:fixed;top:0;left:70px;right:8px;min-height:58px}
+.app .ambient-home[data-layout-editing=true] .ambient-weather{margin-top:0}
+/* The fixed edge handle must remain above the rail it controls. */
+.app .rail{z-index:1}
+.app .topbar{background:var(--bg)}
+.app>.home-layout-toolbar{position:fixed;z-index:30;top:0;left:70px;right:8px;min-height:58px}
+.app .topbar-idle .icon-button{background:transparent}
+.app[data-theme=night]>.ambient-sky:not(.sky-night){filter:brightness(.4)}
+.app .ambient-home .playback-caption .eyebrow,.app .ambient-home .playback-caption .player-state{line-height:17px}
+.app .ambient-home .playback-source{line-height:22px;margin:2px 0}
+.app .ambient-home .playback-metadata{line-height:17px;margin:1px 0 0}
+.app .home-v2.ambient-home .ambient-dock{padding:7px 12px}
+/* E-Ink transport remains readable when its actual weather scene is nocturnal. */
+.app[data-theme=ink]:has(>.ambient-sky.sky-night) .ambient-visualizer{--signal-ink:#d7ebe7;--ambient-text:#f4f7fb;--muted:#d0d9da}
+/* The chosen signal size applies whether the transport is open or folded. */
+.app .home-v2.ambient-home{container-type:inline-size}
+.app .ambient-home .ambient-visualizer{height:64px;min-height:64px;width:min(380px,100%)}
+.app .ambient-home[data-visualizer-size=balanced] .ambient-visualizer{height:88px;min-height:88px;width:min(520px,100%)}
+.app .ambient-home[data-visualizer-size=large] .ambient-visualizer{height:112px;min-height:112px;width:min(660px,100%)}
+.app .home-v2.ambient-home.transport-expanded{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}
+.app .ambient-home.transport-expanded .ambient-weather{grid-column:1;grid-row:1;margin:0;width:calc((100cqw - 16px)/2);max-width:500px}
+.app .ambient-home.transport-expanded .ambient-weather.card-compact{width:min(250px,calc((100cqw - 16px)/2))}
+.app .ambient-home.transport-expanded .ambient-forecast{grid-column:2;grid-row:1;align-self:end;width:calc((100cqw - 16px)/2)}
+.app .ambient-home.transport-expanded .ambient-forecast.card-compact{width:186px}
+.app .ambient-home.transport-expanded .forecast-day{display:flex;flex-direction:column;gap:3px;padding:0 2px}
+.app .ambient-home.transport-expanded .forecast-day>span{gap:3px}
+.app .ambient-home.transport-expanded .ambient-visualizer{grid-column:1/-1;grid-row:2}
+.app .ambient-home.transport-expanded .ambient-dock{grid-column:1/-1;grid-row:3}
+/* Arrange works with the same compact footprints that remain after Done. */
+.app .ambient-home[data-layout-editing=true] .ambient-dock{display:grid}
+.app .ambient-home[data-layout-editing=true] .playback-expand{pointer-events:none}
+.app .ambient-home[data-layout-editing=true] *{transition:none}
+/* The carrier is the leading point; its trail extends backward along the flight axis. */
+.ambient-meteor.meteor-transient{width:0;height:0;background:none;border:0;transform-origin:0 0;pointer-events:none;animation:meteor-flight var(--meteor-duration) linear both}
+.meteor-transient .meteor-tail{position:absolute;left:0;top:0;width:var(--meteor-length);height:var(--meteor-thickness);transform:translate(-100%,-50%);border-radius:100%;background:linear-gradient(90deg,transparent 0%,rgb(166 198 218 / .12) 30%,rgb(193 217 231 / .6) 78%,#edf8ff 100%)}
+.meteor-transient .meteor-head{position:absolute;left:0;top:0;width:calc(var(--meteor-thickness) + 2px);height:calc(var(--meteor-thickness) + 2px);transform:translate(-50%,-50%);border-radius:50%;background:#f6fbff;box-shadow:0 0 4px 1px rgb(193 225 245 / .55)}
+@keyframes meteor-flight{0%{opacity:0;transform:translate(0,0) rotate(var(--meteor-angle))}10%,68%{opacity:var(--meteor-brightness)}100%{opacity:0;transform:translate(var(--meteor-dx),var(--meteor-dy)) rotate(var(--meteor-angle))}}
+@media(prefers-reduced-motion:reduce){.ambient-meteor.meteor-transient{display:none;animation:none}}
+
+/* Home rests in place: only the clock, current signal and sky remain. No preference writes or repositioning. */
+.app[data-home-phase=ambient] .rail,
+.app[data-home-phase=ambient] .topbar-title,
+.app[data-home-phase=ambient] .topbar-right,
+.app[data-home-phase=ambient] .date-label,
+.app[data-home-phase=ambient] .ambient-weather,
+.app[data-home-phase=ambient] .ambient-forecast,
+.app[data-home-phase=ambient] .ambient-dock,
+.app[data-home-phase=ambient] .signal-station,
+.app[data-home-phase=ambient] .toast{visibility:hidden;pointer-events:none}
+.app[data-home-phase=ambient] .topbar{background:transparent;border-color:transparent;box-shadow:none}
+.app[data-home-phase=ambient] .top-clock{color:var(--ink)}
+.app[data-home-phase=ambient]:has(>.ambient-sky.sky-night) .top-clock{color:#f4f7fb}
+.app[data-home-phase=ambient] .ambient-visualizer{pointer-events:none;cursor:default}
+@media(prefers-reduced-motion:reduce){.app[data-home-phase=ambient] .topbar{transition:none}}
+/* Fade the controls together, retaining their saved geometry throughout wake. */
+.app[data-home-phase] :is(.rail,.topbar-title,.topbar-right,.date-label,.ambient-weather,.ambient-forecast,.ambient-dock,.signal-station,.toast){opacity:1;transition:width 300ms ease,height 300ms ease,flex-basis 220ms ease,padding 220ms ease,opacity 220ms ease,visibility 0s}
+.app[data-home-phase=ambient] :is(.rail,.topbar-title,.topbar-right,.date-label,.ambient-weather,.ambient-forecast,.ambient-dock,.signal-station,.toast){opacity:0;transition-delay:0s,0s,0s,0s,0s,220ms}
+@media(prefers-reduced-motion:reduce){.app[data-home-phase] :is(.rail,.topbar-title,.topbar-right,.date-label,.ambient-weather,.ambient-forecast,.ambient-dock,.signal-station,.toast){transition:none}}
+
+/* Static distant architecture and sparse warm windows preserve a quiet horizon. */
+.ambient-city .city-backdrop{fill:#59706e;opacity:.46}
+.ambient-city .city-front{opacity:.94}
+.app[data-theme=night] .ambient-city .city-backdrop{fill:#355260;opacity:.52}
+.ambient-city .city-windows{fill:#dcc69b}
+.ambient-clouds{overflow:visible}
+/* The open Ink rail keeps its own foreground when the header reveals a night sky. */
+.app[data-theme=ink][data-navigation=open] .topbar-idle.sky-header-night .navigation-toggle{color:#23251f}
+
+/* First-entry Arrange keeps every unpositioned compact card and grip on canvas.
+   Saved cards retain their absolute edge anchors and intentional overlap. */
+.app .home-v2.ambient-home[data-layout-editing=true]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.app .home-v2.ambient-home[data-layout-editing=true] .ambient-weather.card-compact{grid-column:1;grid-row:1;align-self:start;margin-left:0;width:min(250px,calc((100cqw - 16px)/2))}
+.app .ambient-home[data-layout-editing=true] .ambient-forecast{grid-column:2;grid-row:1;align-self:start}
+.app .ambient-home[data-layout-editing=true] .ambient-visualizer{grid-column:1/-1;grid-row:2}
+.app .ambient-home[data-layout-editing=true] .ambient-dock{grid-column:1/-1;grid-row:3}
+.app[data-theme=ink] .ambient-home[data-layout-editing=true] .ambient-visualizer .home-drag-handle{color:var(--ink)}

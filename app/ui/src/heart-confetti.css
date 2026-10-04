@@ -1,0 +1,8 @@
+/* Decorative overlay is bounded to its positioned Home canvas. Never captures touch. */
+.heart-confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;user-select:none;z-index:1;contain:paint}
+.confetti-heart{position:absolute;top:-22px;opacity:0;pointer-events:none;will-change:transform,opacity;animation-name:confetti-fall;animation-timing-function:linear;animation-fill-mode:both;color:#9e5476}
+.confetti-tone-1{color:#a95562}.confetti-tone-2{color:#886682}
+.app[data-theme=night] .confetti-heart{color:#eaa8c7}.app[data-theme=night] .confetti-tone-1{color:#e6a0aa}.app[data-theme=night] .confetti-tone-2{color:#c4acd4}
+@keyframes confetti-fall{0%{opacity:0;transform:translate3d(0,0,0) rotate(0)}12%{opacity:.56}72%{opacity:.42}100%{opacity:0;transform:translate3d(var(--heart-drift),440px,0) rotate(var(--heart-rotation))}}
+@media(prefers-reduced-motion:reduce){.heart-confetti{display:none}.confetti-heart{animation:none;will-change:auto}}
+

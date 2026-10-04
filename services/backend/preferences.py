@@ -33,15 +33,35 @@ class Station(BaseModel):
     homepage: str = Field(default="", max_length=2048)
 
 
+class HomePosition(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    x: float = Field(ge=0, le=1, allow_inf_nan=False)
+    y: float = Field(ge=0, le=1, allow_inf_nan=False)
+    z: int = Field(default=1, ge=1, le=4)
+    # Missing anchors keep the legacy top-left x/y interpretation.
+    anchorX: Literal["left", "right"] = "left"
+    anchorY: Literal["top", "bottom"] = "top"
+
+
 class Preferences(BaseModel):
     model_config = ConfigDict(extra="forbid")
     language: Literal["ro", "en"] = "ro"
     theme: Literal["ink", "night"] = "ink"
     accent: Literal["sage", "amber", "blue"] = "sage"
     nightEnabled: bool = False
+    nightMode: Literal["solar", "schedule"] = "solar"
     nightStart: str = Field(default="22:00", pattern=r"^(?:[01]\d|2[0-3]):[0-5]\d$")
     nightEnd: str = Field(default="07:00", pattern=r"^(?:[01]\d|2[0-3]):[0-5]\d$")
     screensaverMinutes: int = Field(default=5, ge=0, le=120)
+    visualizerStyle: Literal["off", "wave", "bars", "orbit", "ribbon", "mirror", "rings"] = "off"
+    visualizerSize: Literal["compact", "balanced", "large"] = "compact"
+    homeCards: list[Literal["weather", "forecast", "playback"]] = Field(default_factory=lambda:["weather", "forecast", "playback"], max_length=3)
+    decorativeAircraft: bool = Field(default=True, strict=True)
+    decorativeLunarDust: bool = Field(default=False, strict=True)
+    homePositions: dict[Literal["weather", "forecast", "playback", "visualizer"], HomePosition] = Field(default_factory=dict, max_length=4)
+    screensaverLayout: Literal["clock", "visualizer"] = "clock"
+    navigationCollapsed: bool = False
+    navigationAutoHide: bool = False
     timezone: str = "Europe/Bucharest"
     location: Location | None = None
     setupComplete: bool = False
@@ -75,7 +95,10 @@ class PreferenceStore:
         for path in (self.path, self.backup):
             if path.exists():
                 try:
-                    result = Preferences.model_validate_json(path.read_text(encoding="utf-8"))
+                    saved = json.loads(path.read_text(encoding="utf-8"))
+                    if isinstance(saved, dict) and "nightMode" not in saved and saved.get("nightEnabled"):
+                        saved["nightMode"] = "schedule"
+                    result = Preferences.model_validate(saved)
                     self.recovered = path == self.backup
                     return result
                 except (ValueError, OSError):

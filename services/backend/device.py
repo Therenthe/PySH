@@ -168,6 +168,7 @@ class Device:
 
     def __init__(self) -> None:
         self._linux = platform.system() == "Linux"
+        self._network_lock = asyncio.Lock()
         self._bus: MessageBus | None = None
         self._nm_obj_cache: dict[tuple[str, str], Any] = {}
         self._bt_pending: dict[str, tuple[asyncio.Future[str | None], dict[str, Any]]] = {}
@@ -308,6 +309,8 @@ class Device:
             for path in await self._nm_device_paths():
                 p = await self._props(NM, path, NM_DEVICE)
                 device_type = int(p.get("DeviceType", 0))
+                if device_type not in (1, 2):
+                    continue
                 entry: dict[str, Any] = {"interface": p.get("Interface", ""), "type": {1: "ethernet", 2: "wifi"}.get(device_type, "other"), "state": self._state_name(int(p.get("State", 0)))}
                 if device_type == 2:
                     wifi = await self._proxy(NM, path, NM_WIFI)
@@ -325,24 +328,44 @@ class Device:
                         entry["ip"] = addresses[0].get("address")
                 result["devices"].append(entry)
             settings = await self._proxy(NM, NM_SETTINGS_PATH, "org.freedesktop.NetworkManager.Settings")
-            active_paths = set(await nm.get_active_connections())
-            active_names: set[str] = set()
+            active_paths = await nm.get_active_connections()
+            primary_path = await nm.get_primary_connection()
+            active_profiles: set[str] = set()
+            candidates: list[tuple[tuple, str]] = []
+            connection_types = {"802-3-ethernet", "802-11-wireless"}
             for active_path in active_paths:
                 try:
                     active = await self._props(NM, active_path, NM_ACTIVE)
-                    active_names.add(str(active.get("Id", "")))
-                    if active.get("State") == 2:
-                        result["connection"] = active.get("Id")
+                    if active.get("Type") not in connection_types or active.get("State") != 2:
+                        continue
+                    active_profiles.add(str(active.get("Uuid", "")))
+                    name = str(active.get("Id", ""))
+                    # Loopback is also active on recent NetworkManager versions.
+                    # Use its primary route, rather than whichever object is last.
+                    priority = (active_path != primary_path,
+                                not (active.get("Default") or active.get("Default6")),
+                                active.get("Type") != "802-3-ethernet", name, active_path)
+                    candidates.append((priority, name))
                 except Exception:
                     continue
+            if candidates:
+                result["connection"] = min(candidates)[1]
             for conn_path in await settings.call_list_connections():
                 try:
                     conn = await self._proxy(NM, conn_path, NM_CONN)
                     config = _unvariant(await conn.call_get_settings())
                     cs = config.get("connection", {})
+                    if cs.get("type") not in connection_types:
+                        continue
                     name = str(cs.get("id", ""))
                     profile_id = str(cs.get("uuid", ""))
-                    result["saved"].append({"id": profile_id, "name": name, "active": name in active_names, "type": str(cs.get("type", "other"))})
+                    item = {"id": profile_id, "name": name, "active": profile_id in active_profiles, "type": str(cs.get("type", "other"))}
+                    if cs.get("type") == "802-11-wireless":
+                        wireless = config.get("802-11-wireless", {})
+                        item["ssid"] = self._ssid(wireless.get("ssid", [])) or None
+                        item["security"] = ("secured" if config.get("802-11-wireless-security")
+                                            else "open" if item["ssid"] else "unknown")
+                    result["saved"].append(item)
                 except Exception:
                     continue
             return result
@@ -383,10 +406,18 @@ class Device:
             result["error"] = _dbus_code(exc)
         return result
 
-    async def network_connect(self, ssid: str, password: str) -> dict[str, Any]:
+    async def network_connect(self, ssid: str, password: str, profile_id: str | None = None) -> dict[str, Any]:
+        if self._network_lock.locked():
+            raise DeviceError("busy")
+        async with self._network_lock:
+            return await self._network_connect(ssid, password, profile_id)
+
+    async def _network_connect(self, ssid: str, password: str, profile_id: str | None = None) -> dict[str, Any]:
         if not isinstance(ssid, str) or not ssid or len(ssid.encode("utf-8")) > 32 or "\x00" in ssid:
             raise DeviceError("invalid_argument")
         if not isinstance(password, str) or len(password) > 128 or "\x00" in password:
+            raise DeviceError("invalid_argument")
+        if profile_id is not None and (not isinstance(profile_id, str) or not UUID_RE.fullmatch(profile_id)):
             raise DeviceError("invalid_argument")
         if not self._linux or self._bus is None:
             raise DeviceError("unavailable")
@@ -395,7 +426,46 @@ class Device:
         checkpoint: str | None = None
         profile: str | None = None
         profile_uuid: str | None = None
+        saved_connection: Any = None
+        original: dict[str, dict[str, Variant]] | None = None
+        save_attempted = False
+        wifi_devices: list[str] = []
         try:
+            if profile_id is not None:
+                # Only an explicit UUID may select an existing profile. Never
+                # guess from its display name or choose among duplicate SSIDs.
+                candidates = []
+                for path in await settings.call_list_connections():
+                    conn = await self._proxy(NM, path, NM_CONN)
+                    data = await conn.call_get_settings()
+                    if str(_unvariant(data).get("connection", {}).get("uuid", "")).lower() == profile_id.lower():
+                        candidates.append((path, conn, data))
+                if not candidates:
+                    raise DeviceError("not_found")
+                if len(candidates) != 1:
+                    raise DeviceError("invalid_argument")
+                profile, saved_connection, data = candidates[0]
+                plain = _unvariant(data)
+                if (plain.get("connection", {}).get("type") != "802-11-wireless"
+                        or bytes(plain.get("802-11-wireless", {}).get("ssid", [])) != ssid.encode("utf-8")):
+                    raise DeviceError("invalid_argument")
+                security = plain.get("802-11-wireless-security", {})
+                if security and security.get("key-mgmt") not in ("wpa-psk", "sae"):
+                    raise DeviceError("credential_update_unsupported")
+                if security and security.get("psk-flags", 0) != 0:
+                    # Agent-owned/not-saved secrets can be sent to another
+                    # process by Update2 even when disk persistence is deferred.
+                    raise DeviceError("credential_update_unsupported")
+                original = {name: dict(values) for name, values in data.items()}
+                # GetSettings excludes secrets. Snapshot them before making
+                # any change; inaccessible secrets make this operation unsafe.
+                for name in ("802-11-wireless-security", "802-1x"):
+                    if name in original:
+                        secrets = await saved_connection.call_get_secrets(name)
+                        for setting_name, values in secrets.items():
+                            original.setdefault(setting_name, {}).update(values)
+                if security and "psk" not in original.get("802-11-wireless-security", {}):
+                    raise DeviceError("permission_denied")
             device_paths = await self._nm_device_paths()
             wifi_devices = []
             matching: list[tuple[str, str, dict[str, Any]]] = []
@@ -423,7 +493,22 @@ class Device:
             if not secured and password:
                 # Avoid silently storing or sending a credential for an open AP.
                 raise DeviceError("invalid_argument")
+            if original is not None and secured != bool(original.get("802-11-wireless-security")):
+                raise DeviceError("invalid_argument")
             checkpoint = await nm.call_checkpoint_create(wifi_devices, 120, 0)
+            if saved_connection is not None and original is not None:
+                updated = {name: dict(values) for name, values in original.items()}
+                if secured:
+                    updated["802-11-wireless-security"]["psk"] = Variant("s", password)
+                # 0x2 retains the disk profile. 0x8 is deliberately not used.
+                await saved_connection.call_update2(updated, 0x2, {})
+                active_path = await nm.call_activate_connection(profile, device_path, ap_path)
+                await self._wait_for_activation(active_path, 45)
+                save_attempted = True
+                await saved_connection.call_save()
+                await nm.call_checkpoint_destroy(checkpoint)
+                checkpoint = None
+                return {"available": True, "connected": True, "ssid": ssid, "profile_id": profile_id, "error": None}
             profile_uuid = str(uuid.uuid4())
             setting: dict[str, dict[str, Variant]] = {
                 "connection": self._variants({"id": ssid, "uuid": profile_uuid, "type": "802-11-wireless", "autoconnect": False}),
@@ -443,14 +528,59 @@ class Device:
             await nm.call_checkpoint_destroy(checkpoint)
             checkpoint = None
             return {"available": True, "connected": True, "ssid": ssid, "error": None}
-        except DeviceError:
+        except (DeviceError, asyncio.CancelledError) as exc:
             if checkpoint:
-                await self._rollback_network(nm, checkpoint, settings, profile, profile_uuid)
+                if saved_connection is not None and original is not None:
+                    recovered = await self._rollback_saved_wifi(nm, checkpoint, wifi_devices, saved_connection, original, save_attempted)
+                    if not recovered and not isinstance(exc, asyncio.CancelledError):
+                        raise DeviceError("network_recovery_failed") from None
+                else:
+                    await self._rollback_network(nm, checkpoint, settings, profile, profile_uuid)
             raise
         except Exception as exc:
             if checkpoint:
-                await self._rollback_network(nm, checkpoint, settings, profile, profile_uuid)
+                if saved_connection is not None and original is not None:
+                    recovered = await self._rollback_saved_wifi(nm, checkpoint, wifi_devices, saved_connection, original, save_attempted)
+                    if not recovered:
+                        raise DeviceError("network_recovery_failed") from None
+                else:
+                    await self._rollback_network(nm, checkpoint, settings, profile, profile_uuid)
             raise DeviceError(_dbus_code(exc)) from None
+
+    async def _restore_wifi_profile(self, connection: Any, original: dict[str, dict[str, Variant]], persist: bool) -> bool:
+        """Restore credentials before checkpoint rollback can reconnect them."""
+        try:
+            await connection.call_update2(original, 0x2, {})
+            if persist:
+                # Save may have changed disk even when its reply failed.
+                await connection.call_save()
+            return True
+        except Exception:
+            LOG.warning("Failed to restore saved Wi-Fi profile")
+            return False
+
+    async def _rollback_saved_wifi(self, nm: Any, checkpoint: str, devices: list[str], connection: Any,
+                                   original: dict[str, dict[str, Variant]], persist: bool) -> bool:
+        restored = await self._restore_wifi_profile(connection, original, persist)
+        rolled_back = False
+        try:
+            result = _unvariant(await nm.call_checkpoint_rollback(checkpoint))
+            # Empty/missing results do not prove that any Wi-Fi device recovered.
+            rolled_back = (isinstance(result, dict) and bool(devices)
+                           and all(path in result and type(result[path]) is int and result[path] == 0 for path in devices)
+                           and all(type(code) is int and code == 0 for code in result.values()))
+            if not rolled_back:
+                LOG.warning("Saved Wi-Fi checkpoint recovery was not verified")
+        except Exception:
+            LOG.warning("Saved Wi-Fi checkpoint rollback failed")
+        finally:
+            try:
+                await nm.call_checkpoint_destroy(checkpoint)
+            except Exception:
+                # A successful rollback consumes its checkpoint on NM versions
+                # where a subsequent destroy returns UnknownObject.
+                pass
+        return restored and rolled_back
 
     async def _wait_for_activation(self, active_path: str, timeout: int) -> None:
         deadline = asyncio.get_running_loop().time() + timeout
@@ -510,6 +640,12 @@ class Device:
                 LOG.warning("Failed Wi-Fi profile cleanup after rollback")
 
     async def network_forget(self, profile_id: str) -> dict[str, Any]:
+        if self._network_lock.locked():
+            raise DeviceError("busy")
+        async with self._network_lock:
+            return await self._network_forget(profile_id)
+
+    async def _network_forget(self, profile_id: str) -> dict[str, Any]:
         if not isinstance(profile_id, str) or not UUID_RE.fullmatch(profile_id):
             raise DeviceError("invalid_argument")
         if not self._linux or self._bus is None:

@@ -63,6 +63,7 @@ def test_status_reads_actual_mpv_properties_and_maps_pause():
         assert state["duration"] == 180
         assert state["volume"] == 63
         assert state["title"] == "Actual stream title"
+        assert state["station_name"] == "Saved station title"
         assert state["url"] == "https://radio.example/live"
 
     asyncio.run(scenario())
@@ -97,7 +98,9 @@ def test_radio_url_fallback_does_not_hide_station_but_keeps_broadcast_metadata(m
         player._writer = FakeWriter(player._reader, {"media-title": metadata, "idle-active": False})
         player._url = "https://radio.example/mp3/128"
         player._title = "Radio Swiss Jazz"
-        assert (await player.status())["title"] == expected
+        snapshot = await player.status()
+        assert snapshot["title"] == expected
+        assert snapshot["station_name"] == "Radio Swiss Jazz"
 
     asyncio.run(scenario())
 
@@ -201,3 +204,47 @@ def test_replacement_stop_event_does_not_clear_newly_selected_source():
     player._handle_event({"event": "end-file", "reason": "stop", "playlist_entry_id":1})
     assert player._url == "file:///tmp/new.wav"
     assert player._connecting is True
+
+
+def test_station_name_survives_radio_pause_error_recovery_and_clears_on_stop():
+    async def scenario():
+        player = Player()
+        player._process = FakeProcess()
+        player._reader = asyncio.StreamReader()
+        player._writer = FakeWriter(player._reader, {"media-title": "Artist — Track", "idle-active": False})
+        source = "https://radio.example/live"
+        started = await player.play(source, title="Chosen Station", kind="radio")
+        assert started["station_name"] == "Chosen Station"
+        assert started["title"] == "Artist — Track"
+        player._handle_event({"event": "file-loaded"})
+        player._writer.values["pause"] = True
+        paused = await player.command("pause")
+        assert paused["state"] == "paused" and paused["station_name"] == "Chosen Station"
+        player._handle_event({"event": "end-file", "reason": "error", "file_error": "network timeout"})
+        failed = await player.status()
+        assert failed["state"] == "error" and failed["station_name"] == "Chosen Station"
+        player._writer.values.update({"pause": False, "media-title": "Different Artist — New Track"})
+        await player.play(source, title="Chosen Station", kind="radio")
+        player._handle_event({"event": "file-loaded"})
+        recovered = await player.status()
+        assert recovered["state"] == "playing"
+        assert recovered["station_name"] == "Chosen Station"
+        assert recovered["title"] == "Different Artist — New Track"
+        stopped = await player.command("stop")
+        assert stopped["station_name"] == "" and stopped["url"] == ""
+    asyncio.run(scenario())
+
+
+@pytest.mark.parametrize("kind", ["local", "audio", "video"])
+def test_non_radio_playback_does_not_expose_a_station_name(kind):
+    async def scenario():
+        player = Player()
+        player._process = FakeProcess()
+        player._reader = asyncio.StreamReader()
+        player._writer = FakeWriter(player._reader, {"media-title": "Artist — Track", "idle-active": False})
+        await player.play("https://radio.example/live", title="Old Station", kind="radio")
+        assert (await player.status())["station_name"] == "Old Station"
+        local = await player.play("/tmp/song.wav", title="Local File", kind=kind)
+        assert local["station_name"] is None
+        assert local["title"] == "Artist — Track"
+    asyncio.run(scenario())

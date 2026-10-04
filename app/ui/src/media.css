@@ -1,0 +1,64 @@
+/* Local media uses the same shell and palette as Radio; scrolling stays tactile. */
+.app .media-redesign{padding:12px 18px 14px;gap:12px}
+.app .media-redesign .media-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;flex:0 0 48px;min-width:0}
+.app .media-redesign h1{font:700 25px/1.15 Manrope,sans-serif;letter-spacing:-.025em;margin:0}
+.app .media-redesign .media-sections{display:flex;gap:5px;background:var(--surface);padding:3px;border-radius:13px}
+.app .media-redesign .media-sections button{display:flex;align-items:center;gap:8px;min-height:48px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-size:16px;font-weight:650;white-space:nowrap}
+.app .media-redesign .media-sections button.selected{background:var(--soft);color:var(--accent-strong);box-shadow:inset 0 -3px var(--accent-strong)}
+.app .media-redesign .media-library{flex:1;border:0;border-radius:16px;background:var(--paper);box-shadow:0 3px 18px #0000000b}
+.app .media-redesign .media-library-toolbar{display:flex;gap:8px;align-items:center;padding:6px 10px;min-height:60px;flex:0 0 auto;border-bottom:1px solid var(--line)}
+.app .media-redesign .crumb-actions{min-width:0;flex:1;gap:4px}
+.app .media-redesign .library-path{height:auto;flex:1;min-width:0;border:0;padding:0 8px;color:var(--ink);font-size:16px}
+.app .media-redesign .library-path b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app .media-redesign .media-parent,.app .media-redesign .media-search-toggle,.app .media-redesign .media-query-clear{display:grid;place-items:center;width:48px;height:48px;flex:0 0 48px;padding:0;border:1px solid var(--line-dark);border-radius:12px;background:var(--surface);color:var(--ink)}
+.app .media-redesign .media-root{height:48px;max-width:190px;padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:14px;text-decoration:underline;text-underline-offset:4px}
+.app .media-redesign .media-crumb-separator{color:var(--muted)}
+.app .media-redesign .media-file-count{font:14px 'DM Mono',monospace;color:var(--muted);padding:0 4px;font-variant-numeric:tabular-nums}
+.app .media-redesign .media-search-toggle.active{background:var(--soft);color:var(--accent-strong)}
+.app .media-redesign .media-query{display:flex;align-items:center;gap:8px;margin:8px 10px 0;padding-left:6px;border-radius:12px;background:var(--surface)}
+.app .media-redesign .media-query-edit{display:flex;align-items:center;gap:9px;min-width:0;flex:1;min-height:48px;border:0;background:transparent;padding:0 9px;text-align:left;font-size:16px}
+.app .media-redesign .media-query-edit span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.app .media-redesign .media-query-clear{border:0;background:transparent}
+.app .media-redesign .media-items{padding:4px 8px 8px;overscroll-behavior:contain;scrollbar-width:none;touch-action:pan-y}
+.app .media-redesign .media-items::-webkit-scrollbar,.app .media-redesign .service-panel::-webkit-scrollbar{display:none}
+.app .media-redesign .media-entry{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);border-radius:10px}
+.app .media-redesign .media-entry.selected{background:var(--soft);box-shadow:inset 3px 0 var(--accent-strong)}
+.app .media-redesign .media-item{min-width:0;flex:1;width:auto;min-height:72px;border:0;border-radius:10px;padding:8px 10px;gap:12px;background:transparent}
+.app .media-redesign .file-icon{width:48px;height:48px;flex:0 0 48px;border-radius:13px;background:var(--surface-2);color:var(--accent-strong)}
+.app .media-redesign .file-icon.folder{background:var(--soft);color:var(--accent-strong)}
+.app .media-redesign .media-file-copy{min-width:0;flex:1}
+.app .media-redesign .media-file-copy b{font-size:16px;line-height:1.3}
+.app .media-redesign .media-file-copy small{font-size:14px;line-height:1.2;min-height:17px}
+.app .media-redesign .media-file-action{width:32px;flex:0 0 32px;display:grid;place-items:center;color:var(--muted)}
+.app .media-redesign .media-delete{height:48px;width:48px;flex:0 0 48px;border:1px solid var(--line-dark);background:transparent;border-radius:11px;color:var(--muted);display:grid;place-items:center;margin-right:6px}
+.app .media-redesign .media-item:active,.app .media-redesign .service-row:active{background:var(--soft);transform:scale(.995)}
+.app .media-redesign .media-pending{margin:8px 10px;font-size:14px;color:var(--muted)}
+.app .media-redesign .media-partial{display:flex;align-items:center;gap:12px;padding:8px;font-size:14px}
+.app .media-redesign .media-partial span{flex:1}
+.app .media-redesign .empty-state{min-height:150px;font-size:16px}
+.app .media-redesign .empty-state b{font-size:16px}
+.app .media-redesign .empty-state span{font-size:14px}
+.app .media-redesign .service-panel{flex:1;overflow-y:auto;padding:18px;border:0;border-radius:16px}
+.app .media-redesign .service-panel>.muted{font-size:14px;line-height:1.5;margin-bottom:18px;max-width:540px}
+.app .media-redesign .media-service-list{display:flex;flex-direction:column;gap:10px}
+.app .media-redesign .service-row{width:100%;height:76px;min-height:76px;margin:0;border:1px solid var(--line-dark);border-radius:13px;padding:10px 16px;gap:16px;background:var(--surface)}
+.app .media-redesign .service-logo{width:48px;height:48px;flex:0 0 48px;font-size:28px;border-radius:12px}
+.app .media-redesign .service-netflix{color:#e50914}
+.app .media-redesign .media-service-copy{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.app .media-redesign .service-row b{font-size:18px}
+.app .media-redesign .service-row small{font-size:14px;color:var(--muted)}
+.media-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(prefers-reduced-motion:no-preference){.app .media-redesign .media-item,.app .media-redesign .service-row{transition:background 120ms ease,transform 120ms ease}}
+
+.media-delete-filename{font-size:16px;line-height:1.4;overflow-wrap:anywhere}
+
+/* Informational toast has no interactive controls and never steals a tap. */
+.app .toast{pointer-events:none}
+
+/* Three distinct destinations fit above transport without vertical clipping. */
+.app .media-redesign .media-service-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.app .media-redesign .service-row{height:150px;min-height:150px;flex-direction:column;align-items:center;justify-content:center;padding:12px;gap:9px;text-align:center}
+.app .media-redesign .media-service-copy{flex:0;align-items:center;gap:4px}
+.app .media-redesign .service-arrow{display:none}
+.app .with-player .media-redesign .service-panel{padding:14px}
+.app .with-player .media-redesign .service-panel>.muted{margin-bottom:14px}

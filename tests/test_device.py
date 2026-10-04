@@ -136,6 +136,9 @@ def test_network_status_uses_settings_object_path_and_state_property(monkeypatch
         async def get_active_connections(self):
             return []
 
+        async def get_primary_connection(self):
+            return "/"
+
     class Settings:
         async def call_list_connections(self):
             return []

@@ -5,6 +5,22 @@ from fastapi.testclient import TestClient
 from services.backend.app import app, Hub
 
 
+@pytest.mark.parametrize('error,expected',[(None,300),('weather_unavailable',60)])
+def test_weather_background_retries_automatically(tmp_path,monkeypatch,error,expected):
+    import asyncio
+    hub=Hub(tmp_path)
+    hub.weather={'error':error}
+    hub.refresh_weather=AsyncMock()
+    delays=[]
+    async def once(delay):
+        delays.append(delay)
+        raise asyncio.CancelledError()
+    monkeypatch.setattr(asyncio,'sleep',once)
+    with pytest.raises(asyncio.CancelledError):asyncio.run(hub.weather_loop())
+    assert delays==[expected]
+    hub.refresh_weather.assert_awaited_once()
+
+
 @pytest.fixture
 def client(tmp_path):
     # Do not start hardware or external network services in HTTP boundary tests.
@@ -22,6 +38,23 @@ def test_session_and_preference_roundtrip(client):
     assert client.get('/api/state').json()['preferences']['language'] == 'en'
 
 
+def test_radio_artwork_survives_recovery_but_not_station_change(client):
+    hub=app.state.hub
+    hub.refresh_device=AsyncMock()
+    hub.audio_selected=True
+    hub.snapshots['audio']={'output':'fixture-output'}
+    hub.player.select_output=AsyncMock()
+    hub.player.play=AsyncMock(return_value={'state':'playing','kind':'radio'})
+    headers={'X-Hub-Token':hub.token}
+    station={'source':'radio','url':'https://radio.example.org/stream','title':'Fixture radio','favicon':'https://radio.example.org/logo.svg'}
+    assert client.post('/api/play',headers=headers,json=station).status_code==200
+    assert hub.store.value.lastStation.favicon==station['favicon']
+    assert client.post('/api/play',headers=headers,json={k:v for k,v in station.items() if k!='favicon'}).status_code==200
+    assert hub.store.value.lastStation.favicon==station['favicon']
+    assert client.post('/api/play',headers=headers,json={'source':'radio','url':'https://other.example.org/stream','title':'Other'}).status_code==200
+    assert hub.store.value.lastStation.favicon==''
+
+
 @pytest.mark.parametrize('headers', [{'Origin':'https://evil.example'}, {'Host':'evil.example:8765'}, {'Sec-Fetch-Site':'cross-site'}])
 def test_host_and_cross_site_boundary(client, headers):
     assert client.get('/api/session', headers=headers).status_code == 403
@@ -32,6 +65,55 @@ def test_mutation_requires_token(client):
     assert app.state.hub.store.value.language == 'ro'
 
 
+@pytest.mark.parametrize('operation,body', [
+    ('report', {'job':'fixture', 'attempt':'attempt', 'ready':True}),
+    ('retry', {'job':'fixture'}), ('cancel', {'job':'fixture'}),
+])
+def test_preparation_mutations_keep_token_origin_boundary(client, operation, body):
+    handler = AsyncMock(return_value={'state':'checking'})
+    app.state.hub.external = SimpleNamespace(**{operation:handler})
+    path = '/api/external/' + operation
+    assert client.post(path, json=body).status_code == 403
+    assert client.post(path, headers={'X-Hub-Token':app.state.hub.token,'Origin':'https://evil.example'},json=body).status_code == 403
+    handler.assert_not_awaited()
+    assert client.post(path, headers={'X-Hub-Token':app.state.hub.token},json=body).status_code == 200
+    if operation == 'report': handler.assert_awaited_once_with('fixture','attempt',True)
+    else: handler.assert_awaited_once_with('fixture')
+
+
+def test_preparation_report_strict_boolean_and_extra_data_redacted(client):
+    handler = AsyncMock()
+    app.state.hub.external = SimpleNamespace(report=handler)
+    headers={'X-Hub-Token':app.state.hub.token}
+    for body in [ {'job':'fixture','attempt':'attempt','ready':'true'},
+                  {'job':'fixture','attempt':'attempt','ready':True,'password':'secret-never-return'} ]:
+        response=client.post('/api/external/report',headers=headers,json=body)
+        assert response.status_code == 422
+        assert response.json() == {'error':'invalid_request'}
+    handler.assert_not_awaited()
+
+
+def test_external_launch_reports_preparation_instead_of_opened(client, monkeypatch):
+    import services.backend.app as backend
+    monkeypatch.setattr(backend.sys,'platform','linux')
+    monkeypatch.setattr(backend.shutil,'which',lambda _: '/usr/bin/chromium')
+    app.state.hub.store.update({'language':'en','theme':'night'})
+    handler=AsyncMock(return_value={'opened':False,'preparing':True,'jobId':'fixture','service':'netflix'})
+    app.state.hub.external=SimpleNamespace(start=handler)
+    response=client.post('/api/external',headers={'X-Hub-Token':app.state.hub.token},json={'service':'netflix'})
+    assert response.status_code == 202 and response.json()['opened'] is False
+    handler.assert_awaited_once_with('netflix','/usr/bin/chromium','en','night')
+
+
+@pytest.mark.parametrize('path', ['/service-prepare','/service-prepare.js','/service-prepare.css'])
+def test_owned_preparation_assets_keep_browser_security_headers(client, path):
+    response=client.get(path)
+    assert response.status_code == 200
+    assert response.headers['X-Frame-Options'] == 'DENY'
+    assert "script-src 'self'" in response.headers['Content-Security-Policy']
+    assert "frame-ancestors 'none'" in response.headers['Content-Security-Policy']
+
+
 def test_validation_never_reflects_submitted_credentials(client):
     token = client.get('/api/session').json()['token']
     secret = 'private-network-password-do-not-return'
@@ -39,6 +121,23 @@ def test_validation_never_reflects_submitted_credentials(client):
     assert response.status_code == 422
     assert secret not in response.text
     assert response.json() == {'error':'invalid_request'}
+
+
+def test_network_connect_forwards_explicit_uuid_and_redacts_invalid_request(client):
+    handler = AsyncMock(return_value={'connected':True})
+    app.state.hub.device.network_connect = handler
+    app.state.hub.refresh_device = AsyncMock()
+    headers = {'X-Hub-Token':app.state.hub.token}
+    profile = '12345678-1234-1234-1234-123456789abc'
+    response = client.post('/api/network/connect', headers=headers,
+                           json={'ssid':'Hub','password':'private-credential','profile_id':profile})
+    assert response.status_code == 200
+    handler.assert_awaited_once_with('Hub','private-credential',profile)
+    response = client.post('/api/network/connect', headers=headers,
+                           json={'ssid':'Hub','password':'private-credential','profile_id':'/saved/path'})
+    assert response.status_code == 422
+    assert response.json() == {'error':'invalid_request'}
+    assert 'private-credential' not in response.text
 
 
 def test_unknown_preferences_rejected_without_persistence(client):
@@ -167,6 +266,24 @@ def test_saved_audio_restores_once_and_after_reconnection(tmp_path):
         assert restarted.store.value.mute is True
         assert restarted.store.value.volume == 23
     asyncio.run(scenario())
+
+
+def test_explicit_weather_refresh_requests_provider_refresh(client):
+    hub = app.state.hub
+    hub.store.update({'location': {'name': 'Bucharest', 'latitude': 44.4, 'longitude': 26.1}})
+    weather = AsyncMock(return_value={'current': {'temperature_c': 24}, 'stale': False, 'error': None})
+    hub.content.weather = weather
+    response = client.post('/api/weather/refresh', headers={'X-Hub-Token': hub.token})
+    assert response.status_code == 200 and response.json()['current']['temperature_c'] == 24
+    weather.assert_awaited_once_with(hub.store.value.location.model_dump(), force=True)
+
+
+def test_media_folder_read_error_is_a_safe_retryable_api_error(client):
+    from services.backend.content import ContentError
+    app.state.hub.content.media_list = AsyncMock(side_effect=ContentError('media_unavailable', 'Folder unavailable.'))
+    response = client.get('/api/media', params={'path': '/approved/Media'})
+    assert response.status_code == 409
+    assert response.json() == {'error': 'media_unavailable'}
 
 
 def test_local_queue_boundaries_exposed_without_enabling_radio_queue(client):

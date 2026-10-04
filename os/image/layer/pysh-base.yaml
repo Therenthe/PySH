@@ -1,0 +1,23 @@
+# METABEGIN
+# X-Env-Layer-Name: pysh-base
+# X-Env-Layer-Desc: Minimal Pi Trixie base using NetworkManager, not networkd/iwd.
+# X-Env-Layer-Category: suite
+# X-Env-Layer-Version: 0.1.0
+# X-Env-Layer-Requires: debian-trixie-arm64-multi,rpi-debian-trixie,
+#  rpi-misc-utils,rpi-essential-base,rpi-misc-skel,systemd-min,
+#  openssh-server,systemd-timesyncd,wireless-regulatory,network-manager,locale-gen
+# METAEND
+---
+mmdebstrap:
+  packages:
+    - wpasupplicant
+    - dbus-user-session
+    - libpam-systemd
+    - polkitd
+    - bluez
+    - pipewire
+    - pipewire-pulse
+    - pulseaudio-utils
+    - libspa-0.2-bluetooth
+    - wireplumber
+    - rtkit
