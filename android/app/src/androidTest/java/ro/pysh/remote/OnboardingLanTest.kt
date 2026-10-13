@@ -94,7 +94,7 @@ class OnboardingLanTest {
     }
     /** Native rendering fixtures, deliberately separate from real discovery/pairing evidence. */
     @Test fun onboardingLayoutStatesNeverAskForManualSecrets() {
-        val activity=instrumentation.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) as MainActivity
+        val activity=instrumentation.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)) as MainActivity
         val scope=CoroutineScope(SupervisorJob()+Dispatchers.Main.immediate)
         try {
             instrumentation.runOnMainSync { activity.window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
@@ -109,7 +109,22 @@ class OnboardingLanTest {
                         } }
                     }
                 }
-                instrumentation.waitForIdleSync();Thread.sleep(350)
+                instrumentation.waitForIdleSync()
+                val rendered=awaitUi(12_000) {
+                    val titles=walkNodes(instrumentation.uiAutomation.rootInActiveWindow).map { it.text?.toString().orEmpty() }
+                    val phaseReady=when(phase) {
+                        "found" -> connectButton(text(ro,"Conectează PySH","Connect PySH"))!=null
+                        "waiting" -> titles.contains(text(ro,"Anulează conectarea","Cancel connection"))
+                        "searching" -> titles.contains(text(ro,"Căutăm PySH în apropiere…","Looking for PySH nearby…"))
+                        "pairing_denied","pairing_expired" -> titles.contains(errorText(phase,ro))
+                        "wifi_required" -> titles.contains(text(ro,"Conectează telefonul la Wi-Fi-ul de acasă pentru a găsi PySH.","Join your home Wi-Fi to find PySH."))
+                        "not_found" -> titles.any { it.startsWith(text(ro,"PySH nu este încă vizibil.","PySH is not visible yet.")) }
+                        else -> false
+                    }
+                    phaseReady && titles.any { it.contains(if(ro) "Hubul tău." else "Your hub.") }
+                }
+                capture("onboarding-$phase-${if(ro)"ro" else "en"}-${if(night)"night" else "light"}")
+                assertTrue("Onboarding phase did not render: $phase / ${if(ro)"ro" else "en"} / ${if(night)"night" else "light"}",rendered)
                 fun allNodes(node:AccessibilityNodeInfo?):List<AccessibilityNodeInfo> = if(node==null)emptyList() else listOf(node)+(0 until node.childCount).flatMap { allNodes(node.getChild(it)) }
                 val nodes=allNodes(instrumentation.uiAutomation.rootInActiveWindow)
                 assertFalse("Onboarding must not request manual credentials",nodes.any { it.isEditable })
@@ -118,9 +133,6 @@ class OnboardingLanTest {
                 assertTrue(labels.none { it.contains("SHA-256")||it.contains("Adresa IP")||it.contains("Pairing code") })
                 if(phase in setOf("searching","found"))assertTrue(labels.any { it.contains("Android App Control") })
                 if(phase=="waiting")assertTrue(labels.any { it.contains(if(ro) "Anulează conectarea" else "Cancel connection") })
-                val image=instrumentation.uiAutomation.takeScreenshot() ?: throw AssertionError("No onboarding capture")
-                File(context.filesDir,"onboarding-$phase-${if(ro)"ro" else "en"}-${if(night)"night" else "light"}.png").outputStream().use { image.compress(Bitmap.CompressFormat.PNG,100,it) }
-                image.recycle()
             }
         } finally { scope.cancel();activity.finish();instrumentation.waitForIdleSync() }
     }
@@ -142,7 +154,9 @@ class OnboardingLanTest {
             store.clear()
             activity=instrumentation.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)) as MainActivity
             instrumentation.runOnMainSync { activity.window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
-            Thread.sleep(400);capture("onboarding-live-search")
+            val onboardingReady=awaitUi(12_000) { walkNodes(instrumentation.uiAutomation.rootInActiveWindow).any { it.text?.toString()?.contains("Hubul tău.")==true } }
+            capture("onboarding-live-search")
+            assertTrue("Live onboarding did not render before discovery",onboardingReady)
             val discoveryDeadline=android.os.SystemClock.elapsedRealtime()+40_000
             while(connectButton()==null && android.os.SystemClock.elapsedRealtime()<discoveryDeadline)Thread.sleep(200)
             val button=connectButton() ?: throw AssertionError("Discovered PySH connect button not found")
@@ -179,13 +193,21 @@ class OnboardingLanTest {
     }
     private fun walkNodes(node:AccessibilityNodeInfo?):List<AccessibilityNodeInfo> = if(node==null)emptyList() else listOf(node)+(0 until node.childCount).flatMap { walkNodes(node.getChild(it)) }
     private fun find(label:String)=walkNodes(instrumentation.uiAutomation.rootInActiveWindow).firstOrNull { it.text?.toString()==label || it.contentDescription?.toString()==label }
-    private fun connectButton():AccessibilityNodeInfo? {
-        for(node in walkNodes(instrumentation.uiAutomation.rootInActiveWindow).filter { it.text?.toString()=="Conectează PySH" }) {
+    private fun connectButton(label:String="Conectează PySH"):AccessibilityNodeInfo? {
+        for(node in walkNodes(instrumentation.uiAutomation.rootInActiveWindow).filter { it.text?.toString()==label }) {
             var parent:AccessibilityNodeInfo?=node
             while(parent!=null && !parent.isClickable)parent=parent.parent
             if(parent!=null)return parent
         }
         return null
+    }
+    private fun awaitUi(timeout:Long,predicate:()->Boolean):Boolean {
+        val deadline=android.os.SystemClock.elapsedRealtime()+timeout
+        while(android.os.SystemClock.elapsedRealtime()<deadline) {
+            if(predicate()) { Thread.sleep(200);return true }
+            Thread.sleep(150)
+        }
+        return predicate()
     }
     private fun capture(name:String) {
         val image=instrumentation.uiAutomation.takeScreenshot() ?: throw AssertionError("No onboarding capture")

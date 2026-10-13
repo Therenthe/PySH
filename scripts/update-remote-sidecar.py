@@ -1,7 +1,8 @@
 """Verified code-only LAN gateway update; retain pairing keys and rollback code.
 
 Usage on the appliance: sudo python3 update-remote-sidecar.py ARCHIVE --sha256 SHA
-No certificate, token, port, networking, unit or main hub changes are made.
+Retains certificates, tokens, ports, networking and main hub. The only permitted
+unit migration adds AF_NETLINK for read-only discovery of the current LAN IP.
 """
 import argparse
 import hashlib
@@ -13,6 +14,7 @@ import subprocess
 import tarfile
 import time
 import urllib.request
+import uuid
 
 LEGACY_FILES={'services/remote/__init__.py','services/remote/__main__.py','services/remote/gateway.py','services/remote/pysh-remote.service'}
 FILES=LEGACY_FILES|{'services/remote/discovery.py'}
@@ -41,6 +43,56 @@ def verify_release(release):
         require(not path.is_symlink() and hashlib.sha256(path.read_bytes()).hexdigest()==manifest['files'][name],'Modified installed source')
     return manifest
 
+def unit_plan(unit,previous_source,candidate_source):
+    require(unit.is_file() and not unit.is_symlink(),'Invalid installed unit')
+    def configured(source):
+        return source.replace('WorkingDirectory=/opt/pysh/current','WorkingDirectory=/opt/pysh-remote/current')
+    previous=configured(previous_source)
+    candidate=configured(candidate_source)
+    require(unit.read_text()==previous,'Installed unit differs from verified previous source')
+    if candidate==previous:
+        return None
+    old_line='RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX\n'
+    new_line='RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK\n'
+    require(previous.count(old_line)==1 and candidate==previous.replace(old_line,new_line),'Unit changes require separate review')
+    return candidate.encode('utf-8')
+
+def write_unit(unit,data):
+    require(unit.is_file() and not unit.is_symlink(),'Invalid installed unit')
+    metadata=unit.stat()
+    temporary=unit.with_name(unit.name+'.update-'+uuid.uuid4().hex)
+    try:
+        descriptor=os.open(temporary,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
+        with os.fdopen(descriptor,'wb') as stream:
+            stream.write(data);stream.flush();os.fsync(stream.fileno())
+            if os.name=='posix':
+                os.fchown(stream.fileno(),metadata.st_uid,metadata.st_gid)
+                os.fchmod(stream.fileno(),metadata.st_mode&0o777)
+        os.replace(temporary,unit)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+def activate(release,old,unit,new_unit,link,restart,reload_unit,health):
+    saved=unit.read_bytes()
+    migrated=False
+    try:
+        if new_unit is not None:
+            migrated=True
+            write_unit(unit,new_unit)
+            reload_unit()
+        link(release,'current')
+        restarted_at=time.time()
+        restart()
+        health(restarted_at)
+    except BaseException:
+        if migrated:
+            write_unit(unit,saved)
+        link(old,'current')
+        if migrated:
+            reload_unit()
+        restart()
+        raise
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('archive',type=Path);parser.add_argument('--sha256',required=True);args=parser.parse_args()
     require(os.name=='posix' and os.geteuid()==0,'Run on Linux as root')
@@ -55,8 +107,7 @@ def main():
         old=current.resolve();verify_release(old)
         contents=archive_files(args.archive,args.sha256)
         account=pwd.getpwnam('pysh');unit=Path(account.pw_dir)/'.config/systemd/user/pysh-remote.service'
-        expected=contents['services/remote/pysh-remote.service'].decode().replace('WorkingDirectory=/opt/pysh/current','WorkingDirectory=/opt/pysh-remote/current')
-        require(unit.is_file() and not unit.is_symlink() and unit.read_text()==expected,'Unit changes require separate review')
+        new_unit=unit_plan(unit,(old/'services/remote/pysh-remote.service').read_text(),contents['services/remote/pysh-remote.service'].decode())
         release=runtime/'releases'/args.sha256[:12]
         require(not release.exists() and not release.is_symlink(),'Release already exists')
         release.mkdir(mode=0o755)
@@ -66,6 +117,7 @@ def main():
         (release/'manifest.json').write_text(json.dumps(manifest,indent=2));verify_release(release)
         environment=['runuser','-u','pysh','--','env',f'XDG_RUNTIME_DIR=/run/user/{account.pw_uid}',f'DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/{account.pw_uid}/bus','systemctl','--user']
         def restart():subprocess.run(environment+['restart','pysh-remote.service'],check=True,timeout=30)
+        def reload_unit():subprocess.run(environment+['daemon-reload'],check=True,timeout=30)
         def link(target,name):
             pointer=runtime/(name+'.next');require(not pointer.exists() and not pointer.is_symlink(),'Unexpected temporary pointer')
             pointer.symlink_to(target,target_is_directory=True);os.replace(pointer,runtime/name)
@@ -87,8 +139,7 @@ def main():
         context.check_hostname=False
         previous=runtime/'previous'
         require(not previous.exists() or previous.is_symlink() and previous.resolve().parent==runtime/'releases','Foreign previous pointer')
-        try:
-            link(release,'current');restarted_at=time.time();restart()
+        def health(restarted_at):
             deadline=time.monotonic()+15
             while True:
                 try:
@@ -103,8 +154,7 @@ def main():
                 except Exception:
                     if time.monotonic()>=deadline:raise
                     time.sleep(.25)
-        except BaseException:
-            link(old,'current');restart();raise
+        activate(release,old,unit,new_unit,link,restart,reload_unit,health)
         link(old,'previous')
         print(json.dumps({'activated':release.name,'previous':old.name,'pairing_preserved':True}))
 

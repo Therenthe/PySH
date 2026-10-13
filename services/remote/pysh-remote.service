@@ -10,7 +10,7 @@ Restart=on-failure
 RestartSec=5
 UMask=0077
 NoNewPrivileges=yes
-RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
 
 [Install]
 WantedBy=default.target
