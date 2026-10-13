@@ -1,5 +1,14 @@
 # PySH status
 
+## Screen, standby and Android refinement — 2026-10-13
+
+Prepared runtime33c3cb8361ac, Android0.1.2/code3 and companion presence/artwork.
+12 new touchscreen cases and445 Python cases PASS/32 Windows skips; Android
+build,10 policy / artwork tests and lint PASS. Complete browser run974 PASS; all\n
+eight initial failures passed affected reruns. Native installation/verification
+is in progress. [Scoped evidence](docs/evidence/standby-remote-2026-10-13.md).
+
+
 ## Android LAN remote — 2026-10-13
 
 Native Android Studio project added in `android/`, with EN/RO, phone light/dark

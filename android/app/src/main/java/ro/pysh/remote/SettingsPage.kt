@@ -26,6 +26,7 @@ import org.json.JSONObject
     var diagnosticLoading by remember { mutableStateOf(false) }
     val scope=rememberCoroutineScope()
     PageTitle(T(remote.ro,"Setări","Settings"),T(remote.ro,"Atmosfera, exact cum îți place.","The atmosphere, just as you like it."))
+    PowerSettings(remote)
     Panel {
         SectionTitle(T(remote.ro,"Pe acest telefon","On this phone"),Icons.Outlined.PhoneAndroid)
         Choice(T(remote.ro,"Limba aplicației","App language"),if(remote.ro) "ro" else "en",listOf("ro" to "Română","en" to "English"),true) { remote.language(it=="ro") }
@@ -107,8 +108,8 @@ import org.json.JSONObject
 @Composable fun PreferenceDialog(remote: RemoteController, key: String, dismiss:()->Unit) {
     var value by remember { mutableStateOf(remote.preferences.opt(key)?.toString() ?: "") }
     var failure by remember { mutableStateOf(false) }
-    val title=when(key){"nightStart"->T(remote.ro,"Început noapte · HH:mm","Night starts · HH:mm");"nightEnd"->T(remote.ro,"Sfârșit noapte · HH:mm","Night ends · HH:mm");"timezone"->T(remote.ro,"Fus orar","Time zone");else->T(remote.ro,"Minute până la screensaver","Minutes before screensaver")}
-    AlertDialog(onDismissRequest=dismiss,title={Text(title)},text={Column(verticalArrangement=Arrangement.spacedBy(10.dp)) { Field(title,value,{value=it});if(failure)Text(T(remote.ro,"Verifică valoarea: ora HH:mm, fus orar valid sau 0–120 minute.","Check the value: HH:mm time, a valid time zone or 0–120 minutes."),color=MaterialTheme.colorScheme.error) }},confirmButton={TextButton(onClick={
+    val title=when(key){"dailyStandbyTime"->T(remote.ro,"Repaus zilnic · HH:mm","Daily standby · HH:mm");"nightStart"->T(remote.ro,"Început noapte · HH:mm","Night starts · HH:mm");"nightEnd"->T(remote.ro,"Sfârșit noapte · HH:mm","Night ends · HH:mm");"timezone"->T(remote.ro,"Fus orar","Time zone");else->T(remote.ro,"Minute până la screensaver","Minutes before screensaver")}
+    AlertDialog(onDismissRequest=dismiss,title={Text(title)},text={Column(verticalArrangement=Arrangement.spacedBy(10.dp)) { Field(title,value,{value=it});if(failure)Text(if(key=="dailyStandbyTime") T(remote.ro,"Introdu o oră între 00:00 și 23:59, în format HH:mm.","Enter a time from 00:00 to 23:59, in HH:mm format.") else T(remote.ro,"Verifică valoarea: ora HH:mm, fus orar valid sau 0–120 minute.","Check the value: HH:mm time, a valid time zone or 0–120 minutes."),color=MaterialTheme.colorScheme.error) }},confirmButton={TextButton(onClick={
         val valid=when(key){"screensaverMinutes"->value.toIntOrNull()?.let{it in 0..120} ?: false;"timezone"->runCatching{java.time.ZoneId.of(value);true}.getOrDefault(false);else->value.matches(Regex("(?:[01][0-9]|2[0-3]):[0-5][0-9]"))}
         if(valid){remote.patch(key,if(key=="screensaverMinutes")value.toInt() else value);dismiss()}else failure=true
     },enabled=remote.enabled){Text(T(remote.ro,"Salvează","Save"))}},dismissButton={TextButton(onClick=dismiss){Text(T(remote.ro,"Anulează","Cancel"))}})

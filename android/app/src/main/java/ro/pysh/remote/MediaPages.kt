@@ -63,7 +63,7 @@ import org.json.JSONObject
 @Composable fun StationRow(station: JSONObject, favorite: Boolean, remote: RemoteController) {
     Surface(shape=RoundedCornerShape(22.dp),color=MaterialTheme.colorScheme.surface) {
         Row(Modifier.fillMaxWidth().padding(14.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(10.dp)) {
-            Surface(shape=RoundedCornerShape(14.dp),color=MaterialTheme.colorScheme.primaryContainer,modifier=Modifier.size(48.dp)) { Box(contentAlignment=Alignment.Center) { Text(station.optString("name","R").take(2).uppercase(),color=MaterialTheme.colorScheme.onPrimaryContainer,fontWeight=FontWeight.Bold,fontSize=18.sp) } }
+            StationArtwork(remote,station.optString("uuid"),station.optString("name"),Modifier.size(56.dp))
             Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(4.dp)) {
                 Text(station.optString("name"),fontWeight=FontWeight.SemiBold,maxLines=2,overflow=TextOverflow.Ellipsis)
                 Text(listOf(station.optString("country"),station.optString("codec"),station.optInt("bitrate").let{if(it>0) "$it kbps" else ""}).filter{it.isNotBlank()}.joinToString(" · "),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant,maxLines=2)

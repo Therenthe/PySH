@@ -275,3 +275,39 @@ def test_https_phone_can_revoke_only_its_own_token(tls_gateway):
     assert request("POST", "/remote/revoke-self", {}, headers) == (200, {"revoked": True})
     assert request("GET", "/api/state", headers=headers)[0] == 401
     assert store.authenticate("Bearer " + second["token"])
+
+
+def test_presence_only_authenticated_current_phone_and_state_poll(tls_gateway):
+    server, store, request = tls_gateway
+    phone = store.pair({'code':store.begin_pairing(), 'name':'Phone'})
+    server.proxy.forward.assert_not_called()  # Pairing is not active presence.
+    assert request('POST','/remote/heartbeat',{})[0] == 401
+    headers = {'Authorization':'Bearer ' + phone['token']}
+    assert request('POST','/remote/heartbeat',{'deviceId':'forged'},headers)[0] == 400
+    assert request('POST','/api/remote/presence',{},headers)[0] == 404
+    assert request('POST','/remote/heartbeat',{},headers)[0] == 200
+    args = server.proxy.forward.call_args.args
+    assert args[:2] == ('POST','/api/remote/presence')
+    assert json.loads(args[2]) == {'deviceId':phone['deviceId'],'active':True}
+    assert request('DELETE','/remote/heartbeat',headers=headers)[0] == 200
+    assert json.loads(server.proxy.forward.call_args.args[2])['active'] is False
+    server.proxy.forward.reset_mock()
+    assert request('GET','/api/state',headers=headers)[0] == 200
+    assert json.loads(server.proxy.forward.call_args_list[0].args[2]) == {'deviceId':phone['deviceId'],'active':True}
+
+
+def test_proxy_allows_bounded_binary_only_on_known_artwork_route(monkeypatch):
+    response = Mock(status=200)
+    response.read.return_value = b'\x89PNG\r\n\x1a\nfixture'
+    response.getheader.return_value = 'image/png'
+    connection = Mock()
+    connection.getresponse.return_value = response
+    monkeypatch.setattr(gateway,'HTTPConnection',Mock(return_value=connection))
+    status, payload = LoopbackProxy().forward('GET','/api/radio/artwork?station=current',b'')
+    assert status == 200 and payload.mime == 'image/png'
+    with pytest.raises(RemoteError):
+        LoopbackProxy().forward('GET','/api/state',b'')
+    response.read.return_value = b'x' * (256 * 1024 + 1)
+    with pytest.raises(RemoteError) as failure:
+        LoopbackProxy().forward('GET','/api/radio/artwork?station=current',b'')
+    assert failure.value.code == 'upstream_response_too_large'

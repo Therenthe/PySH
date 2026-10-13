@@ -15,3 +15,5 @@ Deciziile anterioare de navigare/media sunt păstrate în [DECISIONS](../DECISIO
 - [0008 — UUID image mounts](0008-image-filesystem-uuids.md)
 - [0009 — Guarded first-boot root expansion](0009-guarded-root-expansion.md)
 - [0010 — Android remote over authenticated private LAN HTTPS](0010-android-lan-remote.md)
+
+- [0011 — Recoverable software standby and companion presence](0011-software-standby.md)

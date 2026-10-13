@@ -122,3 +122,45 @@ Pi, atingerea pe un telefon, routerul real, redarea sau acțiunile hardware. Tur
 real necesită Pi-ul și telefonul conectate în LAN, pairing din CLI, citirea stării,
 radio/volum/player/Bluetooth/setări, restart și revocare. Nu acordați criterii PASS
 hardware din testele acestui gateway.
+# Display, standby and active companions (Android 0.1.2)
+
+The phone now shows the current station logo using authenticated
+`GET /api/radio/artwork?station=current` (or a known station UUID). PNG/JPEG/GIF/ICO/
+WebP responses are limited to256KiB; Android decodes at most512px. The Pi fetches
+only known public station metadata; arbitrary URL and private-network fetches
+are refused. Up to three redirects each undergo the same DNS validation; known
+official homepages provide icon fallback for empty/obsolete favicon metadata. The phone never requests an internet logo URL.
+
+`/api/state` includes `power` and `remote:{connected,count}`. An authenticated
+state read renews presence. `POST /remote/heartbeat` renews and `DELETE` withdraws
+presence; background/crashed clients expire within15seconds. This shows active
+companions rather than saved pairing identities.
+
+`GET /api/power` reports standby, actual/desired brightness, countdown and daily
+schedule. `POST /api/power {standby:true|false}` controls recoverable software
+standby. `POST /api/power/timer {minutes:0..720}` sets a countdown;0 cancels it.
+Preference PATCH keys are `screenBrightness` (1..100), `dailyStandbyEnabled`
+and `dailyStandbyTime` (HH:mm). Daily time uses the hub timezone; a manual wake
+after that day's event stays awake until a subsequent event or user command.
+
+## Updating an existing independent gateway
+
+Package only the same four source/unit files as the initial installer. Transfer
+the verified archive plus `scripts/update-remote-sidecar.py` to an administrative
+private directory. On the appliance:
+
+```sh
+sudo python3 update-remote-sidecar.py gateway.tar.gz --sha256 <verified-sha256>
+```
+
+This checks old source integrity, new exact inventory/checksum and the unchanged
+unit, stages root-owned code, changes the sidecar pointer and checks its TLS
+health. It restores the old pointer if startup fails. Private pairing, certificate
+and host/port configuration are preserved; previous code remains retained.
+
+An old pre-standby backend rejects the three new preference keys. Before a
+voluntary rollback to such a release, stop the hub and make a separate private
+copy of current preferences; restore a reviewed copy that removes only these
+three keys, preserving all other choices. Do not let an old loader reset to
+defaults. Immediate activation recovery uses the independently verified
+pre-deployment backup; that backup does not include later user edits.

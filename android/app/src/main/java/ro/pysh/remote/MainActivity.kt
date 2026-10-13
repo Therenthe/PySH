@@ -87,6 +87,7 @@ fun text(ro: Boolean, romanian: String, english: String) = if(ro) romanian else 
         val pageScroll=remember(tab,remote.connection?.deviceId) { ScrollState(0) }
         BackHandler(enabled = tab != 0) { tab = 0 }
         Scaffold(containerColor = MaterialTheme.colorScheme.background,
+            topBar = { Surface(color=MaterialTheme.colorScheme.background) { Box(Modifier.statusBarsPadding().padding(horizontal=22.dp,vertical=10.dp)) { BrandHeader(remote) } } },
             bottomBar = {
                 if(remote.connection != null) Column {
                     if(tab != 0 && remote.state.child("player").optString("state") !in listOf("", "idle", "ended")) MiniPlayer(remote)
@@ -100,9 +101,8 @@ fun text(ro: Boolean, romanian: String, english: String) = if(ro) romanian else 
         ) { padding ->
             Box(Modifier.fillMaxSize().padding(padding).imePadding(), contentAlignment = Alignment.TopCenter) {
                 Column(Modifier.widthIn(max = 680.dp).fillMaxWidth().verticalScroll(pageScroll).padding(horizontal=22.dp).padding(top=18.dp,bottom=28.dp), verticalArrangement=Arrangement.spacedBy(20.dp)) {
-                    BrandHeader(remote)
                     remote.error?.let { code -> MessageCard(errorText(code, remote.ro), true) { remote.error = null } }
-                    remote.notice?.let { notice -> MessageCard(text(remote.ro, if(notice=="sent_check") "Comandă trimisă. Reconectează-te pentru a verifica rezultatul." else "Comandă confirmată de hub.", if(notice=="sent_check") "Command sent. Reconnect to check the result." else "Command confirmed by the hub."), false) { remote.notice = null } }
+                    if(remote.notice=="sent_check") MessageCard(text(remote.ro,"Comandă trimisă. Reconectează-te pentru a verifica rezultatul.","Command sent. Reconnect to check the result."),false) { remote.notice=null }
                     if(remote.connection == null) PairPage(remote)
                     else {
                         if(!remote.online) OfflineBanner(remote)
@@ -122,17 +122,23 @@ fun text(ro: Boolean, romanian: String, english: String) = if(ro) romanian else 
 }
 
 @Composable fun BrandHeader(remote: RemoteController) {
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
+    val showLanLabel=maxWidth>=340.dp || remote.connection==null
     Row(Modifier.fillMaxWidth(), horizontalArrangement=Arrangement.SpaceBetween, verticalAlignment=Alignment.CenterVertically) {
         Row(Modifier.weight(1f),verticalAlignment=Alignment.CenterVertically, horizontalArrangement=Arrangement.spacedBy(10.dp)) {
-            Box(Modifier.size(38.dp).clip(RoundedCornerShape(13.dp)).background(MaterialTheme.colorScheme.primaryContainer), contentAlignment=Alignment.Center) { Icon(Icons.Outlined.GraphicEq,"PySH",tint=MaterialTheme.colorScheme.primary,modifier=Modifier.size(23.dp)) }
-            Column(Modifier.weight(1f)) { Text("PySH",Modifier.fillMaxWidth(),fontSize=22.sp,fontWeight=FontWeight.Bold,maxLines=1); Text(T(remote.ro,"TELECOMANDĂ","REMOTE"),Modifier.fillMaxWidth(),fontSize=10.sp,letterSpacing=2.sp,color=MaterialTheme.colorScheme.onSurfaceVariant,maxLines=1) }
+            Box(Modifier.size(38.dp).clip(RoundedCornerShape(13.dp)).background(MaterialTheme.colorScheme.primaryContainer), contentAlignment=Alignment.Center) { Icon(Icons.Outlined.GraphicEq,null,tint=MaterialTheme.colorScheme.primary,modifier=Modifier.size(23.dp)) }
+            Text("PySH",Modifier.weight(1f),fontSize=22.sp,fontWeight=FontWeight.Bold,maxLines=1)
         }
+        Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)) {
         Surface(shape=CircleShape,color=MaterialTheme.colorScheme.surfaceVariant) {
             Row(Modifier.padding(horizontal=12.dp,vertical=9.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(6.dp)) {
-                Icon(if(remote.online) Icons.Outlined.Wifi else Icons.Outlined.WifiOff,null,Modifier.size(16.dp),tint=MaterialTheme.colorScheme.primary)
-                Text(if(remote.online) "LAN" else T(remote.ro,"Local","Local"),fontSize=12.sp,fontWeight=FontWeight.SemiBold)
+                Icon(if(remote.online) Icons.Outlined.Wifi else Icons.Outlined.WifiOff,if(!showLanLabel) T(remote.ro,if(remote.online) "Conexiune LAN" else "Hub deconectat",if(remote.online) "LAN connection" else "Hub disconnected") else null,Modifier.size(16.dp),tint=MaterialTheme.colorScheme.primary)
+                if(showLanLabel) Text(if(remote.online) "LAN" else T(remote.ro,"Local","Local"),fontSize=12.sp,fontWeight=FontWeight.SemiBold)
             }
         }
+        if(remote.connection!=null) PowerButton(remote)
+        }
+    }
     }
 }
 
@@ -211,11 +217,12 @@ fun playerLabel(player: JSONObject, ro: Boolean) = when(player.optString("state"
         Text(now.format(DateTimeFormatter.ofPattern("HH:mm")),Modifier.fillMaxWidth(),fontSize=60.sp,fontWeight=FontWeight.Light,maxLines=1)
         Text(T(remote.ro,"Spațiul tău sonor.","Your space for sound."),Modifier.fillMaxWidth(),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant)
     }
+    if(remote.power.optBoolean("standby")) { AsleepCard(remote);TimerSummary(remote);return }
     Surface(shape=RoundedCornerShape(30.dp),color=MaterialTheme.colorScheme.surface) {
         Column(Modifier.padding(22.dp),verticalArrangement=Arrangement.spacedBy(18.dp)) {
             Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween,verticalAlignment=Alignment.CenterVertically) { Text(T(remote.ro,"ACUM PE PYSH","NOW ON PYSH"),fontSize=11.sp,letterSpacing=2.sp,color=MaterialTheme.colorScheme.onSurfaceVariant); Icon(Icons.Outlined.Speaker,null,tint=MaterialTheme.colorScheme.primary) }
             Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(18.dp)) {
-                RadioArtwork(Modifier.size(106.dp))
+                CurrentArtwork(remote,Modifier.size(106.dp))
                 Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(6.dp)) {
                     Text(player.label("station_name").ifBlank { player.label("title").ifBlank { T(remote.ro,"Liniște, deocamdată","A quiet moment") } },style=MaterialTheme.typography.headlineMedium,maxLines=2,overflow=TextOverflow.Ellipsis)
                     val title = player.label("title")
@@ -235,12 +242,13 @@ fun playerLabel(player: JSONObject, ro: Boolean) = when(player.optString("state"
     val current = weather.child("current")
     Panel {
         Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween) {
-            Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(6.dp)) { SectionTitle(weather.child("location").optString("name").ifBlank{T(remote.ro,"Vremea pe hub","Hub weather")},Icons.Outlined.Cloud); Text(if(weather.optBoolean("stale")) T(remote.ro,"Date meteo salvate","Saved weather") else T(remote.ro,"Locația aleasă pe PySH","Location selected on PySH"),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant) }
+            Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(6.dp)) { SectionTitle(weather.child("location").optString("name").ifBlank{T(remote.ro,"Vremea pe hub","Hub weather")},Icons.Outlined.Cloud); if(weather.optBoolean("stale")) Text(T(remote.ro,"Date meteo salvate","Saved weather"),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant) }
             Text(if(current.has("temperature_c") && !current.isNull("temperature_c")) "${current.optDouble("temperature_c").toInt()}°" else "—",fontSize=40.sp,fontWeight=FontWeight.Light)
         }
         if(current.has("humidity_pct")) Text("${T(remote.ro,"Umiditate","Humidity")} ${if(current.isNull("humidity_pct")) "—" else current.optInt("humidity_pct").toString()+"%"}  ·  ${T(remote.ro,"Vânt","Wind")} ${current.opt("wind_kmh") ?: "—"} km/h",style=MaterialTheme.typography.bodyMedium)
         TextButton(onClick={navigate(4)}) { Text(T(remote.ro,"Configurează atmosfera","Set the atmosphere")); Icon(Icons.Outlined.ArrowForward,null,modifier=Modifier.padding(start=6.dp).size(18.dp)) }
     }
+    TimerSummary(remote)
     remote.connection?.let { Text("PySH · ${it.host} · ${T(remote.ro,"Conexiune locală criptată","Encrypted local connection")}",style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant) }
 }
 @Composable fun Shortcut(modifier: Modifier, icon: ImageVector, title: String, subtitle: String, action: ()->Unit) {

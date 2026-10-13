@@ -27,11 +27,11 @@ MAX_RESPONSE = 2 * 1024 * 1024
 LAN_NETWORKS = tuple(ipaddress.ip_network(item) for item in (
     "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fc00::/7", "fe80::/10"))
 ROUTES = {
-    "GET": {"/api/state", "/api/radio", "/api/media", "/api/geocode",
+    "GET": {"/api/state", "/api/radio", "/api/radio/artwork", "/api/power", "/api/media", "/api/geocode",
             "/api/audio/visualization", "/api/diagnostics", "/api/external/preparation"},
     "PATCH": {"/api/preferences"},
     "DELETE": {"/api/media"},
-    "POST": {"/api/audio", "/api/bluetooth/power", "/api/bluetooth/scan",
+    "POST": {"/api/audio", "/api/power", "/api/power/timer", "/api/bluetooth/power", "/api/bluetooth/scan",
              "/api/bluetooth/action", "/api/bluetooth/reply", "/api/network/scan",
              "/api/network/connect", "/api/network/forget", "/api/weather/refresh",
              "/api/favorites", "/api/play", "/api/player", "/api/documentation",
@@ -150,10 +150,13 @@ class DeviceStore:
         return result
 
     def authenticate(self, authorization):
+        return self.identity(authorization) is not None
+
+    def identity(self, authorization):
         if not authorization.startswith("Bearer ") or len(authorization) > 256:
-            return False
+            return None
         submitted = digest(authorization[7:])
-        return any(hmac.compare_digest(submitted, device["hash"]) for device in self.read()["devices"])
+        return next((device['deviceId'] for device in self.read()['devices'] if hmac.compare_digest(submitted, device['hash'])), None)
 
     def revoke(self, identity):
         with self.transaction() as state:
@@ -191,6 +194,13 @@ class RateLimiter:
             return True
 
 
+class ImagePayload(bytes):
+    def __new__(cls, payload, mime):
+        result = super().__new__(cls, payload)
+        result.mime = mime
+        return result
+
+
 class LoopbackProxy:
     def __init__(self):
         self.token = ""
@@ -210,7 +220,12 @@ class LoopbackProxy:
                 raise RemoteError("upstream_response_too_large", 502)
             if 300 <= response.status < 400:
                 raise RemoteError("upstream_redirect_blocked", 502)
-            if response.getheader("Content-Type", "").split(";")[0] != "application/json":
+            mime = response.getheader('Content-Type', '').split(';')[0]
+            if urlsplit(path).path == '/api/radio/artwork' and response.status == 200 and mime in {'image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/x-icon', 'image/vnd.microsoft.icon'}:
+                if len(payload) > 256 * 1024:
+                    raise RemoteError('upstream_response_too_large', 502)
+                return response.status, ImagePayload(payload, mime)
+            if mime != "application/json":
                 raise RemoteError("upstream_invalid_response", 502)
             return response.status, payload
         except (OSError, TimeoutError) as error:
@@ -259,7 +274,7 @@ class Handler(BaseHTTPRequestHandler):
     def reply(self, status, body):
         payload = body if isinstance(body, bytes) else json.dumps(body, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Type", getattr(body, 'mime', 'application/json; charset=utf-8'))
         self.send_header("Content-Length", str(len(payload)))
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
@@ -301,10 +316,13 @@ class Handler(BaseHTTPRequestHandler):
             pairing = self.command == "POST" and parsed.path == "/remote/pair" and not parsed.query
             health = self.command == "GET" and self.path == "/remote/health"
             revoke_self = self.command == "POST" and self.path == "/remote/revoke-self"
+            heartbeat = self.command in {'POST', 'DELETE'} and self.path == '/remote/heartbeat'
+            device_id = None
             if not pairing and not health:
-                if not self.server.devices.authenticate(self.headers.get("Authorization", "")):
+                device_id = self.server.devices.identity(self.headers.get("Authorization", ""))
+                if device_id is None:
                     raise RemoteError("unauthorized", 401)
-                if not revoke_self and parsed.path not in ROUTES.get(self.command, set()):
+                if not revoke_self and not heartbeat and parsed.path not in ROUTES.get(self.command, set()):
                     raise RemoteError("route_not_allowed", 404)
             if length and self.headers.get("Content-Type", "").split(";")[0] != "application/json":
                 raise RemoteError("invalid_request")
@@ -325,8 +343,22 @@ class Handler(BaseHTTPRequestHandler):
                 if body and body.strip() != b"{}":
                     raise RemoteError("invalid_request")
                 self.server.devices.revoke_token(self.headers.get("Authorization", ""))
+                try:
+                    self.server.proxy.forward('POST', '/api/remote/presence', json.dumps({'deviceId': device_id, 'active': False}).encode())
+                except RemoteError:
+                    pass
                 self.reply(200, {"revoked": True})
+            elif heartbeat:
+                if body and body.strip() != b'{}':
+                    raise RemoteError('invalid_request')
+                status, payload = self.server.proxy.forward('POST', '/api/remote/presence', json.dumps({'deviceId': device_id, 'active': self.command == 'POST'}).encode())
+                self.reply(status, payload)
             else:
+                if self.command == 'GET' and parsed.path == '/api/state':
+                    try:
+                        self.server.proxy.forward('POST', '/api/remote/presence', json.dumps({'deviceId': device_id, 'active': True}).encode())
+                    except RemoteError:
+                        pass
                 status, payload = self.server.proxy.forward(self.command, self.path, body)
                 self.reply(status, payload)
         except RemoteError as error:

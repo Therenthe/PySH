@@ -53,6 +53,7 @@ def test_signal_only_after_successful_explicit_catalog_start(tmp_path,identifier
     stored=[]
     hub=SimpleNamespace(refresh_device=AsyncMock(),audio_selected=True,snapshots={"audio":{"output":"fixture"}},player=SimpleNamespace(select_output=AsyncMock(),play=AsyncMock(return_value={"state":state})),content=SimpleNamespace(resolve_media=Mock(return_value=tmp_path/"fixture.wav"),media_list=AsyncMock(return_value={"items":[]}),radio_click=AsyncMock()),store=SimpleNamespace(value=SimpleNamespace(lastStation=None),update=stored.append),cache_playback=lambda x:x,visualizer=SimpleNamespace(close=AsyncMock()),background=background)
     hub.media_lock = asyncio.Lock()
+    hub.power = SimpleNamespace(standby=False)
     hub.media_identity = None
     req=SimpleNamespace(app=SimpleNamespace(state=SimpleNamespace(hub=hub)))
     body=Play(source=source,url="https://radio.example.org/stream",path="fixture.wav",station_uuid=identifier)

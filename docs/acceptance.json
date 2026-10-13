@@ -477,5 +477,43 @@
       ],
       "reason": "Physical audio/Bluetooth/USB/Wi-Fi change and recovery tour required; source/unit mocks do not prove hardware."
     }
+  ],
+  "standbyRemote": [
+    {
+      "id": "REMOTE-REFINE-BUILD",
+      "status": "PASS",
+      "candidate": "android-0.1.2-debug-63ec90bcca2f",
+      "evidence": [
+        "docs/evidence/standby-remote-2026-10-13.md"
+      ],
+      "reason": "Build/instrumentation, four LAN policy methods and lint passed; native validation pending."
+    },
+    {
+      "id": "POWER-UI",
+      "status": "PASS",
+      "candidate": "33c3cb8361ac",
+      "evidence": [
+        "docs/evidence/standby-remote-2026-10-13.md"
+      ],
+      "reason": "12 RO/EN ink/night browser cases at800×480; fixture evidence only."
+    },
+    {
+      "id": "POWER-NATIVE",
+      "status": "OPEN",
+      "candidate": "33c3cb8361ac",
+      "evidence": [
+        "docs/evidence/standby-remote-2026-10-13.md"
+      ],
+      "reason": "Actual standby/wake, physical backlight and countdown/daily scheduling still require candidate installation and readback."
+    },
+    {
+      "id": "REMOTE-REFINE-PHONE",
+      "status": "OPEN",
+      "candidate": "android-0.1.2-debug-63ec90bcca2f",
+      "evidence": [
+        "docs/evidence/standby-remote-2026-10-13.md"
+      ],
+      "reason": "Actual logo/header/presence, power controls and saved pairing still require installed-phone checks."
+    }
   ]
 }

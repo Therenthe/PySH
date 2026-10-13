@@ -1,6 +1,8 @@
 package ro.pysh.remote
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.util.LruCache
 import androidx.compose.runtime.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -21,6 +23,13 @@ class RemoteController(context: Context, private val scope: CoroutineScope) {
     private val client = HubClient(context)
     private val writes = Mutex()
     private val reads = Mutex()
+    private val presence = Mutex()
+    private val artworkReads = Mutex()
+    private val artworkCache = object : LruCache<String,Bitmap>(4*1024*1024) {
+        override fun sizeOf(key:String,value:Bitmap)=value.allocationByteCount
+    }
+    private val artworkFailures = LinkedHashMap<String,Long>()
+    @Volatile private var foreground=true
     var connection by mutableStateOf(store.load()); private set
     var state by mutableStateOf(JSONObject()); private set
     var online by mutableStateOf(false); private set
@@ -32,6 +41,8 @@ class RemoteController(context: Context, private val scope: CoroutineScope) {
     var ro by mutableStateOf(uiStore.getString("language", "ro") != "en"); private set
     var dark by mutableStateOf(uiStore.getBoolean("dark", true)); private set
     val preferences get() = state.child("preferences")
+    val power get() = state.child("power")
+    val powerAvailable get() = online && power.has("standby")
     val enabled get() = online && busy == 0
     private var polling: Job? = null
     private var reading = false
@@ -43,10 +54,22 @@ class RemoteController(context: Context, private val scope: CoroutineScope) {
     fun language(value: Boolean) { ro = value; uiStore.edit().putString("language", if (ro) "ro" else "en").apply() }
     fun theme(value: Boolean) { dark = value; uiStore.edit().putBoolean("dark", value).apply() }
     fun start() {
+        foreground=true
         if (polling?.isActive == true) return
         polling = scope.launch { while (isActive) { refresh(); delay(2000) } }
     }
-    fun stop() { polling?.cancel(); polling = null }
+    fun stop() {
+        foreground=false;polling?.cancel();polling = null
+        val current=connection ?: return
+        // This finite cleanup survives Activity destruction, but is ordered before a resumed GET.
+        CoroutineScope(Dispatchers.IO).launch {
+            presence.withLock {
+                if(foreground || connection!=current) return@withLock
+                try { client.request(current,"/remote/heartbeat","DELETE") }
+                catch(e:CancellationException) { throw e } catch(_:Exception) { /* Server TTL also expires presence. */ }
+            }
+        }
+    }
     private fun code(error: Throwable) = when(error) {
         is HubFailure -> error.code
         is IllegalArgumentException -> error.message ?: "invalid_request"
@@ -60,7 +83,10 @@ class RemoteController(context: Context, private val scope: CoroutineScope) {
             reading = true
             syncing = true
             try {
-                val result = client.request(current, "/api/state")
+                val result = presence.withLock stateRead@ {
+                    if(!foreground) return@stateRead null
+                    client.request(current, "/api/state")
+                } ?: return
                 if (connection == current) { state = result; online = true }
             } catch (e: CancellationException) { throw e }
             catch (e: Exception) { if (connection == current) { online = false; connectionIssue=code(e) } }
@@ -100,7 +126,7 @@ class RemoteController(context: Context, private val scope: CoroutineScope) {
                 try {
                     val result = client.request(current, path, method, body)
                     if (connection != current) return
-                    notice = "saved"; after?.invoke(result)
+                    after?.invoke(result)
                     refresh(true)
                     if (!online) notice = "sent_check"
                 } catch (e: CancellationException) { throw e }
@@ -111,6 +137,27 @@ class RemoteController(context: Context, private val scope: CoroutineScope) {
         }
     }
     fun patch(key: String, value: Any) { command("/api/preferences", obj(key to value), "PATCH") }
+    fun standby(value:Boolean) { command("/api/power",obj("standby" to value)) }
+    fun sleepTimer(minutes:Int) { require(minutes in 0..720);command("/api/power/timer",obj("minutes" to minutes)) }
+    suspend fun artwork(station:String,identity:String=station):Bitmap? {
+        val current=connection ?: return null
+        if(!online || current.token=="preview") return null
+        val key="${current.host}|${current.pin}|${current.deviceId}|$identity"
+        return artworkReads.withLock {
+            artworkCache.get(key)?.let{return@withLock it}
+            if((artworkFailures[key] ?: 0)>System.currentTimeMillis()) return@withLock null
+            try {
+                val bitmap=client.artwork(current,station)
+                if(connection!=current) return@withLock null
+                artworkCache.put(key,bitmap);bitmap
+            } catch(e:CancellationException) { throw e }
+            catch(_:Exception) {
+                artworkFailures[key]=System.currentTimeMillis()+60_000
+                while(artworkFailures.size>32) artworkFailures.remove(artworkFailures.keys.first())
+                null
+            }
+        }
+    }
     suspend fun read(path: String): JSONObject {
         val current = connection ?: throw HubFailure("unauthorized")
         return client.request(current, path)
@@ -146,6 +193,8 @@ fun errorText(code: String, ro: Boolean): String {
         code == "hub_unavailable" || code == "upstream_unavailable" -> t("PySH nu răspunde. Verifică rețeaua și serviciul LAN. Comanda poate să fi ajuns; verifică starea înainte să o repeți.", "PySH is not responding. Check the network and LAN service. The command may have arrived; check its state before repeating it.")
         code == "no_audio_output" -> t("Selectează o ieșire audio disponibilă în Dispozitiv → Audio.", "Select an available audio output in Device → Audio.")
         code == "no_favorites" -> t("Adaugă posturi favorite pentru a folosi anterior/următor.", "Add favorite stations to use previous/next.")
+        code.contains("brightness") -> t("Luminozitatea nu a putut fi aplicată. Verifică ecranul și permisiunile PySH.", "Brightness could not be applied. Check the display and PySH permissions.")
+        code.contains("power") || code.contains("standby") -> t("Repausul nu a putut fi aplicat. Verifică starea hubului și reîncearcă.", "Standby could not be applied. Check the hub state and try again.")
         code == "media_in_use" -> t("Oprește redarea înainte de a șterge fișierul.", "Stop playback before deleting the file.")
         code == "rate_limited" -> t("Prea multe comenzi. Așteaptă puțin și reîncearcă.", "Too many commands. Wait a moment and try again.")
         code.contains("bluetooth") || code.contains("pair") -> t("Operația Bluetooth nu s-a încheiat. Verifică dispozitivul și încearcă din nou.", "The Bluetooth operation did not complete. Check the device and try again.")

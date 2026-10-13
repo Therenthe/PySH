@@ -1,6 +1,8 @@
 package ro.pysh.remote
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.security.keystore.KeyGenParameterSpec
@@ -55,6 +57,38 @@ class ConnectionStore(context: Context) {
 class HubClient(context: Context) {
     private val connectivity = context.getSystemService(ConnectivityManager::class.java)
     suspend fun request(connection: HubConnection, path: String, method: String = "GET", body: JSONObject? = null): JSONObject = withContext(Dispatchers.IO) {
+        val response=exchange(connection,path,method,body,"application/json",2*1024*1024)
+        val result = runCatching { JSONObject(String(response.bytes, Charsets.UTF_8)) }.getOrElse { throw HubFailure("invalid_response") }
+        if (response.status !in 200..299 || (method!="GET" && result.has("error") && !result.isNull("error"))) throw HubFailure(result.optString("error", "operation_failed"))
+        result
+    }
+    /** Art is fetched through the exact same LAN transport, certificate pin and bearer token. */
+    suspend fun artwork(connection: HubConnection, station: String): Bitmap = withContext(Dispatchers.IO) {
+        require(station=="current" || station.matches(Regex("[a-fA-F0-9]{8}-(?:[a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}"))) { "invalid_request" }
+        val response=exchange(connection,"/api/radio/artwork?station=${query(station)}","GET",null,"image/png,image/jpeg,image/webp,image/gif,image/x-icon,image/vnd.microsoft.icon",256*1024)
+        if(response.status !in 200..299) throw HubFailure("artwork_unavailable")
+        decodeArtwork(response.bytes,response.type)
+    }
+    internal fun decodeArtwork(bytes:ByteArray,type:String):Bitmap {
+        if(bytes.isEmpty() || bytes.size>256*1024) throw HubFailure("invalid_artwork")
+        val pixels = if(type in setOf("image/x-icon","image/vnd.microsoft.icon")) {
+            when(val frame=try { IcoArtwork.decode(bytes) } catch(_:IllegalArgumentException) { throw HubFailure("invalid_artwork") }) {
+                is IcoArtwork.Frame.Pixels -> return Bitmap.createBitmap(frame.argb,frame.width,frame.height,Bitmap.Config.ARGB_8888)
+                is IcoArtwork.Frame.Png -> frame.bytes
+            }
+        } else {
+            if(type !in setOf("image/png","image/jpeg","image/webp","image/gif")) throw HubFailure("invalid_artwork")
+            bytes
+        }
+        val bounds=BitmapFactory.Options().apply { inJustDecodeBounds=true }
+        BitmapFactory.decodeByteArray(pixels,0,pixels.size,bounds)
+        if(bounds.outWidth !in 1..4096 || bounds.outHeight !in 1..4096 || bounds.outWidth.toLong()*bounds.outHeight>16_000_000) throw HubFailure("invalid_artwork")
+        val options=BitmapFactory.Options()
+        while(bounds.outWidth/options.inSampleSize.coerceAtLeast(1)>512 || bounds.outHeight/options.inSampleSize.coerceAtLeast(1)>512) options.inSampleSize=options.inSampleSize.coerceAtLeast(1)*2
+        return BitmapFactory.decodeByteArray(pixels,0,pixels.size,options) ?: throw HubFailure("invalid_artwork")
+    }
+    private data class Response(val status:Int,val type:String,val bytes:ByteArray)
+    private fun exchange(connection: HubConnection,path:String,method:String,body:JSONObject?,accept:String,maxBytes:Int):Response {
         val host = LanPolicy.host(connection.host)
         val fingerprint = LanPolicy.pin(connection.pin)
         val network = connectivity.allNetworks.firstOrNull { network ->
@@ -82,10 +116,10 @@ class HubClient(context: Context) {
                 hostname == host && runCatching { trust.checkServerTrusted(session.peerCertificates.map { it as X509Certificate }.toTypedArray(), "RSA"); true }.getOrDefault(false)
             }
             http.instanceFollowRedirects = false
-            http.connectTimeout = 6000
-            http.readTimeout = 35000
+            http.connectTimeout = if(path=="/remote/heartbeat") 2000 else 6000
+            http.readTimeout = if(path=="/remote/heartbeat") 2000 else if(accept.startsWith("image/")) 8000 else 35000
             http.requestMethod = method
-            http.setRequestProperty("Accept", "application/json")
+            http.setRequestProperty("Accept", accept)
             if (connection.token.isNotEmpty()) http.setRequestProperty("Authorization", "Bearer ${connection.token}")
             if (body != null) {
                 http.doOutput = true
@@ -94,6 +128,7 @@ class HubClient(context: Context) {
             }
             val status = http.responseCode
             if (status in 300..399) throw HubFailure("redirect_refused")
+            if(http.contentLengthLong>maxBytes) throw HubFailure("invalid_response")
             val input = (if (status in 200..299) http.inputStream else http.errorStream) ?: throw HubFailure("hub_unavailable")
             val bytes = input.use { stream ->
                 val output=ByteArrayOutputStream()
@@ -101,14 +136,12 @@ class HubClient(context: Context) {
                 while(true) {
                     val count=stream.read(buffer)
                     if(count<0) break
-                    if(output.size()+count>2*1024*1024) throw HubFailure("invalid_response")
+                    if(output.size()+count>maxBytes) throw HubFailure("invalid_response")
                     output.write(buffer,0,count)
                 }
                 output.toByteArray()
             }
-            val result = runCatching { JSONObject(String(bytes, Charsets.UTF_8)) }.getOrElse { throw HubFailure("invalid_response") }
-            if (status !in 200..299 || (method!="GET" && result.has("error") && !result.isNull("error"))) throw HubFailure(result.optString("error", "operation_failed"))
-            result
+            return Response(status,http.contentType?.substringBefore(';')?.lowercase() ?: "",bytes)
         } catch (error: javax.net.ssl.SSLException) {
             throw HubFailure("certificate_changed")
         } catch (error: java.io.IOException) {

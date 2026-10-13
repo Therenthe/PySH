@@ -14,11 +14,11 @@ sigle sau conținut de pe internet; sursele media/meteo folosesc conexiunea hubu
 
 | Ecran | Control |
 |---|---|
-| Acasă | Stare reală, volum/mute, transport, seek local, vreme |
+| Acasă | Stare reală, sigle radio prin gateway, volum/mute, transport, seek local, vreme, repaus/activare |
 | Radio | Căutare țară/limbă, favorite comune, fluxuri proprii, redare pe hub |
 | Media | Pi/USB, directoare aprobate, filtrare, audio/video, ștergere confirmată, servicii oficiale/status/retry/cancel |
 | Dispozitiv | Ieșiri audio; Bluetooth power/scan/pair/connect/disconnect/forget/PIN; Wi-Fi scan/connect/editare/eliminare |
-| Setări | Limbă/temă telefon și hub; noapte/ceas/vizualizator; carduri/poziții/ancore/straturi/scurtături; locație/fus; service/revenire/setup/diagnostic/revocare |
+| Setări | Luminozitate reală; repaus după 15/30/60/90/120 min și anulare; program zilnic în fusul hubului; limbă/temă telefon și hub; noapte/ceas/vizualizator; carduri/poziții/ancore/straturi/scurtături; locație/fus; service/revenire/setup/diagnostic/revocare |
 
 Radio anterior/următor parcurge favoritele; fișierele folosesc coada backendului.
 YouTube/Netflix/Spotify se deschid pe PySH. Autentificarea și comenzile interne
@@ -30,6 +30,22 @@ Adresa salvată se poate schimba păstrând pinul/tokenul.
 Citirea se reia la2s în prim-plan. Starea veche este marcată la deconectare și
 comenzile se dezactivează. Mutațiile cu rezultat incert nu se repetă automat.
 Răspunsul PIN Bluetooth poate trece simultan cu cererea pairing în așteptare.
+
+Controlul permanent din antet oprește ecranul și redarea prin standby; nu taie
+alimentarea și permite activarea din aceeași aplicație. `state.power` furnizează
+starea reală, disponibilitatea luminozității, temporizatorul și programul zilnic.
+Luminozitatea se trimite numai când utilizatorul termină deplasarea sliderului;
+valoarea confirmată este recitită. În repaus se afișează luminozitatea dorită la
+activare, distinctă de ecranul stins. Lipsa controlului hardware este explicată.
+
+Siglele folosesc exclusiv `GET /api/radio/artwork?station=current|uuid` cu aceleași
+rețea LAN, pin și token; răspunsurile PNG/JPEG/WebP/GIF/ICO sunt limitate la256KiB.
+Imaginile obișnuite sunt limitate la4096×4096 și decodare512px. ICO acceptă cadre
+PNG și DIB32 necomprimat, maximum256×256, maximum64 intrări; validează limitele
+și aplică transparența alpha/AND. Cache-ul are limita4MiB. Lipsa siglei păstrează
+inițialele postului și declanșează o reîncercare la60s numai cât este vizibilă.
+GETstate menține prezența telefonului; ieșirea în fundal
+trimite DELETE `/remote/heartbeat`, ordonat înaintea revenirii în prim-plan.
 
 ## Build
 
@@ -44,11 +60,19 @@ APK: `app/build/outputs/apk/debug/app-debug.apk`, candidat semnat pentru instala
 locală, fără publicare GooglePlay. Varianta release este minificată și necesită
 cheie proprie de semnare pentru distribuție publică.
 
-`LanPolicyTest` verifică IP/pin/cod/rute. `LiveLanTest` cere hub real, pin și cod nou
+`LanPolicyTest` verifică IP/pin/cod/rute. `IcoArtworkTest` verifică directoare și
+dimensiuni nevalide, PNG inclus, DIB32, orientare și transparență alpha/AND.
+`LiveLanTest` cere hub real, pin și cod nou
 în argumentele instrumentării `host`, `pin`, `code`; asociază, citește starea,
 trimite volumul existent și capturează ecranele. Păstrează asocierea pentru turul
 manual. Capturile se salvează în `files` privat. Preview-urile debug au date de
 exemplu și nu pornesc polling; nu certifică LAN sau hardware.
+
+`PowerLanTest` conține decodare ICO nativă, citirea contractului/artwork real și turul UI înRO/EN×teme.
+Testul de mutații cere explicit `power_mutations=true`, hub fără redare activă
+și fără temporizator existent; salvează și restaurează repausul și programul,
+iar luminozitatea este trimisă cu valoarea existentă. Compilarea testelor nu le
+execută pe telefon. Candidatul acestei modificări:0.1.2/versionCode3.
 
 [Gateway și instalare](../docs/ANDROID_REMOTE.md) ·
 [Dovezi candidat](../docs/evidence/android-remote-2026-10-13.md).

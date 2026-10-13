@@ -21,7 +21,7 @@ object LanPolicy {
         require(it.matches(Regex("[0-9]{8}"))) { "invalid_pairing_code" }
     }
     fun path(value: String): String = value.also {
-        require((it.startsWith("/api/") && !it.startsWith("/api/session")) || it in setOf("/remote/pair", "/remote/health", "/remote/revoke-self")) { "invalid_request" }
+        require((it.startsWith("/api/") && !it.startsWith("/api/session")) || it in setOf("/remote/pair", "/remote/health", "/remote/revoke-self", "/remote/heartbeat")) { "invalid_request" }
         require(!it.contains('#') && !it.contains('\r') && !it.contains('\n')) { "invalid_request" }
     }
 }

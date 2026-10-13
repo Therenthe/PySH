@@ -4,6 +4,9 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class LanPolicyTest {
+    @org.junit.Test fun heartbeatIsLocalAllowedPath() {
+        org.junit.Assert.assertEquals("/remote/heartbeat",LanPolicy.path("/remote/heartbeat"))
+    }
     @Test fun acceptsOnlyExplicitPrivateAddresses() {
         listOf("192.168.1.10", "10.0.0.3", "172.16.2.1", "172.31.1.2").forEach { assertEquals(it, LanPolicy.host(it)) }
         listOf("8.8.8.8", "127.0.0.1", "0.0.0.0", "100.64.0.1", "172.32.1.2", "169.254.1.2", "pysh.local", "192.168.1.10.evil.com", "192.168.001.1", "192.168.1.255", "https://192.168.1.10", "192.168.1.10:8766", "192.168.1.256", "192.168.1.-1").forEach { value ->
