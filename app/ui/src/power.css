@@ -1,0 +1,21 @@
+.app .topbar-right{gap:4px}
+.app .topbar{grid-template-columns:140px minmax(0,1fr) auto;gap:8px;padding:0 12px}
+.app .remote-presence{display:flex;align-items:center;justify-content:center;color:var(--accent-strong);width:24px;height:48px;flex:none}
+.app .power-button{color:var(--ink);border:1px solid var(--line);border-radius:50%;background:var(--paper)}
+.app .power-button:active{background:var(--soft)}
+.power-summary{display:flex;align-items:center;gap:14px;padding:12px 0 18px;border-bottom:1px solid var(--line)}
+.power-symbol{width:48px;height:48px;display:grid;place-items:center;border-radius:16px;background:var(--soft);color:var(--accent-strong);flex:none}
+.power-summary>div{flex:1;min-width:0}.power-summary p{font-size:14px;line-height:1.5;color:var(--muted);margin:6px 0 0}
+.power-summary>.outline{max-width:135px;flex:none}
+.power-setting{padding:16px 0;border-bottom:1px solid var(--line)}
+.power-setting>div{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.power-setting input[type=range]{width:100%;height:48px;accent-color:var(--accent-strong)}
+.power-setting>div>span{font-size:14px;color:var(--muted)}
+.power-setting .sleep-presets{justify-content:flex-start;gap:8px;flex-wrap:wrap}
+.sleep-presets button{min-width:75px;min-height:48px}
+.power-feedback{padding:12px;border:1px solid var(--line-dark);border-radius:14px}
+.power-feedback p{font-size:14px;line-height:1.5;margin:0 0 10px}
+.standby-screen{position:fixed;inset:0;z-index:1000;background:#000;color:#b5bbc2;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.standby-brand{position:absolute;top:34px;left:40px;letter-spacing:.08em;font-size:20px;font-weight:600;color:#8c969e}
+.standby-screen button{min-width:260px;min-height:170px;background:none;color:inherit;border:0;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;border-radius:24px}
+.standby-screen svg{width:38px;height:38px;color:#c4d6cc}.standby-screen h1{font-size:26px;font-weight:500;margin:0}.standby-screen p{font-size:16px;margin:0}.standby-screen>p{max-width:500px;line-height:1.5}

@@ -19,7 +19,7 @@ from zoneinfo import ZoneInfo
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -29,6 +29,9 @@ from .content import Content, ContentError
 from .player import Player, PlayerError
 from .external import ExternalBrowser, ExternalError
 from .visualizer import OutputVisualizer
+from .power import PowerController, RemotePresence
+from .artwork import Artwork
+from .remote_control import AndroidControl, RemoteError
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = Path(os.environ.get("PI_HUB_DATA", str(Path.home() / ".local/share/pi-smart-hub")))
@@ -49,6 +52,28 @@ class MediaDelete(StrictBody):
 
 class Power(StrictBody):
     enabled: bool
+
+
+class Standby(StrictBody):
+    standby: bool = Field(strict=True)
+
+
+class SleepTimer(StrictBody):
+    minutes: int = Field(ge=0, le=720, strict=True)
+
+
+class Presence(StrictBody):
+    deviceId: str = Field(pattern=r'^[0-9a-f-]{36}$')
+    active: bool = Field(strict=True)
+
+
+class AndroidControlEnable(StrictBody):
+    enabled: bool = Field(strict=True)
+
+
+class AndroidPairingReply(StrictBody):
+    requestId: str = Field(pattern=r'^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$', strict=True)
+    accept: bool = Field(strict=True)
 
 
 class BTAction(StrictBody):
@@ -151,6 +176,11 @@ class Hub:
         self._playback_sampled = 0
         self._visualizer_suspended = 0
         self.visualizer = OutputVisualizer(self.visualizer_context)
+        self.power = PowerController(self)
+        self.remote_presence = RemotePresence()
+        self.android_control = AndroidControl(directory)
+        self.artwork = Artwork()
+        self.radio_artwork_stations = {}
 
     def cache_playback(self, playback):
         self._playback_snapshot = dict(playback) if isinstance(playback, dict) else {}
@@ -254,6 +284,7 @@ class Hub:
 
     async def start(self):
         self.background(self.initialize_runtime())
+        self.background(self.power.run())
 
     async def initialize_runtime(self):
         for operation in (self.device.initialize, self.player.start):
@@ -340,6 +371,11 @@ async def integration_error(request, error):
     return JSONResponse({"error": code}, status_code=409)
 
 
+@app.exception_handler(RemoteError)
+async def android_control_error(request, error):
+    return JSONResponse({'error': error.code}, status_code=error.status)
+
+
 @app.exception_handler(Exception)
 async def unexpected_error(request, error):
     log.error("Request failed type=%s", type(error).__name__)
@@ -357,13 +393,64 @@ async def state(request: Request):
     playback = hub.cache_playback(await hub.player.status())
     local = playback.get("kind") == "audio" and bool(playback.get("url"))
     playback.update(canPrevious=local and hub.queue_index > 0, canNext=local and 0 <= hub.queue_index < len(hub.queue) - 1)
-    return {"version": VERSION, "preferences": hub.store.export(), **hub.snapshots, "player": playback, "weather": hub.weather, "recovered": hub.store.recovered, "appliance": hub.appliance, "serviceMode": hub.service_mode}
+    last = hub.store.value.lastStation
+    if playback.get('kind') == 'radio' and last and playback.get('url') == last.url:
+        playback['station_uuid'] = last.uuid
+    return {"version": VERSION, "preferences": hub.store.export(), **hub.snapshots, "player": playback, "weather": hub.weather, "recovered": hub.store.recovered, "appliance": hub.appliance, "serviceMode": hub.service_mode, "power": await hub.power.snapshot(), "remote": hub.remote_presence.snapshot(), 'androidControl': await asyncio.to_thread(hub.android_control.snapshot)}
+
+
+@app.patch('/api/android-control')
+async def android_control_enable(request: Request, body: AndroidControlEnable):
+    hub = request.app.state.hub
+    result = await asyncio.to_thread(hub.android_control.enable, body.enabled)
+    if not body.enabled:
+        for device in result['devices']:
+            hub.remote_presence.update(device['deviceId'], False)
+    return result
+
+
+@app.post('/api/android-control/pairing')
+async def android_control_pairing(request: Request, body: AndroidPairingReply):
+    return await asyncio.to_thread(request.app.state.hub.android_control.approve, body.requestId, body.accept)
+
+
+@app.delete('/api/android-control/devices/{device_id}')
+async def android_control_revoke(request: Request, device_id: str):
+    if len(device_id) != 36:
+        raise RemoteError('invalid_request')
+    hub = request.app.state.hub
+    result = await asyncio.to_thread(hub.android_control.revoke, device_id)
+    hub.remote_presence.update(device_id, False)
+    return result
+
+
+@app.get('/api/power')
+async def power_state(request: Request):
+    return await request.app.state.hub.power.snapshot()
+
+
+@app.post('/api/power')
+async def power_set(request: Request, body: Standby):
+    return await request.app.state.hub.power.change(body.standby)
+
+
+@app.post('/api/power/timer')
+async def power_timer(request: Request, body: SleepTimer):
+    controller = request.app.state.hub.power
+    await controller.timer(body.minutes)
+    return await controller.snapshot()
+
+
+@app.post('/api/remote/presence')
+async def remote_presence(request: Request, body: Presence):
+    request.app.state.hub.remote_presence.update(body.deviceId, body.active)
+    return request.app.state.hub.remote_presence.snapshot()
 
 
 @app.patch("/api/preferences")
 async def preferences(request: Request, patch: dict):
     hub = request.app.state.hub
-    result = hub.store.update(patch)
+    result = await hub.power.update_preferences(patch)
     if patch.get("visualizerStyle") == "off":
         await hub.visualizer.close()
     if "location" in patch:
@@ -457,7 +544,52 @@ async def weather_refresh(request: Request):
 
 @app.get("/api/radio")
 async def radio(request: Request, q: str = "", country: str = "", language: str = ""):
-    return await request.app.state.hub.content.radio_search(q[:160], country[:100], language[:100])
+    hub = request.app.state.hub
+    result = await hub.content.radio_search(q[:160], country[:100], language[:100])
+    for station in result.get('stations', []):
+        if station.get('uuid'):
+            hub.radio_artwork_stations[station['uuid']] = station.get('favicon', '')
+    while len(hub.radio_artwork_stations) > 500:
+        hub.radio_artwork_stations.pop(next(iter(hub.radio_artwork_stations)))
+    return result
+
+
+@app.get('/api/radio/artwork')
+async def radio_artwork(request: Request, station: str = 'current'):
+    hub = request.app.state.hub
+    if len(station) > 100 or any(char in station for char in '/\\:'):
+        return JSONResponse({'error': 'artwork_unavailable'}, status_code=404)
+    if station == 'current':
+        playback = await hub.player.status()
+        last = hub.store.value.lastStation
+        candidate = last if last and playback.get('kind') == 'radio' and playback.get('url') == last.url else None
+        url = candidate.favicon if candidate else ''
+        if not url and playback.get('kind') == 'radio':
+            # The Pi player can display a favorite's logo even when lastStation
+            # came from an older transport command without favicon metadata.
+            match = next((item for item in hub.store.value.favorites if playback.get('url') in {item.url, item.url_resolved}), None)
+            candidate = match or candidate
+            url = candidate.favicon if candidate else ''
+    else:
+        candidate = next((item for item in hub.store.value.favorites if item.uuid == station), None)
+        if candidate is None and hub.store.value.lastStation and hub.store.value.lastStation.uuid == station:
+            candidate = hub.store.value.lastStation
+        url = candidate.favicon if candidate else hub.radio_artwork_stations.get(station, '')
+    try:
+        if url:
+            try:
+                raw, mime = await hub.artwork.get(url)
+            except ContentError:
+                if not candidate or not candidate.homepage:
+                    raise
+                raw, mime = await hub.artwork.homepage(candidate.homepage)
+        elif candidate and candidate.homepage:
+            raw, mime = await hub.artwork.homepage(candidate.homepage)
+        else:
+            raise ContentError('artwork_unavailable')
+    except ContentError:
+        return JSONResponse({'error': 'artwork_unavailable'}, status_code=404)
+    return Response(raw, media_type=mime, headers={'Cache-Control': 'no-store'})
 
 
 @app.post("/api/favorites")
@@ -512,6 +644,8 @@ async def delete_media(request: Request, body: MediaDelete):
 @serialized_media
 async def play(request: Request, body: Play):
     hub = request.app.state.hub
+    if hub.power.standby:
+        return JSONResponse({'error': 'standby_active'}, status_code=409)
     await hub.refresh_device()
     if not hub.audio_selected:
         return JSONResponse({"error": "no_audio_output"}, status_code=409)
@@ -547,6 +681,8 @@ async def play(request: Request, body: Play):
 @serialized_media
 async def player(request: Request, body: Transport):
     hub = request.app.state.hub
+    if hub.power.standby and body.action not in {'pause', 'stop'}:
+        return JSONResponse({'error': 'standby_active'}, status_code=409)
     hub.cache_playback({})
     await hub.visualizer.close()
     if body.action in {"resume", "toggle"} and not hub.audio_selected:
@@ -587,8 +723,11 @@ async def documentation(request: Request, body: Documentation):
 
 
 @app.post("/api/external")
+@serialized_media
 async def external(request: Request, body: External):
     hub = request.app.state.hub
+    if hub.power.standby:
+        return JSONResponse({'error': 'standby_active'}, status_code=409)
     executable = shutil.which("chromium")
     if sys.platform != "linux" or not executable:
         return JSONResponse({"error": "browser_unavailable"}, status_code=409)

@@ -6,6 +6,8 @@ Sesiunea dedicată greetd/labwc pornește API și Chromium supravegheate de unit
 
 Serviciile externe folosesc un profil Chromium separat de kiosk. Pagina loopback de pregătire cere EME/key creation reale înainte de Netflix/Spotify; component updater oficial și o repornire delimitată pregătesc profilurile noi. Extensia și host-ul nativ gestionează tastatura/revenirea. API-ul rămâne exclusiv loopback, cu verificarea originii și token pentru mutații. Profilul conturilor nu este sursă, diagnostic sau fixture de depanare.
 
+Telecomanda Android cerută pe 2026-10-13 folosește un gateway opțional separat în `services/remote`, HTTPS pe IP-ul privat explicit al Pi-ului și portul 8766. Pairing-ul este autorizat prin cod local și pin SHA-256 al certificatului; telefoanele au tokenuri persistente revocabile. Gateway-ul transmite numai comenzile API permise către loopback și gestionează intern tokenul local; nu schimbă binding-ul sau validarea backendului. Nu există relay internet. [ADR-0010](adr/0010-android-lan-remote.md) și [procedura/contractul](ANDROID_REMOTE.md) separă această implementare de verificarea încă deschisă pe telefon/Pi.
+
 ## Implementarea desktop importată (istorică)
 
 Chromium kiosk → assets React în `dist/` → API FastAPI pe `127.0.0.1:8765` → BlueZ/NetworkManager prin D-Bus, PipeWire/WirePlumber și mpv. UI se construiește pe PC. Python rulează ca utilizator al sesiunii grafice; API-ul nu este expus în LAN.

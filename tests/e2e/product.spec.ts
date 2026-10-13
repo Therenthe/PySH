@@ -275,11 +275,11 @@ for(const theme of ['ink','night'] as const) {
     f.state.appliance=true;f.state.preferences.screensaverMinutes=1;const prefs=JSON.stringify(f.state.preferences);await page.clock.install();
     await page.goto('/');await expect(page.locator('.home-layout')).toBeVisible();
     await page.locator('.main-nav button').nth(3).tap();
-    await page.locator('.settings-tabs button').nth(7).tap();
+    await page.locator('.settings-tabs .exit-tab').tap();
     await expect(page.getByRole('dialog')).toContainText(ro?'Deschizi modul de service?':'Open service mode?');
     await capture(page,info,'service-confirmation',defects);
     await page.locator('.dialog-actions button').first().tap();expect(f.actions.some(a=>a.path==='/api/exit')).toBeFalsy();
-    await page.locator('.settings-tabs button').nth(7).tap();await page.locator('.dialog-actions button').last().tap();
+    await page.locator('.settings-tabs .exit-tab').tap();await page.locator('.dialog-actions button').last().tap();
     await expect(page.locator('.service-screen')).toBeVisible();await expect(page.locator('.main-nav')).toHaveCount(0);
     await capture(page,info,'service-mode',defects);
     f.backendDown=true;await expect(page.locator('.error-strip')).toBeVisible({timeout:6000});await capture(page,info,'service-backend-error',defects);
@@ -329,12 +329,12 @@ for(const theme of ['ink','night'] as const) {
     f.media='error';await nav(0);await nav(2);await expect(page.locator('.error-strip')).toBeVisible();await capture(page,info,'media-error',defects);
     await nav(3);
     for(let i=0;i<7;i++){await page.locator('.settings-tabs button').nth(i).tap();await capture(page,info,`settings-${['appearance','weather','network','bluetooth','audio','home','diagnostics'][i]}`,defects);}
-    await page.locator('.settings-tabs button').nth(7).tap();await capture(page,info,'exit-dialog',defects);await page.locator('.dialog-actions button').first().tap();expect(f.actions.some(a=>a.path==='/api/exit')).toBeFalsy();
+    await page.locator('.settings-tabs .exit-tab').tap();await capture(page,info,'exit-dialog',defects);await page.locator('.dialog-actions button').first().tap();expect(f.actions.some(a=>a.path==='/api/exit')).toBeFalsy();
     await nav(0);
     await page.getByRole('button',{name:ro?'Deschide setările':'Open settings',exact:true}).first().tap();await capture(page,info,'quick-settings',defects);
     for(const [index,name] of [[0,'network'],[1,'bluetooth'],[2,'audio']] as const) {
       await page.locator('.quick-modal>button').nth(index).tap();await capture(page,info,`${name}-dialog`,defects);await closeModal(page,ro);
-      if(index<2)await page.locator('.topbar-right .icon-button').tap();
+      if(index<2)await page.getByRole('button',{name:ro?'Deschide setările':'Open settings',exact:true}).tap();
     }
     await nav(1);await page.locator('.radio-toolbar .search-field').tap();await expect(page.locator('.keyboard-card')).toBeVisible();await capture(page,info,'keyboard',defects);
     await page.locator('.diacritics-row button').first().tap();await expect(page.locator('.keyboard-value')).toContainText('ă');await page.locator('.keyboard-card header button').tap();await expect(page.locator('.keyboard-card')).toHaveCount(0);

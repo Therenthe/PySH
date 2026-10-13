@@ -13,6 +13,18 @@ spec.loader.exec_module(observer)
 UID = getattr(os, 'getuid', lambda:0)()
 GROUP = '/user.slice/user-1000.slice/user@1000.service/app.slice/pysh.service'
 
+
+@pytest.mark.parametrize('name', ['services/remote/__init__.py', 'services/remote/__main__.py',
+                                 'services/remote/gateway.py', 'services/remote/pysh-remote.service'])
+def test_remote_runtime_sources_are_known(name):
+    assert observer.allowed(name)
+
+
+@pytest.mark.parametrize('name', ['services/remote/private-key.pem', 'services/remote/devices.json',
+                                 'services/remote/config.json', 'services/remote/../escape.py'])
+def test_remote_private_data_is_not_runtime_evidence(name):
+    assert not observer.allowed(name)
+
 def process(proc, pid, group=GROUP, state='S', pss=128, start=10, parent=1):
     folder = proc / str(pid)
     folder.mkdir(parents=True)
