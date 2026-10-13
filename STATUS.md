@@ -1,5 +1,15 @@
 # PySH status
 
+## Android LAN remote — 2026-10-13
+
+Native Android Studio project added in `android/`, with EN/RO, phone light/dark
+themes and supported PySH controls. Independent authenticated HTTPS LAN gateway
+`afcc33f88ac8` installed alongside the unchanged hub runtime `5c76b8aff50d`.
+Live pairing/state/theme restoration/audio/media/diagnostics/revocation PASS;
+401 backend tests /32 Windows skips, Android compilation/policy tests/lint PASS.
+Native phone acceptance remains OPEN. See [remote evidence](docs/evidence/android-remote-2026-10-13.md)
+and [Android setup](android/README.md). This does not change full product acceptance.
+
 Updated: 2026-10-04. GitHub is canonical: [Therenthe/PySH](https://github.com/Therenthe/PySH), branch `feat/pysh-os-image`, [draft PR #3](https://github.com/Therenthe/PySH/pull/3). The product is incomplete; no 10/10 or final release acceptance is assigned.
 
 ## Current identities

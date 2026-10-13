@@ -1,6 +1,6 @@
 # Securitate
 
-- API numai pe loopback; păstrează validarea host/origin și tokenul pentru mutații. Nu publica portul prin router sau LAN.
+- API-ul existent rămâne numai pe loopback; păstrează validarea host/origin și tokenul pentru mutații. Nu publica portul 8765 prin router sau LAN. Pentru telecomanda Android cerută de proprietar, gateway-ul separat și opțional folosește HTTPS, IP privat explicit, pairing local și token per telefon: [ADR-0010](adr/0010-android-lan-remote.md), [instalare/contract](ANDROID_REMOTE.md). Nici gateway-ul nu se publică prin router, cloud sau tunel.
 - Rulează ca utilizator, cu permisiuni minimale; fără endpoint shell generic, sudo global sau dezactivarea politicilor sistemului.
 - Parolele Wi-Fi, cheile SSH, tokenurile GitHub, profilurile Chromium și sesiunile serviciilor externe rămân în afara Git și release-urilor.
 - Diagnosticele se verifică înainte de publicare. Logurile brute ale dispozitivului, IP-urile, SSID-urile și backupurile private nu sunt probe publice implicite.

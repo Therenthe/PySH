@@ -1,0 +1,16 @@
+[Unit]
+Description=PySH authenticated private LAN remote
+After=pysh.service network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/pysh/current
+ExecStart=/opt/pysh/venv/bin/python -m services.remote serve
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=default.target

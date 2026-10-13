@@ -109,7 +109,9 @@ def test_failed_readiness_restores_old_source_and_retains_new(device, tmp_path):
     assert not (a.state / 'transaction.json').exists()
 
 
-@pytest.mark.parametrize('bad', ['../../outside', '/etc/ssh/config', 'services/backend/../escape', 'unknown.py'])
+@pytest.mark.parametrize('bad', ['../../outside', '/etc/ssh/config', 'services/backend/../escape', 'unknown.py',
+                               'services/remote/private-key.pem', 'services/remote/certificate.pem',
+                               'services/remote/devices.json', 'services/remote/config.json'])
 def test_unsafe_or_unknown_archive_never_changes_active(device, tmp_path, bad):
     a, events, prefs = device
     old = a.active()[1]
@@ -117,6 +119,24 @@ def test_unsafe_or_unknown_archive_never_changes_active(device, tmp_path, bad):
     with pytest.raises(release.Refused):
         a.prepare(archive, m, '2' * 40)
     assert a.active()[1] == old and not events
+
+
+def test_remote_source_inventory_supported_without_private_data(tmp_path):
+    root = tmp_path / 'runtime'
+    runtime(root, 'remote')
+    names = ['services/remote/__init__.py', 'services/remote/__main__.py',
+             'services/remote/gateway.py', 'services/remote/pysh-remote.service']
+    for name in names:
+        path = root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text('fixture source', encoding='utf-8')
+    files = release.inventory(root)
+    assert all(name in files for name in names)
+    release.manifest({'build': release.identity(files), 'files': files, 'sha256': '0' * 64})
+    private = root / 'services/remote/private-key.pem'
+    private.write_text('fixture only', encoding='utf-8')
+    with pytest.raises(release.Refused, match='Unknown runtime file'):
+        release.inventory(root)
 
 
 def test_local_or_wrong_backup_receipt_refused_before_stop(device, tmp_path):
