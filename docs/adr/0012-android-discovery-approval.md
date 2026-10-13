@@ -8,6 +8,11 @@ the service closes its listener and advertisement; the owner can enable it again
 from the local screen. Avahi is an explicit OS runtime dependency; Python uses
 the existing locked dbus-next dependency.
 
+The remote unit adds only AF_NETLINK to its existing address-family restriction
+because iproute2 reads interface/route data through netlink. NoNewPrivileges
+remains enabled. The updater accepts only this exact addition to the verified
+previous unit, preserves ownership/mode and restores both unit and code on failure.
+
 Android discovers in the foreground on Wi-Fi/Ethernet. Initial public identity
 bootstrap sends no credentials or commands. The phone creates an ephemeral
 RSA3072 key, requests pairing and polls a short-lived secret-bound request.

@@ -51,7 +51,10 @@ loopback/browser boundary; cleartext HTTP would expose control credentials to LA
 observers; a cloud relay contradicts the owner's requirement; manually shared
 permanent passwords do not provide independent revocable phone identities.
 
-Consequences: the Android client needs the Pi address and locally observed pin
+The initial manual setup below is superseded by [0012](0012-android-discovery-approval.md):
+the app now discovers locally and requires screen approval without manual secrets.
+
+Historical consequences: the Android client needs the Pi address and locally observed pin
 for first pairing, supports only documented API capabilities, and must explain
 offline, revoked, expired-code and unavailable-hardware states. "Full control"
 covers supported hub commands; no implementation can claim that arbitrary input

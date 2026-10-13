@@ -165,8 +165,9 @@ sudo python3 update-remote-sidecar.py gateway.tar.gz --sha256 <verified-sha256>
 ```
 
 This checks old source integrity, new exact inventory/checksum and the unchanged
-unit, stages root-owned code, changes the sidecar pointer and checks its TLS
-health. It restores the old pointer if startup fails. Private pairing, certificate
+unit (or the exact AF_NETLINK addition for local address discovery), stages
+root-owned code, changes the sidecar pointer and checks its TLS
+health. It restores the old pointer and previous unit if startup fails. Private pairing, certificate
 and host/port configuration are preserved; previous code remains retained.
 
 An old pre-standby backend rejects the three new preference keys. Before a

@@ -17,3 +17,4 @@ Deciziile anterioare de navigare/media sunt păstrate în [DECISIONS](../DECISIO
 - [0010 — Android remote over authenticated private LAN HTTPS](0010-android-lan-remote.md)
 
 - [0011 — Recoverable software standby and companion presence](0011-software-standby.md)
+- [0012 — Android discovery and local approval](0012-android-discovery-approval.md)

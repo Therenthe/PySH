@@ -110,10 +110,13 @@ class OnboardingLanTest {
                     }
                 }
                 instrumentation.waitForIdleSync()
+                var labels=emptyList<String>()
+                var hasEditable=false
                 val rendered=awaitUi(12_000) {
-                    val titles=walkNodes(instrumentation.uiAutomation.rootInActiveWindow).map { it.text?.toString().orEmpty() }
+                    val nodes=walkNodes(instrumentation.uiAutomation.rootInActiveWindow)
+                    val titles=nodes.map { it.text?.toString().orEmpty() }
                     val phaseReady=when(phase) {
-                        "found" -> connectButton(text(ro,"Conectează PySH","Connect PySH"))!=null
+                        "found" -> nodes.any { it.text?.toString()==text(ro,"Conectează PySH","Connect PySH") && clickableAncestor(it)!=null }
                         "waiting" -> titles.contains(text(ro,"Anulează conectarea","Cancel connection"))
                         "searching" -> titles.contains(text(ro,"Căutăm PySH în apropiere…","Looking for PySH nearby…"))
                         "pairing_denied","pairing_expired" -> titles.contains(errorText(phase,ro))
@@ -121,14 +124,14 @@ class OnboardingLanTest {
                         "not_found" -> titles.any { it.startsWith(text(ro,"PySH nu este încă vizibil.","PySH is not visible yet.")) }
                         else -> false
                     }
-                    phaseReady && titles.any { it.contains(if(ro) "Hubul tău." else "Your hub.") }
+                    val ready=phaseReady && titles.any { it.contains(if(ro) "Hubul tău." else "Your hub.") }
+                    if(ready) { labels=titles;hasEditable=nodes.any { it.isEditable } }
+                    ready
                 }
                 capture("onboarding-$phase-${if(ro)"ro" else "en"}-${if(night)"night" else "light"}")
+                if(!rendered)dumpAccessibility("onboarding-$phase-${if(ro)"ro" else "en"}-${if(night)"night" else "light"}")
                 assertTrue("Onboarding phase did not render: $phase / ${if(ro)"ro" else "en"} / ${if(night)"night" else "light"}",rendered)
-                fun allNodes(node:AccessibilityNodeInfo?):List<AccessibilityNodeInfo> = if(node==null)emptyList() else listOf(node)+(0 until node.childCount).flatMap { allNodes(node.getChild(it)) }
-                val nodes=allNodes(instrumentation.uiAutomation.rootInActiveWindow)
-                assertFalse("Onboarding must not request manual credentials",nodes.any { it.isEditable })
-                val labels=nodes.map { it.text?.toString().orEmpty() }
+                assertFalse("Onboarding must not request manual credentials",hasEditable)
                 assertTrue(labels.any { it.contains(if(ro) "Hubul tău." else "Your hub.") })
                 assertTrue(labels.none { it.contains("SHA-256")||it.contains("Adresa IP")||it.contains("Pairing code") })
                 if(phase in setOf("searching","found"))assertTrue(labels.any { it.contains("Android App Control") })
@@ -191,13 +194,22 @@ class OnboardingLanTest {
             if(cleanupFailure!=null)throw AssertionError("Audit identity revocation failed; original association has been restored",cleanupFailure)
         }
     }
-    private fun walkNodes(node:AccessibilityNodeInfo?):List<AccessibilityNodeInfo> = if(node==null)emptyList() else listOf(node)+(0 until node.childCount).flatMap { walkNodes(node.getChild(it)) }
+    private fun walkNodes(node:AccessibilityNodeInfo?):List<AccessibilityNodeInfo> {
+        if(node==null || !node.refresh())return emptyList()
+        return listOf(node)+(0 until node.childCount).flatMap { walkNodes(node.getChild(it)) }
+    }
     private fun find(label:String)=walkNodes(instrumentation.uiAutomation.rootInActiveWindow).firstOrNull { it.text?.toString()==label || it.contentDescription?.toString()==label }
     private fun connectButton(label:String="Conectează PySH"):AccessibilityNodeInfo? {
         for(node in walkNodes(instrumentation.uiAutomation.rootInActiveWindow).filter { it.text?.toString()==label }) {
-            var parent:AccessibilityNodeInfo?=node
-            while(parent!=null && !parent.isClickable)parent=parent.parent
-            if(parent!=null)return parent
+            clickableAncestor(node)?.let { return it }
+        }
+        return null
+    }
+    private fun clickableAncestor(node:AccessibilityNodeInfo):AccessibilityNodeInfo? {
+        var parent:AccessibilityNodeInfo?=node
+        while(parent!=null) {
+            if(parent.refresh() && parent.isClickable)return parent
+            parent=parent.parent
         }
         return null
     }
@@ -208,6 +220,14 @@ class OnboardingLanTest {
             Thread.sleep(150)
         }
         return predicate()
+    }
+    private fun dumpAccessibility(name:String) {
+        val lines=walkNodes(instrumentation.uiAutomation.rootInActiveWindow).map { node ->
+            val bounds=android.graphics.Rect().also { node.getBoundsInScreen(it) }
+            "class=${node.className} clickable=${node.isClickable} enabled=${node.isEnabled} visible=${node.isVisibleToUser} bounds=$bounds actions=${node.actionList.map { it.id }} text=${node.text} description=${node.contentDescription}"
+        }
+        // Fixture diagnostics remain private in app storage, never printed or checked into Git.
+        File(context.filesDir,"$name-accessibility.txt").writeText(lines.joinToString("\n"))
     }
     private fun capture(name:String) {
         val image=instrumentation.uiAutomation.takeScreenshot() ?: throw AssertionError("No onboarding capture")
