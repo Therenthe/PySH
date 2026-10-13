@@ -44,7 +44,8 @@ def allowed(name):
                              'scripts/activate-release.sh', 'scripts/rollback.sh',
                              'scripts/probe-application.py', 'scripts/service-keyboard-host.py',
                              'services/remote/__init__.py', 'services/remote/__main__.py',
-                             'services/remote/gateway.py', 'services/remote/pysh-remote.service'}))
+                             'services/remote/gateway.py', 'services/remote/discovery.py',
+                             'services/remote/pysh-remote.service'}))
 
 
 def identity(files):
