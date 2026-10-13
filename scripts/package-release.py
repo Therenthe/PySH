@@ -8,7 +8,7 @@ root = Path(__file__).resolve().parent.parent
 files = []
 for name in ("services/backend", "app/browser-extension", "dist"):
     files.extend(p for p in (root / name).rglob("*") if p.is_file() and "__pycache__" not in p.parts and p.suffix != ".pyc")
-for name in ("requirements.lock", "scripts/run-hub.py", "scripts/install-session.sh", "scripts/activate-release.sh", "scripts/rollback.sh", "scripts/probe-application.py", "scripts/service-keyboard-host.py", "services/remote/__init__.py", "services/remote/__main__.py", "services/remote/gateway.py", "services/remote/pysh-remote.service"):
+for name in ("requirements.lock", "scripts/run-hub.py", "scripts/install-session.sh", "scripts/activate-release.sh", "scripts/rollback.sh", "scripts/probe-application.py", "scripts/service-keyboard-host.py", "services/remote/__init__.py", "services/remote/__main__.py", "services/remote/gateway.py", "services/remote/discovery.py", "services/remote/pysh-remote.service"):
     files.append(root / name)
 files.sort()
 manifest = {str(p.relative_to(root)).replace("\\", "/"): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}

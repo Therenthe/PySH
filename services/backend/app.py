@@ -31,6 +31,7 @@ from .external import ExternalBrowser, ExternalError
 from .visualizer import OutputVisualizer
 from .power import PowerController, RemotePresence
 from .artwork import Artwork
+from .remote_control import AndroidControl, RemoteError
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = Path(os.environ.get("PI_HUB_DATA", str(Path.home() / ".local/share/pi-smart-hub")))
@@ -64,6 +65,15 @@ class SleepTimer(StrictBody):
 class Presence(StrictBody):
     deviceId: str = Field(pattern=r'^[0-9a-f-]{36}$')
     active: bool = Field(strict=True)
+
+
+class AndroidControlEnable(StrictBody):
+    enabled: bool = Field(strict=True)
+
+
+class AndroidPairingReply(StrictBody):
+    requestId: str = Field(pattern=r'^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$', strict=True)
+    accept: bool = Field(strict=True)
 
 
 class BTAction(StrictBody):
@@ -168,6 +178,7 @@ class Hub:
         self.visualizer = OutputVisualizer(self.visualizer_context)
         self.power = PowerController(self)
         self.remote_presence = RemotePresence()
+        self.android_control = AndroidControl(directory)
         self.artwork = Artwork()
         self.radio_artwork_stations = {}
 
@@ -360,6 +371,11 @@ async def integration_error(request, error):
     return JSONResponse({"error": code}, status_code=409)
 
 
+@app.exception_handler(RemoteError)
+async def android_control_error(request, error):
+    return JSONResponse({'error': error.code}, status_code=error.status)
+
+
 @app.exception_handler(Exception)
 async def unexpected_error(request, error):
     log.error("Request failed type=%s", type(error).__name__)
@@ -380,7 +396,32 @@ async def state(request: Request):
     last = hub.store.value.lastStation
     if playback.get('kind') == 'radio' and last and playback.get('url') == last.url:
         playback['station_uuid'] = last.uuid
-    return {"version": VERSION, "preferences": hub.store.export(), **hub.snapshots, "player": playback, "weather": hub.weather, "recovered": hub.store.recovered, "appliance": hub.appliance, "serviceMode": hub.service_mode, "power": await hub.power.snapshot(), "remote": hub.remote_presence.snapshot()}
+    return {"version": VERSION, "preferences": hub.store.export(), **hub.snapshots, "player": playback, "weather": hub.weather, "recovered": hub.store.recovered, "appliance": hub.appliance, "serviceMode": hub.service_mode, "power": await hub.power.snapshot(), "remote": hub.remote_presence.snapshot(), 'androidControl': await asyncio.to_thread(hub.android_control.snapshot)}
+
+
+@app.patch('/api/android-control')
+async def android_control_enable(request: Request, body: AndroidControlEnable):
+    hub = request.app.state.hub
+    result = await asyncio.to_thread(hub.android_control.enable, body.enabled)
+    if not body.enabled:
+        for device in result['devices']:
+            hub.remote_presence.update(device['deviceId'], False)
+    return result
+
+
+@app.post('/api/android-control/pairing')
+async def android_control_pairing(request: Request, body: AndroidPairingReply):
+    return await asyncio.to_thread(request.app.state.hub.android_control.approve, body.requestId, body.accept)
+
+
+@app.delete('/api/android-control/devices/{device_id}')
+async def android_control_revoke(request: Request, device_id: str):
+    if len(device_id) != 36:
+        raise RemoteError('invalid_request')
+    hub = request.app.state.hub
+    result = await asyncio.to_thread(hub.android_control.revoke, device_id)
+    hub.remote_presence.update(device_id, False)
+    return result
 
 
 @app.get('/api/power')

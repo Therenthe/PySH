@@ -60,13 +60,14 @@ class PowerLanTest {
         assertTrue(power.child("daily").getString("time").matches(Regex("(?:[01][0-9]|2[0-3]):[0-5][0-9]")))
         val brightness=power.child("brightness")
         if(brightness.optBoolean("available") && !brightness.isNull("value")) assertTrue(brightness.getInt("value") in 0..100)
-        if(state.child("player").optString("kind")=="radio") {
+        val station=state.child("preferences").optJSONArray("favorites")?.optJSONObject(0)?.optString("uuid").orEmpty()
+        if(station.isNotEmpty()) {
             try {
-                val logo=client.artwork(connection,"current")
+                val logo=client.artwork(connection,station)
                 assertTrue(logo.width in 1..512);assertTrue(logo.height in 1..512)
                 File(context.filesDir,"radio-logo.png").outputStream().use{logo.compress(Bitmap.CompressFormat.PNG,100,it)}
                 logo.recycle()
-            } catch(e:HubFailure) { assumeTrue("Current station has no available artwork",e.code!="artwork_unavailable");throw e }
+            } catch(e:HubFailure) { throw AssertionError("Configured station artwork failed: ${e.code}",e) }
         }
     }
 
@@ -121,14 +122,22 @@ class PowerLanTest {
                 settings.edit().putString("language",if(ro) "ro" else "en").putBoolean("dark",night).commit()
                 val activity=instrumentation.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 try {
-                    Thread.sleep(2400)
+                    instrumentation.runOnMainSync { activity.window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
                     val action=if(state.child("power").optBoolean("standby")) text(ro,"Pornește","Wake") else text(ro,"Repaus","Standby")
+                    val readyDeadline=android.os.SystemClock.elapsedRealtime()+15000
+                    while(find(action)==null && android.os.SystemClock.elapsedRealtime()<readyDeadline) Thread.sleep(200)
                     assertNotNull(find(action));assertNull(find("TELECOMANDĂ"));assertNull(find("REMOTE"))
                     assertNull(find("Comandă confirmată de hub."));assertNull(find("Command confirmed by the hub."))
                     assertNull(find("Locația aleasă pe PySH"));assertNull(find("Location selected on PySH"))
-                    click(text(ro,"Setări","Settings"));Thread.sleep(400)
-                    assertNotNull(find(text(ro,"Ecran și repaus","Screen and standby")))
+                    click(text(ro,"Setări","Settings"))
+                    val settingsLabel=text(ro,"Ecran și repaus","Screen and standby")
+                    val settingsDeadline=android.os.SystemClock.elapsedRealtime()+8000
+                    while(find(settingsLabel)==null && android.os.SystemClock.elapsedRealtime()<settingsDeadline) Thread.sleep(200)
+                    assertNotNull(find(settingsLabel))
                     assertNotNull(find("15 min"));assertNotNull(find("30 min"));assertNotNull(find("60 min"))
+                    val controls=instrumentation.uiAutomation.takeScreenshot() ?: throw AssertionError("No power screenshot")
+                    File(context.filesDir,"power-controls-${if(ro)"ro" else "en"}-${if(night)"night" else "light"}.png").outputStream().use{controls.compress(Bitmap.CompressFormat.PNG,100,it)}
+                    controls.recycle()
                     scroll();Thread.sleep(300)
                     assertNotNull(find(action)) // Fixed header stays available after content scrolling.
                     val image=instrumentation.uiAutomation.takeScreenshot() ?: throw AssertionError("No screenshot")

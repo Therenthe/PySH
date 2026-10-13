@@ -6,6 +6,10 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.SystemBarStyle
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.draw.scale
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -94,7 +98,7 @@ fun text(ro: Boolean, romanian: String, english: String) = if(ro) romanian else 
                     NavigationBar(containerColor = MaterialTheme.colorScheme.surface, tonalElevation = 0.dp) {
                         val labels = listOf(text(remote.ro,"Acasă","Home"),"Radio",text(remote.ro,"Media","Media"),text(remote.ro,"Dispozitiv","Device"),text(remote.ro,"Setări","Settings"))
                         val icons = listOf(Icons.Outlined.Home, Icons.Outlined.Radio, Icons.Outlined.LibraryMusic, Icons.Outlined.Speaker, Icons.Outlined.Tune)
-                        labels.forEachIndexed { index, label -> NavigationBarItem(selected = tab == index, onClick = { tab = index }, icon = { Icon(icons[index], label) }, label = { Text(label, maxLines=1, fontSize=11.sp) }, colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.primaryContainer)) }
+                        labels.forEachIndexed { index, label -> NavigationBarItem(selected = tab == index, onClick = { tab = index }, icon = { val scale by animateFloatAsState(if(tab==index) 1.10f else 1f,tween(160),label="navigation");Icon(icons[index], label,Modifier.scale(scale)) }, label = { Text(label, maxLines=1, fontSize=11.sp) }, colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.primaryContainer)) }
                     }
                 }
             }
@@ -107,12 +111,16 @@ fun text(ro: Boolean, romanian: String, english: String) = if(ro) romanian else 
                     else {
                         if(!remote.online) OfflineBanner(remote)
                         if(remote.busy > 0) Row(verticalAlignment=Alignment.CenterVertically, horizontalArrangement=Arrangement.spacedBy(12.dp)) { CircularProgressIndicator(Modifier.size(18.dp), strokeWidth=2.dp); Text(T(remote.ro,"Se aplică pe PySH…","Applying on PySH…"), style=MaterialTheme.typography.bodyMedium) }
-                        when(tab) {
-                            0 -> HomePage(remote) { tab = it }
-                            1 -> RadioPage(remote)
-                            2 -> MediaPage(remote)
-                            3 -> DevicePage(remote)
-                            4 -> SettingsPage(remote)
+                        Crossfade(tab,animationSpec=tween(160),label="page") { page ->
+                            Column(verticalArrangement=Arrangement.spacedBy(20.dp)) {
+                                when(page) {
+                                    0 -> HomePage(remote) { tab = it }
+                                    1 -> RadioPage(remote)
+                                    2 -> MediaPage(remote)
+                                    3 -> DevicePage(remote)
+                                    4 -> SettingsPage(remote)
+                                }
+                            }
                         }
                     }
                 }
@@ -159,29 +167,6 @@ fun text(ro: Boolean, romanian: String, english: String) = if(ro) romanian else 
 }
 @Composable fun OfflineBanner(remote: RemoteController) {
     Panel { SectionTitle(T(remote.ro,"Hub deconectat","Hub disconnected"),Icons.Outlined.WifiOff); Text(T(remote.ro,"Datele afișate sunt ultima stare primită.","The values shown are the last received state."),style=MaterialTheme.typography.bodyMedium);Text(errorText(remote.connectionIssue,remote.ro),style=MaterialTheme.typography.bodyMedium); Button(onClick={remote.reconnect()},modifier=Modifier.heightIn(min=48.dp),enabled=!remote.syncing) { Text(T(remote.ro,"Reconectează","Reconnect")) } }
-}
-
-@Composable fun PairPage(remote: RemoteController) {
-    var host by rememberSaveable { mutableStateOf("192.168.100.127") }
-    var pin by rememberSaveable { mutableStateOf("") }
-    var code by rememberSaveable { mutableStateOf("") }
-    Column(verticalArrangement=Arrangement.spacedBy(22.dp)) {
-        Box(Modifier.fillMaxWidth().height(190.dp).clip(RoundedCornerShape(30.dp)).background(Brush.linearGradient(listOf(Color(0xFF263C42),Color(0xFF272B48)))),contentAlignment=Alignment.Center) {
-            RadioArtwork(Modifier.size(170.dp))
-            Surface(Modifier.align(Alignment.BottomEnd).padding(16.dp),shape=CircleShape,color=Mint) { Row(Modifier.padding(horizontal=12.dp,vertical=8.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(6.dp)) { Icon(Icons.Outlined.Lock,null,Modifier.size(14.dp),tint=Color(0xFF103A29)); Text("LAN ONLY",color=Color(0xFF103A29),fontSize=11.sp,fontWeight=FontWeight.Bold,letterSpacing=1.sp) } }
-        }
-        PageTitle(T(remote.ro,"Hubul tău.\nLa o atingere.","Your hub.\nOne touch away."),T(remote.ro,"Sunetul, atmosfera și toate comenzile PySH, direct din rețeaua ta.","Sound, atmosphere and every PySH control, right on your network."))
-        Panel {
-            SectionTitle(T(remote.ro,"Conectează PySH","Connect PySH"),Icons.Outlined.Link)
-            Text(T(remote.ro,"1. Conectează telefonul la Wi-Fi-ul hubului.\n2. Activează serviciul LAN pe PySH.\n3. Copiază amprenta și codul afișate local.","1. Join the hub's Wi-Fi network.\n2. Enable the LAN service on PySH.\n3. Copy the fingerprint and code shown locally."),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant)
-            Field(T(remote.ro,"Adresa IP a hubului","Hub IP address"),host,{host=it},keyboard=KeyboardType.Decimal)
-            Field(T(remote.ro,"Amprentă certificat SHA-256","SHA-256 certificate fingerprint"),pin,{pin=it},single=false)
-            Field(T(remote.ro,"Cod de asociere · 8 cifre","Pairing code · 8 digits"),code,{code=it.take(8)},keyboard=KeyboardType.NumberPassword,password=true)
-            Button(onClick={remote.pair(host,pin,code)},modifier=Modifier.fillMaxWidth().heightIn(min=54.dp),enabled=remote.busy==0) { Icon(Icons.Outlined.Link,null); Spacer(Modifier.width(10.dp)); Text(if(remote.busy>0) T(remote.ro,"Se asociază…","Pairing…") else T(remote.ro,"Asociază telefonul","Pair this phone")) }
-        }
-        Text(T(remote.ro,"Telefonul comunică doar cu adresa locală a hubului. Fără cont, cloud sau control prin internet.","Your phone communicates only with the hub's local address. No account, cloud or internet remote access."),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant)
-        Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) { TextButton(onClick={remote.language(!remote.ro)}) { Text(if(remote.ro) "English" else "Română") }; TextButton(onClick={remote.theme(!remote.dark)}) { Text(T(remote.ro,"Schimbă tema","Change theme")) } }
-    }
 }
 
 @Composable fun Field(label: String, value: String, change: (String) -> Unit, single: Boolean=true, keyboard: KeyboardType=KeyboardType.Text, password: Boolean=false) {

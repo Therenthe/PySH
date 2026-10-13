@@ -25,7 +25,7 @@ import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
 
-data class HubConnection(val host: String, val pin: String, val token: String, val deviceId: String)
+data class HubConnection(val host: String, val pin: String, val token: String, val deviceId: String, val hubId:String="")
 class HubFailure(val code: String) : Exception(code)
 
 /** Credentials encrypted by a non-exportable Android Keystore key; backup is disabled. */
@@ -44,10 +44,10 @@ class ConnectionStore(context: Context) {
         val bytes = Base64.decode(raw, Base64.NO_WRAP)
         val cipher = Cipher.getInstance("AES/GCM/NoPadding").apply { init(Cipher.DECRYPT_MODE, key(), GCMParameterSpec(128, bytes.copyOfRange(0, 12))) }
         val json = JSONObject(String(cipher.doFinal(bytes.copyOfRange(12, bytes.size)), Charsets.UTF_8))
-        HubConnection(LanPolicy.host(json.getString("host")), LanPolicy.pin(json.getString("pin")), json.getString("token"), json.getString("deviceId"))
+        HubConnection(LanPolicy.host(json.getString("host")), LanPolicy.pin(json.getString("pin")), json.getString("token"), json.getString("deviceId"),json.optString("hubId"))
     }.getOrNull()
     fun save(value: HubConnection) {
-        val json = JSONObject().put("host", value.host).put("pin", value.pin).put("token", value.token).put("deviceId", value.deviceId)
+        val json = JSONObject().put("host", value.host).put("pin", value.pin).put("token", value.token).put("deviceId", value.deviceId).put("hubId",value.hubId)
         val cipher = Cipher.getInstance("AES/GCM/NoPadding").apply { init(Cipher.ENCRYPT_MODE, key()) }
         check(prefs.edit().putString("value", Base64.encodeToString(cipher.iv + cipher.doFinal(json.toString().toByteArray()), Base64.NO_WRAP)).commit())
     }
@@ -56,6 +56,15 @@ class ConnectionStore(context: Context) {
 
 class HubClient(context: Context) {
     private val connectivity = context.getSystemService(ConnectivityManager::class.java)
+    /** One public identity read only; no credential is ever sent using bootstrap trust. */
+    suspend fun discoverIdentity(hub:DiscoveredHub):HubIdentity=withContext(Dispatchers.IO) {
+        val response=exchange(HubConnection(hub.host,"","",""),"/remote/identity","GET",null,"application/json",8192,bootstrap=true)
+        if(response.status !in 200..299)throw HubFailure("hub_unavailable")
+        val identity=JSONObject(response.bytes.toString(Charsets.UTF_8))
+        if(identity.optInt("protocol")!=2)throw HubFailure("unsupported_hub")
+        DiscoveryPolicy.verifyPairing(hub.hubId,identity.getString("hubId"),identity.getString("certificateSha256"),response.pin)
+        HubIdentity(hub.hubId,identity.optString("name","PySH"),response.pin,identity.optBoolean("enabled"))
+    }
     suspend fun request(connection: HubConnection, path: String, method: String = "GET", body: JSONObject? = null): JSONObject = withContext(Dispatchers.IO) {
         val response=exchange(connection,path,method,body,"application/json",2*1024*1024)
         val result = runCatching { JSONObject(String(response.bytes, Charsets.UTF_8)) }.getOrElse { throw HubFailure("invalid_response") }
@@ -87,10 +96,12 @@ class HubClient(context: Context) {
         while(bounds.outWidth/options.inSampleSize.coerceAtLeast(1)>512 || bounds.outHeight/options.inSampleSize.coerceAtLeast(1)>512) options.inSampleSize=options.inSampleSize.coerceAtLeast(1)*2
         return BitmapFactory.decodeByteArray(pixels,0,pixels.size,options) ?: throw HubFailure("invalid_artwork")
     }
-    private data class Response(val status:Int,val type:String,val bytes:ByteArray)
-    private fun exchange(connection: HubConnection,path:String,method:String,body:JSONObject?,accept:String,maxBytes:Int):Response {
+    private data class Response(val status:Int,val type:String,val bytes:ByteArray,val pin:String)
+    private fun exchange(connection: HubConnection,path:String,method:String,body:JSONObject?,accept:String,maxBytes:Int,bootstrap:Boolean=false):Response {
         val host = LanPolicy.host(connection.host)
-        val fingerprint = LanPolicy.pin(connection.pin)
+        if(bootstrap) DiscoveryPolicy.bootstrapPath(path,method,connection.token.isNotEmpty())
+        val fingerprint = if(bootstrap) "" else LanPolicy.pin(connection.pin)
+        var observedPin=""
         val network = connectivity.allNetworks.firstOrNull { network ->
             val capabilities = connectivity.getNetworkCapabilities(network)
             capabilities != null && !capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN) &&
@@ -103,8 +114,11 @@ class HubClient(context: Context) {
                 if (chain.isEmpty()) throw CertificateException("certificate_changed")
                 chain[0].checkValidity()
                 val actual = MessageDigest.getInstance("SHA-256").digest(chain[0].encoded)
-                val expected = fingerprint.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
-                if (!MessageDigest.isEqual(actual, expected)) throw CertificateException("certificate_changed")
+                observedPin=actual.joinToString("") { "%02x".format(it.toInt() and 255) }
+                if(!bootstrap) {
+                    val expected = fingerprint.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+                    if (!MessageDigest.isEqual(actual, expected)) throw CertificateException("certificate_changed")
+                }
             }
         }
         val tls = SSLContext.getInstance("TLS").apply { init(null, arrayOf(trust), null) }
@@ -116,8 +130,8 @@ class HubClient(context: Context) {
                 hostname == host && runCatching { trust.checkServerTrusted(session.peerCertificates.map { it as X509Certificate }.toTypedArray(), "RSA"); true }.getOrDefault(false)
             }
             http.instanceFollowRedirects = false
-            http.connectTimeout = if(path=="/remote/heartbeat") 2000 else 6000
-            http.readTimeout = if(path=="/remote/heartbeat") 2000 else if(accept.startsWith("image/")) 8000 else 35000
+            http.connectTimeout = if(path in setOf("/remote/heartbeat","/remote/pair/cancel")) 2000 else 6000
+            http.readTimeout = if(path in setOf("/remote/heartbeat","/remote/pair/cancel")) 2000 else if(path.startsWith("/remote/pair/")||path=="/remote/identity") 6000 else if(accept.startsWith("image/")) 8000 else 35000
             http.requestMethod = method
             http.setRequestProperty("Accept", accept)
             if (connection.token.isNotEmpty()) http.setRequestProperty("Authorization", "Bearer ${connection.token}")
@@ -141,7 +155,7 @@ class HubClient(context: Context) {
                 }
                 output.toByteArray()
             }
-            return Response(status,http.contentType?.substringBefore(';')?.lowercase() ?: "",bytes)
+            return Response(status,http.contentType?.substringBefore(';')?.lowercase() ?: "",bytes,observedPin)
         } catch (error: javax.net.ssl.SSLException) {
             throw HubFailure("certificate_changed")
         } catch (error: java.io.IOException) {

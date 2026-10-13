@@ -21,6 +21,11 @@ import threading
 import time
 from urllib.parse import urlsplit
 import uuid
+import base64
+import subprocess
+import tempfile
+import re
+import unicodedata
 
 MAX_BODY = 65536
 MAX_RESPONSE = 2 * 1024 * 1024
@@ -77,6 +82,40 @@ class RemoteError(Exception):
         self.code, self.status = code, status
 
 
+def validate_public_key(encoded):
+    if not isinstance(encoded, str) or len(encoded) > 800:
+        raise RemoteError('invalid_request')
+    try:
+        key = base64.b64decode(encoded, validate=True)
+        if len(key) != 422:
+            raise ValueError()
+        result = subprocess.run(['openssl', 'pkey', '-pubin', '-inform', 'DER', '-text', '-noout'], input=key, capture_output=True, timeout=3, check=True)
+        if b'Public-Key: (3072 bit)' not in result.stdout or b'Exponent: 65537 ' not in result.stdout:
+            raise ValueError()
+        canonical = subprocess.run(['openssl', 'pkey', '-pubin', '-inform', 'DER', '-outform', 'DER'], input=key, capture_output=True, timeout=3, check=True).stdout
+        if canonical != key:
+            raise ValueError()
+        return key
+    except (ValueError, OSError, subprocess.SubprocessError):
+        raise RemoteError('invalid_public_key')
+
+
+def encrypt_result(key, payload):
+    plaintext = json.dumps(payload, separators=(',', ':')).encode()
+    if len(plaintext) > 318:
+        raise RemoteError('pairing_failed', 503)
+    try:
+        with tempfile.TemporaryDirectory(prefix='pysh-public-key-') as directory:
+            path = Path(directory) / 'public.der'
+            path.write_bytes(key)
+            result = subprocess.run(['openssl', 'pkeyutl', '-encrypt', '-pubin', '-inkey', str(path), '-keyform', 'DER', '-pkeyopt', 'rsa_padding_mode:oaep', '-pkeyopt', 'rsa_oaep_md:sha256', '-pkeyopt', 'rsa_mgf1_md:sha256'], input=plaintext, capture_output=True, timeout=3, check=True)
+            if len(result.stdout) != 384:
+                raise ValueError()
+            return base64.b64encode(result.stdout).decode()
+    except (ValueError, OSError, subprocess.SubprocessError):
+        raise RemoteError('pairing_failed', 503)
+
+
 class DeviceStore:
     """Phone hashes only; one-time pairing never writes its plaintext code."""
     def __init__(self, directory):
@@ -86,6 +125,83 @@ class DeviceStore:
 
     def read(self):
         return json.loads(self.path.read_text(encoding="utf-8")) if self.path.exists() else {"devices": []}
+
+    def enabled(self):
+        return self.read().get('enabled', True) is True
+
+    def hub_id(self):
+        with self.transaction() as state:
+            state.setdefault('hubId', str(uuid.uuid4()))
+            return state['hubId']
+
+    def set_enabled(self, enabled):
+        with self.transaction() as state:
+            state['enabled'] = enabled
+            if not enabled:
+                state.pop('requests', None)
+                state.pop('pairing', None)
+
+    @staticmethod
+    def prune(state, now):
+        state['requests'] = [r for r in state.get('requests', []) if r['expires'] > now]
+
+    def request_pair(self, body, pin, now=None):
+        now = time.time() if now is None else now
+        if not isinstance(body, dict) or set(body) != {'name', 'publicKey'}:
+            raise RemoteError('invalid_request')
+        name = body['name']
+        if not isinstance(name, str) or not name.strip() or len(name) > 80 or any(unicodedata.category(c) in {'Cc', 'Cf', 'Zl', 'Zp'} for c in name):
+            raise RemoteError('invalid_request')
+        key = validate_public_key(body['publicKey'])
+        with self.transaction() as state:
+            if state.get('enabled', True) is not True:
+                raise RemoteError('control_disabled', 503)
+            self.prune(state, now)
+            if len(state['requests']) >= 4:
+                raise RemoteError('pairing_busy', 429)
+            identity, secret = str(uuid.uuid4()), secrets.token_urlsafe(32)
+            state.setdefault('hubId', str(uuid.uuid4()))
+            state['requests'].append({'requestId': identity, 'secretHash': digest(secret), 'name': name.strip(), 'publicKey': base64.b64encode(key).decode(), 'certificateSha256': pin, 'expires': now + 120, 'status': 'pending'})
+        return {'requestId': identity, 'requestSecret': secret, 'expiresIn': 120}
+
+    def pair_status(self, body, cancel=False, now=None):
+        now = time.time() if now is None else now
+        if not isinstance(body, dict) or set(body) != {'requestId', 'requestSecret'} or not isinstance(body['requestSecret'], str) or not re.fullmatch(r'[A-Za-z0-9_-]{43}', body['requestSecret']) or not isinstance(body['requestId'], str):
+            raise RemoteError('invalid_request')
+        with self.transaction() as state:
+            request = next((r for r in state.get('requests', []) if r['requestId'] == body['requestId']), None)
+            if request is None or not hmac.compare_digest(request['secretHash'], digest(body['requestSecret'])):
+                raise RemoteError('pairing_expired', 403)
+            if request['expires'] <= now or state.get('enabled', True) is not True:
+                return {'status': 'expired'}
+            if cancel:
+                state['requests'].remove(request)
+                state['devices'] = [d for d in state['devices'] if d['deviceId'] != request.get('deviceId')]
+                return {'status': 'cancelled'}
+            result = {'status': request['status']}
+            if request['status'] == 'approved':
+                result['encryptedResult'] = request['encryptedResult']
+            return result
+
+    def approve(self, identity, accept, now=None):
+        now = time.time() if now is None else now
+        with self.transaction() as state:
+            self.prune(state, now)
+            request = next((r for r in state['requests'] if r['requestId'] == identity and r['status'] == 'pending'), None)
+            if request is None or state.get('enabled', True) is not True:
+                raise RemoteError('pairing_expired', 409)
+            if not accept:
+                request['status'] = 'denied'
+            else:
+                if len(state['devices']) >= 16:
+                    raise RemoteError('device_limit', 409)
+                token = secrets.token_urlsafe(32)
+                device = {'deviceId': str(uuid.uuid4()), 'name': request['name'], 'hash': digest(token)}
+                payload = {'token': token, 'deviceId': device['deviceId'], 'hubId': state['hubId'], 'certificateSha256': request['certificateSha256']}
+                encrypted = encrypt_result(base64.b64decode(request['publicKey']), payload)
+                state['devices'].append(device)
+                request.update(status='approved', encryptedResult=encrypted, deviceId=device['deviceId'])
+            return {'requestId': identity, 'accepted': accept}
 
     @contextmanager
     def transaction(self):
@@ -315,10 +431,14 @@ class Handler(BaseHTTPRequestHandler):
                 raise RemoteError("invalid_request")
             pairing = self.command == "POST" and parsed.path == "/remote/pair" and not parsed.query
             health = self.command == "GET" and self.path == "/remote/health"
+            identity = self.command == 'GET' and self.path == '/remote/identity'
+            pairing_request = self.command == 'POST' and self.path in {'/remote/pair/request', '/remote/pair/status', '/remote/pair/cancel'}
             revoke_self = self.command == "POST" and self.path == "/remote/revoke-self"
             heartbeat = self.command in {'POST', 'DELETE'} and self.path == '/remote/heartbeat'
             device_id = None
-            if not pairing and not health:
+            if not health and not identity and not self.server.devices.enabled():
+                raise RemoteError('control_disabled', 503)
+            if not pairing and not health and not identity and not pairing_request:
                 device_id = self.server.devices.identity(self.headers.get("Authorization", ""))
                 if device_id is None:
                     raise RemoteError("unauthorized", 401)
@@ -331,6 +451,19 @@ class Handler(BaseHTTPRequestHandler):
                 raise RemoteError("invalid_request")
             if health:
                 self.reply(200, {"service": "pysh-remote", "version": 1})
+            elif identity:
+                self.reply(200, {'hubId': self.server.devices.hub_id(), 'name': 'PySH', 'protocol': 2, 'enabled': self.server.devices.enabled(), 'certificateSha256': self.server.pin})
+            elif pairing_request:
+                try:
+                    decoded = json.loads(body)
+                except (ValueError, UnicodeError):
+                    raise RemoteError('invalid_request')
+                if self.path == '/remote/pair/request':
+                    if not self.server.pair_limiter.allow(peer):
+                        raise RemoteError('rate_limited', 429)
+                    self.reply(200, self.server.devices.request_pair(decoded, self.server.pin))
+                else:
+                    self.reply(200, self.server.devices.pair_status(decoded, cancel=self.path.endswith('/cancel')))
             elif pairing:
                 if not self.server.pair_limiter.allow(peer):
                     raise RemoteError("rate_limited", 429)
@@ -374,13 +507,15 @@ class Handler(BaseHTTPRequestHandler):
 class LanServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
     request_queue_size = 16
+    allow_reuse_address = True
 
-    def __init__(self, host, port, context, devices, proxy=None):
+    def __init__(self, host, port, context, devices, proxy=None, pin=''):
         if not lan_address(host):
             raise ValueError("An explicit private LAN IP is required; wildcard/public/loopback binding refused")
         self.address_family = socket.AF_INET6 if ":" in host else socket.AF_INET
         self.expected_host = f"[{host}]:{port}" if ":" in host else f"{host}:{port}"
         self.context, self.devices, self.proxy = context, devices, proxy or LoopbackProxy()
+        self.pin = pin
         self.limiter = RateLimiter()
         self.global_limiter = RateLimiter(limit=600)
         self.pair_limiter = RateLimiter(limit=5)

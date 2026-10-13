@@ -1,0 +1,15 @@
+.android-control-summary{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.android-control-summary>div{flex:1;min-width:0}.android-control-summary p,.android-control-hint{font-size:16px;line-height:1.5;color:var(--muted);margin:8px 0}
+.android-control-mark{width:48px;height:48px;display:grid;place-items:center;flex:none;border-radius:16px;background:var(--soft);color:var(--accent-strong)}
+.android-control-device{display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.android-control-device>b{flex:1;overflow-wrap:anywhere;font-size:16px}.android-control-device>svg{flex:none;color:var(--accent-strong)}
+.android-control-remove{width:100%;display:flex;align-items:center;flex-wrap:wrap;gap:10px}.android-control-remove>span{width:100%;font-size:16px}
+.android-control-feedback{font-size:16px;line-height:1.4;margin:10px 0}.android-control-feedback[role=alert]{border:1px solid var(--line-dark);border-radius:12px;padding:10px}.android-control-feedback p{margin:0 0 8px}
+.android-pairing-scrim{position:absolute;inset:0;z-index:140;background:#101917b8;display:flex;align-items:center;justify-content:center;padding:16px}
+.android-pairing-card{width:520px;max-width:100%;max-height:100%;overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--line-dark);border-radius:22px;background:var(--paper);color:var(--ink);padding:22px;box-shadow:var(--shadow);animation:android-pair-in .22s ease-out}.android-pairing-body{overflow:auto;min-height:0}.android-pairing-heading,.android-pairing-actions{flex-shrink:0}
+.android-pairing-heading{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--muted)}
+.android-pairing-card h2{font-size:23px;line-height:1.3;margin:15px 0}.android-pairing-body>p{font-size:16px;line-height:1.4;color:var(--muted);margin:12px 0}
+.android-pairing-phone{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--soft)}.android-pairing-phone>b{font-size:18px;line-height:1.4;overflow-wrap:anywhere}.android-pairing-phone>svg{flex:none;color:var(--accent-strong)}
+.android-pairing-actions{display:flex;gap:12px;margin-top:18px}.android-pairing-actions>button{flex:1;min-height:52px;font-size:18px}
+.app .settings-tabs button.android-control-tab{height:auto;min-height:52px;line-height:18px}.android-control-tab span{overflow-wrap:normal}
+@keyframes android-pair-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.android-pairing-card{animation:none}}

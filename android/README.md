@@ -5,8 +5,11 @@ Aplicație nativă Android Studio, Kotlin / Jetpack Compose / Material3, Android
 
 ## Conectare
 
-Instalează APK-ul și conectează telefonul la Wi-Fi-ul PySH. Introdu IP-ul privat,
-amprenta certificatului SHA256 DER și codul local de8cifre (unic, valabil5minute).
+Instalează APK-ul și conectează telefonul la Wi-Fi-ul PySH. Pe hub deschide
+**Setări → Android App Control** și activează serviciul. Aplicația caută automat
+huburile locale; alege PySH și confirmă **Da** pe ecranul hubului pentru numele
+telefonului tău. Cererea expiră după două minute. Nu introduci IP, certificat
+sau cod de asociere. Poți refuza cu **Nu** și elimina telefoane din același meniu.
 Clientul folosește numai IPv4 RFC1918, port8766, rețeaua Wi-Fi/Ethernet Android și
 HTTPS cu pinning; refuză adresele publice/DNS și redirecturile. Tokenul este
 criptat cu Android Keystore, fără backup/transfer automat. Telefonul nu descarcă
@@ -25,7 +28,10 @@ YouTube/Netflix/Spotify se deschid pe PySH. Autentificarea și comenzile interne
 ale site-urilor rămân pe ecranul hubului. Aplicația nu pretinde comenzi OS fără
 suport în backend (reboot/shutdown), control universal al paginilor terților ori
 acceptare DRM. Wi-Fi poate întrerupe legătura; recuperarea este pe ecranul PySH.
-Adresa salvată se poate schimba păstrând pinul/tokenul.
+După schimbarea IP-ului, descoperirea locală regăsește același hub și verifică
+identitatea și certificatul deja salvat, păstrând tokenul. O cheie înlocuită
+cere asociere nouă. Căutarea funcționează în prim-plan; izolarea Wi-Fi sau
+blocarea multicastului poate împiedica descoperirea.
 
 Citirea se reia la2s în prim-plan. Starea veche este marcată la deconectare și
 comenzile se dezactivează. Mutațiile cu rezultat incert nu se repetă automat.
@@ -71,8 +77,15 @@ exemplu și nu pornesc polling; nu certifică LAN sau hardware.
 `PowerLanTest` conține decodare ICO nativă, citirea contractului/artwork real și turul UI înRO/EN×teme.
 Testul de mutații cere explicit `power_mutations=true`, hub fără redare activă
 și fără temporizator existent; salvează și restaurează repausul și programul,
-iar luminozitatea este trimisă cu valoarea existentă. Compilarea testelor nu le
-execută pe telefon. Candidatul acestei modificări:0.1.2/versionCode3.
+iar luminozitatea este trimisă cu valoarea existentă. Testul artwork citește primul
+favorit configurat chiar când playerul este inactiv. Turul UI păstrează ecranul
+activ numai pe durata testului; telefonul trebuie deblocat manual. Compilarea testelor nu le
+execută pe telefon. Candidatul acestei modificări:0.1.3/versionCode4.
+
+`OnboardingLanTest` verifică identitatea salvată, descoperirea NSD reală,
+recuperarea unei adrese salvate nevalide și 28 de prezentări ale configurării.
+Testul `fresh_pairing=true` cere aprobarea locală și restaurează asocierea inițială,
+revocând numai asocierea creată de test. Nu schimbă IP-ul real al hubului.
 
 [Gateway și instalare](../docs/ANDROID_REMOTE.md) ·
-[Dovezi candidat](../docs/evidence/android-remote-2026-10-13.md).
+[Dovezi candidat0.1.2](../docs/evidence/standby-remote-2026-10-13.md).

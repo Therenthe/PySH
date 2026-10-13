@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import ssl
 import subprocess
+import asyncio
 
 from .gateway import DeviceStore, LanServer, atomic_json, certificate_pin, lan_address
 
@@ -66,14 +67,12 @@ def main(argv=None):
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         context.minimum_version = ssl.TLSVersion.TLSv1_2
         context.load_cert_chain(directory / "certificate.pem", directory / "private-key.pem")
-        server = LanServer(config["host"], config["port"], context, store)
-        print("PySH LAN remote gateway ready", flush=True)
+        from .discovery import serve_dynamic
+        print("PySH Android App Control supervisor ready", flush=True)
         try:
-            server.serve_forever(poll_interval=0.5)
+            asyncio.run(serve_dynamic(config, directory, context, store, certificate_pin(directory / 'certificate.pem')))
         except KeyboardInterrupt:
             pass
-        finally:
-            server.server_close()
 
 
 if __name__ == "__main__":

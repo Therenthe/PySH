@@ -21,7 +21,6 @@ import org.json.JSONObject
     var layout by remember { mutableStateOf<String?>(null) }
     var exit by remember { mutableStateOf(false) }
     var forget by remember { mutableStateOf(false) }
-    var address by remember { mutableStateOf(false) }
     var diagnostic by remember { mutableStateOf<JSONObject?>(null) }
     var diagnosticLoading by remember { mutableStateOf(false) }
     val scope=rememberCoroutineScope()
@@ -66,7 +65,7 @@ import org.json.JSONObject
     Panel {
         SectionTitle(T(remote.ro,"Service și diagnostic","Service and diagnostics"),Icons.Outlined.Build)
         Text("PySH ${remote.state.optString("version","—")} · ${remote.connection?.host}",style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant)
-        SettingButton(T(remote.ro,"Adresa LAN a hubului","Hub LAN address"),remote.connection?.host ?: "—",true){address=true}
+        Text(T(remote.ro,"Android App Control · Conectare automată în rețeaua locală","Android App Control · Automatic local connection"),style=MaterialTheme.typography.bodyMedium)
         OutlinedButton(onClick={scope.launch { diagnosticLoading=true;try{diagnostic=remote.read("/api/diagnostics")}catch(e:CancellationException){throw e}catch(e:Exception){remote.error=(e as? HubFailure)?.code ?: "operation_failed"}finally{diagnosticLoading=false} }},enabled=remote.online && !diagnosticLoading,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(T(remote.ro,"Vezi diagnosticul","View diagnostics"))}
         if(remote.state.optBoolean("serviceMode")) Button(onClick={remote.command("/api/service/return")},enabled=remote.enabled,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(T(remote.ro,"Revino în hub","Return to hub"))}
         else OutlinedButton(onClick={exit=true},enabled=remote.enabled,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(if(remote.state.optBoolean("appliance")) T(remote.ro,"Intră în modul de service","Enter service mode") else T(remote.ro,"Ieși la desktop","Exit to desktop"))}
@@ -76,15 +75,8 @@ import org.json.JSONObject
     edit?.let { key -> PreferenceDialog(remote,key){edit=null} }
     layout?.let { key -> LayoutDialog(remote,key){layout=null} }
     if(exit) ConfirmDialog(T(remote.ro,"Schimbi modul hubului?","Change the hub's mode?"),T(remote.ro,"Redarea se oprește. Pentru a reveni, folosește comanda de revenire sau ecranul PySH.","Playback stops. To return, use the return control or the PySH screen."),remote.ro,{remote.command("/api/exit");exit=false}){exit=false}
-    if(forget) ConfirmDialog(T(remote.ro,"Elimini asocierea telefonului?","Remove this phone's pairing?"),if(remote.online) T(remote.ro,"Accesul se revocă pe PySH și datele de asociere se șterg din telefon.","Access is revoked on PySH and pairing credentials are removed from this phone.") else T(remote.ro,"Hubul este deconectat: se elimină numai datele din telefon. Revocă separat telefonul în serviciul LAN al PySH.","The hub is disconnected: only credentials on this phone are removed. Revoke the phone separately in PySH's LAN service."),remote.ro,{if(remote.online)remote.revoke() else remote.forget();forget=false}){forget=false}
-    if(address) AddressDialog(remote){address=false}
+    if(forget) ConfirmDialog(T(remote.ro,"Elimini asocierea telefonului?","Remove this phone's pairing?"),if(remote.online) T(remote.ro,"Accesul se revocă pe PySH și datele de asociere se șterg din telefon.","Access is revoked on PySH and pairing credentials are removed from this phone.") else T(remote.ro,"Hubul este deconectat: se elimină numai datele din telefon. Revocă separat telefonul în Setări → Android App Control pe PySH.","The hub is disconnected: only credentials on this phone are removed. Revoke the phone separately in PySH Settings → Android App Control."),remote.ro,{if(remote.online)remote.revoke() else remote.forget();forget=false}){forget=false}
     diagnostic?.let { data -> AlertDialog(onDismissRequest={diagnostic=null},title={Text(T(remote.ro,"Diagnostic PySH","PySH diagnostics"))},text={Column(Modifier.heightIn(max=360.dp).verticalScrollCompat()) { Text(data.toString(2),style=MaterialTheme.typography.bodyMedium) }},confirmButton={TextButton(onClick={diagnostic=null}){Text(T(remote.ro,"Închide","Close"))}}) }
-}
-
-@Composable fun AddressDialog(remote: RemoteController,dismiss:()->Unit) {
-    var host by remember{mutableStateOf(remote.connection?.host ?: "")}
-    var invalid by remember{mutableStateOf(false)}
-    AlertDialog(onDismissRequest=dismiss,title={Text(T(remote.ro,"Adresa hubului","Hub address"))},text={Column(verticalArrangement=Arrangement.spacedBy(10.dp)){Field("IP LAN",host,{host=it});Text(T(remote.ro,"Certificatul salvat rămâne verificat. Folosește această opțiune dacă adresa hubului s-a schimbat.","The saved certificate remains verified. Use this option if your hub's address changed."),style=MaterialTheme.typography.bodyMedium);if(invalid)Text(errorText("invalid_lan_address",remote.ro),color=MaterialTheme.colorScheme.error)}},confirmButton={TextButton(onClick={if(runCatching{LanPolicy.host(host)}.isSuccess){remote.changeAddress(host);dismiss()}else invalid=true}){Text(T(remote.ro,"Salvează","Save"))}},dismissButton={TextButton(onClick=dismiss){Text(T(remote.ro,"Anulează","Cancel"))}})
 }
 
 @Composable fun Modifier.verticalScrollCompat(): Modifier = verticalScroll(rememberScrollState())

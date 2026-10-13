@@ -2,6 +2,7 @@ package ro.pysh.remote
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.Build
 import android.util.LruCache
 import androidx.compose.runtime.*
 import kotlinx.coroutines.*
@@ -21,6 +22,10 @@ class RemoteController(context: Context, private val scope: CoroutineScope) {
     private val store = ConnectionStore(context)
     private val uiStore = context.getSharedPreferences("interface", Context.MODE_PRIVATE)
     private val client = HubClient(context)
+    private val discovery=HubDiscovery(context) { found,phase ->
+        discoveredHubs=found;discoveryState=phase
+        if(connection!=null && !online && foreground) recoverDiscoveredAddress()
+    }
     private val writes = Mutex()
     private val reads = Mutex()
     private val presence = Mutex()
@@ -40,6 +45,15 @@ class RemoteController(context: Context, private val scope: CoroutineScope) {
     var notice by mutableStateOf<String?>(null)
     var ro by mutableStateOf(uiStore.getString("language", "ro") != "en"); private set
     var dark by mutableStateOf(uiStore.getBoolean("dark", true)); private set
+    var discoveredHubs by mutableStateOf<List<DiscoveredHub>>(emptyList());private set
+    var discoveryState by mutableStateOf("searching");private set
+    var pairingState by mutableStateOf("idle");private set
+    var pairingHub by mutableStateOf<String?>(null);private set
+    val phoneName=listOf(Build.MANUFACTURER,Build.MODEL).distinct().joinToString(" ").filterNot{it.isISOControl()}.take(64).ifBlank{"Android"}
+    private var pairingJob:Job?=null
+    private var recoveryJob:Job?=null
+    private val recoveryAttempts=mutableMapOf<String,Long>()
+    private var nextSearchAt=0L
     val preferences get() = state.child("preferences")
     val power get() = state.child("power")
     val powerAvailable get() = online && power.has("standby")
@@ -51,15 +65,25 @@ class RemoteController(context: Context, private val scope: CoroutineScope) {
         state=value;ro=romanian;online=true
         connection=HubConnection("192.168.100.127","0".repeat(64),"preview","preview")
     }
+    internal fun previewOnboarding(phase:String,romanian:Boolean,night:Boolean) {
+        check(BuildConfig.DEBUG)
+        connection=null;state=JSONObject();online=false;ro=romanian;dark=night
+        discoveryState=if(phase in setOf("searching","wifi_required","not_found","discovery_unavailable"))phase else "found"
+        discoveredHubs=if(discoveryState=="found")listOf(DiscoveredHub("192.168.1.88","079ab3e4-6dd7-486b-88b9-8a1a6900dc8b")) else emptyList()
+        pairingState=if(phase in setOf("waiting","pairing_denied","pairing_expired"))phase else "idle"
+        pairingHub=if(phase=="waiting")"PySH" else null
+    }
     fun language(value: Boolean) { ro = value; uiStore.edit().putString("language", if (ro) "ro" else "en").apply() }
     fun theme(value: Boolean) { dark = value; uiStore.edit().putBoolean("dark", value).apply() }
     fun start() {
         foreground=true
         if (polling?.isActive == true) return
+        discovery.start()
         polling = scope.launch { while (isActive) { refresh(); delay(2000) } }
     }
     fun stop() {
         foreground=false;polling?.cancel();polling = null
+        discovery.stop();recoveryJob?.cancel();pairingJob?.cancel()
         val current=connection ?: return
         // This finite cleanup survives Activity destruction, but is ordered before a resumed GET.
         CoroutineScope(Dispatchers.IO).launch {
@@ -87,36 +111,110 @@ class RemoteController(context: Context, private val scope: CoroutineScope) {
                     if(!foreground) return@stateRead null
                     client.request(current, "/api/state")
                 } ?: return
-                if (connection == current) { state = result; online = true }
+                if (connection == current) {
+                    state = result; online = true
+                    if(current.hubId.isBlank()) migrateIdentity(current)
+                }
             } catch (e: CancellationException) { throw e }
-            catch (e: Exception) { if (connection == current) { online = false; connectionIssue=code(e) } }
+            catch (e: Exception) {
+                if (connection == current) {
+                    online = false;connectionIssue=code(e);recoverDiscoveredAddress()
+                    // Re-resolve even if an mDNS implementation retained an instance after its IP changed.
+                    if(foreground && System.currentTimeMillis()>=nextSearchAt) { nextSearchAt=System.currentTimeMillis()+12_000;discovery.restart() }
+                }
+            }
             finally { syncing = false; reading = false }
         }
     }
-    fun reconnect() { scope.launch { refresh(true) } }
-    fun pair(host: String, fingerprint: String, code: String) {
-        if (busy > 0) return
-        scope.launch {
-            busy++; error = null
-            try {
-                val candidate = HubConnection(LanPolicy.host(host), LanPolicy.pin(fingerprint), "", "")
-                val result = client.request(candidate, "/remote/pair", "POST", obj("code" to LanPolicy.pairingCode(code), "name" to "PySH Android"))
-                val paired = candidate.copy(token = result.getString("token"), deviceId = result.getString("deviceId"))
-                store.save(paired); connection = paired; state = JSONObject(); online = false
-                refresh()
-            } catch (e: CancellationException) { throw e }
-            catch (e: Exception) { error = this@RemoteController.code(e) }
-            finally { busy-- }
+    fun reconnect() { searchAgain();scope.launch { refresh(true) } }
+    fun searchAgain() { recoveryAttempts.clear();discovery.restart();recoverDiscoveredAddress() }
+    private suspend fun migrateIdentity(current:HubConnection) {
+        try {
+            val identity=client.request(current,"/remote/identity")
+            DiscoveryPolicy.verifyReconnect(current.hubId,current.pin,identity.getString("hubId"),identity.getString("certificateSha256"))
+            if(connection==current) { val updated=current.copy(hubId=DiscoveryPolicy.hubId(identity.getString("hubId")));store.save(updated);connection=updated }
+        } catch(e:CancellationException) { throw e } catch(_:Exception) { /* Old gateways remain paired until their upgrade. */ }
+    }
+    /** Only GET identity/state are retried. A failed command is never replayed at a new address. */
+    private fun recoverDiscoveredAddress() {
+        val saved=connection ?: return
+        if(!foreground || online || recoveryJob?.isActive==true)return
+        val hints=discoveredHubs.filter { (saved.hubId.isBlank() || it.hubId==saved.hubId) && (recoveryAttempts[it.host] ?: 0)<System.currentTimeMillis() }
+        if(hints.isEmpty())return
+        recoveryJob=scope.launch {
+            for(hint in hints) {
+                if(connection!=saved || !foreground)return@launch
+                recoveryAttempts[hint.host]=System.currentTimeMillis()+15_000
+                try {
+                    // The stored certificate is verified before any bearer token reaches this hint.
+                    val atHint=saved.copy(host=hint.host,token="")
+                    val identity=client.request(atHint,"/remote/identity")
+                    DiscoveryPolicy.verifyPairing(hint.hubId,identity.getString("hubId"),identity.getString("certificateSha256"),saved.pin)
+                    DiscoveryPolicy.verifyReconnect(saved.hubId,saved.pin,identity.getString("hubId"),identity.getString("certificateSha256"))
+                    val updated=saved.copy(host=hint.host,hubId=hint.hubId)
+                    if(connection!=saved)return@launch
+                    if(busy>0)notice="sent_check"
+                    store.save(updated);connection=updated;refresh(true);return@launch
+                } catch(e:CancellationException) { throw e }
+                catch(e:Exception) { if(connection==saved)connectionIssue=code(e) }
+            }
         }
     }
-    fun forget() { store.clear(); connection = null; state = JSONObject(); online = false; error = null }
-    fun revoke() { command("/remote/revoke-self",after={forget()}) }
-    fun changeAddress(host: String) {
-        try {
-            val updated=connection?.copy(host=LanPolicy.host(host)) ?: return
-            store.save(updated);connection=updated;online=false;reconnect()
-        } catch(e: Exception) { error=code(e) }
+    fun pair(hub:DiscoveredHub) {
+        if(pairingJob?.isActive==true || connection!=null)return
+        pairingJob=scope.launch {
+            pairingState="requesting";pairingHub=hub.name;error=null
+            var candidate:HubConnection?=null
+            var pending:JSONObject?=null
+            var completed=false
+            try {
+                val identity=client.discoverIdentity(hub)
+                if(!identity.enabled)throw HubFailure("control_disabled")
+                val crypto=withContext(Dispatchers.Default) { PairingCrypto() }
+                candidate=HubConnection(hub.host,identity.pin,"","",hub.hubId)
+                val request=client.request(candidate,"/remote/pair/request","POST",obj("name" to phoneName,"publicKey" to crypto.publicKey))
+                val id=DiscoveryPolicy.hubId(request.getString("requestId"))
+                val secret=request.getString("requestSecret")
+                require(secret.matches(Regex("[A-Za-z0-9_-]{43}"))) { "invalid_response" }
+                pending=obj("requestId" to id,"requestSecret" to secret)
+                pairingState="waiting"
+                withTimeout(request.getInt("expiresIn").coerceIn(1,120)*1000L) {
+                    while(true) {
+                        val response=client.request(candidate,"/remote/pair/status","POST",pending)
+                        when(response.getString("status")) {
+                            "pending" -> delay(1500)
+                            "denied" -> throw HubFailure("pairing_denied")
+                            "expired" -> throw HubFailure("pairing_expired")
+                            "approved" -> {
+                                val result=JSONObject(withContext(Dispatchers.Default) { crypto.decrypt(response.getString("encryptedResult")) })
+                                DiscoveryPolicy.verifyPairing(hub.hubId,result.getString("hubId"),result.getString("certificateSha256"),identity.pin)
+                                val token=result.getString("token")
+                                require(token.matches(Regex("[A-Za-z0-9_-]{43}"))) { "invalid_response" }
+                                val paired=candidate.copy(token=token,deviceId=DiscoveryPolicy.hubId(result.getString("deviceId")))
+                                // Prove the pinned authenticated association before persisting it.
+                                val initial=client.request(paired,"/api/state")
+                                store.save(paired);connection=paired;state=initial;online=true;completed=true;pairingState="idle"
+                                return@withTimeout
+                            }
+                            else -> throw HubFailure("invalid_response")
+                        }
+                    }
+                }
+            } catch(_:TimeoutCancellationException) { pairingState="pairing_expired" }
+            catch(e:CancellationException) { pairingState="idle";throw e }
+            catch(e:Exception) { pairingState=code(e) }
+            finally {
+                if(!completed && candidate!=null && pending!=null) withContext(NonCancellable) {
+                    // Own pending request only; the endpoint also revokes an uncollected approved token.
+                    runCatching { withTimeout(4000) { client.request(candidate,"/remote/pair/cancel","POST",pending) } }
+                }
+                pairingHub=null
+            }
+        }
     }
+    fun cancelPairing() { pairingJob?.cancel() }
+    fun forget() { store.clear(); connection = null; state = JSONObject(); online = false; error = null;pairingState="idle";searchAgain() }
+    fun revoke() { command("/remote/revoke-self",after={forget()}) }
     fun command(path: String, body: JSONObject = JSONObject(), method: String = "POST", parallel: Boolean = false, after: ((JSONObject) -> Unit)? = null) {
         val current = connection ?: return
         scope.launch {
@@ -184,13 +282,14 @@ fun errorText(code: String, ro: Boolean): String {
     fun t(a: String, b: String) = if (ro) a else b
     return when {
         code == "wifi_required" || code == "lan_required" -> t("Conectează telefonul la aceeași rețea Wi-Fi sau Ethernet ca PySH.", "Connect your phone to the same Wi-Fi or Ethernet network as PySH.")
-        code == "invalid_lan_address" -> t("Introdu o adresă IP locală, de exemplu 192.168.100.127.", "Enter a local IP address, such as 192.168.100.127.")
-        code == "invalid_fingerprint" -> t("Amprenta certificatului trebuie să conțină 64 de caractere hexazecimale.", "The certificate fingerprint must contain 64 hexadecimal characters.")
-        code == "invalid_pairing_code" -> t("Codul de asociere are 8 cifre.", "The pairing code has 8 digits.")
-        code == "certificate_changed" -> t("Certificatul hubului nu corespunde. Verifică amprenta pe PySH înainte de o nouă asociere.", "The hub certificate does not match. Verify its fingerprint on PySH before pairing again.")
-        code.startsWith("pairing_") -> t("Codul nu este valid sau a expirat. Generează un cod nou pe PySH.", "The code is invalid or expired. Generate a new code on PySH.")
+        code == "certificate_changed" || code == "hub_identity_changed" -> t("Identitatea PySH s-a schimbat. Conectarea s-a oprit pentru a proteja accesul. Verifică hubul și reia asocierea dacă l-ai reinstalat.", "PySH's identity changed. Connection stopped to protect access. Check the hub and pair again if you reinstalled it.")
+        code == "pairing_denied" -> t("Cererea a fost refuzată pe PySH. Poți solicita din nou conectarea.","The request was declined on PySH. You can request a connection again.")
+        code == "pairing_expired" -> t("Cererea a expirat. Alege din nou hubul și acceptă pe ecranul lui.","The request expired. Choose the hub again and accept on its screen.")
+        code == "control_disabled" -> t("Activează Android App Control în Setări pe PySH, apoi caută din nou.","Enable Android App Control in PySH Settings, then search again.")
+        code == "unsupported_hub" -> t("Actualizează Android App Control pe PySH pentru conectare automată.","Update Android App Control on PySH for automatic connection.")
+        code.startsWith("pairing_") -> t("Conectarea nu s-a încheiat. Verifică ecranul PySH și solicită din nou conectarea.","Connection did not complete. Check PySH's screen and request a connection again.")
         code == "unauthorized" -> t("Accesul telefonului a fost revocat. Asociază-l din nou.", "This phone's access was revoked. Pair it again.")
-        code == "hub_unavailable" || code == "upstream_unavailable" -> t("PySH nu răspunde. Verifică rețeaua și serviciul LAN. Comanda poate să fi ajuns; verifică starea înainte să o repeți.", "PySH is not responding. Check the network and LAN service. The command may have arrived; check its state before repeating it.")
+        code == "hub_unavailable" || code == "upstream_unavailable" -> t("Regăsim automat PySH. Verifică rețeaua și Android App Control în Setări pe hub. Dacă ai trimis o comandă, verifică rezultatul după reconectare înainte să o repeți.", "Automatically finding PySH again. Check the network and Android App Control in hub Settings. If you sent a command, check the result after reconnecting before repeating it.")
         code == "no_audio_output" -> t("Selectează o ieșire audio disponibilă în Dispozitiv → Audio.", "Select an available audio output in Device → Audio.")
         code == "no_favorites" -> t("Adaugă posturi favorite pentru a folosi anterior/următor.", "Add favorite stations to use previous/next.")
         code.contains("brightness") -> t("Luminozitatea nu a putut fi aplicată. Verifică ecranul și permisiunile PySH.", "Brightness could not be applied. Check the display and PySH permissions.")

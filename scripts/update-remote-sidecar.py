@@ -14,7 +14,8 @@ import tarfile
 import time
 import urllib.request
 
-FILES={'services/remote/__init__.py','services/remote/__main__.py','services/remote/gateway.py','services/remote/pysh-remote.service'}
+LEGACY_FILES={'services/remote/__init__.py','services/remote/__main__.py','services/remote/gateway.py','services/remote/pysh-remote.service'}
+FILES=LEGACY_FILES|{'services/remote/discovery.py'}
 
 def require(ok,message):
     if not ok:raise RuntimeError(message)
@@ -32,9 +33,10 @@ def verify_release(release):
     require(release.parent==Path('/opt/pysh-remote/releases') and re.fullmatch('[0-9a-f]{12}',release.name) is not None,'Foreign release')
     require(release.is_dir() and not release.is_symlink(),'Invalid release directory')
     manifest=json.loads((release/'manifest.json').read_text())
-    require(manifest['build']==release.name and set(manifest['files'])==FILES,'Unexpected manifest')
-    require({str(p.relative_to(release)) for p in release.rglob('*') if p.is_file()}==FILES|{'manifest.json'},'Unexpected runtime file')
-    for name in FILES:
+    names=set(manifest['files'])
+    require(manifest['build']==release.name and names in (FILES,LEGACY_FILES),'Unexpected manifest')
+    require({str(p.relative_to(release)) for p in release.rglob('*') if p.is_file()}==names|{'manifest.json'},'Unexpected runtime file')
+    for name in names:
         path=release/name
         require(not path.is_symlink() and hashlib.sha256(path.read_bytes()).hexdigest()==manifest['files'][name],'Modified installed source')
     return manifest
@@ -70,17 +72,33 @@ def main():
         # Use the saved, unchanged private LAN host; never return bearer tokens.
         config=json.loads((Path(account.pw_dir)/'.local/share/pi-smart-hub/remote/config.json').read_text())
         import ssl,ipaddress
-        address=ipaddress.ip_address(config['host'])
+        remote_data=Path(account.pw_dir)/'.local/share/pi-smart-hub/remote'
+        marker=remote_data/'runtime.json'
+        endpoint_host=config['host']
+        if marker.exists():
+            live=json.loads(marker.read_text())
+            if live.get('ready') is True and live.get('updated',0)>time.time()-10 and live.get('host'):
+                endpoint_host=live['host']
+        address=ipaddress.ip_address(endpoint_host)
         require(address.version==4 and any(address in ipaddress.ip_network(n) for n in ('10.0.0.0/8','172.16.0.0/12','192.168.0.0/16')) and config['port']==8766,'Unexpected LAN endpoint')
         context=ssl.create_default_context(cafile=str(Path(account.pw_dir)/'.local/share/pi-smart-hub/remote/certificate.pem'))
+        # DHCP may change the address while the exact trusted self-signed
+        # certificate stays fixed. Trust the retained certificate, not its old SAN.
+        context.check_hostname=False
         previous=runtime/'previous'
         require(not previous.exists() or previous.is_symlink() and previous.resolve().parent==runtime/'releases','Foreign previous pointer')
         try:
-            link(release,'current');restart()
+            link(release,'current');restarted_at=time.time();restart()
             deadline=time.monotonic()+15
             while True:
                 try:
-                    result=json.load(urllib.request.urlopen(f"https://{config['host']}:8766/remote/health",context=context,timeout=2))
+                    enabled=json.loads((remote_data/'devices.json').read_text()).get('enabled',True) is True
+                    if not enabled:
+                        live=json.loads(marker.read_text())
+                        require(live.get('protocol')==2 and live.get('updated',0)>restarted_at and live.get('ready') is True and live.get('host')=='','Disabled supervisor not ready')
+                        subprocess.run(environment+['is-active','--quiet','pysh-remote.service'],check=True,timeout=3)
+                        break
+                    result=json.load(urllib.request.urlopen(f"https://{endpoint_host}:8766/remote/health",context=context,timeout=2))
                     require(result.get('service')=='pysh-remote','Unexpected gateway health');break
                 except Exception:
                     if time.monotonic()>=deadline:raise

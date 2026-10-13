@@ -1,4 +1,4 @@
-# Telecomanda Android în LAN
+# Android App Control în LAN
 
 `services/remote` este un gateway opțional separat. API-ul PySH existent rămâne pe
 `127.0.0.1:8765`, cu validarea Host/Origin și tokenul sesiunii intacte. Gateway-ul
@@ -12,12 +12,13 @@ rutată administrată local. Izolarea clienților Wi-Fi poate bloca legătura.
 Comenzile următoare sunt pentru runtime-ul appliance `/opt/pysh/current` și venv-ul
 existent `/opt/pysh/venv`. Se rulează **ca utilizatorul sesiunii PySH**, după livrarea
 fișierelor gateway-ului în release. Nu s-au executat prin acest document.
-Pachetul de sistem `openssl` trebuie să fie instalat. Gateway-ul nu adaugă
-dependențe Python. IP-ul este o adresă RFC1918 IPv4, ULA sau link-local IPv6;
-wildcard, loopback, DNS și IP public sunt refuzate. Folosiți o rezervare DHCP.
-Aplicația Android livrată folosește numai IPv4 privat și portul fix 8766; configurați
-gateway-ul pe această adresă/port. Suportul IPv6 al gateway-ului este disponibil
-pentru clienți viitori, dar nu este oferit în formularul acestui client Android.
+Pachetele de sistem `openssl` și `avahi-daemon` trebuie să fie instalate.
+Gateway-ul folosește `dbus-next` deja fixat în requirements.lock. Supervisorul
+alege o interfață IPv4 privată activă, preferând ruta implicită, și publică
+`_pysh-control._tcp` cu hubId persistent, protocol=2 și name=PySH. Se leagă de
+o singură adresă explicită, fără wildcard sau listener public. La schimbarea
+adresei închide listenerul vechi și îl recreează, păstrând certificatul/tokenurile.
+Clientul Android acceptă IPv4 privat și portul8766.
 
 ```sh
 cd /opt/pysh/current
@@ -27,7 +28,6 @@ install -m 0644 services/remote/pysh-remote.service ~/.config/systemd/user/pysh-
 systemctl --user daemon-reload
 systemctl --user enable --now pysh-remote.service
 systemctl --user status pysh-remote.service --no-pager
-/opt/pysh/venv/bin/python -m services.remote pair
 ```
 
 Înlocuiți `192.168.1.50` cu IP-ul LAN efectiv. Datele private sunt în
@@ -43,12 +43,20 @@ Pentru instalarea separată sidecar, folosiți directorul verificat
 `/opt/pysh-remote/<hash>` ca WorkingDirectory și păstrați venv-ul existent în ExecStart;
 backendul și runtime-ul PySH curent nu trebuie înlocuite pentru activarea gateway-ului.
 
-În aplicație introduceți IP-ul IPv4 privat și amprenta `Certificate SHA256` afișată
-de comanda locală. Amprenta este SHA-256 peste **certificatul X.509 DER complet**,
-64 caractere hex lowercase, fără două puncte; nu este hash SPKI. Aplicația trebuie
-să verifice această amprentă în handshake TLS înainte de trimiterea codului sau
-tokenului. Codul de 8 cifre funcționează 5 minute pentru un telefon, cu maximum
-5 încercări; o nouă comandă `pair` înlocuiește codul anterior.
+Pe PySH deschideți **Setări → Android App Control** și activați serviciul.
+Aplicația caută automat în aceeași rețea Wi-Fi. Alegeți hubul și confirmați
+**Da** pe ecranul PySH pentru numele telefonului; **Nu** refuză cererea.
+Nu introduceți adresă, certificat sau cod. Cererea expiră după două minute.
+Telefoanele asociate se pot elimina din același meniu. Dezactivarea închide
+portul LAN; unitatea locală rămâne disponibilă pentru reactivare din meniu.
+
+Identitatea publică inițială este TOFU, fără token sau comenzi. Telefonul trimite
+o cheie RSA3072 temporară; aprobarea locală livrează tokenul criptat OAEP SHA256.
+Numele telefonului este declarat de client. Acest flux nu oferă verificare
+independentă împotriva unui atacator activ la prima asociere. După asociere,
+toate citirile/comenzile verifică pinul certificatului DER și identitatea hubului.
+O identitate/cheie înlocuită cere asociere nouă. CLI `pair` rămâne compatibil
+pentru administratori; nu este fluxul normal al aplicației.
 
 Nu configurați port forwarding, DMZ, reverse proxy public sau tunel internet.
 Filtrarea adreselor private nu poate detecta un router care rescrie traficul WAN
@@ -59,7 +67,11 @@ Firewall-ul LAN poate limita suplimentar portul 8766 la subrețeaua telefonului.
 
 | Cerere | Răspuns |
 |---|---|
-| `GET /remote/health` fără autentificare | `{"service":"pysh-remote","version":1}` |
+| `GET /remote/health` fără autentificare | Identitatea serviciului |
+| `GET /remote/identity` | hubId, name, protocol, enabled, certificateSha256 |
+| `POST /remote/pair/request {name,publicKey}` | requestId, requestSecret, expiresIn |
+| `POST /remote/pair/status {requestId,requestSecret}` | pending/denied/expired/approved; encryptedResult după aprobare |
+| `POST /remote/pair/cancel {requestId,requestSecret}` | Anulează cererea și asocierea emisă pentru ea |
 | `POST /remote/pair`, JSON `{"code":"12345678","name":"Telefon"}` | `{"token":"…","deviceId":"UUID","name":"Telefon"}` |
 | `POST /remote/revoke-self`, bearer autentificat, JSON `{}` sau corp gol | `{"revoked":true}`; următoarea cerere cu tokenul respectiv primește 401 |
 | API permis pe `/api/*` | JSON și codurile de stare ale API-ului PySH |
@@ -70,7 +82,7 @@ aplicației. Gateway-ul stochează numai hash-ul lui, suportă până la 16 tele
 și nu exportă tokenul sesiunii locale. Acțiunea de revocare self poate retrage numai
 tokenul telefonului apelant, fără un ID de telefon trimis de client. Dacă telefonul
 este offline când utilizatorul îl elimină din aplicație, revocarea se poate face din
-CLI pe Pi. `/api/session`, `/api/media/file`, paginile
+meniul local PySH sau CLI pe Pi. `/api/session`, `/api/media/file`, paginile
 web și rapoartele interne DRM nu sunt expuse: telecomanda redă media **pe Pi**.
 Codurile de ștergere media întoarse de `/api/media` sunt contractul existent,
 distinct de tokenul sesiunii locale.
@@ -106,12 +118,11 @@ systemctl --user disable --now pysh-remote.service
 ```
 
 Revocarea este efectivă la următoarea cerere, fără restart. Dacă IP-ul se schimbă,
-opriți gateway-ul, modificați `host` în fișierul privat `config.json`, reporniți-l
-și actualizați IP-ul din aplicație. Pinning-ul verifică identitatea certificatului
-independent de IP; nu dezactivați verificarea pinului. Pentru înlocuirea cheii,
-folosiți un director privat nou cu `init`, revocați telefoanele vechi și asociați
-din nou cu noua amprentă. Protejați datele private în backup separat. Actualizările
-codului păstrează datele; păstrați certificatul pentru a evita pairing repetat.
+supervisorul urmărește interfața și Android regăsește hubul prin mDNS. Recunoașterea
+cere hubId și pin identice celor salvate; nu acceptă automat un certificat nou.
+Izolarea clienților sau blocarea multicastului poate împiedica descoperirea.
+Pentru înlocuirea certificatului revocați telefoanele și asociați-le din nou.
+Protejați datele private în backup separat; actualizările păstrează identitatea.
 
 ## Verificare și limite
 
@@ -119,7 +130,7 @@ codului păstrează datele; păstrați certificatul pentru a evita pairing repet
 pairing/expirare/persistență/revocare, limitele, contractul HTTPS și separarea
 autentificării în fixture-uri temporare. Aceste probe nu certifică instalarea pe
 Pi, atingerea pe un telefon, routerul real, redarea sau acțiunile hardware. Turul
-real necesită Pi-ul și telefonul conectate în LAN, pairing din CLI, citirea stării,
+real necesită Pi-ul și telefonul conectate în LAN, aprobarea pe ecranul local, citirea stării,
 radio/volum/player/Bluetooth/setări, restart și revocare. Nu acordați criterii PASS
 hardware din testele acestui gateway.
 # Display, standby and active companions (Android 0.1.2)
@@ -145,7 +156,7 @@ after that day's event stays awake until a subsequent event or user command.
 
 ## Updating an existing independent gateway
 
-Package only the same four source/unit files as the initial installer. Transfer
+Package the five allowlisted source/unit files, including discovery.py. Transfer
 the verified archive plus `scripts/update-remote-sidecar.py` to an administrative
 private directory. On the appliance:
 
@@ -164,3 +175,8 @@ copy of current preferences; restore a reviewed copy that removes only these
 three keys, preserving all other choices. Do not let an old loader reset to
 defaults. Immediate activation recovery uses the independently verified
 pre-deployment backup; that backup does not include later user edits.
+
+The local-only `/api/android-control` routes manage enablement, pending requests
+and saved devices. They are not forwarded by the gateway. `tests/test_android_control.py`
+covers approval/denial/expiry, encrypted delivery, discovery lifecycle and updater
+compatibility. See [decision0012](adr/0012-android-discovery-approval.md).
