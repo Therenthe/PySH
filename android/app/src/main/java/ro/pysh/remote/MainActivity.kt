@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.SystemBarStyle
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -43,7 +44,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         remote = RemoteController(applicationContext, scope)
-        setContent { RemoteApp(remote) }
+        setContent {
+            val dark=remote.dark
+            SideEffect {
+                enableEdgeToEdge(
+                    statusBarStyle=SystemBarStyle.auto(android.graphics.Color.TRANSPARENT,android.graphics.Color.TRANSPARENT){dark},
+                    navigationBarStyle=SystemBarStyle.auto(android.graphics.Color.TRANSPARENT,android.graphics.Color.TRANSPARENT){dark}
+                )
+            }
+            RemoteApp(remote)
+        }
     }
     override fun onStart() { super.onStart(); remote.start() }
     override fun onStop() { remote.stop(); super.onStop() }
@@ -74,6 +84,7 @@ fun text(ro: Boolean, romanian: String, english: String) = if(ro) romanian else 
     AppTheme(remote.dark,remote.ro) {
         if(remote.connection!=null) BluetoothPrompts(remote)
         var tab by rememberSaveable { mutableIntStateOf(0) }
+        val pageScroll=remember(tab,remote.connection?.deviceId) { ScrollState(0) }
         BackHandler(enabled = tab != 0) { tab = 0 }
         Scaffold(containerColor = MaterialTheme.colorScheme.background,
             bottomBar = {
@@ -88,7 +99,7 @@ fun text(ro: Boolean, romanian: String, english: String) = if(ro) romanian else 
             }
         ) { padding ->
             Box(Modifier.fillMaxSize().padding(padding).imePadding(), contentAlignment = Alignment.TopCenter) {
-                Column(Modifier.widthIn(max = 680.dp).fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal=22.dp).padding(top=18.dp,bottom=28.dp), verticalArrangement=Arrangement.spacedBy(20.dp)) {
+                Column(Modifier.widthIn(max = 680.dp).fillMaxWidth().verticalScroll(pageScroll).padding(horizontal=22.dp).padding(top=18.dp,bottom=28.dp), verticalArrangement=Arrangement.spacedBy(20.dp)) {
                     BrandHeader(remote)
                     remote.error?.let { code -> MessageCard(errorText(code, remote.ro), true) { remote.error = null } }
                     remote.notice?.let { notice -> MessageCard(text(remote.ro, if(notice=="sent_check") "Comandă trimisă. Reconectează-te pentru a verifica rezultatul." else "Comandă confirmată de hub.", if(notice=="sent_check") "Command sent. Reconnect to check the result." else "Command confirmed by the hub."), false) { remote.notice = null } }
@@ -206,9 +217,9 @@ fun playerLabel(player: JSONObject, ro: Boolean) = when(player.optString("state"
             Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(18.dp)) {
                 RadioArtwork(Modifier.size(106.dp))
                 Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(6.dp)) {
-                    Text(player.optString("station_name").ifBlank { player.optString("title").ifBlank { T(remote.ro,"Liniște, deocamdată","A quiet moment") } },style=MaterialTheme.typography.headlineMedium,maxLines=2,overflow=TextOverflow.Ellipsis)
-                    val title = player.optString("title")
-                    if(title.isNotBlank() && title!=player.optString("station_name")) Text(title,style=MaterialTheme.typography.bodyMedium,maxLines=2,color=MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(player.label("station_name").ifBlank { player.label("title").ifBlank { T(remote.ro,"Liniște, deocamdată","A quiet moment") } },style=MaterialTheme.typography.headlineMedium,maxLines=2,overflow=TextOverflow.Ellipsis)
+                    val title = player.label("title")
+                    if(title.isNotBlank() && title!=player.label("station_name")) Text(title,style=MaterialTheme.typography.bodyMedium,maxLines=2,color=MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(playerLabel(player,remote.ro),color=MaterialTheme.colorScheme.primary,style=MaterialTheme.typography.bodyMedium)
                 }
             }
@@ -269,7 +280,7 @@ fun playerLabel(player: JSONObject, ro: Boolean) = when(player.optString("state"
     val player = remote.state.child("player")
     Surface(color=MaterialTheme.colorScheme.surfaceVariant) { Row(Modifier.fillMaxWidth().padding(start=22.dp,end=12.dp,top=6.dp,bottom=6.dp),verticalAlignment=Alignment.CenterVertically) {
         Icon(Icons.Outlined.GraphicEq,null,tint=MaterialTheme.colorScheme.primary,modifier=Modifier.size(24.dp)); Spacer(Modifier.width(12.dp))
-        Column(Modifier.weight(1f)) { Text(player.optString("station_name").ifBlank{player.optString("title")},maxLines=1,overflow=TextOverflow.Ellipsis,fontSize=14.sp,fontWeight=FontWeight.SemiBold); Text(playerLabel(player,remote.ro),fontSize=11.sp,color=MaterialTheme.colorScheme.onSurfaceVariant) }
+        Column(Modifier.weight(1f)) { Text(player.label("station_name").ifBlank{player.label("title")},maxLines=1,overflow=TextOverflow.Ellipsis,fontSize=14.sp,fontWeight=FontWeight.SemiBold); Text(playerLabel(player,remote.ro),fontSize=11.sp,color=MaterialTheme.colorScheme.onSurfaceVariant) }
         IconButton(onClick={remote.transport("toggle")},enabled=remote.enabled) { Icon(if(player.optString("state")=="paused") Icons.Outlined.PlayArrow else Icons.Outlined.Pause,T(remote.ro,"Redare sau pauză","Play or pause")) }
     } }
 }

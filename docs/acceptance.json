@@ -444,7 +444,7 @@
     {
       "id": "ANDROID-BUILD-01",
       "status": "PASS",
-      "candidate": "android-0.1.0-debug",
+      "candidate": "android-0.1.1-debug-249beebcb942",
       "evidence": [
         "docs/evidence/android-remote-2026-10-13.md"
       ],
@@ -461,17 +461,17 @@
     },
     {
       "id": "ANDROID-PHONE-01",
-      "status": "OPEN",
-      "candidate": "android-0.1.0-debug",
+      "status": "PASS",
+      "candidate": "android-0.1.1-debug-249beebcb942",
       "evidence": [
         "docs/evidence/android-remote-2026-10-13.md"
       ],
-      "reason": "Physical Android USB phone pairing/control/visual/persistence tour pending; PC emulator failed to boot."
+      "reason": "Core real-phone smoke: Samsung Note10 Android12; private Wi-Fi pinned HTTPS, saved pairing, volume and transport commands, theme restoration, five-screen navigation, nullable local-title regression, native Home EN/RO dark/light and force-stop/relaunch. This is not the full hardware/touch/audibility criterion."
     },
     {
       "id": "ANDROID-HARDWARE-01",
       "status": "OPEN",
-      "candidate": "android-0.1.0-debug",
+      "candidate": "android-0.1.1-debug-249beebcb942",
       "evidence": [
         "docs/evidence/android-remote-2026-10-13.md"
       ],

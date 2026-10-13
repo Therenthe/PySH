@@ -8,7 +8,7 @@ companion scope does not accept the complete PySH product or external streaming.
 Android Studio2026.1.1/JBR21 project sync PASS. APK and opt-in instrumentation APK
 compile PASS; 3 LAN policy test methods PASS; lint zero errors. Advisory warnings
 cover installed version upgrades, style and deliberate custom certificate pin
-validation. Final APK SHA256:
+validation. Initial 0.1.0 APK SHA256:
 `6e0f55bd9031c3525e010d8e11f90df8f53eeece843f0a5f265500e1221faec5`.
 Installable copy: `2026-10-13/PySH-Remote/PySH-Remote-0.1.0.apk` in the PC workspace.
 Final app/instrumentation build, policy tests and lint passed after correcting
@@ -49,11 +49,27 @@ Official Android36/API29 x86_64 project AVDs were prepared because none existed.
 Multiple software-rendering runs remained ADB offline before kernel boot; no
 active hypervisor driver on this PC. No Windows security/virtualization/boot
 changes. Emulator testing is OPEN; Studio sync/preview are separate evidence.
-Owner offered a physical USB Android phone; discovery/install/LAN tour remains
-pending until recorded below.
+Owner connected and authorized a Samsung Note10 / SM-N970F, Android12, physical
+1080×2280. APK0.1.0 installed and actual Android instrumentation pairing,
+Wi-Fi-bound HTTPS/state, same-volume audio command and five-screen tour passed.
+Actual screenshot review found page scroll carryover, fixed in0.1.1. Explicit
+nullable station labels fix local media/idle presentation. Light-mode status
+bar icons are adapted to the application's theme rather than the phone theme.
 
-Physical APK launch, pairing/persistence, Wi-Fi HTTPS, command feedback, EN/RO
-light/dark layouts, keyboard/rotation/font scaling and real media/Bluetooth
-recovery remain OPEN. Router forwarding/DMZ was not inspected; port8766 must stay
-local. Updating Android target37 will require Android17 LAN runtime permission
-and a new acceptance run. Third-party sign-in/site controls stay on PySH.
+Core Android tests observed volume change/readback/restoration, pause/resume,
+hub theme change/readback/restoration, Android Keystore association persistence,
+four native RO/EN×dark/light Home captures, and connection after force-stop and
+relaunch. The original hub theme and volume were restored; radio resumed. Native
+screenshots stay in private `.runtime/android-phone`, excluded from Git.
+
+Final Android0.1.1 candidate SHA256:
+`249beebcb942a47af01512128c96ad2632fa2431a92ed230c7cd5eb3cac7400f`.
+The matching APK is saved at `2026-10-13/PySH-Remote/PySH-Remote-0.1.1.apk`.
+Final post-correction phone results are recorded in the delivery manifest.
+
+Physical finger/audibility and full Bluetooth pairing/Wi-Fi disruption/local
+media deletion/video/keyboard/rotation/font-scaling recovery coverage remain
+OPEN; the core phone smoke tour does not certify every hardware flow. Router
+forwarding/DMZ was not inspected; port8766 must stay local. Updating Android
+target37 requires Android17 LAN runtime permission and new acceptance.
+Third-party sign-in/site controls stay on PySH.

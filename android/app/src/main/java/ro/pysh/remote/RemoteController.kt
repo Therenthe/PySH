@@ -12,6 +12,7 @@ import java.net.URLEncoder
 fun obj(vararg entries: Pair<String, Any?>) = JSONObject().apply { entries.forEach { put(it.first, it.second ?: JSONObject.NULL) } }
 fun JSONObject.objects(key: String): List<JSONObject> = optJSONArray(key)?.let { array -> (0 until array.length()).mapNotNull { array.optJSONObject(it) } } ?: emptyList()
 fun JSONObject.child(key: String): JSONObject = optJSONObject(key) ?: JSONObject()
+fun JSONObject.label(key: String): String = if(isNull(key)) "" else optString(key)
 fun query(value: String) = URLEncoder.encode(value, "UTF-8")
 
 class RemoteController(context: Context, private val scope: CoroutineScope) {

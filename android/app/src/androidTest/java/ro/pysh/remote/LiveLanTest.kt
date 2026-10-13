@@ -12,6 +12,60 @@ import java.io.File
 @Suppress("DEPRECATION")
 class LiveLanTest {
     private val instrumentation=InstrumentationRegistry.getInstrumentation()
+    @Test fun testScreensWithSavedPairing() = runBlocking {
+        val context=instrumentation.targetContext
+        val connection=ConnectionStore(context).load() ?: throw AssertionError("Pair first")
+        assertTrue(HubClient(context).request(connection,"/api/state").has("preferences"))
+        val local=obj("station_name" to null,"title" to "Local music")
+        assertEquals("",local.label("station_name"))
+        assertEquals("Local music",local.label("station_name").ifBlank{local.label("title")})
+        val activity=instrumentation.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        Thread.sleep(2200);capture("home-ro-night")
+        for(label in listOf("Radio","Media","Dispozitiv","Setări")) {
+            clickText(label);Thread.sleep(900);capture(label.lowercase().replace("ă","a"))
+        }
+        activity.finish()
+    }
+    @Test fun testCommandsPersistenceAndPalettes() = runBlocking {
+        val context=instrumentation.targetContext
+        val connection=ConnectionStore(context).load() ?: throw AssertionError("Pair the phone first")
+        val client=HubClient(context)
+        val initial=client.request(connection,"/api/state")
+        val originalTheme=initial.child("preferences").getString("theme")
+        val volume=initial.child("audio").getInt("volume")
+        val playing=initial.child("player").optString("state")=="playing"
+        try {
+            val changed=if(volume<100)volume+1 else volume-1
+            client.request(connection,"/api/audio","POST",obj("volume" to changed))
+            assertEquals(changed,client.request(connection,"/api/state").child("audio").getInt("volume"))
+            client.request(connection,"/api/audio","POST",obj("volume" to volume))
+            if(playing) {
+                client.request(connection,"/api/player","POST",obj("action" to "pause"))
+                assertEquals("paused",client.request(connection,"/api/state").child("player").getString("state"))
+                client.request(connection,"/api/player","POST",obj("action" to "resume"))
+            }
+            val alternate=if(originalTheme=="night")"ink" else "night"
+            client.request(connection,"/api/preferences","PATCH",obj("theme" to alternate))
+            assertEquals(alternate,client.request(connection,"/api/state").child("preferences").getString("theme"))
+            client.request(connection,"/api/preferences","PATCH",obj("theme" to originalTheme))
+        } finally {
+            client.request(connection,"/api/audio","POST",obj("volume" to volume))
+            client.request(connection,"/api/preferences","PATCH",obj("theme" to originalTheme))
+            if(playing)client.request(connection,"/api/player","POST",obj("action" to "resume"))
+        }
+        assertEquals(volume,client.request(connection,"/api/state").child("audio").getInt("volume"))
+        val preferences=context.getSharedPreferences("interface",android.content.Context.MODE_PRIVATE)
+        for(ro in listOf(true,false))for(dark in listOf(true,false)) {
+            preferences.edit().putString("language",if(ro)"ro" else "en").putBoolean("dark",dark).commit()
+            val activity=instrumentation.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            Thread.sleep(2200)
+            capture("home-${if(ro)"ro" else "en"}-${if(dark)"night" else "light"}")
+            activity.finish();instrumentation.waitForIdleSync()
+        }
+        preferences.edit().putString("language","ro").putBoolean("dark",true).commit()
+        assertNotNull(ConnectionStore(context).load())
+        assertTrue(client.request(ConnectionStore(context).load()!!,"/api/state").has("preferences"))
+    }
     @Test
     fun testPairReadAudioAndScreens() = runBlocking {
         val arguments=InstrumentationRegistry.getArguments()
