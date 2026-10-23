@@ -1,5 +1,16 @@
 # Plan urmărit de livrare UI/UX — 2026-10-04
 
+## Audit nou —2026-10-23
+
+Trei auditori cu skilluri GitHub fixate au aplicat rutina din
+[AUDITOR_SKILLS.md](AUDITOR_SKILLS.md) pe sursa8cfffd0. Rezultatul deduplicat:
+8defecte OPEN și o recomandare APG, fără schimbarea aplicației instalate.
+Coada [AUD-01–09](evidence/auditor-skills-2026-10-23.md) păstrează severitatea,
+sursa, responsabilul root și proba obligatorie de retest. Priorități:
+focus modal/tastatură și contrast Home, apoi focus Media/Acasă, stare selecții,
+navigare în eroare, scroll Setări, identificare fișiere și săgeți TouchChoice.
+Restanțele istorice de mai jos rămân în inventar; acest audit nu le închide.
+
 Acest inventar păstrează cerințele din conversație, inclusiv cele vechi. Nu acordă note sau acceptare din descrieri. GitHub este sursa canonică; implementările nepublicate sunt lucru local. Candidatul instalat actual:ca0bbb62a3d8/source8cfffd0; cinci aeronave Blender distincte și orientate corect, cu funcțiile anterioare păstrate. [Dovezi ale iterației aeronavelor](evidence/ambient-aircraft-2026-10-23.md). Stările și buildurile din rânduri sunt dovezi istorice; probele noi sunt în PLAN_2026_10_23.md. Documentele pot avansa separat de sursa runtime-ului. Toate30criteriile complete rămân OPEN în acceptance.json; dovada HW-01 de pe670c este istorică. O probă veche nu certifică un candidat nou.
 
 [Corecția atmosferei meteo](evidence/weather-atmosphere-2026-10-23.md) păstrează inventarul anterior: vizibilitate și nebulozitate independente, precipitații diurne mai lizibile, fără schimbarea etichetei furnizorului.

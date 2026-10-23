@@ -10,6 +10,7 @@ Read STATUS.md first, then docs/PRODUCT.md, docs/ARCHITECTURE.md, docs/DEVELOPME
 - All app-owned UI and accessible names must support EN/RO at 800x480. A shortcut is not proof of streaming/DRM playback.
 - Show exact remote commands before execution and useful results afterwards. No secrets, private logs, browser profiles or device backups in Git.
 - Apply the versioned skills under skills/ when relevant. Current STATUS and accepted ADRs override historical phase/architecture statements in imported references or skills.
+- For UI/UX audits, use the complementary reviewers and evidence workflow in docs/AUDITOR_SKILLS.md. Report observed outcomes and reproducible defects; automated findings and browser fixtures do not certify physical acceptance.
 - Do not replay historical cleanup scripts. Do not flash storage, alter active networking or activate autostart as part of a repository migration.
 
 ## Unpacked Chromium extension updates
