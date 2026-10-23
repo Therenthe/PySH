@@ -179,6 +179,11 @@
 .app .home-v2.ambient-home .ambient-dock{padding:7px 12px}
 /* E-Ink transport remains readable when its actual weather scene is nocturnal. */
 .app[data-theme=ink]:has(>.ambient-sky.sky-night) .ambient-visualizer{--signal-ink:#d7ebe7;--ambient-text:#f4f7fb;--muted:#d0d9da}
+/* Only text gets a stable backing: the signal and city keep their clear canvas. */
+.app .ambient-home .ambient-visualizer{--signal-caption-bg:#fbfaf5f5;--signal-caption-text:#23251f}
+.app[data-theme=night] .ambient-home .ambient-visualizer,.app:has(>.ambient-sky.sky-night) .ambient-home .ambient-visualizer{--signal-caption-bg:#0c1720f5;--signal-caption-text:#f1f3ee}
+.app .ambient-home .signal-station>span:last-child,.app .ambient-home .audio-visualizer:is(.signal-empty,.signal-level)>span{padding:3px 9px;border-radius:8px;background:var(--signal-caption-bg);color:var(--signal-caption-text);line-height:20px;font-weight:500}
+.app .ambient-home .audio-visualizer:is(.signal-empty,.signal-level)>span{max-width:calc(100% - 16px);text-align:center}
 /* The chosen signal size applies whether the transport is open or folded. */
 .app .home-v2.ambient-home{container-type:inline-size}
 .app .ambient-home .ambient-visualizer{height:64px;min-height:64px;width:min(380px,100%)}

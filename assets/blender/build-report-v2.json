@@ -1,0 +1,125 @@
+{
+  "version": 2,
+  "blender": "5.2.2 LTS",
+  "seed": 231026,
+  "city_objects": 20,
+  "city_vertices": 21517,
+  "city_polygons": 16065,
+  "transparent": true,
+  "resolution": [
+    1600,
+    570
+  ],
+  "radio_anchor": [
+    60.49,
+    18.001
+  ],
+  "bluetooth_anchor": [
+    21.678,
+    20.945
+  ],
+  "wifi_roof_world": [
+    6.3,
+    0.4,
+    4.58
+  ],
+  "camera": {
+    "position": [
+      0,
+      -42,
+      14
+    ],
+    "target": [
+      0,
+      0,
+      3.7
+    ],
+    "ortho_scale": 28.6
+  },
+  "metro_resolution": [
+    512,
+    96
+  ],
+  "metro_timing": {
+    "fps": 24,
+    "frames": 1032,
+    "crossing_frames": [
+      94,
+      506
+    ]
+  },
+  "authoring": "Original procedural Blender geometry, procedural stone, no external textures/models. v1 baseline retained.",
+  "scope": "City and metro only. Separate sky/stars/Moon/weather/network hardware assets unchanged.",
+  "limits": "Offline raster scenery; architectural islands and open window planes are intentional. Not a watertight/printable/game export. Browser/native-device acceptance separate.",
+  "assets": [
+    {
+      "name": "gothic-city-night-v2.png",
+      "bytes": 524740,
+      "sha256": "22a32e813049d7a6df207df679efffbde9875c356f03c4a40997a5df53e6d4f9"
+    },
+    {
+      "name": "gothic-city-day-v2.png",
+      "bytes": 605685,
+      "sha256": "579f920e4e517ebb2e481f3cf076d69a550327832a31b44413b1ec791626e900"
+    },
+    {
+      "name": "metro-v2.png",
+      "bytes": 31908,
+      "sha256": "5706b00660cd33c83febbacaadfde94f375e7718e9f339e4ebe0e91929a897fd"
+    }
+  ],
+  "builder_sha256": "7857a262fb6575cd57ddbfb78473a6f910f0fa9d46d4288308be74421f291e10",
+  "helper_sha256": "f9288a206a14ce3410a4fdc58ef4d52ed84b1beea3784e5454401214c783147f",
+  "encoded_bytes": 1162333,
+  "rgba_decoded_bytes": 7492608,
+  "city_base_triangles": 32144,
+  "png_compression": "RGBA8, Blender PNG compression100, lossless; no palette quantization.",
+  "editable_source_sha256": "de1780281dc2ca21a9492015dfedf46be8e14794641e12e32364af1771fe1a79",
+  "reviewer_sha256": "0aaee9c68c7a92b57676fc16449ed736be4bffe8020343b117a5dc3daa0c4c83",
+  "offline_review": {
+    "pass": true,
+    "color_audit": [],
+    "closed_components": 2744,
+    "inside_out_components": 0,
+    "intentional_open_glazing_components": 50,
+    "render_profile_archetypes": 36,
+    "archetype_errors": 0,
+    "archetype_warnings": 0,
+    "zero_area_faces": 0,
+    "loose_vertices": 0,
+    "loose_edges": 0,
+    "flipped_faces": 0,
+    "night_subject_internal_ratio": 4.68,
+    "night_subject_edge_merge_percent": 13.9,
+    "night_linear_max": 1.196,
+    "night_clip_percent": 0.0,
+    "cycles_reference_samples": 32,
+    "limits": "Open facades and deliberate overlapping stone assemblies are expected in this offline raster scene. Whole-frame black percentage includes transparent sky and is not a display contrast measurement. Native Pi/animation performance and browser integration remain separate."
+  },
+  "raster_review": {
+    "night": {
+      "alpha_bbox": [
+        0,
+        58,
+        1600,
+        536
+      ],
+      "luma_p10": 9.3702,
+      "luma_p50": 21.8046,
+      "luma_p90": 53.4516,
+      "rgba_decoded_bytes": 3648000
+    },
+    "day": {
+      "alpha_bbox": [
+        0,
+        58,
+        1600,
+        536
+      ],
+      "luma_p10": 30.7284,
+      "luma_p50": 57.1628,
+      "luma_p90": 109.36339999999998,
+      "rgba_decoded_bytes": 3648000
+    }
+  }
+}

@@ -1,5 +1,45 @@
 # Original PySH ambient assets
 
+The current city refinement is `pysh-gothic-city-v2.blend`, authored with
+`scripts/blender/build_ambient_city_v2.py` using the original primitive/material
+helpers in `build_ambient_city.py`. V1 sources and images remain as the baseline.
+V2 adds a civic lantern, mansard and asymmetric parapet silhouettes, layered
+stone bays and sills, grouped warm/cool night occupancy, reflective day glazing,
+solid segmented viaduct arches and an articulated four-car metro. Directional
+moonlight separates stone from recessed glass; no fog/glow overlay is baked in.
+
+The camera, 1600×570 canvas and full scene placement stay fixed. Radio remains
+at `[60.490,18.001]%`, Bluetooth at `[21.678,20.945]%`; the separate Wi-Fi prop
+still sits on its original `[6.3,0.4,4.58]` roof apex. Source city images are
+displayed at the existing 800×208 footprint. Sky, 170 SVG stars, Moon/weather,
+network props and aircraft are independent assets.
+
+V2 writes only `gothic-city-night-v2.png`, `gothic-city-day-v2.png` and
+`metro-v2.png`. The two city PNGs are 1600×570 and metro is 512×96, all RGBA8
+with lossless compression100. Their exact SHA-256 hashes, encoded/decoded bytes,
+source hashes, camera and mesh counts are in `build-report-v2.json`.
+Regenerate and audit separately:
+
+```sh
+blender -b --factory-startup --python-exit-code 1 \
+  -P scripts/blender/build_ambient_city_v2.py -- --root /absolute/repository
+blender -b --factory-startup --python-exit-code 1 \
+  -P scripts/blender/review_ambient_city_v2.py -- \
+  --root /absolute/repository --skills-root /absolute/installed/skills
+```
+
+The scoped V2 review measured 2,744 closed components with no inside-out parts,
+zero-area/loose/flipped geometry, and 50 intentional pointed glass planes.
+Thirty-six solid component archetypes passed the render-profile delivery gate
+with zero errors/warnings; each component's signed volume was measured. These
+gates do not assert an intersection-free or watertight full city: embedded
+cornices, panels and architectural islands are deliberate for offline baking.
+Private evidence includes silhouette/matcap/wire orbit sheets, an EEVEE linear
+EXR and value study, a 32-sample Cycles comparison, and before/after 800×208
+composites. Native touch/display/performance acceptance remains separate.
+
+## Retained V1 baseline
+
 `pysh-gothic-city-v1.blend` is editable Blender 5.2.2 LTS source. All geometry and
 materials are authored by `scripts/blender/build_ambient_city.py`, seed 231026;
 there are no downloaded meshes, photographic textures, logos or external files.
