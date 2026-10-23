@@ -1,3 +1,5 @@
+// Floating visualizer coverage remains on other styles or local media;
+// radio Wave facade behavior is exercised separately in radio-neon.spec.ts.
 import {openSettingsSection} from './settings-navigation';
 import {test,expect} from '@playwright/test';
 import {createHash} from 'node:crypto';
@@ -8,7 +10,7 @@ const signal=(amplitude=.65)=>({available:true,status:'ready',waveform:Array.fro
 for(const theme of ['ink','night']){
  test(`six genuinely distinct output geometries ${theme}, silence and reduced motion`,async({page},info)=>{
   const ro=info.project.name.endsWith('ro');let current=signal();
-  const state:any={preferences:{language:ro?'ro':'en',theme,setupComplete:true,nightEnabled:false,screensaverMinutes:0,visualizerStyle:'wave'},network:{},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{state:'playing',kind:'radio',station_name:'Station',url:'https://example.org/stream'},weather:{}};
+  const state:any={preferences:{language:ro?'ro':'en',theme,setupComplete:true,nightEnabled:false,screensaverMinutes:0,visualizerStyle:'wave'},network:{},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{state:'playing',kind:'local',station_name:'Station',url:'https://example.org/stream'},weather:{}};
   await page.route('**/api/**',route=>{const path=new URL(route.request().url()).pathname;return route.fulfill({json:path==='/api/audio/visualization'?current:path==='/api/session'?{token:'fixture'}:path==='/api/state'?state:{ok:true}});});
   // Crop only the signal: animated weather cannot make two identical
   // visualizers appear different in this pixel comparison.
@@ -35,7 +37,7 @@ for(const theme of ['ink','night']){
  test(`chosen size changes every style with expanded and collapsed playback ${theme}`,async({page},info)=>{
   test.setTimeout(90000);
   const ro=info.project.name.endsWith('ro');
-  const state:any={preferences:{language:ro?'ro':'en',theme,setupComplete:true,nightEnabled:false,navigationCollapsed:false,screensaverMinutes:0,visualizerStyle:'wave',visualizerSize:'compact',homeCards:['weather','forecast','playback'],homePositions:{visualizer:{x:.08,y:.62,z:4}},timezone:'Europe/Bucharest',shortcuts:['radio','media']},network:{state:'connected'},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{state:'playing',kind:'radio',station_name:'Radio One',url:'https://example.org/stream'},weather:{}};
+  const state:any={preferences:{language:ro?'ro':'en',theme,setupComplete:true,nightEnabled:false,navigationCollapsed:false,screensaverMinutes:0,visualizerStyle:'wave',visualizerSize:'compact',homeCards:['weather','forecast','playback'],homePositions:{visualizer:{x:.08,y:.62,z:4}},timezone:'Europe/Bucharest',shortcuts:['radio','media']},network:{state:'connected'},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{state:'playing',kind:'local',station_name:'Radio One',url:'https://example.org/stream'},weather:{}};
   await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname;let json:any={ok:true};if(path==='/api/session')json={token:'fixture'};else if(path==='/api/state')json=state;else if(path==='/api/audio/visualization')json=signal();else if(path==='/api/preferences'){Object.assign(state.preferences,route.request().postDataJSON());json=state.preferences;}await route.fulfill({json});});
   await page.clock.install();await page.goto('/');
   // First exercise the real preference action, not only preloaded fixture values.

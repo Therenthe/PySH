@@ -1,3 +1,5 @@
+// Floating visualizer coverage remains on other styles or local media;
+// radio Wave facade behavior is exercised separately in radio-neon.spec.ts.
 import {test,expect,type Locator} from '@playwright/test';
 
 // A translucent caption must remain legible over both dark masonry and lit windows.
@@ -16,7 +18,7 @@ for(const theme of ['ink','night'])for(const day of [true,false])for(const size 
  test(`Home captions stay legible over city: ${theme} ${day?'day':'night'} ${size}`,async({page},info)=>{
   const language=info.project.name.endsWith('ro')?'ro':'en';
   let signalReady=false;
-  const state:any={preferences:{language,theme,setupComplete:true,nightEnabled:false,screensaverMinutes:0,visualizerStyle:'wave',visualizerSize:size,timezone:'Europe/Bucharest',location:{name:'București',latitude:44.4,longitude:26.1},homeCards:['weather','forecast','playback'],shortcuts:[]},network:{},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{state:'playing',kind:'radio',url:'https://example.invalid/radio',station_name:'Radio România Actualități'},weather:{stale:false,current:{temperature_c:13,weather_code:0,is_day:day?1:0},daily:[]}};
+  const state:any={preferences:{language,theme,setupComplete:true,nightEnabled:false,screensaverMinutes:0,visualizerStyle:'bars',visualizerSize:size,timezone:'Europe/Bucharest',location:{name:'București',latitude:44.4,longitude:26.1},homeCards:['weather','forecast','playback'],shortcuts:[]},network:{},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{state:'playing',kind:'radio',url:'https://example.invalid/radio',station_name:'Radio România Actualități'},weather:{stale:false,current:{temperature_c:13,weather_code:0,is_day:day?1:0},daily:[]}};
   await page.clock.install({time:new Date(day?'2026-10-23T10:00:00Z':'2026-10-23T20:00:00Z')});
   await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname;let json:any={ok:true};if(path==='/api/state')json=state;else if(path==='/api/session')json={token:'fixture'};else if(path==='/api/audio/visualization')json=signalReady?{available:true,status:'ready',waveform:Array(64).fill(.2),bars:Array(16).fill(.2),peak:.3,rms:.2,silent:false}:{available:false,status:'unavailable'};await route.fulfill({json});});
   await page.goto('/');await expect(page.locator('.ambient-home')).toBeVisible();

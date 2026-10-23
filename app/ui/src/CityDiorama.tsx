@@ -2,10 +2,11 @@ import {useEffect,useRef,useState,type CSSProperties} from 'react';
 import type {SceneWeather} from './sceneWeather';
 import {currentWeatherAlerts,type WeatherAlertsDocument} from './weatherAlertModel';
 import './city-diorama.css';
+import {RadioBuildingNeon} from './RadioBuildingNeon';
 
 /** Original Blender-authored geometry, lit and rendered offline. Runtime uses two
  * flat image layers: no WebGL context or hidden 3D renderer competes with video. */
-export function CityDiorama({night,weather,radioPlaying=false,bluetoothPowered=false,bluetoothConnected=false,wifiState='unknown',wifiActive=false}:{night:boolean;weather:SceneWeather;radioPlaying?:boolean;bluetoothPowered?:boolean;bluetoothConnected?:boolean;wifiState?:'off'|'disconnected'|'connecting'|'connected'|'unknown';wifiActive?:boolean}) {
+export function CityDiorama({night,weather,radioPlaying=false,visualizeRadio=false,radioCanVisualize=false,bluetoothPowered=false,bluetoothConnected=false,wifiState='unknown',wifiActive=false}:{night:boolean;weather:SceneWeather;radioPlaying?:boolean;visualizeRadio?:boolean;radioCanVisualize?:boolean;bluetoothPowered?:boolean;bluetoothConnected?:boolean;wifiState?:'off'|'disconnected'|'connecting'|'connected'|'unknown';wifiActive?:boolean}) {
  const [active,setActive]=useState(!document.hidden);
  const [inView,setInView]=useState(true),city=useRef<HTMLDivElement>(null);
  useEffect(()=>{const change=()=>setActive(!document.hidden);document.addEventListener('visibilitychange',change);return()=>document.removeEventListener('visibilitychange',change);},[]);
@@ -17,6 +18,7 @@ export function CityDiorama({night,weather,radioPlaying=false,bluetoothPowered=f
  return <div ref={city} aria-hidden="true" className="ambient-city city-diorama" data-city-version="blender-v2" data-season={weather.season} data-thermal={weather.heat?'heat':'normal'} data-radio-emitting={radioPlaying} data-bluetooth={bluetoothPowered?(bluetoothConnected?'connected':'on'):'off'} data-wifi={wifiState} data-wifi-active={wifiState==='connected'&&wifiActive} data-animate={active&&inView} data-freezing={weather.freezing}>
   {weather.heat&&<div className="city-heat-haze"/>}
   <img className="city-architecture" src={`/ambient/gothic-city-${night?'night':'day'}-v2.png`} alt="" draggable={false}/>
+  {visualizeRadio&&<RadioBuildingNeon night={night} enabled={radioCanVisualize} active={active&&inView}/>}
   <div className="city-wifi" aria-hidden="true">
    <img className="city-wifi-hardware" src={`/ambient/city-wifi-${night?'night':'day'}-v1.png`} alt="" draggable={false}/>
    <img className="city-wifi-emission" src="/ambient/city-wifi-emission-v1.png" alt="" draggable={false}/>

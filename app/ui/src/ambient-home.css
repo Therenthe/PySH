@@ -116,7 +116,7 @@
 .app .home-v2.ambient-home.ambient-has-signal{grid-template-rows:minmax(160px,1fr) 80px 48px auto}
 .app .ambient-home .ambient-visualizer{width:min(660px,100%);height:48px;min-height:48px;border:0;background:transparent;padding:0;position:relative;color:var(--ambient-text);border-radius:14px;transition:height 300ms ease}
 .app .home-v2.ambient-home.playback-in-signal{grid-template-rows:minmax(176px,1fr) 80px 88px}
-.app .ambient-home.playback-in-signal .ambient-visualizer{height:88px;min-height:88px;padding-bottom:30px}
+.app .ambient-home.playback-in-signal .ambient-visualizer:not(.city-radio-control){height:88px;min-height:88px;padding-bottom:30px}
 .app .ambient-home.playback-in-signal .ambient-dock{display:none}
 .app .ambient-home .signal-station{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:8px;height:30px;color:var(--ambient-text);font-size:14px}
 .app .ambient-home .signal-station>span:last-child{max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -139,9 +139,9 @@
 .app .ambient-home .ambient-visualizer{grid-row:3;cursor:pointer}
 .app .ambient-home .ambient-dock{grid-row:4;height:80px;padding:7px 12px}
 .app .ambient-home [data-home-positioned=true]{margin:0}
-.app .ambient-home.playback-in-signal .ambient-visualizer{height:64px;min-height:64px;padding-bottom:28px;width:min(380px,100%)}
-.app .ambient-home.playback-in-signal[data-visualizer-size=balanced] .ambient-visualizer{height:88px;min-height:88px;width:min(520px,100%)}
-.app .ambient-home.playback-in-signal[data-visualizer-size=large] .ambient-visualizer{height:112px;min-height:112px;width:min(660px,100%)}
+.app .ambient-home.playback-in-signal .ambient-visualizer:not(.city-radio-control){height:64px;min-height:64px;padding-bottom:28px;width:min(380px,100%)}
+.app .ambient-home.playback-in-signal[data-visualizer-size=balanced] .ambient-visualizer:not(.city-radio-control){height:88px;min-height:88px;width:min(520px,100%)}
+.app .ambient-home.playback-in-signal[data-visualizer-size=large] .ambient-visualizer:not(.city-radio-control){height:112px;min-height:112px;width:min(660px,100%)}
 .ambient-clouds{background:none;width:100%;height:250px;opacity:.85}
 .sky-mainly-clear .ambient-clouds{opacity:.7}
 .sky-overcast .ambient-clouds,.sky-rain .ambient-clouds,.sky-snow .ambient-clouds{opacity:1}
@@ -186,9 +186,9 @@
 .app .ambient-home .audio-visualizer:is(.signal-empty,.signal-level)>span{max-width:calc(100% - 16px);text-align:center}
 /* The chosen signal size applies whether the transport is open or folded. */
 .app .home-v2.ambient-home{container-type:inline-size}
-.app .ambient-home .ambient-visualizer{height:64px;min-height:64px;width:min(380px,100%)}
-.app .ambient-home[data-visualizer-size=balanced] .ambient-visualizer{height:88px;min-height:88px;width:min(520px,100%)}
-.app .ambient-home[data-visualizer-size=large] .ambient-visualizer{height:112px;min-height:112px;width:min(660px,100%)}
+.app .ambient-home .ambient-visualizer:not(.city-radio-control){height:64px;min-height:64px;width:min(380px,100%)}
+.app .ambient-home[data-visualizer-size=balanced] .ambient-visualizer:not(.city-radio-control){height:88px;min-height:88px;width:min(520px,100%)}
+.app .ambient-home[data-visualizer-size=large] .ambient-visualizer:not(.city-radio-control){height:112px;min-height:112px;width:min(660px,100%)}
 .app .home-v2.ambient-home.transport-expanded{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}
 .app .ambient-home.transport-expanded .ambient-weather{grid-column:1;grid-row:1;margin:0;width:calc((100cqw - 16px)/2);max-width:500px}
 .app .ambient-home.transport-expanded .ambient-weather.card-compact{width:min(250px,calc((100cqw - 16px)/2))}

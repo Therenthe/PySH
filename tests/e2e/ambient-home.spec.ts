@@ -1,5 +1,7 @@
+// Floating visualizer coverage remains on other styles or local media;
+// radio Wave facade behavior is exercised separately in radio-neon.spec.ts.
 import {test,expect} from '@playwright/test';
-for(const signal of ['off','wave']) for(const theme of ['ink','night']) for(const scene of ['clear-day','clear-night','cloud-night','rain','snow','stale']) {
+for(const signal of ['off','bars']) for(const theme of ['ink','night']) for(const scene of ['clear-day','clear-night','cloud-night','rain','snow','stale']) {
  test(`ambient home ${theme} ${scene} ${signal}: genuine weather scene and five forecast symbols`,async({page},info)=>{
   const language=info.project.name.endsWith('ro')?'ro':'en';
   const state={preferences:{language,theme,setupComplete:true,nightEnabled:false,screensaverMinutes:0,visualizerStyle:signal,lastStation:{name:'Radio România Actualități',url:'https://example.invalid/radio',favicon:'https://radio.example.org/logo.svg'},timezone:'Europe/Bucharest',location:{name:'București'},favorites:[],shortcuts:['radio','media']},network:{available:true,state:'connected',connection:'Ethernet',devices:[],saved:[]},bluetooth:{available:true,powered:true,devices:[],prompts:[]},audio:{available:true,ready:true,volume:20,mute:false,outputs:[]},player:{state:'playing',kind:'radio',station_name:'Radio România Actualități',title:'Artist · A distinct song title',url:'https://example.invalid/radio'},weather:{current:{temperature_c:13,feels_like_c:10,weather_code:scene==='rain'?63:scene==='snow'?73:scene==='cloud-night'?2:0,is_day:scene.endsWith('night')?0:1,wind_kmh:8},daily:Array.from({length:5},(_,i)=>({date:`2026-10-0${i+3}`,weather_code:[0,2,63,73,95][i],max_c:22-i,min_c:11-i})),updated_at:'2026-10-03T12:00:00Z',stale:scene==='stale',attribution:'Open-Meteo'}};
@@ -44,13 +46,13 @@ for(const signal of ['off','wave']) for(const theme of ['ink','night']) for(cons
   await expect(page.locator('.ambient-dock')).toHaveClass(/card-compact/);
   await expect.poll(async()=>Math.round((await page.locator('.ambient-forecast').boundingBox())!.width)).toBe(186);
   await expect.poll(async()=>(await page.locator('.ambient-weather').boundingBox())!.width).toBeLessThanOrEqual(250);
-  if(signal==='wave'){await expect(page.locator('.ambient-dock')).toBeHidden();await expect(page.locator('.ambient-visualizer')).toBeVisible();expect((await page.locator('.ambient-visualizer').boundingBox())!.height).toBe(64);await expect(page.locator('.signal-station img')).toBeVisible();}else{await expect(page.locator('.playback-toggle')).toBeVisible();await expect(page.locator('.playback-expand .radio-artwork img')).toBeVisible();}
+  if(signal==='bars'){await expect(page.locator('.ambient-dock')).toBeHidden();await expect(page.locator('.ambient-visualizer')).toBeVisible();expect((await page.locator('.ambient-visualizer').boundingBox())!.height).toBe(64);await expect(page.locator('.signal-station img')).toBeVisible();}else{await expect(page.locator('.playback-toggle')).toBeVisible();await expect(page.locator('.playback-expand .radio-artwork img')).toBeVisible();}
   await page.screenshot({path:info.outputPath(`ambient-compact-${theme}-${scene}.png`)});
   await page.locator('.weather-heading').click();
   await expect(page.locator('.ambient-metrics')).toBeVisible();
   await page.locator('.ambient-forecast').click();await expect(page.locator('.forecast-day')).toHaveCount(5);
   await page.locator('.ambient-forecast').click();await expect(page.locator('.forecast-day')).toHaveCount(1);
-  await page.locator(signal==='wave'?'.ambient-visualizer':'.playback-expand').click();await expect(page.locator('.ambient-shortcuts')).toBeVisible();
+  await page.locator(signal==='bars'?'.ambient-visualizer':'.playback-expand').click();await expect(page.locator('.ambient-shortcuts')).toBeVisible();
   await page.clock.fastForward(10000);await page.locator('.weather-heading').click();await page.locator('.weather-heading').click();
   await page.clock.fastForward(6000);await expect(page.locator('.ambient-metrics')).toBeVisible();
   await page.clock.fastForward(10000);await expect(page.locator('.ambient-metrics')).toBeHidden();
