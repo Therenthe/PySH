@@ -1,9 +1,13 @@
 # Audit inițial cu skilluri UI/UX — 2026-10-23
 
-Triage delimitat: **8 defecte de produs și o recomandare APG**, deduplicate;
+Actualizare ulterioară: AUD-02 este remediat pe `1371bbff602e`, sursă `6ad7ad5`,
+cu probe locale, audit independent și verificare pe panou. Celelalte 7 defecte
+și recomandarea APG rămân OPEN. [Dovada](city-polish-2026-10-23.md).
+
+Triage inițial delimitat: **8 defecte de produs și o recomandare APG**, deduplicate;
 două priorități P1, șase P2 și una P3. Nu este acceptarea produsului sau o
 evaluare completă WCAG. În acest lot se instalează și se aplică auditorii;
-defectele de mai jos sunt OPEN, fără modificări ale aplicației instalate.
+defectele erau OPEN; remedierea ulterioară AUD-02 este indicată mai sus.
 
 ## Sursă și metodă
 
@@ -39,7 +43,7 @@ au fost corectate înainte de matricea finală și nu sunt raportate ca defecte.
 
 ## Coada de remediere
 
-Toate rândurile sunt **OPEN**, responsabil root; auditorul de origine repetă
+La audit toate rândurile erau OPEN; acum AUD-02 este remediat, restul **OPEN**, responsabil root; auditorul de origine repetă
 proba după remediere. P1 se rezolvă înaintea rafinamentelor, apoi P2 și P3.
 
 | ID | Prioritate | Defect / impact observat | Sursă | Rezultat cerut la retest |

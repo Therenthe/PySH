@@ -44,7 +44,7 @@ animațiile orașului. Mișcarea redusă păstrează sensul static al conexiunii
 oprește deplasările decorative. Nu se schimbă condițiile/fazele meteo, Luna,
 stelele, aeronavele, serviciile de rețea sau preferințele.
 
-AUD-02 are remediere locală: doar eticheta postului și textele de stare/nivel
+AUD-02 este remediat în candidatul instalat: doar eticheta postului și textele de stare/nivel
 audio primesc un fundal stabil. Unda și restul scenei rămân transparente.
 Se verifică contrastul și peste ziduri întunecate, și peste ferestre luminoase.
 Celelalte opt rânduri ale [auditului](auditor-skills-2026-10-23.md) rămân în coadă.
@@ -58,8 +58,47 @@ Celelalte opt rânduri ale [auditului](auditor-skills-2026-10-23.md) rămân în
 - 150 probe browser combinate PASS, apoi 52 probe afectate repetate după
   înghețarea definitivă a activelor. Există capturi EN/RO × teme la 800×480.
 
-Acestea sunt probe locale, cu API-uri simulate. Auditul independent al
-snapshotului final, publicarea sursei/pachetului și instalarea cu backup verificat
-sunt următoarea poartă; nu sunt declarate realizate de acest checkpoint.
-Acceptarea fizică, performanța susținută și toate cele 30 criterii de produs
-rămân OPEN. Rezultatele instalării se adaugă separat, cu identitatea candidatului.
+Acestea sunt probe locale, cu API-uri simulate. Rezultatele finale de mai jos
+completează checkpointul sursei; nu transferă acceptarea hardware din fixture.
+
+## Candidat final publicat și instalat
+
+Runtime `1371bbff602e`, sursă
+`6ad7ad51524f653c17818e5e06fb8151e09a17b8`, instalat cu backup citit și verificat
+separat pe PC; precedentul `ca0bbb62a3d8` rămâne disponibil. Cele 106 fișiere runtime
+și 29 de preferințe au hashurile așteptate; rețeaua, gatewayul și profilurile sunt
+păstrate. Radioul curent a fost reluat și ieșirea audio rămâne pregătită.
+
+Regresia finală pe sursa înghețată: **326 probe browser PASS** în EN/RO.
+Auditul independent a inspectat 130 de capturi UI și 32 de capturi de contrast pereche,
+în opt contexte limbă/temă/zi-noapte, plus cazuri meteo și de semnal. Minimul
+măsurat al etichetelor: 13.669:1; fără erori de pagină, overflow global sau ținte
+primare eșantionate sub 48px. S-au verificat restrângere/ambient/wake, aranjare,
+mișcare redusă, pauza orașului ascuns și sensurile metroului.
+
+Pe panoul real 800×480: oraș Blender v2, 208px, cele 12 active verificate și decodate
+(3 oraș/metrou, 3 Wi-Fi, 6 cer), etichetă audio cu fundal stabil și contrast-limită
+calculat 14.74:1. Home a trecut automat în ambient. O probă scurtă de 180 de cadre în
+aproximativ 3s a avut rAF p95 de 16.7ms; aceasta nu este latență tactilă fizică sau
+probă de performanță susținută. Cadrul de metrou a fost ales prin faza CSS pentru
+inspecție, nu este declarat o observare a unei treceri programate în timp real.
+
+Datele meteo reale ale probei nu au fost simulate sau schimbate: cod 45,
+vizibilitate 5540m, nebulozitate 77%, stare proaspătă; scena păstrează haze 0.056 și
+cer acoperit, fără Soare/Lună forțate. Acestea sunt estimări de furnizor, nu
+observații directe din exterior. Stelele, faza Lunii și logica meteo sunt păstrate.
+
+Preferințele, sursa audio și redarea au rămas identice. Diagnosticul loopback a
+fost închis; Chromium normal și radioul au fost restaurate. Capturile și
+jurnalele brute sunt private, fără tunel public sau încărcare în cloud.
+
+## Restanțe păstrate
+
+AUD-02 este închis în domeniul acestei remedieri; celelalte 7 defecte și recomandarea
+APG din audit rămân OPEN. Auditorul a observat separat cinci animații de sclipire
+preexistente care rămân `running` în inventarul DOM când `document.hidden` este
+simulat. Orașul se oprește explicit; cerul nu a fost schimbat. Această observație
+nu dovedește consum GPU/CPU în fundal și cere o probă de lifecycle real separată.
+
+Nu se declară 10/10, acceptare fizică integrală, DRM, persistență după reboot,
+memorie sau stabilitate de opt ore. Toate cele 30 de criterii complete rămân OPEN.
