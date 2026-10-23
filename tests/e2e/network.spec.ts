@@ -95,6 +95,24 @@ for(const theme of ['ink','night'] as const){
 }
 
 for (const theme of ['ink', 'night'] as const) {
+  test(`Ethernet cannot conceal disconnected Wi-Fi in ${theme}`,async({page},info)=>{
+    const ro=info.project.name==='touch-ro',f=await networkFixture(page,ro?'ro':'en',theme);
+    f.state.network.devices=[{type:'ethernet',interface:'end0',state:'connected',ip:'192.0.2.10'},
+      {type:'wifi',interface:'wlan0',state:'disconnected',ssid:null}];
+    await page.goto('/');await page.locator('.main-nav button').nth(3).tap();await page.locator('.settings-tabs button').nth(2).tap();
+    const links=page.locator('.settings-panel .network-links');
+    await expect(links.locator('[data-network-type="ethernet"]')).toContainText(ro?'Conectat':'Connected');
+    await expect(links.locator('[data-network-type="ethernet"]')).toContainText('192.0.2.10');
+    await expect(links.locator('[data-network-type="wifi"]')).toContainText(ro?'Neconectat':'Not connected');
+    await withinViewport(links);expect(await textLegibility(page)).toEqual([]);
+    await page.screenshot({path:info.outputPath('ethernet-wifi-separate.png')});
+    await page.getByRole('button',{name:ro?'Deschide setările':'Open settings',exact:true}).tap();
+    await page.locator('.quick-modal').getByRole('button',{name:`${ro?'Rețea':'Network'} Ethernet`,exact:true}).tap();
+    const modalLinks=page.locator('.modal-card .network-links');
+    await expect(modalLinks.locator('[data-network-type="wifi"]')).toContainText(ro?'Neconectat':'Not connected');
+    await withinViewport(modalLinks);expect(await textLegibility(page)).toEqual([]);
+    expect(f.unexpected).toEqual([]);
+  });
   test(`network settings and saved connection actions in ${theme}`, async ({ page }, testInfo) => {
     const ro = testInfo.project.name === 'touch-ro';
     const language = ro ? 'ro' : 'en';

@@ -9,6 +9,7 @@ import signal
 import struct
 import subprocess
 import sys
+import urllib.request
 
 MAX_MESSAGE = 4096
 KEYBOARD = "/usr/bin/wvkbd-mobintl"
@@ -51,7 +52,7 @@ def read_message(stream):
         raise ProtocolError("invalid_request") from None
     if not isinstance(message, dict) or set(message) != {"action"}:
         raise ProtocolError("invalid_request")
-    if message["action"] not in ("status", "show", "hide"):
+    if message["action"] not in ("status", "show", "hide", "home", "radio", "media"):
         raise ProtocolError("invalid_action")
     return message
 
@@ -92,6 +93,23 @@ class Keyboard:
         return os.access(KEYBOARD, os.X_OK) and bool(os.environ.get("WAYLAND_DISPLAY"))
 
     def handle(self, action):
+        if action in ("home", "radio", "media"):
+            # Fixed loopback owner API, no page URLs, cookies or typed values.
+            # A native message cannot choose another host, path or command.
+            try:
+                opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+                headers = {"Origin": "http://127.0.0.1:8765"}
+                with opener.open(urllib.request.Request("http://127.0.0.1:8765/api/session", headers=headers), timeout=2) as response:
+                    token = json.loads(response.read(4096))["token"]
+                body = json.dumps({"target": action}).encode()
+                request = urllib.request.Request("http://127.0.0.1:8765/api/external/navigation", data=body,
+                    headers={**headers, "Content-Type": "application/json", "X-Hub-Token": token}, method="POST")
+                with opener.open(request, timeout=2) as response:
+                    if json.loads(response.read(4096)).get("accepted") is not True:
+                        raise ValueError("navigation_unavailable")
+                return {"ok": True}
+            except (OSError, ValueError, KeyError, TypeError):
+                return {"ok": False, "error": "return_unavailable"}
         if self.child is not None and self.child.poll() is not None:
             self.child.wait()
             self.child = None

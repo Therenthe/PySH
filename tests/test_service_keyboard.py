@@ -26,7 +26,7 @@ def frame(body):
     return struct.pack("<I", len(payload)) + payload
 
 
-@pytest.mark.parametrize("action", ["status", "show", "hide"])
+@pytest.mark.parametrize("action", ["status", "show", "hide", "home", "radio", "media"])
 def test_allowed_actions(host, action):
     assert host.read_message(io.BytesIO(frame({"action": action}))) == {"action": action}
     assert host.read_message(io.BytesIO()) is None
@@ -172,3 +172,29 @@ def test_disconnect_reaps_real_child(host, monkeypatch, tmp_path):
     assert child.poll() is not None
     with pytest.raises(ProcessLookupError):
         os.kill(child.pid, 0)
+
+
+@pytest.mark.parametrize('target',['home','radio','media'])
+def test_destination_bridge_uses_only_fixed_loopback_owner_api(host, monkeypatch, target):
+    from unittest.mock import MagicMock
+    opener=Mock()
+    session=MagicMock();session.__enter__.return_value.read.return_value=b'{"token":"private-fixture-token"}'
+    accepted=MagicMock();accepted.__enter__.return_value.read.return_value=b'{"accepted":true}'
+    opener.open.side_effect=[session,accepted]
+    factory=Mock(return_value=opener)
+    monkeypatch.setattr(host.urllib.request,'build_opener',factory)
+    assert host.Keyboard().handle(target)=={'ok':True}
+    calls=opener.open.call_args_list
+    assert calls[0].args[0].full_url=='http://127.0.0.1:8765/api/session'
+    request=calls[1].args[0]
+    assert request.full_url=='http://127.0.0.1:8765/api/external/navigation'
+    assert json.loads(request.data)=={'target':target}
+    assert request.get_header('X-hub-token')=='private-fixture-token'
+    assert request.get_header('Origin')=='http://127.0.0.1:8765'
+    assert calls[0].kwargs['timeout']==calls[1].kwargs['timeout']==2
+
+
+def test_destination_failure_is_sanitized_and_does_not_claim_return(host, monkeypatch):
+    opener=Mock();opener.open.side_effect=OSError('private transport detail')
+    monkeypatch.setattr(host.urllib.request,'build_opener',Mock(return_value=opener))
+    assert host.Keyboard().handle('radio')=={'ok':False,'error':'return_unavailable'}

@@ -1,0 +1,42 @@
+/* Blender materials provide the detail; restrained composite motion keeps Pi4
+   video and touch responsive. Every decorative layer is pointer-transparent. */
+.ambient-sky .city-diorama{position:absolute;inset:auto 0 0;width:100%;height:208px;opacity:1;pointer-events:none;isolation:isolate;color:inherit}
+.city-architecture{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
+.sky-neutral .city-architecture{filter:saturate(.35);opacity:.6}
+.sky-fog .city-architecture{opacity:.62}
+.city-metro-track{position:absolute;left:0;right:0;bottom:14.7%;height:8.5%;overflow:hidden}
+.city-metro{position:absolute;bottom:0;width:17%;height:auto;max-height:100%;object-fit:contain;animation:city-metro-passage 43s linear infinite;animation-delay:-11s}
+@keyframes city-metro-passage{0%,8%{transform:translateX(-130%);opacity:0}9%{opacity:1}49%{transform:translateX(740%);opacity:1}50%,100%{transform:translateX(740%);opacity:0}}
+.city-radio-emitter{position:absolute;left:60.49%;top:18.001%;width:38px;height:38px;transform:translate(-50%,-50%)}
+.city-radio-emitter>i{position:absolute;inset:9px;border:1px solid #87ceb7;border-radius:50%;opacity:0;animation:city-transmission 3.4s ease-out infinite}
+.city-radio-emitter>i:nth-child(2){animation-delay:1.13s}.city-radio-emitter>i:nth-child(3){animation-delay:2.26s}
+.city-radio-emitter>span{position:absolute;left:18px;top:18px;width:3px;height:3px;background:#c6efd9;border-radius:50%}
+@keyframes city-transmission{0%{transform:scale(.25);opacity:.72}100%{transform:scale(2.3);opacity:0}}
+.city-bluetooth{position:absolute;left:21.678%;top:20.945%;width:19px;height:25px;transform:translate(-50%,-100%);color:#9bb1be;filter:drop-shadow(0 0 3px #76a3c830)}
+.city-bluetooth svg{width:16px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.city-bluetooth.connected{color:#8ecbdf}.city-bluetooth.connected i{position:absolute;right:0;bottom:1px;width:4px;height:4px;border-radius:50%;background:#8bd6ae;animation:city-connection 5s ease-in-out infinite}
+@keyframes city-connection{0%,100%{opacity:.4}50%{opacity:1}}
+.city-frost{position:absolute;left:0;right:0;bottom:0;height:10%;background:linear-gradient(transparent,#d5e6eb20);pointer-events:none}
+.ambient-sky.sky-day[data-thermal=heat]{background:linear-gradient(170deg,#ece4d4,#d4d7c4 65%,#a3b1a5)}
+.city-heat-haze{position:absolute;inset:-55% -5% 8%;background:radial-gradient(ellipse at 50% 34%,#dba4654a,transparent 68%);animation:city-heat-shimmer 9s ease-in-out infinite alternate;pointer-events:none}
+@keyframes city-heat-shimmer{from{opacity:.45;transform:translateY(0) skewX(-.35deg)}to{opacity:.85;transform:translateY(-3px) skewX(.35deg)}}
+.ambient-sky .scene-precipitation{position:absolute;inset:-10% -5% -20%;overflow:hidden;z-index:2;pointer-events:none;background:none;opacity:1;animation:none}
+.weather-particle{position:absolute;top:-8%;display:block;width:var(--particle-width);height:var(--particle-height);opacity:var(--particle-opacity);background-position:center;background-size:100% 100%;background-repeat:no-repeat;animation:weather-fall var(--particle-duration) var(--particle-delay) linear infinite;transform:translate3d(0,-50px,0)}
+.particle-raindrop{background-image:url('/ambient/raindrop-v1.png');background-size:1000% 100%;rotate:var(--particle-lean)}.particle-snowflake{background-image:url('/ambient/snowflake-v1.png')}.particle-ice{background-image:url('/ambient/ice-v1.png');background-size:180% 100%}
+@keyframes weather-fall{from{transform:translate3d(0,-50px,0)}to{transform:translate3d(calc(var(--particle-drift) - var(--weather-wind)),650px,0)}}
+.sky-thunder,.sky-thunder-hail{--storm-shade:#15222d}
+.sky-thunder::after,.sky-thunder-hail::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 37% 4%,#c9dbe9,transparent 65%);opacity:0;animation:weather-distant-lightning 31s 7s ease-in-out infinite;pointer-events:none;z-index:0}
+@keyframes weather-distant-lightning{0%,94%,100%{opacity:0}96%{opacity:.14}98%{opacity:0}}
+.sky-fog::before{content:'';position:absolute;inset:48% -10% 0;background:linear-gradient(transparent,#aab9bd45);z-index:2;pointer-events:none}
+.city-diorama[data-animate=false] *{animation-play-state:paused}
+.scene-warning-illustration{position:absolute;inset:0;pointer-events:none;z-index:2}
+.warning-tornado{position:absolute;width:82px;height:172px;left:76%;bottom:65px;opacity:.55}
+.warning-tornado img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;animation:warning-funnel-frame 3s steps(1) infinite}
+.warning-tornado img:nth-child(2){animation-delay:1s}.warning-tornado img:nth-child(3){animation-delay:2s}
+@keyframes warning-funnel-frame{0%,32%{opacity:1}33%,100%{opacity:0}}
+.warning-flood{position:absolute;bottom:0;left:-3%;right:-3%;height:40px;opacity:.55;overflow:hidden}
+.warning-flood img{width:100%;height:100%;object-fit:fill;animation:warning-water 9s ease-in-out infinite alternate}
+@keyframes warning-water{from{transform:translateX(-1%)}to{transform:translateX(1%)}}
+.warning-scene-caption{position:absolute;right:12px;bottom:8px;padding:4px 8px;border-radius:6px;background:#15242bdd;color:#e7e6d9;font-size:14px;line-height:18px}
+@media(prefers-reduced-motion:reduce){.city-diorama *,.weather-particle,.sky-thunder::after,.sky-thunder-hail::after{animation:none!important}.city-metro{display:none}.city-radio-emitter>i:first-child{opacity:.5;transform:none}.weather-particle{transform:translateY(var(--particle-still-y));opacity:.15}.sky-thunder::after,.sky-thunder-hail::after{display:none}}
+@media(prefers-reduced-motion:reduce){.warning-tornado img,.warning-flood img{animation:none}.warning-tornado img:first-child{opacity:1}.city-heat-haze{animation:none}}

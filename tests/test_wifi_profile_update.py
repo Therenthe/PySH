@@ -252,3 +252,54 @@ def test_failed_operation_releases_network_lock(monkeypatch):
     with pytest.raises(DeviceError):
         asyncio.run(device.network_connect("Hub", "credential", PROFILE))
     assert not device._network_lock.locked()
+
+
+def test_connect_uses_selected_visible_access_point_without_requesting_another_scan(monkeypatch):
+    """A UI scan immediately followed by Join can be rate-limited by NM."""
+    device, conn, events = fixture(monkeypatch)
+    original_proxy = device._proxy
+
+    class Wifi:
+        async def call_request_scan(self, options):
+            raise AssertionError("Join must not rescan a selected visible AP")
+
+        async def get_access_points(self):
+            return ["/ap"]
+
+    async def proxy(service, path, interface):
+        if path == "/wifi":
+            return Wifi()
+        return await original_proxy(service, path, interface)
+
+    monkeypatch.setattr(device, "_proxy", proxy)
+    result = asyncio.run(device.network_connect("Hub", "new-private-credential", PROFILE))
+    assert result["connected"] is True
+    assert events.index("checkpoint") < events.index("activate")
+
+
+@pytest.mark.parametrize("visible_after_scan", [False, True])
+def test_missing_selected_ap_is_scanned_once_before_activation(monkeypatch, visible_after_scan):
+    device, conn, events = fixture(monkeypatch)
+    original_proxy = device._proxy
+    scans = []
+
+    class Wifi:
+        async def call_request_scan(self, options):
+            scans.append(options)
+
+        async def get_access_points(self):
+            return ["/ap"] if scans and visible_after_scan else []
+
+    async def proxy(service, path, interface):
+        if path == "/wifi":
+            return Wifi()
+        return await original_proxy(service, path, interface)
+
+    monkeypatch.setattr(device, "_proxy", proxy)
+    if visible_after_scan:
+        assert asyncio.run(device.network_connect("Hub", "new-private-credential", PROFILE))["connected"]
+    else:
+        with pytest.raises(DeviceError, match="not_found"):
+            asyncio.run(device.network_connect("Hub", "new-private-credential", PROFILE))
+        assert "checkpoint" not in events and "activate" not in events
+    assert scans == [{}]

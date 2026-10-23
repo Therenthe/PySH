@@ -15,10 +15,12 @@ class FakeWriter:
         self.reader = reader
         self.values = values or {}
         self.error_for = error_for
+        self.commands = []
 
     def write(self, payload):
         request = json.loads(payload.decode("utf-8"))
         command = request["command"]
+        self.commands.append(command)
         error = "success"
         data = None
         if command[0] == "get_property":
@@ -247,4 +249,71 @@ def test_non_radio_playback_does_not_expose_a_station_name(kind):
         local = await player.play("/tmp/song.wav", title="Local File", kind=kind)
         assert local["station_name"] is None
         assert local["title"] == "Artist — Track"
+    asyncio.run(scenario())
+
+
+@pytest.mark.parametrize('state', ['error', 'ended', 'idle', 'paused', 'playing'])
+@pytest.mark.parametrize('action', ['resume', 'toggle'])
+def test_explicit_play_recovers_expired_radio_but_preserves_healthy_pause(state, action):
+    from unittest.mock import AsyncMock
+    async def scenario():
+        player = Player()
+        player._url = 'https://radio.example/live'
+        player._title = 'Chosen station'
+        player.start = AsyncMock()
+        player.status = AsyncMock(return_value={'state': state})
+        player.play = AsyncMock(return_value={'state': 'connecting'})
+        player._command = AsyncMock()
+        await player.command(action)
+        if state in {'error', 'ended', 'idle'}:
+            player.play.assert_awaited_once_with('https://radio.example/live', 'Chosen station', 'radio')
+            player._command.assert_not_awaited()
+        else:
+            player.play.assert_not_awaited()
+            player._command.assert_awaited_once_with(['set_property', 'pause', False] if action == 'resume' else ['cycle', 'pause'])
+    asyncio.run(scenario())
+
+
+def test_browser_pause_rejoins_live_radio_only_on_first_explicit_play():
+    async def scenario():
+        player=Player()
+        player._process=FakeProcess()
+        player._reader=asyncio.StreamReader()
+        player._writer=FakeWriter(player._reader, {'idle-active':False,'pause':True})
+        player._url='https://radio.example/live'
+        player._title='Chosen station'
+        await player.pause_for_external()
+        assert player._radio_return_pending is True
+        assert not any(command[0]=='loadfile' for command in player._writer.commands)
+        # Returning/navigation/state polling alone cannot start anything.
+        await player.status()
+        assert not any(command[0]=='loadfile' for command in player._writer.commands)
+        await player.command('resume')
+        assert [command for command in player._writer.commands if command[0]=='loadfile']==[['loadfile','https://radio.example/live','replace']]
+        assert player._radio_return_pending is False
+        player._handle_event({'event':'file-loaded'})
+        player._writer.values['pause']=False
+        await player.command('pause')
+        await player.command('resume')
+        assert len([command for command in player._writer.commands if command[0]=='loadfile'])==1
+        await player.pause_for_external()
+        await player.command('stop')
+        assert player._radio_return_pending is False and player._url==''
+        player._url='https://radio.example/live'
+        await player.pause_for_external()
+        await player.play('/tmp/fixture.wav','File','local')
+        assert player._radio_return_pending is False and player._kind=='audio'
+    asyncio.run(scenario())
+
+
+def test_external_local_audio_pause_does_not_force_restart():
+    from unittest.mock import AsyncMock
+    async def scenario():
+        player=Player();player._kind='audio';player._url='/tmp/fixture.wav'
+        player.start=AsyncMock();player._command=AsyncMock();player.status=AsyncMock(return_value={'state':'paused'})
+        await player.pause_for_external()
+        assert player._radio_return_pending is False
+        player._command.reset_mock()
+        await player.command('resume')
+        player._command.assert_awaited_once_with(['set_property','pause',False])
     asyncio.run(scenario())

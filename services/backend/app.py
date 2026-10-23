@@ -26,6 +26,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from .preferences import PreferenceStore, Station
 from .device import Device, DeviceError
 from .content import Content, ContentError
+from .weather_alerts import WeatherAlerts
 from .player import Player, PlayerError
 from .external import ExternalBrowser, ExternalError
 from .visualizer import OutputVisualizer
@@ -130,6 +131,10 @@ class External(StrictBody):
     service: Literal["youtube", "netflix", "spotify"]
 
 
+class ExternalNavigation(StrictBody):
+    target: Literal["home", "radio", "media"]
+
+
 class PreparationJob(StrictBody):
     job: str = Field(min_length=1, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
 
@@ -157,10 +162,14 @@ class Hub:
         self.player = Player()
         self.token = secrets.token_urlsafe(32)
         self.weather = None
+        self.alerts = None
+        self.alert_provider = WeatherAlerts(directory / "cache")
+        self._alerts_generation = 0
         self.tasks = []
         self.external = ExternalBrowser(directory, ROOT / "app" / "browser-extension")
         self.appliance = os.environ.get("PI_HUB_APPLIANCE") == "1"
         self.service_mode = False
+        self.external_navigation = None
         self.snapshots = {"network": {"available": False, "state": "initializing"}, "bluetooth": {"available": False, "devices": [], "prompts": []}, "audio": {"available": False, "outputs": []}}
         self.last_output = None
         self.audio_selected = False
@@ -274,7 +283,22 @@ class Hub:
     async def weather_loop(self):
         while True:
             await self.refresh_weather()
+            await self.refresh_alerts()
             await asyncio.sleep(60 if self.weather and self.weather.get('error') else 300)
+
+    async def refresh_alerts(self):
+        self._alerts_generation += 1
+        generation = self._alerts_generation
+        location = self.store.value.location
+        identity = location.model_dump() if location else None
+        try:
+            result = await self.alert_provider.snapshot(identity)
+        except Exception:
+            result = {"state": "unavailable", "updated_at": None, "alerts": [], "coverage": "Romania", "error": "weather_alerts_unavailable"}
+        current = self.store.value.location
+        if generation == self._alerts_generation and identity == (current.model_dump() if current else None):
+            self.alerts = result
+        return self.alerts
 
     def background(self, coroutine):
         task = asyncio.create_task(coroutine)
@@ -396,7 +420,7 @@ async def state(request: Request):
     last = hub.store.value.lastStation
     if playback.get('kind') == 'radio' and last and playback.get('url') == last.url:
         playback['station_uuid'] = last.uuid
-    return {"version": VERSION, "preferences": hub.store.export(), **hub.snapshots, "player": playback, "weather": hub.weather, "recovered": hub.store.recovered, "appliance": hub.appliance, "serviceMode": hub.service_mode, "power": await hub.power.snapshot(), "remote": hub.remote_presence.snapshot(), 'androidControl': await asyncio.to_thread(hub.android_control.snapshot)}
+    return {"version": VERSION, "preferences": hub.store.export(), **hub.snapshots, "player": playback, "weather": {**hub.weather, "alerts": hub.alerts} if hub.weather else None, "recovered": hub.store.recovered, "appliance": hub.appliance, "serviceMode": hub.service_mode, "externalNavigation": hub.external_navigation, "power": await hub.power.snapshot(), "remote": hub.remote_presence.snapshot(), 'androidControl': await asyncio.to_thread(hub.android_control.snapshot)}
 
 
 @app.patch('/api/android-control')
@@ -455,7 +479,9 @@ async def preferences(request: Request, patch: dict):
         await hub.visualizer.close()
     if "location" in patch:
         hub.weather = None
+        hub.alerts = None
         hub.background(hub.refresh_weather())
+        hub.background(hub.refresh_alerts())
     return result
 
 
@@ -722,6 +748,15 @@ async def documentation(request: Request, body: Documentation):
     return await hub.external.start(body.provider, executable, prefs.language, prefs.theme)
 
 
+@app.post("/api/external/navigation")
+async def external_navigation(request: Request, body: ExternalNavigation):
+    # Protected by the same loopback Origin + per-process token as owner actions.
+    # A destination is data, never a URL, shell command or filesystem path.
+    hub = request.app.state.hub
+    hub.external_navigation = {"id": secrets.token_urlsafe(16), "target": body.target}
+    return {"accepted": True}
+
+
 @app.post("/api/external")
 @serialized_media
 async def external(request: Request, body: External):
@@ -734,7 +769,7 @@ async def external(request: Request, body: External):
     hub.cache_playback({})
     await hub.visualizer.close()
     with contextlib.suppress(Exception):
-        hub.cache_playback(await hub.player.command("pause"))
+        hub.cache_playback(await hub.player.pause_for_external())
     prefs = hub.store.value
     local = datetime.now(ZoneInfo(prefs.timezone)).strftime("%H:%M")
     scheduled_night = prefs.nightEnabled and (prefs.nightStart <= local < prefs.nightEnd if prefs.nightStart <= prefs.nightEnd else local >= prefs.nightStart or local < prefs.nightEnd)

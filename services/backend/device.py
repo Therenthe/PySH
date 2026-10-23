@@ -385,8 +385,17 @@ class Device:
                 if int(props.get("DeviceType", 0)) != 2:
                     continue
                 wifi = await self._proxy(NM, path, NM_WIFI)
-                await wifi.call_request_scan({})
-                await asyncio.sleep(2)
+                try:
+                    await wifi.call_request_scan({})
+                    await asyncio.sleep(2)
+                except DBusError as exc:
+                    # NM rate-limits scans, including a second request from
+                    # opening the network sheet. Its current AP list remains
+                    # usable. Do not conceal authorization/radio-off failures.
+                    if (exc.type != "org.freedesktop.NetworkManager.Device.NotAllowed"
+                            or int(props.get("State", 0)) not in (30, 40, 50, 60, 70, 80, 100)
+                            or not await wifi.get_access_points()):
+                        raise
                 access_points = await wifi.get_access_points()
                 active = await wifi.get_active_access_point()
                 by_ssid: dict[str, dict[str, Any]] = {}
@@ -475,12 +484,23 @@ class Device:
                     continue
                 wifi_devices.append(path)
                 wifi = await self._proxy(NM, path, NM_WIFI)
-                await wifi.call_request_scan({})
-                await asyncio.sleep(1)
-                for ap_path in await wifi.get_access_points():
+                access_points = await wifi.get_access_points()
+                device_matches = []
+                for ap_path in access_points:
                     ap = await self._props(NM, ap_path, NM_AP)
                     if self._ssid(ap.get("Ssid", [])) == ssid:
-                        matching.append((path, ap_path, ap))
+                        device_matches.append((path, ap_path, ap))
+                # Join normally follows the UI's scan. Requesting another
+                # scan here can be rejected by NM before activation even
+                # starts. Use the selected visible AP and scan only if absent.
+                if not device_matches:
+                    await wifi.call_request_scan({})
+                    await asyncio.sleep(1)
+                    for ap_path in await wifi.get_access_points():
+                        ap = await self._props(NM, ap_path, NM_AP)
+                        if self._ssid(ap.get("Ssid", [])) == ssid:
+                            device_matches.append((path, ap_path, ap))
+                matching.extend(device_matches)
             if not wifi_devices:
                 raise DeviceError("unavailable")
             if not matching:
