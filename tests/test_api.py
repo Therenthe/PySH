@@ -31,6 +31,14 @@ def client(tmp_path):
     return TestClient(app, base_url="http://127.0.0.1:8765")
 
 
+def test_external_context_contains_only_public_ui_enums_and_keeps_origin_boundary(client):
+    response = client.get('/api/external/context')
+    assert response.status_code == 200
+    assert set(response.json()) == {'language', 'theme'}
+    assert response.json()['theme'] in ('ink', 'night')
+    assert client.get('/api/external/context', headers={'Origin': 'https://www.youtube.com'}).status_code == 403
+
+
 def test_session_and_preference_roundtrip(client):
     token = client.get('/api/session').json()['token']
     response = client.patch('/api/preferences', headers={'X-Hub-Token':token}, json={'language':'en'})

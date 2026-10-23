@@ -126,6 +126,7 @@ def test_broken_output_still_cleanup(host):
 
 
 def test_status_exposes_only_validated_language(host, monkeypatch, tmp_path):
+    monkeypatch.setattr(host.urllib.request, "build_opener", Mock(side_effect=OSError))
     monkeypatch.setenv("PI_HUB_DATA", str(tmp_path))
     monkeypatch.setattr(host.Keyboard, "available", lambda self: True)
     path = tmp_path / "preferences.json"
@@ -134,6 +135,23 @@ def test_status_exposes_only_validated_language(host, monkeypatch, tmp_path):
     for contents in ['{"language":"unknown"}', '[]', 'bad-json']:
         path.write_text(contents)
         assert host.preferred_language() == "ro"
+
+
+def test_status_theme_is_filtered_and_only_requests_fixed_loopback_context(host, monkeypatch):
+    response = Mock()
+    response.__enter__ = Mock(return_value=response)
+    response.__exit__ = Mock(return_value=False)
+    response.read.return_value = b'{"language":"en","theme":"night","password":"never_return"}'
+    opener = Mock()
+    opener.open.return_value = response
+    factory = Mock(return_value=opener)
+    monkeypatch.setattr(host.urllib.request, "build_opener", factory)
+    assert host.presentation() == {"language": "en", "theme": "night"}
+    request = opener.open.call_args.args[0]
+    assert request.full_url == "http://127.0.0.1:8765/api/external/context"
+    assert request.get_header("Origin") == "http://127.0.0.1:8765"
+    assert opener.open.call_args.kwargs == {"timeout": 2}
+    response.read.assert_called_once_with(1025)
 
 
 def test_origin_uses_manifest_key_not_service_site(host, tmp_path, monkeypatch):

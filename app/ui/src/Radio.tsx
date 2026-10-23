@@ -9,6 +9,10 @@ export type RadioStation = {
   [key: string]: unknown;
 };
 
+function FavoriteIcon({filled=false}:{filled?:boolean}) {
+  return <svg width="20" height="20" viewBox="0 0 24 24" fill={filled?'currentColor':'none'} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>;
+}
+
 /** Transport flags include pending actions/audio availability; previous/next select stations. */
 export type RadioProps = {
   language: 'en' | 'ro'; stations: RadioStation[]; favorites: RadioStation[];
@@ -48,7 +52,7 @@ export function StationArtwork({ station, name, large = false }: { station?: Rad
   return <span className={`radio-artwork ${large ? 'radio-artwork-large' : ''}`} aria-hidden="true">
     {source && failed !== source
       ? <img src={source} alt="" referrerPolicy="no-referrer" loading={large ? 'eager' : 'lazy'} onError={() => setFailed(source)} />
-      : <span className="radio-monogram">{initials || '♫'}</span>}
+      : <span className="radio-monogram">{initials || <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l11-2v13M9 8l11-2"/><ellipse cx="6" cy="18" rx="3" ry="2"/><ellipse cx="17" cy="16" rx="3" ry="2"/></svg>}</span>}
   </span>;
 }
 
@@ -77,7 +81,7 @@ export function Radio(props: RadioProps) {
             <button className="filter-button" onClick={onCountry} disabled={busy}>{icon('globe', 16)}<span>{country || t('country')}</span></button>
             <button className="filter-button" onClick={onLanguage} disabled={busy}><span>{radioLanguage || t('language')}</span></button>
             <button className={`filter-button favorites-filter ${favoritesOnly ? 'active' : ''}`} onClick={onFavoritesFilter} aria-pressed={favoritesOnly}>
-              <span aria-hidden="true">♥</span><span>{t('favorites')}</span><small>{favorites.length}</small>
+              <FavoriteIcon filled={favoritesOnly}/><span>{t('favorites')}</span><small>{favorites.length}</small>
             </button>
           </div>
         </div>
@@ -94,7 +98,7 @@ export function Radio(props: RadioProps) {
                   <span className="station-txt"><b>{station.name}</b><small>{[station.country, station.language, station.codec].filter(Boolean).join(' · ') || (ro ? 'Post de radio' : 'Radio station')}</small></span>
                   {selected && <span className="station-play" aria-hidden="true">{icon(isStationPausing(station) ? 'pause' : 'play', 17)}</span>}
                 </button>
-                <button className={`favorite-button ${favorite ? 'favorited' : ''}`} disabled={busy || favoriteBusy} aria-busy={favoriteBusy} onClick={() => onFavorite(station)} aria-label={`${favorite ? t('removeFavorite') : t('addFavorite')}: ${station.name}`} aria-pressed={favorite}><span aria-hidden="true">♥</span></button>
+                <button className={`favorite-button ${favorite ? 'favorited' : ''}`} disabled={busy || favoriteBusy} aria-busy={favoriteBusy} onClick={() => onFavorite(station)} aria-label={`${favorite ? t('removeFavorite') : t('addFavorite')}: ${station.name}`} aria-pressed={favorite}><FavoriteIcon filled={favorite}/></button>
               </div>;
             }) : <div className={`empty-state ${favoritesOnly ? 'favorites-empty' : ''}`}>
               {icon('radio', 28)}<b>{favoritesOnly ? t('favoritesEmpty') : t('noStations')}</b>
@@ -105,9 +109,9 @@ export function Radio(props: RadioProps) {
       </section>
       <section className="radio-side" aria-label={t('nowPlaying')}>
         <div className="mini-player">
-          <span className="eyebrow">{remembered ? (ro ? 'Ultimul post' : 'Last station') : currentUrl?t('nowPlaying'):t('radio')}</span>
+          {remembered&&<span className="radio-remembered">{ro ? 'Ultimul post' : 'Last station'}</span>}
           <StationArtwork station={isRadio ? currentStation : null} name={isRadio ? stationName : ''} large />
-          <b className="radio-station-name"><MarqueeText text={title} active={playerState==='playing'}/></b>
+          <h2 className="radio-station-name"><MarqueeText text={title} active={playerState==='playing'}/></h2>
           {metadata && <span className="radio-track-name"><MarqueeText text={metadata} active={playerState==='playing'}/></span>}
           <small className={`state-text ${playerState}`} role="status">{!currentUrl&&!remembered?(ro?'Alege un post din listă.':'Choose a station from the list.'):status}</small>
           {visualizer && <div className="radio-visualizer">{visualizer}</div>}

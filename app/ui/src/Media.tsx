@@ -21,11 +21,11 @@ const basename=(path:string)=>path.split(/[\\/]/).filter(Boolean).at(-1)||'';
 
 /** Browsing and search stay local to the listing; all device mutations belong to App. */
 export function Media({language,media,loading=false,busy=false,localMediaPending=false,externalMediaPending=false,deletionPending=false,localAudioError=false,localAudioFilename='',localAudioErrorMessage='',audioReady,currentPath,playerState,deleteDisabledPaths=[],t,icon,statusText,onBrowse,onSelect,onService,onReplayCurrent,onDelete,onSearch}:MediaProps){
- const ro=language==='ro',[section,setSection]=useState<'files'|'services'>('files'),[query,setQuery]=useState(''),[searchPending,setSearchPending]=useState(false),[browsing,setBrowsing]=useState(false),browseSerial=useRef(0);
+ const ro=language==='ro',[section,setSection]=useState<'files'|'services'>('files'),[query,setQuery]=useState(''),[searchPending,setSearchPending]=useState(false),[browsing,setBrowsing]=useState(false),[disclosed,setDisclosed]=useState<string|null>(null),browseSerial=useRef(0),folderHeading=useRef<HTMLDivElement>(null);
  const pending=busy||localMediaPending||externalMediaPending||deletionPending;
  const items=media.items||[],matches=items.filter(item=>searchKey(item.name).includes(searchKey(query))),hasParent=Boolean(media.parent&&media.parent!==media.path);
  const inFolder=Boolean(media.path),folderName=inFolder?basename(media.path||''):t('root');
- const browse=async(path?:string)=>{const serial=++browseSerial.current;setBrowsing(true);setQuery('');try{await onBrowse(path);}finally{if(serial===browseSerial.current)setBrowsing(false);}};
+ const browse=async(path?:string)=>{const serial=++browseSerial.current;setBrowsing(true);setQuery('');setDisclosed(null);try{const result=await onBrowse(path);if(result!==false&&serial===browseSerial.current)requestAnimationFrame(()=>folderHeading.current?.focus());}finally{if(serial===browseSerial.current)setBrowsing(false);}};
  const search=async()=>{if(!onSearch||pending||searchPending)return;setSearchPending(true);try{const result=await onSearch(query);if(result!==null)setQuery(result.trim());}finally{setSearchPending(false);}};
  const deleteLabel=ro?'Șterge fișierul':'Delete file';
  return <div className="media-page media-redesign">
@@ -39,7 +39,7 @@ export function Media({language,media,loading=false,busy=false,localMediaPending
      {hasParent&&<button className="media-parent" aria-label={t('parentFolder')} disabled={pending} onClick={()=>void browse(media.parent||'')}>{icon('back',20)}</button>}
      {(inFolder||browsing||loading)&&<button className="media-root" disabled={pending} onClick={()=>void browse('')}>{t('root')}</button>}
      {inFolder&&<span className="media-crumb-separator" aria-hidden="true">/</span>}
-     <div className="library-path"><b>{folderName}</b><span className="media-sr-only">{media.path||''}</span></div>
+     <div ref={folderHeading} className="library-path" tabIndex={-1} role="heading" aria-level={2}><b>{folderName}</b><span className="media-sr-only">{media.path||''}</span></div>
     </div>
     <span className="media-file-count" aria-label={ro?'Număr de elemente':'Item count'}>{matches.length}</span>
     {onSearch&&<button className={`media-search-toggle ${query?'active':''}`} disabled={pending||searchPending} onClick={()=>void search()} aria-label={ro?'Caută în acest dosar':'Search this folder'}>{icon('search',21)}</button>}
@@ -53,19 +53,21 @@ export function Media({language,media,loading=false,busy=false,localMediaPending
      const directory=isMediaDirectory(item),video=Boolean(isVideo(item)),selected=Boolean(!directory&&currentPath===item.path&&playerState&&playerState!=='idle');
      const canDelete=!directory&&item.deletable===true&&typeof item.delete_token==='string'&&item.delete_token.length>0;
      const active=deleteDisabledPaths.includes(item.path)||Boolean(selected&&['playing','paused','buffering','connecting'].includes(playerState||''));
-     return <div className={`media-entry ${selected?'selected':''}`} key={item.path}>
+     return <div data-media-path={item.path} className={`media-entry ${selected?'selected':''}`} key={item.path}>
       <button className="media-item" disabled={pending||loading||browsing} onClick={()=>directory?void browse(item.path):onSelect(item,video)}>
        <span className={`file-icon ${directory?'folder':video?'video':'audio'}`}>{icon(directory?'folder':video?'media':'speaker',26)}</span>
        <span className="media-file-copy"><b>{item.name}</b><small>{directory?t('folders'):formatMediaSize(item.size,language)}</small></span>
        <span className="media-file-action" aria-hidden="true">{icon(directory?'next':'play',20)}</span>
       </button>
+      <button className="media-name-toggle" aria-label={`${ro?'Arată numele complet':'Show full name'}: ${item.name}`} aria-expanded={disclosed===item.path} aria-controls={`media-name-${items.indexOf(item)}`} onClick={()=>setDisclosed(old=>old===item.path?null:item.path)}><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v.1"/></svg></button>
       {canDelete&&onDelete&&<button className="media-delete" disabled={pending||loading||browsing||active} title={active?(ro?'Oprește redarea înainte de ștergere':'Stop playback before deleting'):deleteLabel} aria-label={`${deleteLabel}: ${item.name}`} onClick={()=>onDelete(item)}><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg></button>}
+      <div hidden={disclosed!==item.path} className="media-full-name" id={`media-name-${items.indexOf(item)}`}>{item.name}</div>
      </div>;
     }):loading||browsing?null:<div className="empty-state">{icon(query?'search':'folder',32)}<b>{query?(ro?'Niciun fișier găsit':'No matching files'):t('noFiles')}</b><span>{query?(ro?'Caută alt nume în acest dosar.':'Try another name in this folder.'):t('selectFile')}</span>{query&&<button className="outline" onClick={()=>setQuery('')}>{ro?'Șterge căutarea':'Clear search'}</button>}</div>}
    </div>
   </section>:<section className="service-panel" aria-label={t('services')} aria-busy={externalMediaPending}>
    <p className="muted" role={externalMediaPending?'status':undefined}>{externalMediaPending?(ro?'Se deschide serviciul…':'Opening service…'):t('websiteOpens')}</p>
-   <div className="media-service-list">{['youtube','netflix','spotify'].map((id,index)=><button className="service-row" key={id} disabled={pending} onClick={()=>onService(id)}><span className={`service-logo service-${id}`} aria-hidden="true">{['▶','N','●'][index]}</span><span className="media-service-copy"><b>{t(id)}</b><small>{ro?'Deschide site-ul oficial':'Open official website'}</small></span><span className="service-arrow">{icon('next',22)}</span></button>)}</div>
+   <div className="media-service-list">{['youtube','netflix','spotify'].map(id=><button className="service-row" key={id} disabled={pending} onClick={()=>onService(id)}><span className={`service-logo service-${id}`} aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none">{id==='youtube'?<path d="m9 6 10 6-10 6Z" fill="currentColor"/>:id==='spotify'?<g stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"><path d="M5 8c4-1.5 10-1 14 1M6 12c4-1 8-0.7 12 1M7 16c3-.7 6-.4 9 1"/></g>:<g fill="currentColor"><path d="M5 3h4v18H5zM15 3h4v18h-4z"/><path d="m5 3 4 0 10 18h-4Z"/></g>}</svg></span><span className="media-service-copy"><b>{t(id)}</b><small>{ro?'Deschide site-ul oficial':'Open official website'}</small></span><span className="service-arrow">{icon('next',22)}</span></button>)}</div>
   </section>}
  </div>;
 }

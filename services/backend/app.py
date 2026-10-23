@@ -33,6 +33,7 @@ from .visualizer import OutputVisualizer
 from .power import PowerController, RemotePresence
 from .artwork import Artwork
 from .remote_control import AndroidControl, RemoteError
+from .presentation import presentation_context
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = Path(os.environ.get("PI_HUB_DATA", str(Path.home() / ".local/share/pi-smart-hub")))
@@ -757,6 +758,12 @@ async def external_navigation(request: Request, body: ExternalNavigation):
     return {"accepted": True}
 
 
+@app.get("/api/external/context")
+async def external_context(request: Request):
+    hub = request.app.state.hub
+    return presentation_context(hub.store.value, hub.weather)
+
+
 @app.post("/api/external")
 @serialized_media
 async def external(request: Request, body: External):
@@ -771,9 +778,7 @@ async def external(request: Request, body: External):
     with contextlib.suppress(Exception):
         hub.cache_playback(await hub.player.pause_for_external())
     prefs = hub.store.value
-    local = datetime.now(ZoneInfo(prefs.timezone)).strftime("%H:%M")
-    scheduled_night = prefs.nightEnabled and (prefs.nightStart <= local < prefs.nightEnd if prefs.nightStart <= prefs.nightEnd else local >= prefs.nightStart or local < prefs.nightEnd)
-    theme = "night" if prefs.theme == "night" or scheduled_night else "ink"
+    theme = presentation_context(prefs, hub.weather)["theme"]
     result = await hub.external.start(body.service, executable, prefs.language, theme)
     return JSONResponse(result, status_code=202 if result.get("preparing") else 200)
 

@@ -1,5 +1,13 @@
 # Plan urmărit de livrare UI/UX — 2026-10-04
 
+## Audit UI integral și rafinare — în verificare 23–24 octombrie
+
+Toate zonele hubului sunt reevaluate în EN/RO × Ink/Noapte. Baseline: 280 stări
+capturate independent; sertarul extern și suprafețele comune sunt rafinate,
+iar AUD-01/03–09 au remedieri cu probe locale. Urmează auditul independent al
+candidatului înghețat, regresia și verificarea pe Raspberry. [Plan și dovadă](evidence/ui-polish-2026-10-23.md).
+AUD-02 rămâne remediat anterior. Acceptarea completă nu este închisă prin acest lot.
+
 ## Oraș și animații — instalate pe `1371bbff602e`
 
 Sursă `6ad7ad5`, 106 hashuri / 29 de preferințe verificate, radio reluat și backup PC
