@@ -52,6 +52,36 @@ Private local evidence (not release assets): `.runtime/blender-sky-review/`,
 `.runtime/blender-sky-refined-20261023/`, and the shortened 800×480 previews
 `.runtime/sky3d-preview-{night,day,waxing,overcast}.png`.
 
-This is browser/source verification. Native Raspberry performance, final physical
-display approval and whole-product acceptance remain separate checks. No numeric
-quality score or complete product acceptance is claimed here.
+## Scoped native observation
+
+Application300f61c313c3/source86b0e79 was installed after a separately verified,
+readable PC backup;81 runtime hashes and29 preferences match. Existing-profile
+YouTube gesture/Return to Home, Radio and Media, profile/search hit testing,
+explicit Play and no Return autoplay passed. Normal browsers and original
+preferences/playback were restored; temporary diagnostic ports were closed.
+
+On the actual800×480 panel scene, all ten sky assets matched installed hashes
+and decoded successfully. Wi-Fi/Ethernet links and active-AP signal matched real
+state; network control target was48px high. The genuine weather was fog: no Moon
+or stars were rendered. This capture therefore does not certify a visible native
+Moon phase; the source/browser phase and horizon tests remain separate evidence.
+
+The50 published USNO2026 primary phase instants are retained as cited test
+fixtures. Worst deviation from nominal illuminated fraction at those instants
+was1.7165 percentage points; this is not a global ephemeris error bound. Atlas
+rounding is separately bounded at1.23 percentage points.
+
+A six-second native renderer scheduling sample had345 frames, median16.6ms,
+p9516.8ms and one interval over50ms. Normal radio/Home observation over nine
+seconds measured626–637MiB combined PSS and31.19% CPU on the four-core machine,
+with16 stable process identities, selected radio/audio and preferences preserved.
+These short observations do not certify idle memory, physical latency, video or
+eight-hour stability. Physical Ethernet→Wi-Fi→Ethernet cable/radio retest passed:
+40seconds per direction, actual default routes and fresh ordinary HTTPS egress,
+same advancing radio/audio ready, preferences unchanged and no Play/network
+mutation. Owner confirmed audible radio after both cable moves. This is the
+observed saved-network configuration, not a claim about every AP/network failure.
+Complete frozen-candidate browser regression passed1112 cases in EN/RO.603 Python
+cases passed with32 platform skips;121 extension/policy checks, TypeScript, Vite
+and repository inventory passed. No numeric quality score or complete product
+acceptance is claimed.

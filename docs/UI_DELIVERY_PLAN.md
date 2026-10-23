@@ -1,6 +1,6 @@
 # Plan urmărit de livrare UI/UX — 2026-10-04
 
-Acest inventar păstrează cerințele din conversație, inclusiv cele vechi. Nu acordă note sau acceptare din descrieri. GitHub este sursa canonică; implementările nepublicate sunt lucru local. Candidatul instalat actual: 5c76b8aff50d/source012ca8d; schimbare exclusivă a stelelor, funcțiile c1e2 păstrate. Documentele pot avansa separat de sursa runtime-ului. Toate30criteriile complete rămân OPEN în acceptance.json; dovada HW-01 de pe670c este istorică. O probă veche nu certifică un candidat nou.
+Acest inventar păstrează cerințele din conversație, inclusiv cele vechi. Nu acordă note sau acceptare din descrieri. GitHub este sursa canonică; implementările nepublicate sunt lucru local. Candidatul instalat actual:300f61c313c3/source86b0e79; cer Blender și indicatori reali de rețea, cu funcțiile anterioare păstrate. Stările și buildurile din rânduri sunt dovezi istorice; probele noi sunt în PLAN_2026_10_23.md. Documentele pot avansa separat de sursa runtime-ului. Toate30criteriile complete rămân OPEN în acceptance.json; dovada HW-01 de pe670c este istorică. O probă veche nu certifică un candidat nou.
 
 Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4defectele auditorilor și tur complet →5acceptare nativă și imagine finală. Cerințele noi se adaugă; nu înlocuiesc restanțele.
 
@@ -73,7 +73,9 @@ Actualizare 2026-10-04: UI-40 anulat explicit; continuă UI-39 și toate restan�
 Dovada finală pentru UI-34/35/41/42/43: [media-confetti-2026-10-04](evidence/media-confetti-2026-10-04.md). Verificate 51 hashuri, nouă preferințe față de backup și radio reluat. Toate cele 14 preferințe schimbate de audit restaurate; diagnosticul privat oprit. Turul a folosit acțiuni injectate în Chromium, nu certifică gestul fizic ori toate criteriile de produs. Restanțele anterioare rămân în inventar; UI-40 rămâne anulat.
 
 Restaurare limitată cerută de utilizator: stelele SVG și gradientul original din4bb708b, fără textura fotografică. Instalat5c76/source012;34probe afectate PASS, captură nativă inspectată,51hashuri/nouă preferințe/radio verificate. Nicio altă cerință nouă implementată în acest pas. Vezi [dovada](evidence/original-stars-2026-10-04.md).
-# Iterația cer/rețea —2026-10-23
+## Iterația cer/rețea —2026-10-23
 
-Reperul utilizatorului „Varianta Back” este păstrat separat. Lotul nou păstrează toate cerințele de mai jos: cer Blender cu stele rare, Lună în faza reală pentru dată/oră, nori/avioane/Soare/meteori, indicatori distincți Wi-Fi/Ethernet și recuperarea radioului când ruta se schimbă. Auditul vizual local nu certifică atingerea sau performanța pe Pi. Starea fiecărei probe și responsabilii sunt în [planul activ](PLAN_2026_10_23.md); restanțele anterioare nu sunt anulate.
+Reperul utilizatorului „Varianta Back” este păstrat separat. Lotul nou păstrează cerințele inventariate: cer Blender cu stele rare, Lună în faza reală pentru dată/oră, nori/avioane/Soare/meteori, indicatori distincți Wi-Fi/Ethernet și recuperarea radioului când ruta se schimbă. Auditul vizual local nu certifică atingerea sau performanța pe Pi. Starea fiecărei probe și responsabilii sunt în [planul activ](PLAN_2026_10_23.md); restanțele anterioare nu sunt anulate.
 
+
+Verificarea lotului300f/source86b0:1112browser/603Python PASS,32platform skips;81hashuri/29preferințe verificate după update; cer/YouTube/rețea auditate nativ și Ethernet↔Wi-Fi cu radio continuu confirmat fizic. Rândurile UI anterioare rămân cerințe, iar acceptarea lor completă se face în matricea de produs.

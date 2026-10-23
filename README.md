@@ -2,7 +2,7 @@
 
 Hub tactil EN/RO pentru Raspberry Pi 4 (4 GB), LCD DSI 7″, 800 × 480: ceas, vreme, radio, media locală și conectivitate.
 
-**Stare: implementare existentă importată; acceptarea produsului este incompletă.** Nu există încă o imagine PySH OS construită și validată. [STATUS.md](STATUS.md) indică rezultatele și următorul pas.
+**Stare: PySH OS experimental instalat pe dispozitiv; acceptarea produsului rămâne incompletă.** Pentru iterația curentă citește [planul activ](docs/PLAN_2026_10_23.md), [dovezile cerului Blender și verificările native](docs/evidence/blender-sky-2026-10-23.md) și [inventarul integral UI/UX](docs/UI_DELIVERY_PLAN.md), împreună cu [STATUS.md](STATUS.md). Probe ale unui candidat anterior nu certifică o versiune nouă. Cele30 criterii complete rămân OPEN.
 
 - [Produs](docs/PRODUCT.md), [arhitectură](docs/ARCHITECTURE.md), [hardware](docs/HARDWARE.md)
 - [Dezvoltare și verificări](docs/DEVELOPMENT.md), [operare/recuperare](docs/OPERATIONS.md), [securitate](docs/SECURITY.md)
