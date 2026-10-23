@@ -1,5 +1,22 @@
 # Plan urmărit de livrare UI/UX — 2026-10-04
 
+## Reorganizare UX — instalată 24 octombrie
+
+Runtime `dd9a018bf755`, sursă `38b07da`: șase categorii orientate către sarcini,
+13 secțiuni, comenzi rapide distincte, revenire la pagina de origine și legături
+între configurările asociate. Radio fără boxă și resetarea filtrelor au recuperare
+directă; tastatura șterge textul într-o atingere. Volumul nu mai provoacă navigare
+accidentală, iar recuperarea audio rămâne integral vizibilă, inclusiv la erori lungi.
+
+Audituri independente repetate și iterații R1–R7 păstrate. Regresia afectată: 446/470
+PASS inițial; toate cele 24 probe cu locatoare vechi au retest PASS în lotul R4 de84.
+Ultimul lot Quick: 16/16 PASS; B final 52/52 verificări. 650 Python / 82 extension
+PASS. Instalare: 107 hashuri / 29 preferințe; backup PC verificat și e1a82fcc1327
+păstrat. Tur nativ PASS: 84 capturi, patru contexte, 13 secțiuni, revenire și volum;
+preferințe/radio restaurate, diagnostic închis. Toate cele30 criterii complete OPEN.
+[Dovezi și limite](evidence/ux-reorganization-2026-10-24.md).
+
+
 ## Audit UI integral și rafinare — instalat 24 octombrie
 
 Runtime `e1a82fcc1327`, sursă `0c912de`: sertar extern rafinat, suprafețe și

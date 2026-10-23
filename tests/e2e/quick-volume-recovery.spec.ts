@@ -74,6 +74,7 @@ for (const theme of ['ink', 'night'] as const) {
           const alert = quick.getByRole('alert');
           await expect(alert).toBeVisible();
           expect(state.audio.volume).toBe(40);
+          const bodyClip = (await quick.locator('.modal-body').boundingBox())!;
           // Inspect the targets before Playwright's tap can auto-scroll them.
           for (const name of [ro ? 'Încearcă din nou' : 'Try again', ro ? 'Închide' : 'Close']) {
             const control = alert.getByRole('button', {name, exact: true});
@@ -84,6 +85,10 @@ for (const theme of ['ink', 'night'] as const) {
             expect(rect.y).toBeGreaterThanOrEqual(0);
             expect(rect.x + rect.width).toBeLessThanOrEqual(800);
             expect(rect.y + rect.height).toBeLessThanOrEqual(480);
+            expect(Math.round((bodyClip.x - rect.x) * 1000) / 1000).toBeLessThanOrEqual(0);
+            expect(Math.round((bodyClip.y - rect.y) * 1000) / 1000).toBeLessThanOrEqual(0);
+            expect(Math.round((rect.x + rect.width - bodyClip.x - bodyClip.width) * 1000) / 1000).toBeLessThanOrEqual(0);
+            expect(Math.round((rect.y + rect.height - bodyClip.y - bodyClip.height) * 1000) / 1000).toBeLessThanOrEqual(0);
             expect(await control.evaluate(el => {
               const b = el.getBoundingClientRect();
               return [.1, .5, .9].every(fraction => el.contains(document.elementFromPoint(b.x + b.width / 2, b.y + b.height * fraction)));
@@ -105,4 +110,77 @@ for (const theme of ['ink', 'night'] as const) {
       }
     });
   }
+
+  test(`Quick retains long output recovery carried from Audio ${theme}`, async ({page}, info) => {
+    const ro = info.project.name.endsWith('ro');
+    const longName = 'Fixture output ' + 'W'.repeat(400);
+    const state: any = {
+      preferences: {language: ro ? 'ro' : 'en', theme, setupComplete: true, nightEnabled: false, screensaverMinutes: 0},
+      network: {available: true, state: 'connected', connection: 'Fixture Ethernet'},
+      bluetooth: {available: true, devices: [], prompts: []},
+      audio: {available: true, ready: true, volume: 40, mute: false, outputs: [{id: 'existing', description: 'Existing speaker', active: true}, {id: 'long-output', description: longName, active: false}]},
+      player: {kind: 'radio', state: 'playing', station_name: 'Fixture Radio', url: 'https://example.org/radio'},
+      weather: {},
+      power: {standby: false, brightness: {available: true, value: 80}, timer: {}, daily: {enabled: false, time: '23:00'}},
+    };
+    const writes: unknown[] = [];
+    await page.route('**/api/**', async route => {
+      const request = route.request(), path = new URL(request.url()).pathname;
+      let json: any = {ok: true};
+      if (path === '/api/session') json = {token: 'fixture-only'};
+      else if (path === '/api/state') json = state;
+      else if (path === '/api/audio' && request.method() === 'POST') {
+        writes.push(request.postDataJSON());
+        if (writes.length === 1) {
+          await route.fulfill({status: 503, json: {error: 'audio_unavailable'}});
+          return;
+        }
+        state.audio.outputs.forEach((output: any) => { output.active = output.id === 'long-output'; });
+        json = state.audio;
+      }
+      await route.fulfill({json});
+    });
+    await page.goto('/');
+    await page.locator('.quick-controls-button').tap();
+    await page.locator('.quick-modal>button').nth(2).tap();
+    const audio = page.getByRole('dialog', {name: 'Audio', exact: true});
+    await expect(audio).toBeVisible();
+    await audio.locator('.modal-list button').last().tap();
+    await expect(audio.getByRole('alert')).toContainText(longName);
+    await audio.locator('header').getByRole('button', {name: ro ? 'Închide' : 'Close', exact: true}).tap();
+    // The persistent recovery banner replaces the header; Settings remains an
+    // available user route to Quick controls without dismissing the error.
+    await page.locator('.main-nav button').nth(3).tap();
+    await page.locator('.settings-quick-control').tap();
+    const quick = page.getByRole('dialog', {name: ro ? 'Comenzi rapide' : 'Quick controls', exact: true});
+    const alert = quick.getByRole('alert');
+    await expect(alert).toContainText(longName);
+    const bodyClip = (await quick.locator('.modal-body').boundingBox())!;
+    for (const name of [ro ? 'Încearcă din nou' : 'Try again', ro ? 'Închide' : 'Close']) {
+      const control = alert.getByRole('button', {name, exact: true});
+      const rect = (await control.boundingBox())!;
+      expect(Math.round(rect.width * 1000) / 1000).toBeGreaterThanOrEqual(48);
+      expect(Math.round(rect.height * 1000) / 1000).toBeGreaterThanOrEqual(48);
+      expect(rect.x).toBeGreaterThanOrEqual(0);
+      expect(rect.y).toBeGreaterThanOrEqual(0);
+      expect(rect.x + rect.width).toBeLessThanOrEqual(800);
+      expect(rect.y + rect.height).toBeLessThanOrEqual(480);
+      expect(Math.round((bodyClip.x - rect.x) * 1000) / 1000).toBeLessThanOrEqual(0);
+      expect(Math.round((bodyClip.y - rect.y) * 1000) / 1000).toBeLessThanOrEqual(0);
+      expect(Math.round((rect.x + rect.width - bodyClip.x - bodyClip.width) * 1000) / 1000).toBeLessThanOrEqual(0);
+      expect(Math.round((rect.y + rect.height - bodyClip.y - bodyClip.height) * 1000) / 1000).toBeLessThanOrEqual(0);
+      expect(await control.evaluate(el => {
+        const b = el.getBoundingClientRect();
+        return [.1, .5, .9].every(fraction => el.contains(document.elementFromPoint(b.x + b.width / 2, b.y + b.height * fraction)));
+      })).toBe(true);
+    }
+    await page.screenshot({path: info.outputPath('long-output-recovery-before-scroll.png')});
+    await alert.getByRole('button', {name: ro ? 'Încearcă din nou' : 'Try again', exact: true}).tap();
+    await expect(alert).toHaveCount(0);
+    await expect(quick).toBeVisible();
+    await expect(quick.getByRole('button', {name: ro ? 'Toate setările' : 'All settings', exact: true})).toBeVisible();
+    expect(writes).toEqual([{output: 'long-output'}, {output: 'long-output'}]);
+    expect(state.audio.outputs.find((output: any) => output.id === 'long-output').active).toBe(true);
+    await page.screenshot({path: info.outputPath('long-output-retry-retains-quick.png')});
+  });
 }

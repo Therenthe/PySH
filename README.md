@@ -2,9 +2,9 @@
 
 Hub tactil EN/RO pentru Raspberry Pi 4 (4 GB), LCD DSI 7″, 800 × 480: ceas, vreme, radio, media locală și conectivitate.
 
-Ultimul lot instalat: `e1a82fcc1327`, sursă `0c912de` — audit UI integral,
-sertar extern rafinat, suprafețe coerente și corectarea focusului/navigării.
-[Dovezi și limite](docs/evidence/ui-polish-2026-10-23.md).
+Ultimul lot instalat: `dd9a018bf755`, sursă `38b07da` — reorganizare UX în
+șase categorii, comenzi rapide stabile și recuperare directă. 84 capturi native,
+preferințe și radio restaurate. [Dovezi și limite](docs/evidence/ux-reorganization-2026-10-24.md).
 
 **Stare: PySH OS experimental instalat pe dispozitiv; acceptarea produsului rămâne incompletă.** Pentru iterația curentă citește [planul activ](docs/PLAN_2026_10_23.md), [dovezile cerului Blender](docs/evidence/blender-sky-2026-10-23.md), [conexiunea activă și clădirea Wi-Fi](docs/evidence/network-rooftop-2026-10-23.md), [aeronavele ambientale](docs/evidence/ambient-aircraft-2026-10-23.md), [atmosfera meteo](docs/evidence/weather-atmosphere-2026-10-23.md) și [inventarul integral UI/UX](docs/UI_DELIVERY_PLAN.md), împreună cu [STATUS.md](STATUS.md). Probe ale unui candidat anterior nu certifică o versiune nouă. Cele30 criterii complete rămân OPEN.
 
