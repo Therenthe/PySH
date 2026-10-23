@@ -7,7 +7,7 @@ export type SceneWeather = {
 };
 const finite=(value:unknown)=>typeof value==='number'&&Number.isFinite(value)?value:undefined;
 
-/** WMO observations describe precipitation, never a flood/tornado or an alert.
+/** Provider WMO codes describe precipitation, never a flood/tornado or an alert.
  * Decorations must not manufacture emergency information absent a real alert source.
  */
 export function sceneWeather(code:unknown,stale:boolean,temperature:unknown,wind:unknown,now:Date,latitude:unknown):SceneWeather {

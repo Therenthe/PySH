@@ -1,7 +1,7 @@
 .ambient-sky .blender-moon{display:block;background-image:url('/ambient/sky3d/moon-phases-blender-v1.png');background-size:1600% 800%;background-repeat:no-repeat;filter:drop-shadow(0 0 7px #b5d0e71c)}
 .ambient-sky .blender-sun{background:url('/ambient/sky3d/sun-blender-v1.png') center/100% 100% no-repeat;box-shadow:none}
 .blender-meteor{position:absolute;left:0;top:0;display:block;width:var(--meteor-length);height:7px;transform:translate(-94.68%,-50%);background:url('/ambient/sky3d/meteor-blender-v1.png') center/100% 100% no-repeat;pointer-events:none}
-.ambient-sky .stars-blender3d{opacity:.8;overflow:hidden;pointer-events:none}
+.ambient-sky .stars-blender3d{opacity:calc(.8 * var(--sky-transmission,1));overflow:hidden;pointer-events:none}
 .stars-blender3d .blender-star-glint{animation:blender-star-breathe 13s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
 .stars-blender3d .blender-star-glint:nth-of-type(74n){animation-delay:-7s}
 @keyframes blender-star-breathe{0%,45%{opacity:.45}78%{opacity:.95}100%{opacity:.7}}

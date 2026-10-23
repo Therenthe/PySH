@@ -4,14 +4,14 @@
 .ambient-sky{position:absolute;inset:0;z-index:0;overflow:hidden;background:linear-gradient(170deg,#e7edf0,#b8ccd0 65%,#889e9c);color:#fff}
 .ambient-sky.sky-night{background:radial-gradient(ellipse at 85% 10%,#213747,transparent 65%),linear-gradient(#080e19,#142d39 72%,#344341)}
 .ambient-sky.sky-neutral{background:linear-gradient(135deg,#d8dedb,#a9b7b3)}
-.ambient-sky.sky-overcast,.ambient-sky.sky-fog{background:linear-gradient(#8b9ca5,#c7d0cc)}
-.ambient-sky.sky-night.sky-overcast,.ambient-sky.sky-night.sky-fog{background:linear-gradient(#19232c,#344344)}
+.ambient-sky[data-sky-cover=overcast]{background:linear-gradient(#8b9ca5,#c7d0cc)}
+.ambient-sky.sky-night[data-sky-cover=overcast]{background:linear-gradient(#19232c,#344344)}
 .ambient-stars{position:absolute;inset:0;width:100%;height:100%;opacity:.65}
 .city-material{opacity:.72}
 .ambient-orb{position:absolute;right:23px;top:23px;width:90px;height:90px;border-radius:50%}
 .ambient-moon{background:none;filter:drop-shadow(0 0 12px #a8cbd320)}
 .ambient-sun{background:radial-gradient(circle at 35% 30%,#fff8d9,#e8c98a);box-shadow:0 0 24px #e4ba7940}
-.celestial-anchor{position:absolute;width:90px;height:90px;transform:translate(-50%,-50%);pointer-events:none}
+.celestial-anchor{position:absolute;width:90px;height:90px;transform:translate(-50%,-50%);pointer-events:none;opacity:var(--sky-transmission,1)}
 .app>.ambient-sky .celestial-anchor .ambient-orb{position:relative;top:auto;right:auto;display:block}
 .sky-day .celestial-anchor .ambient-moon{opacity:.55;filter:none}
 .ambient-clouds{position:absolute;inset:0;background:radial-gradient(ellipse at 80% 15%,#f7fbff65 0 10%,transparent 27%),radial-gradient(ellipse at 95% 27%,#ecf1f74a 0 15%,transparent 37%)}

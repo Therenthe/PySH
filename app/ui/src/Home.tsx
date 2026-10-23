@@ -1,7 +1,7 @@
 import type {WeatherDocument} from './WeatherSource';
 import {createPortal} from 'react-dom';
 import { MarqueeText } from './MarqueeText';
-import {useEffect,useState,useMemo,type ReactNode} from 'react';
+import {useEffect,useState,useMemo,type ReactNode,type CSSProperties} from 'react';
 import {StationArtwork} from './Radio';
 import {TouchChoice} from './TouchChoice';
 import {Meteors} from './Meteors';
@@ -11,6 +11,7 @@ import {BlenderMoon,BlenderStars,BlenderClouds,BlenderSun} from './AmbientCelest
 import {AmbientEvents} from './AmbientEvents';
 import {CityDiorama,ScenePrecipitation,SceneWarningIllustration} from './CityDiorama';
 import {sceneWeather} from './sceneWeather';
+import {sceneAtmosphere} from './sceneAtmosphere';
 import {getCelestialScene} from './CelestialMotion';
 import { weatherCondition, weatherIsNight } from './weatherCondition';
 import {WeatherAlertNotice,currentWeatherAlerts,type WeatherAlertsDocument} from './WeatherAlerts';
@@ -30,17 +31,17 @@ function useAmbientCard(editing:boolean,wakeEpoch:number){
  useEffect(()=>{if(!expanded)return;const timer=window.setTimeout(()=>setExpanded(false),15000);return()=>window.clearTimeout(timer);},[expanded,activity]);
  return {expanded,toggle:()=>{setExpanded(v=>!v);setActivity(v=>v+1);},touch:()=>setActivity(v=>v+1)};
 }
-export function AmbientSky({code,isDay,stale,aircraft=true,lunarDust=false,now=new Date(),latitude,longitude,temperature,wind,radioPlaying=false,bluetoothPowered=false,bluetoothConnected=false,wifiState='unknown',wifiActive=false,weatherAlerts,language='en'}:{code:unknown;isDay:unknown;stale:boolean;aircraft?:boolean;lunarDust?:boolean;now?:Date;latitude?:unknown;longitude?:unknown;temperature?:unknown;wind?:unknown;radioPlaying?:boolean;bluetoothPowered?:boolean;bluetoothConnected?:boolean;wifiState?:'off'|'disconnected'|'connecting'|'connected'|'unknown';wifiActive?:boolean;weatherAlerts?:WeatherAlertsDocument;language?:'en'|'ro'}){
+export function AmbientSky({code,isDay,stale,visibility,cloudCover,aircraft=true,lunarDust=false,now=new Date(),latitude,longitude,temperature,wind,radioPlaying=false,bluetoothPowered=false,bluetoothConnected=false,wifiState='unknown',wifiActive=false,weatherAlerts,language='en'}:{code:unknown;isDay:unknown;stale:boolean;visibility?:unknown;cloudCover?:unknown;aircraft?:boolean;lunarDust?:boolean;now?:Date;latitude?:unknown;longitude?:unknown;temperature?:unknown;wind?:unknown;radioPlaying?:boolean;bluetoothPowered?:boolean;bluetoothConnected?:boolean;wifiState?:'off'|'disconnected'|'connecting'|'connected'|'unknown';wifiActive?:boolean;weatherAlerts?:WeatherAlertsDocument;language?:'en'|'ro'}){
  const minute=Math.floor(now.getTime()/60000),instant=useMemo(()=>new Date(minute*60000),[minute]);
  const celestial=useMemo(()=>getCelestialScene(instant,latitude,longitude),[instant,latitude,longitude]);
  const category=weatherCondition(stale?null:code),known=!['missing','unknown'].includes(category)&&(!!celestial||[true,false,0,1].includes(isDay as boolean|number)),night=known&&(celestial?.night??weatherIsNight(isDay as boolean|number|null));
- const openSky=known&&['clear','mainly-clear','partly-cloudy'].includes(category);
+ const atmosphere=sceneAtmosphere(code,stale||!known,visibility,cloudCover),openSky=known&&atmosphere.openSky;
  const moonVisible=!!(openSky&&celestial?.moon.visible);
  const weather=sceneWeather(code,stale,temperature,wind,instant,latitude);
- return <div className={`ambient-sky ${known?(night?'sky-night':'sky-day'):'sky-neutral'} sky-${category}`} data-thermal={weather.heat?'heat':'normal'} aria-hidden="true">
+ return <div className={`ambient-sky ${known?(night?'sky-night':'sky-day'):'sky-neutral'} sky-${category}`} data-thermal={weather.heat?'heat':'normal'} data-haze={atmosphere.haze.toFixed(3)} data-sky-cover={atmosphere.cloudCover} style={{'--ground-haze':atmosphere.haze,'--city-visibility':1-atmosphere.haze*.65,'--sky-transmission':atmosphere.transmission} as CSSProperties} aria-hidden="true">
  {night&&openSky&&<BlenderStars/>}
 
- {openSky&&celestial&&[celestial.sun,celestial.moon].map((body,index)=>body.visible&&(index?night:!night)&&<div key={index} className="celestial-anchor" data-celestial-body={index?'moon':'sun'} data-altitude={body.altitude.toFixed(4)} data-azimuth={body.azimuth.toFixed(4)} style={{left:`${body.x}%`,top:`${body.y}%`}}>{index?<BlenderMoon now={instant}/>:<BlenderSun/>}</div>)}<Meteors enabled={night&&openSky}/><AmbientEvents enabled={known&&(aircraft||lunarDust)} aircraft={aircraft} night={night} moonVisible={moonVisible&&category==='clear'} moonPosition={celestial?.moon} lunarDust={lunarDust}/>{known&&<BlenderClouds night={night} condition={category}/>}<ScenePrecipitation weather={weather}/>
+ {openSky&&celestial&&[celestial.sun,celestial.moon].map((body,index)=>body.visible&&(index?night:!night)&&<div key={index} className="celestial-anchor" data-celestial-body={index?'moon':'sun'} data-altitude={body.altitude.toFixed(4)} data-azimuth={body.azimuth.toFixed(4)} style={{left:`${body.x}%`,top:`${body.y}%`}}>{index?<BlenderMoon now={instant}/>:<BlenderSun/>}</div>)}<Meteors enabled={night&&openSky}/><AmbientEvents enabled={known&&(aircraft||lunarDust)} aircraft={aircraft} night={night} moonVisible={moonVisible&&category==='clear'} moonPosition={celestial?.moon} lunarDust={lunarDust}/>{known&&<BlenderClouds night={night} condition={category} cover={atmosphere.cloudCover}/>}<ScenePrecipitation weather={weather}/>
  <SceneWarningIllustration alerts={weatherAlerts} now={instant} language={language}/><CityDiorama night={night} weather={weather} radioPlaying={radioPlaying} bluetoothPowered={bluetoothPowered} bluetoothConnected={bluetoothConnected} wifiState={wifiState} wifiActive={wifiActive}/>
 
  </div>;

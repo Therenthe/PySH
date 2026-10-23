@@ -2,6 +2,7 @@ import {useId,type CSSProperties} from 'react';
 import {lunarPhase} from './Moon';
 import type {WeatherCondition} from './weatherCondition';
 import {aircraftAnchors} from './aircraftAnchors';
+import type {SkyCover} from './sceneAtmosphere';
 import './ambient-celestial-3d.css';
 
 const assets='/ambient/sky3d/';
@@ -30,9 +31,9 @@ export function BlenderStars(){
  })}</svg>;
 }
 
-export function BlenderClouds({night,condition}:{night:boolean;condition:WeatherCondition}){
- if(['clear','missing','unknown'].includes(condition))return null;
- const cover=condition==='mainly-clear'?'sparse':condition==='partly-cloudy'?'broken':'overcast';
+export function BlenderClouds({night,condition,cover:override}:{night:boolean;condition:WeatherCondition;cover?:SkyCover}){
+ const cover=override??(condition==='mainly-clear'?'sparse':condition==='partly-cloudy'?'broken':['clear','missing','unknown'].includes(condition)?'none':'overcast');
+ if(cover==='none'||cover==='unknown')return null;
  return <div className={`ambient-clouds blender-clouds cloud-cover-${cover}`} data-cloud-model="blender-volume" data-cloud-cover={cover} aria-hidden="true">
   <img className="cloud-mass cloud-primary" src={`${assets}clouds-${night?'night':'day'}-blender-v1.png`} alt="" draggable={false}/>
   {cover!=='sparse'&&<img className="cloud-mass cloud-secondary" src={`${assets}clouds-${night?'night':'day'}-blender-v1.png`} alt="" draggable={false}/>}
