@@ -1,6 +1,6 @@
 # Plan urmărit de livrare UI/UX — 2026-10-04
 
-Acest inventar păstrează cerințele din conversație, inclusiv cele vechi. Nu acordă note sau acceptare din descrieri. GitHub este sursa canonică; implementările nepublicate sunt lucru local. Candidatul instalat actual:0b877f669cdd/sourcee533e53; cer Blender, o singură conexiune activă în bară și clădire Wi-Fi, cu funcțiile anterioare păstrate. Stările și buildurile din rânduri sunt dovezi istorice; probele noi sunt în PLAN_2026_10_23.md. Documentele pot avansa separat de sursa runtime-ului. Toate30criteriile complete rămân OPEN în acceptance.json; dovada HW-01 de pe670c este istorică. O probă veche nu certifică un candidat nou.
+Acest inventar păstrează cerințele din conversație, inclusiv cele vechi. Nu acordă note sau acceptare din descrieri. GitHub este sursa canonică; implementările nepublicate sunt lucru local. Candidatul instalat actual:07493a5a387f/sourcef91f4f9; cinci aeronave Blender distincte și orientate corect, cu funcțiile anterioare păstrate. [Dovezi ale iterației aeronavelor](evidence/ambient-aircraft-2026-10-23.md). Stările și buildurile din rânduri sunt dovezi istorice; probele noi sunt în PLAN_2026_10_23.md. Documentele pot avansa separat de sursa runtime-ului. Toate30criteriile complete rămân OPEN în acceptance.json; dovada HW-01 de pe670c este istorică. O probă veche nu certifică un candidat nou.
 
 Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4defectele auditorilor și tur complet →5acceptare nativă și imagine finală. Cerințele noi se adaugă; nu înlocuiesc restanțele.
 

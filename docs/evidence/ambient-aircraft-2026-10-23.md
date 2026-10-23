@@ -49,5 +49,26 @@ scenes, and passed23independent browser tests. The small ambient scale naturally
 limits equipment detail; role is communicated chiefly by airframe and livery.
 This is scoped visual evidence, not a numeric quality score or physical motion test.
 
-Frozen-candidate verification, publication and native installation are pending.
+## Installed candidate
+
+Runtime`07493a5a387f` / canonical source`f91f4f9cd37c6c6bc36137ecaef6ef5bb5463b71`.619Python cases passed with32
+platform skips;236affected browser cases passed on the frozen candidate in EN/RO.
+TypeScript, Vite, repository inventory and runtime package passed. The integrated
+fleet/settings checks and independent review also passed before freezing.
+121extension/policy checks and3weather-icon checks passed on that same source.
+
+After a separately verified readable PC backup, all103installed runtime hashes
+and29preferences were verified. Native800×480 Home observed a naturally scheduled
+upright airliner; all18fleet PNG hashes and decodes matched.
+The genuine scheduled flight was paused at its CSS midpoint only for capture;
+weather, time, variant and direction were not replaced with fixture values.
+During that native flight,180requestAnimationFrame samples over roughly3seconds
+had a16.7ms p95 interval. This measures brief browser scheduling, not physical
+touch latency, sustained frame delivery or the full performance acceptance budget.
+Radio/audio, selected source, preferences, prior release and gateway/network
+were preserved; normal Chromium was restored and diagnostic listeners closed.
+The native observation covers one randomly scheduled type. The full five-model,
+two-theme, two-direction matrix is browser presentation evidence, not a claim of
+every combination physically observed on the Pi. Long-term motion/performance
+and full hardware/product acceptance remain OPEN.
 This scoped iteration does not close the full product acceptance inventory.
