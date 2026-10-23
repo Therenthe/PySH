@@ -2,9 +2,9 @@
 
 Hub tactil EN/RO pentru Raspberry Pi 4 (4 GB), LCD DSI 7″, 800 × 480: ceas, vreme, radio, media locală și conectivitate.
 
-Ultimul lot instalat: `dd9a018bf755`, sursă `38b07da` — reorganizare UX în
-șase categorii, comenzi rapide stabile și recuperare directă. 84 capturi native,
-preferințe și radio restaurate. [Dovezi și limite](docs/evidence/ux-reorganization-2026-10-24.md).
+Ultimul lot instalat: `bf33d3e87322`, sursă `112c7c9` — neon Blender pe clădirea
+radio, condus de semnalul audio.146 teste browser și verificare nativă;
+preferințe/radio restaurate. [Dovezi și limite](docs/evidence/radio-building-neon-2026-10-24.md).
 
 Vizualizatorul Undă este acum integrat în clădirea radio: circuite neon Blender
 conduse de semnalul audio, cu intensitate nocturnă și control tactil al playerului.

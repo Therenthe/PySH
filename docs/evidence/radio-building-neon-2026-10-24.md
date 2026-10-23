@@ -50,3 +50,47 @@ Raspberry verification are recorded below when complete.
 
 This scoped feature is not full product acceptance, a numeric quality score or
 a sustained Pi performance certification. All30 product criteria remain OPEN.
+
+
+## Final delivery
+
+Installed runtime `bf33d3e87322`, GitHub production source
+`112c7c906ad2f775b6051e46b134c701b5ca0d03`, public tree
+`5537d9e3250cead1c958fe04738fc83814eff881`. Local canonical source
+`982625dddb779dfaaefd3b4ca3970f0e151acf9e`, tree
+`6ff5bf9011d44de445a3461a31c4d772cb582f2b`.
+Subsequent documentation/test-fixture changes do not change this runtime.
+
+- Final cold-load browser gate:146/146 PASS (20 new +126 retained), EN/RO at800x480;
+  zero failures/skips/flaky cases. Three test fixtures then adopted the backend's
+  real local-audio kind; all14 affected retests PASS against the same frozen
+  runtime. This is a targeted follow-up, not160 unique cases.
+- Independent visual R4:60 captures across native-size night/day, languages,
+  folded/expanded/ambient, sizes and reduced motion. Two geometry/sizing defects
+  corrected and independently retested.
+- Earlier working-tree regression:125/126 then isolated unchanged case PASS.
+  Development hot reload invalidated that batch; the final146 run starts cold
+  and supersedes it. Failed iterations remain in private evidence.
+- GitHub publication verified577 public blobs/modes, including Blender source
+  and every PNG. Five previously excluded operational documents stay excluded.
+- PC backup contents/checksum verified before activation;115 installed hashes
+  and29 preferences verified. Previous runtime `dd9a018bf755` retained; gateway
+  and Ethernet unchanged; originally playing radio resumed.
+- Actual Raspberry Chromium R2 PASS: 19 native800x480 screenshots, twelve
+  theme/size/rail combinations, eight decoded118x281 images, changing measured
+  radio signal, facade touch, Play button, pause/mute darkness and first ambient
+  touch consumed. Control59x102.53px; x matched, y differed0.016px. Actual weather
+  was fog and was not replaced for these captures.
+- First native run passed geometry/signal/pause, then its API probe sent `play`
+  instead of supported `resume`; the UI already maps that correctly. R2 uses the
+  real Play button; no production fix required. Both runs restored preferences
+  and original playback, closed debug listeners and retained raw private evidence.
+
+Paused/muted/unavailable Wave has no floating caption: the facade darkens while
+its target and global Quick controls retain player access. The accessible name
+includes station, playback state and Expand/Collapse. This is an explicit
+immersive-scene discoverability tradeoff.
+
+Native CDP touch is injected input, not physical-finger/acoustic acceptance.
+Approximately1.01MiB decoded assets is a bounded budget, not a sustained Pi
+CPU/GPU/frame-rate certification. All30 complete product criteria remain OPEN.
