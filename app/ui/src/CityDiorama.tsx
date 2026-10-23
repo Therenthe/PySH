@@ -5,12 +5,17 @@ import './city-diorama.css';
 
 /** Original Blender-authored geometry, lit and rendered offline. Runtime uses two
  * flat image layers: no WebGL context or hidden 3D renderer competes with video. */
-export function CityDiorama({night,weather,radioPlaying=false,bluetoothPowered=false,bluetoothConnected=false}:{night:boolean;weather:SceneWeather;radioPlaying?:boolean;bluetoothPowered?:boolean;bluetoothConnected?:boolean}) {
+export function CityDiorama({night,weather,radioPlaying=false,bluetoothPowered=false,bluetoothConnected=false,wifiState='unknown',wifiActive=false}:{night:boolean;weather:SceneWeather;radioPlaying?:boolean;bluetoothPowered?:boolean;bluetoothConnected?:boolean;wifiState?:'off'|'disconnected'|'connecting'|'connected'|'unknown';wifiActive?:boolean}) {
  const [active,setActive]=useState(!document.hidden);
  useEffect(()=>{const change=()=>setActive(!document.hidden);document.addEventListener('visibilitychange',change);return()=>document.removeEventListener('visibilitychange',change);},[]);
- return <div className="ambient-city city-diorama" data-city-version="blender-v1" data-season={weather.season} data-thermal={weather.heat?'heat':'normal'} data-radio-emitting={radioPlaying} data-bluetooth={bluetoothPowered?(bluetoothConnected?'connected':'on'):'off'} data-animate={active} data-freezing={weather.freezing}>
+ return <div className="ambient-city city-diorama" data-city-version="blender-v1" data-season={weather.season} data-thermal={weather.heat?'heat':'normal'} data-radio-emitting={radioPlaying} data-bluetooth={bluetoothPowered?(bluetoothConnected?'connected':'on'):'off'} data-wifi={wifiState} data-wifi-active={wifiState==='connected'&&wifiActive} data-animate={active} data-freezing={weather.freezing}>
   {weather.heat&&<div className="city-heat-haze"/>}
   <img className="city-architecture" src={`/ambient/gothic-city-${night?'night':'day'}-v1.png`} alt="" draggable={false}/>
+  <div className="city-wifi" aria-hidden="true">
+   <img className="city-wifi-hardware" src={`/ambient/city-wifi-${night?'night':'day'}-v1.png`} alt="" draggable={false}/>
+   <img className="city-wifi-emission" src="/ambient/city-wifi-emission-v1.png" alt="" draggable={false}/>
+   <i className="city-wifi-lamp"/>
+  </div>
   <div className="city-metro-track"><img className="city-metro" src="/ambient/metro-v1.png" alt="" draggable={false}/></div>
   {radioPlaying&&<div className="city-radio-emitter"><i/><i/><i/><span/></div>}
   {bluetoothPowered&&<div className={`city-bluetooth ${bluetoothConnected?'connected':''}`}><svg viewBox="0 0 20 24"><path d="m4 6 12 12-6 5V1l6 5L4 18"/></svg><i/></div>}

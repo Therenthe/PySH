@@ -1,0 +1,229 @@
+{
+  "blender": "5.2.2 LTS",
+  "city_source": "assets/blender/pysh-gothic-city-v1.blend",
+  "roof_world": [
+    6.3,
+    0.4,
+    4.58
+  ],
+  "crop_pixels": [
+    1116,
+    153,
+    73,
+    89
+  ],
+  "crop_percent": [
+    69.75,
+    26.842105263157894,
+    4.5625,
+    15.614035087719298
+  ],
+  "lamp_percent": [
+    49.92822620966663,
+    49.88196003303099
+  ],
+  "vertices": 606,
+  "polygons": 590,
+  "audit": {
+    "WiFi roof mount -1": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi roof mount 1": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi access point cabinet": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi cabinet silver cap": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi ventilation slot 0": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi ventilation slot 1": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi ventilation slot 2": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi ventilation slot 3": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi ventilation slot 4": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi signal mast": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi aerial -1": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi aerial 1": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi signal arc 1": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi signal arc 2": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi signal arc 3": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    },
+    "WiFi association lamp": {
+      "non_manifold_edges": 0,
+      "loose_verts": 0,
+      "loose_edges": 0,
+      "zero_area_faces": 0,
+      "flipped_faces": 0
+    }
+  },
+  "render_profile_gates": {
+    "WiFi roof mount -1": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi roof mount 1": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi access point cabinet": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi cabinet silver cap": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi ventilation slot 0": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi ventilation slot 1": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi ventilation slot 2": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi ventilation slot 3": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi ventilation slot 4": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi signal mast": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi aerial -1": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi aerial 1": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi signal arc 1": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi signal arc 2": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi signal arc 3": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    },
+    "WiFi association lamp": {
+      "pass": true,
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "assets": [
+    "city-wifi-day-v1.png",
+    "city-wifi-night-v1.png",
+    "city-wifi-emission-v1.png"
+  ],
+  "runtime": "Three small RGBA crops; no runtime WebGL. Active route animation, standby static lamp, off/unknown unlit."
+}

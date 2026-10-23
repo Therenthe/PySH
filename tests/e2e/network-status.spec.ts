@@ -15,7 +15,7 @@ async function show(page:Page,network:unknown,language:string,theme:string){
 for(const theme of ['ink','night']){
  test(`actual header retains clock, Android presence and network touch targets ${theme}`,async({page},info)=>{
   const language=info.project.name==='touch-ro'?'ro':'en';
-  const network={available:true,state:'connected',connection:'Ethernet',devices:[{type:'wifi',interface:'wlan0',state:'connected',ssid:'Test AP',signal:72},{type:'ethernet',interface:'end0',state:'connected'}],networks:[{ssid:'Test AP',in_use:true,signal:38}]};
+  const network={available:true,state:'connected',connection:'Ethernet',active_type:'ethernet',active_interface:'end0',devices:[{type:'wifi',interface:'wlan0',state:'connected',ssid:'Test AP',signal:72},{type:'ethernet',interface:'end0',state:'connected'}],networks:[{ssid:'Test AP',in_use:true,signal:38}]};
   await page.route('**/api/**',route=>{
    const p=new URL(route.request().url()).pathname;
    const json=p==='/api/session'?{token:'test-only-token'}:p==='/api/state'?{
@@ -26,7 +26,9 @@ for(const theme of ['ink','night']){
   });
   await page.goto('/');
   const button=page.locator('.top-network.network-status');await expect(button).toBeVisible();
-  await expect(button).toHaveAccessibleName(new RegExp(language==='ro'?'Semnal 72%':'Signal 72%'));
+  await expect(button).toHaveAccessibleName(new RegExp(`Ethernet: ${language==='ro'?'Conectat':'Connected'}`));
+  await expect(button.locator('[data-network-link]')).toHaveCount(1);
+  await expect(button.locator('[data-network-link=wifi]')).toHaveCount(0);
   await expect(page.locator('.remote-presence')).toBeVisible();
   const clock=await page.locator('.topbar-time').boundingBox(),networkBox=await button.boundingBox();
   expect(clock!.x+clock!.width).toBeLessThanOrEqual(networkBox!.x);
@@ -36,36 +38,61 @@ for(const theme of ['ink','night']){
   await button.tap();await expect(page.locator('.modal-card .network-links')).toBeVisible();
   await expect(page.locator('.modal-card .network-links [data-network-type=wifi]')).toContainText(language==='ro'?'Conectat':'Connected');
  });
- test(`independent network identity, truthful signal and touch action ${theme}`,async({page},info)=>{
+ test(`one current route follows Ethernet to Wi-Fi to Ethernet without losing association ${theme}`,async({page},info)=>{
   const language=info.project.name==='touch-ro'?'ro':'en',ro=language==='ro';await fixture(page);
-  const network={available:true,state:'connected',devices:[{type:'ethernet',interface:'end0',state:'connected'},{type:'wifi',interface:'wlan0',state:'connected',ssid:'Test AP'}],networks:[{ssid:'Neighbour',signal:100,in_use:false},{ssid:'Test AP',signal:38,in_use:true}]};
+  const network={available:true,state:'connected',active_type:'ethernet',active_interface:'end0',devices:[{type:'ethernet',interface:'end0',state:'connected'},{type:'wifi',interface:'wlan0',state:'connected',ssid:'Test AP'}],networks:[{ssid:'Neighbour',signal:100,in_use:false},{ssid:'Test AP',signal:38,in_use:true}]};
   await show(page,network,language,theme);
   const status=page.locator('.network-status');
-  await expect(status).toHaveAccessibleName(new RegExp(`Wi-Fi: ${ro?'Conectat':'Connected'}, ${ro?'Semnal':'Signal'} 38%; Ethernet: ${ro?'Conectat':'Connected'}`));
-  await expect(status.locator('[data-network-link=wifi] svg')).toHaveAttribute('data-signal','1');
+  await expect(status).toHaveAccessibleName(new RegExp(`Ethernet: ${ro?'Conectat':'Connected'}`));
+  await expect(status.locator('[data-network-link]')).toHaveCount(1);
+  await expect(status.locator('[data-network-link=wifi]')).toHaveCount(0);
   await expect(status.locator('[data-network-link=ethernet]')).toHaveAttribute('data-link-state','connected');
   await status.tap();expect(await page.evaluate(()=>(window as any).networkOpens)).toBe(1);
   const box=await status.boundingBox();expect(box!.height).toBeGreaterThanOrEqual(48);expect(box!.width).toBeGreaterThanOrEqual(48);
   await expect(page.locator('.date-label')).toBeVisible();
   expect(await page.locator('.topbar').evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
   expect(await textLegibility(page)).toEqual([]);
-  await page.screenshot({path:info.outputPath('network-both-connected.png')});
+  await page.screenshot({path:info.outputPath('network-primary-ethernet.png')});
 
-  network.devices[1].state='disconnected';await show(page,network,language,theme);
-  await expect(status.locator('[data-network-link=wifi]')).toHaveAttribute('data-link-state','disconnected');
-  await expect(status.locator('[data-network-link=wifi] svg')).toHaveAttribute('data-signal','unknown');
-  await expect(status).toHaveAccessibleName(new RegExp(`Wi-Fi: ${ro?'Neconectat':'Not connected'}; Ethernet: ${ro?'Conectat':'Connected'}`));
-  await page.screenshot({path:info.outputPath('network-wired-wifi-disconnected.png')});
+  network.active_type='wifi';network.active_interface='wlan0';await show(page,network,language,theme);
+  await expect(status.locator('[data-network-link]')).toHaveCount(1);
+  await expect(status.locator('[data-network-link=ethernet]')).toHaveCount(0);
+  await expect(status.locator('[data-network-link=wifi] svg')).toHaveAttribute('data-signal','1');
+  await expect(status).toHaveAccessibleName(new RegExp(`Wi-Fi: ${ro?'Conectat':'Connected'}, ${ro?'Semnal':'Signal'} 38%`));
+  expect(await page.evaluate(()=>(window as any).networkModel.links.map((l:any)=>[l.type,l.state]))).toEqual([['wifi','connected'],['ethernet','connected']]);
+  await page.screenshot({path:info.outputPath('network-primary-wifi.png')});
 
-  network.devices[1].state='connected';network.networks[1].in_use=false;await show(page,network,language,theme);
+  network.active_type='ethernet';network.active_interface='end0';await show(page,network,language,theme);
+  await expect(status.locator('[data-network-link]')).toHaveCount(1);
+  await expect(status.locator('[data-network-link=ethernet]')).toHaveAttribute('data-link-state','connected');
+  await expect(status.locator('[data-network-link=wifi]')).toHaveCount(0);
+
+  network.active_type='wifi';network.active_interface='wlan0';network.networks[1].in_use=false;await show(page,network,language,theme);
   await expect(status.locator('[data-network-link=wifi] svg')).toHaveAttribute('data-signal','unknown');
   await expect(status).toHaveAccessibleName(new RegExp(ro?'Puterea semnalului indisponibilă':'Signal strength unavailable'));
-  const direct={...network,devices:[{type:'wifi',state:'connected',ssid:'Test AP',signal:82}],networks:[{ssid:'Test AP',in_use:true,signal:12}]};
+  const direct={...network,devices:[{type:'wifi',interface:'wlan0',state:'connected',ssid:'Test AP',signal:82}],networks:[{ssid:'Test AP',in_use:true,signal:12}]};
   await show(page,direct,language,theme);
   await expect(status).toHaveAccessibleName(new RegExp(ro?'Semnal 82%':'Signal 82%'));
   await expect(status.locator('svg')).toHaveAttribute('data-signal','3');
   direct.devices[0].signal=-1;direct.networks[0].in_use=false;await show(page,direct,language,theme);
   await expect(status.locator('svg')).toHaveAttribute('data-signal','unknown');
+ });
+ test(`ambiguous dual association stays unknown; single legacy association is safe ${theme}`,async({page},info)=>{
+  const language=info.project.name==='touch-ro'?'ro':'en',ro=language==='ro';await fixture(page);
+  const status=page.locator('.network-status');
+  const devices=[{type:'wifi',interface:'wlan0',state:'connected',ssid:'Test AP',signal:75},{type:'ethernet',interface:'end0',state:'connected'}];
+  for(const metadata of [{},{active_type:null,active_interface:null}]){
+   await show(page,{available:true,state:'connected',devices,...metadata},language,theme);
+   await expect(status.locator('[data-network-link]')).toHaveCount(1);
+   await expect(status.locator('[data-network-link=network]')).toHaveAttribute('data-link-state','unknown');
+   await expect(status).toHaveAccessibleName(new RegExp(ro?'Stare necunoscută':'Status unknown'));
+  }
+  await show(page,{available:true,state:'connected',devices:[devices[0]]},language,theme);
+  await expect(status.locator('[data-network-link=wifi]')).toHaveAttribute('data-link-state','connected');
+  await show(page,{available:true,state:'connected',active_type:null,active_interface:null,devices:[devices[0]]},language,theme);
+  await expect(status.locator('[data-network-link=network]')).toHaveAttribute('data-link-state','unknown');
+  await show(page,{available:true,state:'disconnected',devices:devices.map(d=>({...d,state:'disconnected'}))},language,theme);
+  await expect(status.locator('[data-network-link=network]')).toHaveAttribute('data-link-state','disconnected');
  });
  test(`offline, joining, radio off and unknown are distinct ${theme}`,async({page},info)=>{
   const language=info.project.name==='touch-ro'?'ro':'en',ro=language==='ro';await fixture(page);
@@ -82,7 +109,7 @@ for(const theme of ['ink','night']){
   await show(page,{available:true,state:'connected',devices:[]},language,theme);
   await expect(status.locator('[data-network-link=wifi]')).toHaveCount(0);
   await expect(status.locator('[data-network-link=ethernet]')).toHaveCount(0);
-  await expect(status).toHaveAccessibleName(new RegExp(`${ro?'Rețea':'Network'}: ${ro?'Conectat':'Connected'}`));
+  await expect(status).toHaveAccessibleName(new RegExp(`${ro?'Rețea':'Network'}: ${ro?'Stare necunoscută':'Status unknown'}`));
   await show(page,{available:true,devices:[{type:'wifi',state:'unknown'}]},language,theme);
   await expect(status).toHaveAccessibleName(new RegExp(ro?'Stare necunoscută':'Status unknown'));
   expect(await textLegibility(page)).toEqual([]);

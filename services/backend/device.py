@@ -295,7 +295,7 @@ class Device:
         return list(await nm.call_get_devices())
 
     async def network_status(self) -> dict[str, Any]:
-        result: dict[str, Any] = {"available": False, "state": "unavailable", "connection": None, "devices": [], "saved": [], "error": None}
+        result: dict[str, Any] = {"available": False, "state": "unavailable", "connection": None, "active_type": None, "active_interface": None, "devices": [], "saved": [], "error": None}
         if not self._linux or self._bus is None:
             result["error"] = "unavailable"
             return result
@@ -315,6 +315,7 @@ class Device:
                 except Exception:
                     # Optional radio metadata must not hide a working route.
                     pass
+            devices_by_path: dict[str, dict[str, Any]] = {}
             for path in await self._nm_device_paths():
                 p = await self._props(NM, path, NM_DEVICE)
                 device_type = int(p.get("DeviceType", 0))
@@ -339,15 +340,20 @@ class Device:
                     if addresses:
                         entry["ip"] = addresses[0].get("address")
                 result["devices"].append(entry)
+                devices_by_path[path] = entry
             settings = await self._proxy(NM, NM_SETTINGS_PATH, "org.freedesktop.NetworkManager.Settings")
             active_paths = await nm.get_active_connections()
             primary_path = await nm.get_primary_connection()
             active_profiles: set[str] = set()
             candidates: list[tuple[tuple, str]] = []
+            route_candidates: list[tuple[str, dict[str, Any]]] = []
+            primary: dict[str, Any] | None = None
             connection_types = {"802-3-ethernet", "802-11-wireless"}
             for active_path in active_paths:
                 try:
                     active = await self._props(NM, active_path, NM_ACTIVE)
+                    if active_path == primary_path and active.get("State") == 2:
+                        primary = active
                     if active.get("Type") not in connection_types or active.get("State") != 2:
                         continue
                     active_profiles.add(str(active.get("Uuid", "")))
@@ -358,10 +364,25 @@ class Device:
                                 not (active.get("Default") or active.get("Default6")),
                                 active.get("Type") != "802-3-ethernet", name, active_path)
                     candidates.append((priority, name))
+                    route_candidates.append((active_path, active))
                 except Exception:
                     continue
             if candidates:
                 result["connection"] = min(candidates)[1]
+            # Association alone does not identify which link carries traffic.
+            selected = primary if primary and primary.get("Type") in connection_types else None
+            if selected is None and (primary is None or primary.get("Type") == "loopback"):
+                defaults = [active for _, active in route_candidates if active.get("Default") or active.get("Default6")]
+                if len(defaults) == 1:
+                    selected = defaults[0]
+            if selected is not None:
+                active_type = {"802-3-ethernet": "ethernet", "802-11-wireless": "wifi"}[selected["Type"]]
+                result["active_type"] = active_type
+                route_devices = [devices_by_path[path] for path in selected.get("Devices", []) if path in devices_by_path]
+                if not route_devices:
+                    route_devices = [entry for entry in result["devices"] if entry["type"] == active_type and entry["state"] == "connected"]
+                if len(route_devices) == 1 and route_devices[0]["type"] == active_type:
+                    result["active_interface"] = route_devices[0]["interface"] or None
             for conn_path in await settings.call_list_connections():
                 try:
                     conn = await self._proxy(NM, conn_path, NM_CONN)

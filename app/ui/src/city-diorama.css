@@ -4,6 +4,21 @@
 .city-architecture{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
 .sky-neutral .city-architecture{filter:saturate(.35);opacity:.6}
 .sky-fog .city-architecture{opacity:.62}
+/* Crop bounds come from the existing Blender camera and the x6.3 roof apex.
+   Association is a static lamp; only the actual Wi-Fi route emits signal arcs. */
+.city-wifi{position:absolute;left:69.75%;top:26.842105%;width:4.5625%;height:15.614035%;pointer-events:none}
+.city-wifi img{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.city-wifi-emission{opacity:0}
+.city-wifi-lamp{position:absolute;left:49.928226%;top:49.88196%;width:2.5px;height:2.5px;transform:translate(-50%,-50%);border-radius:50%;background:#48645f;opacity:.4}
+.city-diorama[data-wifi=connected] .city-wifi-lamp{background:#b0edc9;opacity:1;box-shadow:0 0 3px #8bd6ae55}
+.city-diorama[data-wifi-active=true] .city-wifi-emission{opacity:.85;animation:city-wifi-transmission 5s ease-in-out infinite}
+.city-diorama[data-wifi=connecting] .city-wifi-emission{opacity:.38;animation:city-wifi-search 2.8s ease-in-out infinite}
+.city-diorama[data-wifi=connecting] .city-wifi-lamp{background:#e6c99a;opacity:.9}
+.city-diorama[data-wifi=off] .city-wifi-hardware,.city-diorama[data-wifi=unknown] .city-wifi-hardware{filter:saturate(.3) brightness(.72)}
+.city-diorama[data-wifi=off] .city-wifi-lamp,.city-diorama[data-wifi=unknown] .city-wifi-lamp{opacity:0}
+.sky-fog .city-wifi{opacity:.62}
+@keyframes city-wifi-transmission{0%,100%{opacity:.55}50%{opacity:.92}}
+@keyframes city-wifi-search{0%,100%{opacity:.12}45%,60%{opacity:.52}}
 .city-metro-track{position:absolute;left:0;right:0;bottom:14.7%;height:8.5%;overflow:hidden}
 .city-metro{position:absolute;bottom:0;width:17%;height:auto;max-height:100%;object-fit:contain;animation:city-metro-passage 43s linear infinite;animation-delay:-11s}
 @keyframes city-metro-passage{0%,8%{transform:translateX(-130%);opacity:0}9%{opacity:1}49%{transform:translateX(740%);opacity:1}50%,100%{transform:translateX(740%);opacity:0}}
@@ -28,7 +43,7 @@
 .sky-thunder::after,.sky-thunder-hail::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 37% 4%,#c9dbe9,transparent 65%);opacity:0;animation:weather-distant-lightning 31s 7s ease-in-out infinite;pointer-events:none;z-index:0}
 @keyframes weather-distant-lightning{0%,94%,100%{opacity:0}96%{opacity:.14}98%{opacity:0}}
 .sky-fog::before{content:'';position:absolute;inset:48% -10% 0;background:linear-gradient(transparent,#aab9bd45);z-index:2;pointer-events:none}
-.city-diorama[data-animate=false] *{animation-play-state:paused}
+.city-diorama[data-animate=false] *{animation-play-state:paused!important}
 .scene-warning-illustration{position:absolute;inset:0;pointer-events:none;z-index:2}
 .warning-tornado{position:absolute;width:82px;height:172px;left:76%;bottom:65px;opacity:.55}
 .warning-tornado img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;animation:warning-funnel-frame 3s steps(1) infinite}
