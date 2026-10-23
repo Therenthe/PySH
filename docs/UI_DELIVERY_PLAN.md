@@ -1,6 +1,6 @@
 # Plan urmărit de livrare UI/UX — 2026-10-04
 
-Acest inventar păstrează cerințele din conversație, inclusiv cele vechi. Nu acordă note sau acceptare din descrieri. GitHub este sursa canonică; implementările nepublicate sunt lucru local. Candidatul instalat actual:300f61c313c3/source86b0e79; cer Blender și indicatori reali de rețea, cu funcțiile anterioare păstrate. Stările și buildurile din rânduri sunt dovezi istorice; probele noi sunt în PLAN_2026_10_23.md. Documentele pot avansa separat de sursa runtime-ului. Toate30criteriile complete rămân OPEN în acceptance.json; dovada HW-01 de pe670c este istorică. O probă veche nu certifică un candidat nou.
+Acest inventar păstrează cerințele din conversație, inclusiv cele vechi. Nu acordă note sau acceptare din descrieri. GitHub este sursa canonică; implementările nepublicate sunt lucru local. Candidatul instalat actual:0b877f669cdd/sourcee533e53; cer Blender, o singură conexiune activă în bară și clădire Wi-Fi, cu funcțiile anterioare păstrate. Stările și buildurile din rânduri sunt dovezi istorice; probele noi sunt în PLAN_2026_10_23.md. Documentele pot avansa separat de sursa runtime-ului. Toate30criteriile complete rămân OPEN în acceptance.json; dovada HW-01 de pe670c este istorică. O probă veche nu certifică un candidat nou.
 
 Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4defectele auditorilor și tur complet →5acceptare nativă și imagine finală. Cerințele noi se adaugă; nu înlocuiesc restanțele.
 
@@ -79,3 +79,5 @@ Reperul utilizatorului „Varianta Back” este păstrat separat. Lotul nou păs
 
 
 Verificarea lotului300f/source86b0:1112browser/603Python PASS,32platform skips;81hashuri/29preferințe verificate după update; cer/YouTube/rețea auditate nativ și Ethernet↔Wi-Fi cu radio continuu confirmat fizic. Rândurile UI anterioare rămân cerințe, iar acceptarea lor completă se face în matricea de produs.
+
+Corecția ulterioară cerută de utilizator: un singur simbol pentru ruta activă în bară, Ethernet redesenat și clădire Wi-Fi Blender cu asociere statică/activitate după rută. Instalat0b/sourcee533,619Python/104browser afectate PASS și nativ84hashuri/29preferințe/un singur simbol/rută kernel/clădire verificate. Rutarea și cerințele anterioare sunt păstrate.
