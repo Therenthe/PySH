@@ -45,5 +45,26 @@ remain untouched. Eight dedicated EN/RO screenshot comparisons passed, measuring
 stronger daytime contrast and identical night appearance against the control.
 No new assets, procedural substitute particles or photorealistic star fields ship.
 
-Frozen-candidate verification, canonical publication and native rollout remain
-pending. Full product acceptance remains OPEN.
+## Installed candidate and native evidence
+
+Runtime`ca0bbb62a3d8` / canonical source`8cfffd0de81e64f59e1d81c27db0cad3d78a9138`.633Python cases passed with32
+platform skips;296affected frozen-candidate browser cases passed in EN/RO.
+121extension/policy and3weather-icon checks, TypeScript, Vite, structure and
+runtime packaging passed. Independently reviewed test scenes are simulations;
+they are not observations of the user's local weather.
+
+A readable checksummed backup was verified on a separate PC before activation;
+all103installed runtime hashes and29preferences matched. On the native800×480
+panel browser, actual provider sample`2026-10-23T23:00` reported code45,
+visibility7060m and cloud cover80%. The rendered
+scene had haze0.021, city opacity0.986034 and
+overcastsky. No weather/time fixtures were injected. All six used Blender
+sky asset hashes and decodes matched; original source, radio/audio, preferences,
+gateway and networking were preserved. Diagnostic listeners closed and normal
+Chromium was restored. Home automatic ambient mode observed:
+true.
+
+Short native requestAnimationFrame sample: 180frames over
+3.0seconds, p9516.7ms.
+This is scheduling evidence only, not physical latency, sustained performance or
+all-weather hardware acceptance. Full product acceptance remains OPEN.
