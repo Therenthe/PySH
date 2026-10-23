@@ -1,0 +1,11 @@
+.app .network-status,.app .network-status.top-network{border:0;border-radius:9px;background:transparent;color:var(--ink);padding:2px 5px;min-height:48px;min-width:94px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:0;font-family:inherit;font-weight:500;touch-action:manipulation;flex-shrink:0}
+.app .network-status-link{display:flex;align-items:center;gap:5px;height:22px;white-space:nowrap;font-size:14px;line-height:22px}
+.app .network-status-link svg{flex:none}
+.app .network-status-link[data-link-state=connected] svg{color:var(--accent-strong)}
+.app .topbar-idle.sky-header-night .network-status-link[data-link-state=connected] svg{color:var(--ink)}
+.app .network-status-link[data-link-state=connecting] svg{color:var(--ink)}
+.app .network-arc-inactive{opacity:.25}
+.app .network-link-slash{paint-order:stroke;stroke-width:2.2}
+.app .network-status-progress{font-size:16px;line-height:20px}
+.app .network-status:active{background:var(--soft)}
+.app .network-status:focus-visible{outline:3px solid var(--accent-strong);outline-offset:1px}

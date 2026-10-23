@@ -1,5 +1,5 @@
 .ambient-events{position:absolute;inset:0;overflow:hidden;pointer-events:none;container-type:size}
-.ambient-flight{position:absolute;width:40px;height:20px;animation:ambient-flight-traverse var(--flight-duration) linear both;will-change:transform}
+.ambient-flight{position:absolute;width:76px;height:38px;animation:ambient-flight-traverse var(--flight-duration) linear both;will-change:transform}
 .ambient-flight svg{display:block;width:40px;height:20px;fill:#334956;opacity:.75}
 .ambient-events[data-night=true] .ambient-flight svg{fill:#bbcbd0;opacity:.64}
 .aircraft-navigation{fill:#d6a6a2;animation:aircraft-navigation 2800ms steps(1,end) infinite}

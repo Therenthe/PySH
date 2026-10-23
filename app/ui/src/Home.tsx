@@ -1,13 +1,13 @@
 import type {WeatherDocument} from './WeatherSource';
 import {createPortal} from 'react-dom';
 import { MarqueeText } from './MarqueeText';
-import {useEffect,useState,useId,useMemo,type ReactNode} from 'react';
+import {useEffect,useState,useMemo,type ReactNode} from 'react';
 import {StationArtwork} from './Radio';
 import {TouchChoice} from './TouchChoice';
 import {Meteors} from './Meteors';
 import {useHomeLayout,type HomePositions,type HomeKey} from './HomeLayout';
 import { WeatherIcon } from './WeatherIcon';
-import {Moon} from './Moon';
+import {BlenderMoon,BlenderStars,BlenderClouds,BlenderSun} from './AmbientCelestial3D';
 import {AmbientEvents} from './AmbientEvents';
 import {CityDiorama,ScenePrecipitation,SceneWarningIllustration} from './CityDiorama';
 import {sceneWeather} from './sceneWeather';
@@ -31,17 +31,16 @@ function useAmbientCard(editing:boolean,wakeEpoch:number){
  return {expanded,toggle:()=>{setExpanded(v=>!v);setActivity(v=>v+1);},touch:()=>setActivity(v=>v+1)};
 }
 export function AmbientSky({code,isDay,stale,aircraft=true,lunarDust=false,now=new Date(),latitude,longitude,temperature,wind,radioPlaying=false,bluetoothPowered=false,bluetoothConnected=false,weatherAlerts,language='en'}:{code:unknown;isDay:unknown;stale:boolean;aircraft?:boolean;lunarDust?:boolean;now?:Date;latitude?:unknown;longitude?:unknown;temperature?:unknown;wind?:unknown;radioPlaying?:boolean;bluetoothPowered?:boolean;bluetoothConnected?:boolean;weatherAlerts?:WeatherAlertsDocument;language?:'en'|'ro'}){
- const skyId=useId().replace(/:/g,'');
  const minute=Math.floor(now.getTime()/60000),instant=useMemo(()=>new Date(minute*60000),[minute]);
  const celestial=useMemo(()=>getCelestialScene(instant,latitude,longitude),[instant,latitude,longitude]);
  const category=weatherCondition(stale?null:code),known=!['missing','unknown'].includes(category)&&(!!celestial||[true,false,0,1].includes(isDay as boolean|number)),night=known&&(celestial?.night??weatherIsNight(isDay as boolean|number|null));
  const openSky=known&&['clear','mainly-clear','partly-cloudy'].includes(category);
  const moonVisible=!!(openSky&&celestial?.moon.visible);
- const clear=category==='clear',weather=sceneWeather(code,stale,temperature,wind,instant,latitude);
+ const weather=sceneWeather(code,stale,temperature,wind,instant,latitude);
  return <div className={`ambient-sky ${known?(night?'sky-night':'sky-day'):'sky-neutral'} sky-${category}`} data-thermal={weather.heat?'heat':'normal'} aria-hidden="true">
- {night&&['clear','mainly-clear','partly-cloudy'].includes(category)&&<svg className="ambient-stars" viewBox="0 0 694 422" preserveAspectRatio="none"><g fill="currentColor">{Array.from({length:170},(_,i)=>[12+(i*137.507%670),8+((i*73.13+i*i*3.11)%360)]).map(([cx,cy],i)=><circle key={i} cx={cx} cy={cy} r={i%4===0?1.4:.8}/>)}</g></svg>}
+ {night&&openSky&&<BlenderStars/>}
 
- {openSky&&celestial&&[celestial.sun,celestial.moon].map((body,index)=>body.visible&&(index?night:!night)&&<div key={index} className="celestial-anchor" data-celestial-body={index?'moon':'sun'} data-altitude={body.altitude.toFixed(4)} data-azimuth={body.azimuth.toFixed(4)} style={{left:`${body.x}%`,top:`${body.y}%`}}>{index?<Moon now={instant}/>:<div className="ambient-orb ambient-sun"/>}</div>)}<Meteors enabled={night&&openSky}/><AmbientEvents enabled={known&&(aircraft||lunarDust)} aircraft={aircraft} night={night} moonVisible={moonVisible&&category==='clear'} moonPosition={celestial?.moon} lunarDust={lunarDust}/>{known&&!clear&&<svg className="ambient-clouds" viewBox="0 0 800 250" preserveAspectRatio="none"><defs><radialGradient id={'cloud-'+skyId}><stop stopColor={night?'#a9bbc6':'#f0f5f5'} stopOpacity=".38"/><stop offset=".55" stopColor={night?'#859aa8':'#d8e4e9'} stopOpacity=".22"/><stop offset="1" stopColor={night?'#6d8798':'#c3d4dd'} stopOpacity="0"/></radialGradient></defs><g fill={`url(#cloud-${skyId})`}><ellipse cx="510" cy="76" rx="175" ry="38"/><ellipse cx="615" cy="92" rx="190" ry="30" opacity=".7"/><ellipse cx="385" cy="93" rx="140" ry="25" opacity=".5"/><ellipse cx="52" cy="165" rx="180" ry="42"/><ellipse cx="165" cy="181" rx="185" ry="28" opacity=".62"/><ellipse cx="775" cy="168" rx="175" ry="35" opacity=".8"/></g></svg>}<ScenePrecipitation weather={weather}/>
+ {openSky&&celestial&&[celestial.sun,celestial.moon].map((body,index)=>body.visible&&(index?night:!night)&&<div key={index} className="celestial-anchor" data-celestial-body={index?'moon':'sun'} data-altitude={body.altitude.toFixed(4)} data-azimuth={body.azimuth.toFixed(4)} style={{left:`${body.x}%`,top:`${body.y}%`}}>{index?<BlenderMoon now={instant}/>:<BlenderSun/>}</div>)}<Meteors enabled={night&&openSky}/><AmbientEvents enabled={known&&(aircraft||lunarDust)} aircraft={aircraft} night={night} moonVisible={moonVisible&&category==='clear'} moonPosition={celestial?.moon} lunarDust={lunarDust}/>{known&&<BlenderClouds night={night} condition={category}/>}<ScenePrecipitation weather={weather}/>
  <SceneWarningIllustration alerts={weatherAlerts} now={instant} language={language}/><CityDiorama night={night} weather={weather} radioPlaying={radioPlaying} bluetoothPowered={bluetoothPowered} bluetoothConnected={bluetoothConnected}/>
 
  </div>;

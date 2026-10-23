@@ -1,5 +1,6 @@
 import {useEffect,useState,type CSSProperties} from 'react';
 import './ambient-events.css';
+import {BlenderAircraft} from './AmbientCelestial3D';
 
 type Aircraft={kind:'aircraft';id:number;fromX:number;fromY:number;toX:number;toY:number;duration:number;heading:number;scale:number};
 type Dust={kind:'lunar-dust';id:number;x:number;y:number;duration:number;radius:number};
@@ -35,11 +36,7 @@ export function AmbientEvents({enabled,night,moonVisible=false,lunarDust=false,a
  },[enabled,night,moonVisible,lunarDust,aircraft]);
  return <div className="ambient-events" data-night={night} aria-hidden="true">
   {events.map(event=>event.kind==='aircraft'?<div key={event.id} className="ambient-flight" data-ambient-event="aircraft" style={{left:`${event.fromX}%`,top:`${event.fromY}%`,'--flight-dx':`${event.toX-event.fromX}cqw`,'--flight-dy':`${event.toY-event.fromY}cqh`,'--flight-duration':`${event.duration}ms`} as CSSProperties}>
-   <svg viewBox="0 0 40 20" style={{transform:`rotate(${event.heading}deg) scale(${event.scale})`}}>
-    {/* Nose points +X; both main wings and tailplanes sweep back toward -X. */}
-    <path d="M38 10C38 9 35 8.3 32 8.3H24L15 2H11L18 8.3H7L4 5H2L4 9H2V11H4L2 15H4L7 11.7H18L11 18H15L24 11.7H32C35 11.7 38 11 38 10Z"/>
-    <circle className="aircraft-navigation" cx="13" cy="2" r=".7"/><circle className="aircraft-navigation aircraft-navigation-secondary" cx="13" cy="18" r=".7"/>
-   </svg>
+   <BlenderAircraft night={night} heading={event.heading} scale={event.scale} variant={!night&&event.id%5===0?'glider':'airliner'}/>
   </div>:<div key={event.id} className="ambient-lunar-event" data-ambient-event="lunar-dust" style={{left:moonPosition?`${moonPosition.x}%`:undefined,top:moonPosition?`${moonPosition.y}%`:undefined,right:moonPosition?'auto':undefined,transform:moonPosition?'translate(-50%,-50%)':undefined,'--dust-duration':`${event.duration}ms`,'--dust-radius':`${event.radius}px`} as CSSProperties}>
    <svg viewBox="0 0 90 90"><g transform={`translate(${event.x} ${event.y})`}>
     <circle className="lunar-contact" r="1.6"/>

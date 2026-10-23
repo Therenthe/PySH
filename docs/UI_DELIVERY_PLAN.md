@@ -73,3 +73,7 @@ Actualizare 2026-10-04: UI-40 anulat explicit; continuă UI-39 și toate restan�
 Dovada finală pentru UI-34/35/41/42/43: [media-confetti-2026-10-04](evidence/media-confetti-2026-10-04.md). Verificate 51 hashuri, nouă preferințe față de backup și radio reluat. Toate cele 14 preferințe schimbate de audit restaurate; diagnosticul privat oprit. Turul a folosit acțiuni injectate în Chromium, nu certifică gestul fizic ori toate criteriile de produs. Restanțele anterioare rămân în inventar; UI-40 rămâne anulat.
 
 Restaurare limitată cerută de utilizator: stelele SVG și gradientul original din4bb708b, fără textura fotografică. Instalat5c76/source012;34probe afectate PASS, captură nativă inspectată,51hashuri/nouă preferințe/radio verificate. Nicio altă cerință nouă implementată în acest pas. Vezi [dovada](evidence/original-stars-2026-10-04.md).
+# Iterația cer/rețea —2026-10-23
+
+Reperul utilizatorului „Varianta Back” este păstrat separat. Lotul nou păstrează toate cerințele de mai jos: cer Blender cu stele rare, Lună în faza reală pentru dată/oră, nori/avioane/Soare/meteori, indicatori distincți Wi-Fi/Ethernet și recuperarea radioului când ruta se schimbă. Auditul vizual local nu certifică atingerea sau performanța pe Pi. Starea fiecărei probe și responsabilii sunt în [planul activ](PLAN_2026_10_23.md); restanțele anterioare nu sunt anulate.
+

@@ -1,4 +1,5 @@
 import {useEffect,useState,type CSSProperties} from 'react';
+import {BlenderMeteor} from './AmbientCelestial3D';
 type Meteor={id:number;left:number;top:number;length:number;angle:number;dx:number;dy:number;duration:number;brightness:number;thickness:number};
 const random=()=>crypto.getRandomValues(new Uint32Array(1))[0]/4294967296;
 
@@ -30,6 +31,6 @@ export function Meteors({enabled}:{enabled:boolean}){
  },[enabled]);
  return <>{meteors.map(m=><i aria-hidden="true" className="ambient-meteor meteor-transient" key={m.id} data-meteor-id={m.id}
   style={{left:`${m.left}%`,top:`${m.top}%`,'--meteor-angle':`${m.angle}deg`,'--meteor-dx':`${m.dx}px`,'--meteor-dy':`${m.dy}px`,'--meteor-duration':`${m.duration}ms`,'--meteor-length':`${m.length}px`,'--meteor-brightness':m.brightness,'--meteor-thickness':`${m.thickness}px`} as CSSProperties}>
-  <span className="meteor-tail"/><span className="meteor-head"/>
+  <BlenderMeteor/>
  </i>)}</>;
 }

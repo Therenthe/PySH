@@ -306,6 +306,15 @@ class Device:
             nm_state = int(await nm.get_state())
             result["available"] = True
             result["state"] = "connected" if nm_state in (50, 60, 70) else ("disconnected" if nm_state in (20, 30, 40) else "connecting")
+            read_wireless = getattr(nm, "get_wireless_enabled", None)
+            if callable(read_wireless):
+                try:
+                    enabled = await asyncio.wait_for(read_wireless(), timeout=0.5)
+                    if type(enabled) is bool:
+                        result["wireless_enabled"] = enabled
+                except Exception:
+                    # Optional radio metadata must not hide a working route.
+                    pass
             for path in await self._nm_device_paths():
                 p = await self._props(NM, path, NM_DEVICE)
                 device_type = int(p.get("DeviceType", 0))
@@ -318,6 +327,9 @@ class Device:
                     if ap_path and ap_path != "/":
                         ap = await self._props(NM, ap_path, NM_AP)
                         entry["ssid"] = self._ssid(ap.get("Ssid", []))
+                        strength = ap.get("Strength")
+                        if type(strength) is int and 0 <= strength <= 100:
+                            entry["signal"] = strength
                     else:
                         entry["ssid"] = None
                 ip_path = p.get("Ip4Config", "/")

@@ -17,7 +17,7 @@ for(const theme of ['ink','night'] as const){
  test(`${theme}: connected app icon precedes network and power touch-wakes without stray actions`,async({page},info)=>{
   const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro);
   await page.locator('.main-nav button').first().tap();
-  expect(await page.locator('.remote-presence').evaluate(e=>e.nextElementSibling?.className)).toBe('top-network');
+  expect(await page.locator('.remote-presence').evaluate(e=>e.nextElementSibling?.matches('button.top-network'))).toBe(true);
   const power=page.getByRole('button',{name:ro?'Oprește PySH':'Turn off PySH',exact:true});
   const box=await power.boundingBox();expect(box!.width).toBeGreaterThanOrEqual(48);expect(box!.height).toBeGreaterThanOrEqual(48);
   await power.tap();await expect(page.getByRole('dialog',{name:ro?'Ecran și standby':'Display & standby'})).toBeVisible();

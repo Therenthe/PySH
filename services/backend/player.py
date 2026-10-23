@@ -147,7 +147,17 @@ class Player:
         self._last_position = None
         self._last_play_command = time.monotonic()
         await self._command(["set_property", "pause", False])
-        await self._command(["loadfile", url, "replace"])
+        load = ["loadfile", url, "replace"]
+        if self._kind == "radio" and parsed.scheme in {"http", "https"}:
+            # Per-file transport recovery keeps pause/stop authoritative and
+            # cannot turn a finished local track into an endless broadcast.
+            load.extend([-1, {
+                "network-timeout": "10",
+                "stream-lavf-o": "reconnect=1,reconnect_streamed=1,reconnect_at_eof=1,"
+                    "reconnect_on_network_error=1,reconnect_delay_max=5,"
+                    "reconnect_max_retries=4,reconnect_delay_total_max=15",
+            }])
+        await self._command(load)
         return await self.status()
 
     async def pause_for_external(self) -> dict[str, Any]:
