@@ -14,10 +14,19 @@
 .blender-clouds.cloud-cover-overcast .cloud-primary{width:111%;left:-8%;top:-9%;opacity:.98}
 .blender-clouds.cloud-cover-overcast .cloud-secondary{width:105%;left:-30%;top:19%;opacity:.92}
 @keyframes blender-cloud-travel{from{translate:-8px 0}to{translate:15px -3px}}
-.blender-aircraft{position:relative;display:block;width:76px;height:38px;transform-origin:center;pointer-events:none}
-.blender-aircraft>img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.blender-aircraft{position:relative;display:block;width:96px;height:48px;transform-origin:center;pointer-events:none}
+.ambient-flight>.blender-aircraft{width:100%;height:100%}
+.blender-aircraft-body{position:relative;display:block;width:100%;height:100%}
+.blender-aircraft-body>img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.blender-aircraft-body>.aircraft-rotor-frame{position:absolute;inset:0;animation:blender-rotor-frame .18s steps(1,end) infinite}
+.aircraft-rotor-frame.rotor-frame-1{animation-delay:-.12s}
+.aircraft-rotor-frame.rotor-frame-2{animation-delay:-.06s}
+.aircraft-hover{animation:blender-helicopter-hover 3.7s ease-in-out infinite alternate}
+@keyframes blender-rotor-frame{0%,33.32%{opacity:1}33.33%,100%{opacity:0}}
+@keyframes blender-helicopter-hover{from{translate:0 -1px}to{translate:0 1px}}
 .blender-aircraft-light{position:absolute;width:2px;height:2px;transform:translate(-50%,-50%);border-radius:50%;opacity:0;animation:blender-navigation-light 3.2s steps(1,end) infinite}
-.blender-aircraft-light.port{left:29.5863%;top:87.6336%;background:#dc7c71;box-shadow:0 0 3px #d2776366}
-.blender-aircraft-light.starboard{left:37.3379%;top:6.9898%;background:#9ac8ac;animation-delay:1.6s;box-shadow:0 0 3px #8dbd9e66}
+.blender-aircraft-light.port,.blender-aircraft-light.beacon{background:#dc7c71;box-shadow:0 0 2px #d2776340}
+.blender-aircraft-light.starboard{background:#9ac8ac;animation-delay:1.6s;box-shadow:0 0 2px #8dbd9e40}
+.blender-aircraft-light.beacon.police{background:#97c9ef;box-shadow:0 0 2px #6ea7e040}
 @keyframes blender-navigation-light{0%,6%{opacity:.85}7%,100%{opacity:0}}
-@media(prefers-reduced-motion:reduce){.stars-blender3d .blender-star-glint,.blender-clouds .cloud-mass,.blender-aircraft-light{animation:none}.blender-aircraft-light{opacity:.55}}
+@media(prefers-reduced-motion:reduce){.stars-blender3d .blender-star-glint,.blender-clouds .cloud-mass,.blender-aircraft-light,.aircraft-hover,.blender-aircraft-body>.aircraft-rotor-frame{animation:none}.blender-aircraft-light{opacity:.55}.blender-aircraft-body>.aircraft-rotor-frame:not(.rotor-frame-0){display:none}}

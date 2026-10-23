@@ -7,7 +7,7 @@ for(const theme of ['ink','night'])test(`ambient pending protection, retry and i
 
  await page.clock.install();await page.goto('/');await page.evaluate(()=>{AbortSignal.timeout=()=>new AbortController().signal;});
  const settings=async()=>{await page.locator('.main-nav button').nth(3).tap();await page.locator('.settings-tabs button').filter({hasText:ro?'Acasă':'Home'}).tap();};await settings();
- const names=[ro?'Avioane decorative':'Decorative aircraft',ro?'Praf lunar decorativ':'Decorative lunar dust'];
+ const names=[ro?'Aeronave decorative':'Decorative aircraft',ro?'Praf lunar decorativ':'Decorative lunar dust'];
  for(const name of names){
  const button=page.getByRole('button',{name,exact:true});await button.scrollIntoViewIfNeeded();const start=calls;gate=true;
  // Deliberately dispatch both before React can paint: the synchronous lock must protect this case too.

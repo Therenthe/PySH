@@ -1,0 +1,1317 @@
+{
+  "schema": 1,
+  "blender": "5.2.2 LTS",
+  "contract": {
+    "width": 160,
+    "height": 80,
+    "nose": "right",
+    "up": "image-top",
+    "travel_mirror": "scaleX only",
+    "helicopter_frames": 3
+  },
+  "models": {
+    "airliner": {
+      "mesh_objects": 32,
+      "vertices": 6744,
+      "polygons": 7204,
+      "gate_errors": [],
+      "assembly_gate": {
+        "profile": "render",
+        "eps": 0.001603,
+        "tol": 0.032067,
+        "gap": 0.160335,
+        "pass": true,
+        "errors": [],
+        "warnings": [],
+        "per_object": {
+          "Narrowbody_pressure_fuselage": {
+            "tris": 508,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Swept_low_wing_port": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Swept_low_wing_starboard": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Swept_stabilizer_port": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Swept_stabilizer_starboard": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Conventional_tail_fin": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Underwing_turbofan_-1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Dark_engine_intake_-1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Engine_pylon_-1": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Upturned_winglet_-1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Underwing_turbofan_1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Dark_engine_intake_1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Engine_pylon_1": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Upturned_winglet_1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_0": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_2": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_3": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_4": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_5": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_6": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_7": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_8": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_9": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_10": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_11": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_12": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_13": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_14": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_15": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Cabin_window_16": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Flightdeck_glazing": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          }
+        },
+        "skipped": []
+      },
+      "nav_points": {
+        "nose": [
+          0.92143,
+          0.56132
+        ],
+        "tail": [
+          0.11429,
+          0.2888
+        ],
+        "port": [
+          0.37143,
+          0.79384
+        ],
+        "starboard": [
+          0.37143,
+          0.35604
+        ],
+        "finTop": [
+          0.13571,
+          0.22749
+        ],
+        "finBase": [
+          0.13571,
+          0.53134
+        ]
+      },
+      "files": [
+        {
+          "path": "app/ui/public/ambient/aircraft/airliner-day-v1.png",
+          "sha256": "d9a87e12dee1139be2729e6121e24ceca3a4ce904fa6ddfe8e7d8f210baa3d71",
+          "encoded_bytes": 8849,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            10,
+            17,
+            149,
+            66
+          ]
+        },
+        {
+          "path": "app/ui/public/ambient/aircraft/airliner-night-v1.png",
+          "sha256": "38fba28566d54ac106a1095b1ed7a9be91326a1ae6991e4cffe1d20a15f26b1d",
+          "encoded_bytes": 8714,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            10,
+            17,
+            149,
+            66
+          ]
+        }
+      ],
+      "gate_scope": "closed parts and whole render assembly; not a watertight printable mesh"
+    },
+    "turboprop": {
+      "mesh_objects": 27,
+      "vertices": 4414,
+      "polygons": 4620,
+      "gate_errors": [],
+      "assembly_gate": {
+        "profile": "render",
+        "eps": 0.001308,
+        "tol": 0.026164,
+        "gap": 0.130821,
+        "pass": true,
+        "errors": [],
+        "warnings": [],
+        "per_object": {
+          "Regional_tapered_fuselage": {
+            "tris": 380,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "High_straight_wing_port": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "High_straight_wing_starboard": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "T_tail_horizontal_port": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "T_tail_horizontal_starboard": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Tall_T_tail_fin": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Turboprop_nacelle_-1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Spinner_-1": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Propeller_blade_-10.2": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Propeller_blade_-11.7707963267948965": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Turboprop_nacelle_1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Spinner_1": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Propeller_blade_10.2": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Propeller_blade_11.7707963267948965": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Regional_window_0": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Regional_window_1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Regional_window_2": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Regional_window_3": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Regional_window_4": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Regional_window_5": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Regional_window_6": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Regional_window_7": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Regional_window_8": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Regional_window_9": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Regional_window_10": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Regional_window_11": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Regional_flightdeck": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          }
+        },
+        "skipped": []
+      },
+      "nav_points": {
+        "nose": [
+          0.84649,
+          0.58032
+        ],
+        "tail": [
+          0.14912,
+          0.25737
+        ],
+        "port": [
+          0.50877,
+          0.74774
+        ],
+        "starboard": [
+          0.50877,
+          0.25226
+        ],
+        "finTop": [
+          0.15789,
+          0.24063
+        ],
+        "finBase": [
+          0.15789,
+          0.54183
+        ]
+      },
+      "files": [
+        {
+          "path": "app/ui/public/ambient/aircraft/turboprop-day-v1.png",
+          "sha256": "e38abcd9aeb0910bd804c3a1781b32210a913f8adbc5f53b901cf6792bca9e0c",
+          "encoded_bytes": 8595,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            11,
+            11,
+            137,
+            62
+          ]
+        },
+        {
+          "path": "app/ui/public/ambient/aircraft/turboprop-night-v1.png",
+          "sha256": "f6bab428a5fa4720c5a808c24b6aaa2d89bc1f3c6ff7924cb6415495d39af7fd",
+          "encoded_bytes": 8579,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            12,
+            11,
+            137,
+            62
+          ]
+        }
+      ],
+      "gate_scope": "closed parts and whole render assembly; not a watertight printable mesh"
+    },
+    "business-jet": {
+      "mesh_objects": 24,
+      "vertices": 4552,
+      "polygons": 4836,
+      "gate_errors": [],
+      "assembly_gate": {
+        "profile": "render",
+        "eps": 0.001169,
+        "tol": 0.023389,
+        "gap": 0.116947,
+        "pass": true,
+        "errors": [],
+        "warnings": [],
+        "per_object": {
+          "Business_jet_slender_fuselage": {
+            "tris": 380,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_swept_wing_port": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_swept_wing_starboard": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_T_tail_port": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_T_tail_starboard": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_fin": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Rear_engine_-1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Rear_intake_-1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Rear_engine_mount_-1": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_winglet_-1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Rear_engine_1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Rear_intake_1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Rear_engine_mount_1": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_winglet_1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_window_0": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_window_1": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_window_2": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_window_3": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_window_4": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_window_5": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_window_6": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_window_7": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_window_8": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Business_flightdeck": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          }
+        },
+        "skipped": []
+      },
+      "nav_points": {
+        "nose": [
+          0.85088,
+          0.5753
+        ],
+        "tail": [
+          0.12719,
+          0.29083
+        ],
+        "port": [
+          0.33333,
+          0.76506
+        ],
+        "starboard": [
+          0.33333,
+          0.38554
+        ],
+        "finTop": [
+          0.15789,
+          0.28247
+        ],
+        "finBase": [
+          0.15789,
+          0.54183
+        ]
+      },
+      "files": [
+        {
+          "path": "app/ui/public/ambient/aircraft/business-jet-day-v1.png",
+          "sha256": "15de11a41e652b98000390a76a2691a4e84a8bf1f879871ab28616134623bb53",
+          "encoded_bytes": 8097,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            10,
+            15,
+            137,
+            64
+          ]
+        },
+        {
+          "path": "app/ui/public/ambient/aircraft/business-jet-night-v1.png",
+          "sha256": "398a8a0b43dd9fd7aec42c6410440ccf604bba7c4a0b69dc2378f56695b4990e",
+          "encoded_bytes": 8011,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            10,
+            15,
+            137,
+            64
+          ]
+        }
+      ],
+      "gate_scope": "closed parts and whole render assembly; not a watertight printable mesh"
+    },
+    "tv-helicopter": {
+      "mesh_objects": 29,
+      "vertices": 2632,
+      "polygons": 2598,
+      "gate_errors": [],
+      "assembly_gate": {
+        "profile": "render",
+        "eps": 0.001432,
+        "tol": 0.028646,
+        "gap": 0.14323,
+        "pass": true,
+        "errors": [],
+        "warnings": [],
+        "per_object": {
+          "TV_compact_cabin": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Continuous_bubble_windscreen": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Roof_engine_cowling": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Tapered_tail_boom": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Vertical_tail_fin": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Tail_stabilizer_port": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Tail_stabilizer_starboard": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_rail_-1": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_front_curve_-1": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_support_-1-0.8": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_support_-11.25": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_rail_1": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_front_curve_1": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_support_1-0.8": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_support_11.25": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Rotor_mast": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Rotor_hub": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Main_rotor_blade_0": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Main_rotor_blade_1": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Main_rotor_blade_2": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Main_rotor_blade_3": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Tail_rotor_axle": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Tail_rotor_0": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Tail_rotor_1.5707963267948966": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Broadcast_white_door": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Television_gyro_camera": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Camera_optics": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Microwave_antenna_stem": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Microwave_broadcast_dish": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          }
+        },
+        "skipped": []
+      },
+      "nav_points": {
+        "nose": [
+          0.76154,
+          0.52985
+        ],
+        "tail": [
+          0.13077,
+          0.37314
+        ],
+        "beacon": [
+          0.59231,
+          0.41791
+        ],
+        "rotor": [
+          0.53462,
+          0.27314
+        ],
+        "rotorTop": [
+          0.53462,
+          0.27314
+        ],
+        "skidBottom": [
+          0.59231,
+          0.7306
+        ]
+      },
+      "files": [
+        {
+          "path": "app/ui/public/ambient/aircraft/tv-helicopter-day-0-v1.png",
+          "sha256": "9f803f0c8c74cb11d1a4a91e1d17d3355067bf27e70a5ab6ec57600fc6cc1b87",
+          "encoded_bytes": 9783,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            16,
+            6,
+            145,
+            60
+          ]
+        },
+        {
+          "path": "app/ui/public/ambient/aircraft/tv-helicopter-day-1-v1.png",
+          "sha256": "691da2f2dfac0242c6071f5137caada380b47fc9a4c63491b4e6b775f215da30",
+          "encoded_bytes": 10925,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            16,
+            8,
+            138,
+            60
+          ]
+        },
+        {
+          "path": "app/ui/public/ambient/aircraft/tv-helicopter-day-2-v1.png",
+          "sha256": "2c12aabcadea2c02ef3a992749f8047cd9d06b316983eb70f6f15a7a0d241de4",
+          "encoded_bytes": 10883,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            16,
+            8,
+            138,
+            60
+          ]
+        },
+        {
+          "path": "app/ui/public/ambient/aircraft/tv-helicopter-night-0-v1.png",
+          "sha256": "21dd16ccd1d284807f31558043b411bba9dd9531384754452b56a6380e93edf5",
+          "encoded_bytes": 9591,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            16,
+            6,
+            145,
+            60
+          ]
+        },
+        {
+          "path": "app/ui/public/ambient/aircraft/tv-helicopter-night-1-v1.png",
+          "sha256": "e865ff0d4c0093077c34e2d744964ad76ea583f0f818bede180cafa39186db52",
+          "encoded_bytes": 10758,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            16,
+            8,
+            138,
+            60
+          ]
+        },
+        {
+          "path": "app/ui/public/ambient/aircraft/tv-helicopter-night-2-v1.png",
+          "sha256": "540e0c51a5b658aaa221c9bf7cb395bf4d9696b6a51a3a30daf36323461b2aac",
+          "encoded_bytes": 10695,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            16,
+            8,
+            138,
+            60
+          ]
+        }
+      ],
+      "gate_scope": "closed parts and whole render assembly; not a watertight printable mesh"
+    },
+    "police-helicopter": {
+      "mesh_objects": 29,
+      "vertices": 2866,
+      "polygons": 2868,
+      "gate_errors": [],
+      "assembly_gate": {
+        "profile": "render",
+        "eps": 0.001432,
+        "tol": 0.028637,
+        "gap": 0.143187,
+        "pass": true,
+        "errors": [],
+        "warnings": [],
+        "per_object": {
+          "Police_twin_cabin": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Continuous_bubble_windscreen.001": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Roof_engine_cowling.001": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Tapered_tail_boom.001": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Vertical_tail_fin.001": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Tail_stabilizer_port.001": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Tail_stabilizer_starboard.001": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_rail_-1.001": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_front_curve_-1.001": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_support_-1-0.001": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_support_-11.001": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_rail_1.001": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_front_curve_1.001": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_support_1-0.001": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Skid_support_11.001": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Rotor_mast.001": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Rotor_hub.001": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Main_rotor_blade_0.001": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Main_rotor_blade_1.001": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Main_rotor_blade_2.001": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Main_rotor_blade_3.001": {
+            "tris": 108,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Tail_rotor_axle.001": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Tail_rotor_0.001": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Tail_rotor_1.5707963267948966.001": {
+            "tris": 60,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "White_police_side_band": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Stabilized_searchlight": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Searchlight_lens": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Blue_roof_beacon": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          },
+          "Police_sensor_gimbal": {
+            "tris": 528,
+            "parts": 1,
+            "errors": [],
+            "warnings": []
+          }
+        },
+        "skipped": []
+      },
+      "nav_points": {
+        "nose": [
+          0.76154,
+          0.52985
+        ],
+        "tail": [
+          0.13077,
+          0.37314
+        ],
+        "beacon": [
+          0.59231,
+          0.41791
+        ],
+        "rotor": [
+          0.53462,
+          0.27314
+        ],
+        "rotorTop": [
+          0.53462,
+          0.27314
+        ],
+        "skidBottom": [
+          0.59231,
+          0.7306
+        ]
+      },
+      "files": [
+        {
+          "path": "app/ui/public/ambient/aircraft/police-helicopter-day-0-v1.png",
+          "sha256": "2ef44240bdbd14f39586635208c2fe599898ad019578b0217e5368032aa77cdb",
+          "encoded_bytes": 9504,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            16,
+            6,
+            145,
+            60
+          ]
+        },
+        {
+          "path": "app/ui/public/ambient/aircraft/police-helicopter-day-1-v1.png",
+          "sha256": "de09ca301b2e0755fdd19619c9addeb0dd38936c771d6f391335af54ba47fc8d",
+          "encoded_bytes": 10773,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            16,
+            8,
+            138,
+            60
+          ]
+        },
+        {
+          "path": "app/ui/public/ambient/aircraft/police-helicopter-day-2-v1.png",
+          "sha256": "980b3798f2b4bbbcfd5b9919c3b96bdfbb64361c4a08821e48a00780f5350e00",
+          "encoded_bytes": 10759,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            16,
+            8,
+            138,
+            60
+          ]
+        },
+        {
+          "path": "app/ui/public/ambient/aircraft/police-helicopter-night-0-v1.png",
+          "sha256": "96a32a97c217b0a8593342ac4f9e8fd3d519270d0fde2536379f1240265dac57",
+          "encoded_bytes": 9314,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            16,
+            6,
+            145,
+            60
+          ]
+        },
+        {
+          "path": "app/ui/public/ambient/aircraft/police-helicopter-night-1-v1.png",
+          "sha256": "980f2cf03463cb146ea0e45390628fb48818000052ffdd7cf41634b42e5a67cd",
+          "encoded_bytes": 10659,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            16,
+            8,
+            138,
+            60
+          ]
+        },
+        {
+          "path": "app/ui/public/ambient/aircraft/police-helicopter-night-2-v1.png",
+          "sha256": "5e639f0d2a5866fe8ad2f307c2548b519d41f804fe25e1dd4967aa6f6944b070",
+          "encoded_bytes": 10593,
+          "decoded_bytes": 51200,
+          "alpha_bounds": [
+            16,
+            8,
+            138,
+            60
+          ]
+        }
+      ],
+      "gate_scope": "closed parts and whole render assembly; not a watertight printable mesh"
+    }
+  },
+  "totals": {
+    "sprite_count": 18,
+    "encoded_bytes": 175082,
+    "decoded_bytes": 921600
+  },
+  "blend_sha256": "47e26a80798c3910decbdf74840eebf4f13f686afeb6bf6209ce5bda6efb4ad1"
+}

@@ -22,16 +22,16 @@ async function stage(page:Page,{time,condition='partly-cloudy',night=true,aircra
  },{time,condition,night,aircraft});
  await expect(page.locator('.city-diorama')).toBeVisible();
  await page.locator('.blender-clouds img').evaluateAll(elements=>Promise.all(elements.map(element=>(element as HTMLImageElement).decode())));
- await page.locator('.blender-aircraft img').evaluate(element=>(element as HTMLImageElement).decode());
+ await page.locator('.blender-aircraft img').evaluateAll(elements=>Promise.all(elements.map(element=>(element as HTMLImageElement).decode())));
  await page.evaluate(async()=>{const image=new Image();image.src='/ambient/sky3d/moon-phases-blender-v1.png';await image.decode();});
 }
 
 for(const scene of [
  {name:'night-half-moon',time:'2026-10-04T23:00:00Z',night:true,condition:'partly-cloudy',aircraft:'airliner'},
- {name:'night-clear',time:'2026-10-04T23:00:00Z',night:true,condition:'clear',aircraft:'glider'},
+ {name:'night-clear',time:'2026-10-04T23:00:00Z',night:true,condition:'clear',aircraft:'tv-helicopter'},
  {name:'night-waxing-moon',time:'2026-10-20T17:00:00Z',night:true,condition:'clear',aircraft:'airliner'},
  {name:'day-spring',time:'2026-04-14T10:00:00Z',night:false,condition:'partly-cloudy',aircraft:'airliner'},
- {name:'day-summer',time:'2026-07-14T10:00:00Z',night:false,condition:'mainly-clear',aircraft:'glider'},
+ {name:'day-summer',time:'2026-07-14T10:00:00Z',night:false,condition:'mainly-clear',aircraft:'turboprop'},
  {name:'day-autumn',time:'2026-10-14T10:00:00Z',night:false,condition:'overcast',aircraft:'airliner'},
  {name:'night-winter',time:'2026-01-04T23:00:00Z',night:true,condition:'overcast',aircraft:'airliner'},
 ])test(`Blender sky fixture ${scene.name} preserves sparse geometry and loads genuine rendered assets`,async({page},info)=>{

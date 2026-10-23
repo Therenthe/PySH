@@ -1,57 +1,84 @@
-import {test,expect} from '@playwright/test';
+import {test,expect,type Page} from '@playwright/test';
+import path from 'node:path';
 import {readFileSync} from 'node:fs';
 
-// Camera projections exported by Blender, checked against the delivered pixels.
-const report=JSON.parse(readFileSync('assets/blender/sky3d/build-report.json','utf8'));
+const variants=['airliner','turboprop','business-jet','tv-helicopter','police-helicopter'];
+const anchors=JSON.parse(readFileSync('app/ui/public/ambient/aircraft/anchors-v1.json','utf8')).models;
 
-test('all aircraft renders preserve both complete swept wings inside a transparent frame',async({page})=>{
- await page.route('**/api/**',route=>route.fulfill({json:{token:'fixture',preferences:{setupComplete:true,screensaverMinutes:0},network:{},bluetooth:{},audio:{},player:{},weather:{}}}));await page.goto('/');
- const masks=await page.evaluate(async report=>{
-  const results=[];for(const kind of ['airliner','glider'])for(const lighting of ['day','night']){
-   const image=new Image();image.src=`/ambient/sky3d/${kind}-${lighting}-blender-v1.png`;await image.decode();const canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;const ctx=canvas.getContext('2d')!;ctx.drawImage(image,0,0);const pixels=ctx.getImageData(0,0,image.width,image.height).data,points=report[kind].rasterAnchors;
-   const alpha=(x:number,y:number)=>pixels[(y*image.width+x)*4+3];let edgePeak=0,count=0,minX=image.width,maxX=0,minY=image.height,maxY=0;for(let y=0;y<image.height;y++)for(let x=0;x<image.width;x++){const value=alpha(x,y);if(x===0||y===0||x===image.width-1||y===image.height-1)edgePeak=Math.max(edgePeak,value);if(value>200){count++;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);}}
-   const hits=Object.entries(points).map(([name,p])=>{const [px,py]=p as number[];let peak=0;for(let y=Math.max(0,Math.round(py)-3);y<=Math.min(image.height-1,Math.round(py)+3);y++)for(let x=Math.max(0,Math.round(px)-3);x<=Math.min(image.width-1,Math.round(px)+3);x++)peak=Math.max(peak,alpha(x,y));return {name,point:[px,py],peak};});
-   results.push({kind,lighting,size:[image.width,image.height],edgePeak,coverage:count/(image.width*image.height),bounds:{minX,maxX,minY,maxY},hits});
-  }return results;
- },report);
- for(const mask of masks){expect(mask.size).toEqual([256,128]);expect(mask.edgePeak,`${mask.kind}/${mask.lighting} must not clip a wing at the image edge`).toBeLessThan(20);expect(mask.coverage).toBeGreaterThan(.04);expect(mask.coverage).toBeLessThan(.4);for(const hit of mask.hits){expect(hit.point[0]).toBeGreaterThan(2);expect(hit.point[0]).toBeLessThan(254);expect(hit.point[1]).toBeGreaterThan(2);expect(hit.point[1]).toBeLessThan(126);expect(hit.peak,`${mask.kind}/${mask.lighting} ${hit.name} must hit rendered geometry`).toBeGreaterThan(200);}expect(mask.bounds.minX).toBeGreaterThan(2);expect(mask.bounds.maxX).toBeLessThan(254);expect(mask.bounds.minY).toBeGreaterThan(2);expect(mask.bounds.maxY).toBeLessThan(126);}
+async function fixture(page:Page){
+ const entry='/@fs/'+path.resolve('tests/e2e/aircraft.fixture.tsx').replaceAll('\\','/');
+ await page.route('**/aircraft-audit',route=>route.fulfill({contentType:'text/html',body:`<html><head><style>html,body,#root{margin:0;width:800px;height:480px;overflow:hidden}</style></head><body><div id="root"></div><script type="module">import RefreshRuntime from '/@react-refresh';RefreshRuntime.injectIntoGlobalHook(window);window.$RefreshReg$=()=>{};window.$RefreshSig$=()=>type=>type;window.__vite_plugin_react_preamble_installed__=true;</script><script type="module" src="${entry}"></script></body></html>`}));
+ await page.goto('/aircraft-audit');await page.waitForFunction(()=>(window as any).aircraftFixtureReady);
+}
+
+test('fleet selection is genuinely varied, slower lower helicopters and no immediate repeats',async({page})=>{
+ await fixture(page);
+ const fleet=await page.evaluate(()=>{
+  const create=(window as any).createAircraft,make=(index:number,west=false,previous?:string)=>{
+   const values=[(index+.5)/5,west?.9:.1,.5,.6,.5,.5];let i=0;
+   return create(index,()=>values[i++],800/422,previous);
+  };
+  return {east:[0,1,2,3,4].map(index=>make(index)),west:[0,1,2,3,4].map(index=>make(index,true)),again:make(0,false,'airliner')};
+ });
+ expect(fleet.east.map(f=>f.variant)).toEqual(variants);expect(fleet.again.variant).not.toBe('airliner');
+ for(const [index,east]of fleet.east.entries()){
+  const west=fleet.west[index];expect(east.facing).toBe(1);expect(west.facing).toBe(-1);
+  expect(Math.abs(east.heading)).toBeLessThan(5);expect(west.heading).toBeCloseTo(-east.heading);
+  const helicopter=east.variant.endsWith('helicopter');
+  expect(east.fromY).toBe(helicopter?39:24.5);expect(east.duration).toBe(helicopter?56500:east.variant==='turboprop'?41000:east.variant==='business-jet'?27000:33000);
+ }
 });
 
-for(const theme of ['ink','night'])for(const direction of ['east','west'])test(`aircraft swept wings ${direction} ${theme}`,async({page},info)=>{
- const ro=info.project.name.endsWith('ro'),west=direction==='west';
- await page.addInitScript(west=>{crypto.getRandomValues=((array:Uint32Array)=>{array.fill(west?4294967295:0);return array;}) as typeof crypto.getRandomValues;},west);
- await page.route('**/api/**',route=>{const path=new URL(route.request().url()).pathname;return route.fulfill({json:path==='/api/session'?{token:'fixture'}:path==='/api/state'?{preferences:{language:ro?'ro':'en',theme,nightEnabled:false,setupComplete:true,screensaverMinutes:0,decorativeAircraft:true},network:{},bluetooth:{devices:[],prompts:[]},audio:{},player:{},weather:{current:{weather_code:0,is_day:theme==='ink'?1:0},daily:[]}}:{ok:true}});});
- await page.clock.install({time:new Date('2026-10-04T12:00:00Z')});await page.goto('/');
- await page.clock.runFor(west?50020:18020);const flight=page.locator('.ambient-flight');await expect(flight).toHaveCount(1);
- await flight.evaluate(el=>{el.getAnimations().forEach(animation=>{animation.currentTime=Number(getComputedStyle(el).getPropertyValue('--flight-duration').replace('ms',''))/2;animation.pause();});el.getAnimations({subtree:true}).filter(a=>a.effect?.target!==el).forEach(a=>a.pause());});
- const image=flight.locator('.blender-aircraft>img');await expect(image).toHaveAttribute('src',`/ambient/sky3d/airliner-${theme==='night'?'night':'day'}-blender-v1.png`);
- const anchors=report.airliner.rasterAnchors;
- expect(anchors,'Blender must export its actual camera-projected geometry').toBeTruthy();
- const geometry=await flight.locator('.blender-aircraft').evaluate(async(el,anchors)=>{
-  const img=el.querySelector('img')!;await img.decode();
-  const canvas=document.createElement('canvas');canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;const ctx=canvas.getContext('2d')!;ctx.drawImage(img,0,0);const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
-  const alpha=(x:number,y:number)=>data[(y*canvas.width+x)*4+3];
-  const occupied=[];for(let y=0;y<canvas.height;y++)for(let x=0;x<canvas.width;x++)if(alpha(x,y)>200)occupied.push([x,y]);
-  const hit=(point:number[])=>{let peak=0;for(let y=Math.max(0,Math.round(point[1])-3);y<=Math.min(canvas.height-1,Math.round(point[1])+3);y++)for(let x=Math.max(0,Math.round(point[0])-3);x<=Math.min(canvas.width-1,Math.round(point[0])+3);x++)peak=Math.max(peak,alpha(x,y));return peak;};
-  const matrix=new DOMMatrix(getComputedStyle(el).transform),sx=el.clientWidth/canvas.width,sy=el.clientHeight/canvas.height;
-  const transform=(point:number[])=>new DOMPoint(point[0]*sx,point[1]*sy).matrixTransform(matrix);
-  const nose=transform(anchors.nose),tail=transform(anchors.tail),forward={x:nose.x-tail.x,y:nose.y-tail.y};
-  const sweep=(tip:number[],root:number[])=>{const a=transform(tip),b=transform(root);return (a.x-b.x)*forward.x+(a.y-b.y)*forward.y;};
-  const parent=el.closest('.ambient-flight')!,sky=parent.parentElement!,style=getComputedStyle(parent);
-  const travel={x:parseFloat(style.getPropertyValue('--flight-dx'))*sky.clientWidth/100,y:parseFloat(style.getPropertyValue('--flight-dy'))*sky.clientHeight/100};
-  const lights=Array.from(el.querySelectorAll<HTMLElement>('.blender-aircraft-light')).map(n=>({className:n.className,x:(n.offsetLeft+n.offsetWidth/2)/sx,y:(n.offsetTop+n.offsetHeight/2)/sy,color:getComputedStyle(n).backgroundColor}));
-  return {size:[canvas.width,canvas.height],hits:Object.fromEntries(Object.entries(anchors).map(([key,p])=>[key,hit(p as number[])])),coverage:occupied.length/(canvas.width*canvas.height),bounds:{left:Math.min(...occupied.map(p=>p[0])),right:Math.max(...occupied.map(p=>p[0])),top:Math.min(...occupied.map(p=>p[1])),bottom:Math.max(...occupied.map(p=>p[1]))},corners:[alpha(0,0),alpha(canvas.width-1,0),alpha(0,canvas.height-1),alpha(canvas.width-1,canvas.height-1)],forward,upperSweep:sweep(anchors.upperWingTip,anchors.upperWingRoot),lowerSweep:sweep(anchors.lowerWingTip,anchors.lowerWingRoot),headingCosine:(forward.x*travel.x+forward.y*travel.y)/(Math.hypot(forward.x,forward.y)*Math.hypot(travel.x,travel.y)),lights};
- },anchors);
- expect(geometry.size).toEqual([256,128]);expect(geometry.corners).toEqual([0,0,0,0]);expect(geometry.coverage).toBeGreaterThan(.06);expect(geometry.coverage).toBeLessThan(.4);
- for(const [name,alpha]of Object.entries(geometry.hits))expect(alpha,`${name} must land on the actual rendered aircraft`).toBeGreaterThan(200);
- expect(Math.abs(geometry.bounds.right-anchors.nose[0])).toBeLessThan(9);expect(Math.abs(geometry.bounds.top-anchors.upperWingTip[1])).toBeLessThan(6);expect(Math.abs(geometry.bounds.bottom-anchors.lowerWingTip[1])).toBeLessThan(6);
- expect(geometry.forward.x*(west?-1:1)).toBeGreaterThan(0);expect(geometry.headingCosine).toBeGreaterThan(.9);expect(geometry.upperSweep).toBeLessThan(0);expect(geometry.lowerSweep).toBeLessThan(0);
- if(theme==='night'){
-  expect(geometry.lights).toHaveLength(2);
-  for(const light of geometry.lights){const port=light.className.includes('port'),tip=port?anchors.lowerWingTip:anchors.upperWingTip;expect(Math.hypot(light.x-tip[0],light.y-tip[1]),`${port?'red port':'green starboard'} light must sit on its real wing tip`).toBeLessThan(6);expect(light.color).toBe(port?'rgb(220, 124, 113)':'rgb(154, 200, 172)');}
- }else expect(geometry.lights).toHaveLength(0);
- await page.screenshot({path:info.outputPath(`aircraft-${direction}-${theme}.png`)});
- // Enlarged diagnostic uses the same live raster and lights, not a replacement SVG.
- await flight.locator('.blender-aircraft').evaluate(el=>{const clone=el.cloneNode(true) as HTMLElement;Object.assign(clone.style,{width:'512px',height:'256px',position:'fixed',left:'144px',top:'112px',transform:'none',zIndex:'999'});clone.querySelectorAll<HTMLElement>('.blender-aircraft-light').forEach(n=>{n.style.animation='none';n.style.opacity='.85';});document.body.appendChild(clone);});
- await page.screenshot({path:info.outputPath(`aircraft-silhouette-${direction}-${theme}.png`)});
+for(const night of [false,true])test(`all five Blender aircraft have distinct unclipped ${night?'night':'day'} renders`,async({page})=>{
+ await fixture(page);
+ const masks=await page.evaluate(async({variants,night})=>{
+  const results=[];
+  for(const variant of variants){
+   const helicopter=variant.endsWith('helicopter'),frames=[];
+   for(let frame=0;frame<(helicopter?3:1);frame++){
+    const image=new Image();image.src=`/ambient/aircraft/${variant}-${night?'night':'day'}${helicopter?`-${frame}`:''}-v1.png`;await image.decode();
+    const canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;const ctx=canvas.getContext('2d')!;ctx.drawImage(image,0,0);const pixels=ctx.getImageData(0,0,image.width,image.height).data;
+    let edge=0,occupied=0,signature=2166136261,minX=image.width,minY=image.height,maxX=0,maxY=0;
+    for(let y=0;y<image.height;y++)for(let x=0;x<image.width;x++){
+     const offset=(y*image.width+x)*4,alpha=pixels[offset+3];if(x===0||y===0||x===image.width-1||y===image.height-1)edge=Math.max(edge,alpha);
+     if(alpha>180){occupied++;minX=Math.min(minX,x);minY=Math.min(minY,y);maxX=Math.max(maxX,x);maxY=Math.max(maxY,y);}
+     for(let c=0;c<4;c++)signature=Math.imul(signature^pixels[offset+c],16777619)>>>0;
+    }
+    frames.push({size:[image.width,image.height],edge,occupied,signature,bounds:{minX,minY,maxX,maxY}});
+   }results.push({variant,frames});
+  }return results;
+ },{variants,night});
+ expect(new Set(masks.map(item=>item.frames[0].signature)).size).toBe(5);
+ for(const item of masks){
+  expect(new Set(item.frames.map(frame=>frame.signature)).size).toBe(item.frames.length);
+  for(const frame of item.frames){expect(frame.size).toEqual([160,80]);expect(frame.edge,`${item.variant} must be fully in frame`).toBeLessThan(20);expect(frame.occupied).toBeGreaterThan(350);expect(frame.occupied).toBeLessThan(8000);expect(frame.bounds.minX).toBeGreaterThan(1);expect(frame.bounds.minY).toBeGreaterThan(1);expect(frame.bounds.maxX).toBeLessThan(158);expect(frame.bounds.maxY).toBeLessThan(78);}
+ }
+});
+
+for(const variant of variants)for(const night of [false,true])for(const facing of [1,-1] as const)test(`upright ${variant} ${night?'night':'day'} ${facing===1?'east':'west'}`,async({page},info)=>{
+ await fixture(page);await page.evaluate(({night,variant,facing})=>(window as any).showAircraft(night,variant,facing),{night,variant,facing});
+ const aircraft=page.locator('.blender-aircraft');await expect(aircraft).toBeVisible();
+ await aircraft.locator('img').evaluateAll(images=>Promise.all(images.map(image=>(image as HTMLImageElement).decode())));
+ const transform=await aircraft.evaluate((el,points)=>{
+  const m=new DOMMatrix(getComputedStyle(el).transform),top=points.finTop||points.rotorTop,bottom=points.finBase||points.skidBottom;
+  const project=(p:number[])=>new DOMPoint(p[0]*el.clientWidth,p[1]*el.clientHeight).matrixTransform(m);
+  const image=el.querySelector('img')!,canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+  const ctx=canvas.getContext('2d')!;ctx.drawImage(image,0,0);const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  const hit=(point:number[])=>{let peak=0;for(let y=Math.max(0,Math.round(point[1]*canvas.height)-3);y<=Math.min(canvas.height-1,Math.round(point[1]*canvas.height)+3);y++)for(let x=Math.max(0,Math.round(point[0]*canvas.width)-3);x<=Math.min(canvas.width-1,Math.round(point[0]*canvas.width)+3);x++)peak=Math.max(peak,pixels[(y*canvas.width+x)*4+3]);return peak;};
+  const lights=Array.from(el.querySelectorAll<HTMLElement>('.blender-aircraft-light')).map(light=>{const key=light.classList.contains('port')?'port':light.classList.contains('starboard')?'starboard':'beacon';return {key,x:parseFloat(light.style.left)/100,y:parseFloat(light.style.top)/100,hit:hit(points[key])};});
+  return {xx:m.a,yy:m.d,det:m.a*m.d-m.b*m.c,pointer:getComputedStyle(el).pointerEvents,top:project(top).y,bottom:project(bottom).y,topHit:hit(top),bottomHit:hit(bottom),lights};
+ },anchors[variant]);
+ expect(transform.xx*facing).toBeGreaterThan(0);expect(transform.yy,'the aircraft top must never flip below its belly').toBeGreaterThan(0);expect(Math.sign(transform.det)).toBe(facing);expect(transform.pointer).toBe('none');
+ expect(transform.top,'actual Blender fin/rotor must stay above body/skids in both directions').toBeLessThan(transform.bottom);expect(transform.topHit).toBeGreaterThan(180);expect(transform.bottomHit).toBeGreaterThan(180);
+ expect(transform.lights).toHaveLength(night?(variant.endsWith('helicopter')?1:2):0);
+ for(const light of transform.lights){expect(light.x).toBeCloseTo(anchors[variant][light.key][0],5);expect(light.y).toBeCloseTo(anchors[variant][light.key][1],5);expect(light.hit,'navigation light must sit on its rendered airframe').toBeGreaterThan(180);}
+ const helicopter=variant.endsWith('helicopter');await expect(aircraft.locator('img')).toHaveCount(helicopter?3:1);
+ if(helicopter){
+  const visible=await aircraft.locator('img').evaluateAll(images=>images.map(image=>getComputedStyle(image).opacity));expect(visible.filter(value=>value==='1')).toHaveLength(1);
+  await expect(aircraft.locator('.aircraft-hover')).toHaveCSS('animation-name','blender-helicopter-hover');
+ }
+ await page.screenshot({path:info.outputPath(`fleet-${variant}-${night?'night':'day'}-${facing===1?'east':'west'}.png`)});
+ await page.emulateMedia({reducedMotion:'reduce'});
+ expect(await aircraft.locator('.aircraft-hover,.aircraft-rotor-frame').evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).animationName==='none'))).toBeTruthy();
+ if(helicopter)await expect(aircraft.locator('.rotor-frame-1')).toBeHidden();
 });

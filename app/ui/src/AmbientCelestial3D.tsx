@@ -1,6 +1,7 @@
 import {useId,type CSSProperties} from 'react';
 import {lunarPhase} from './Moon';
 import type {WeatherCondition} from './weatherCondition';
+import {aircraftAnchors} from './aircraftAnchors';
 import './ambient-celestial-3d.css';
 
 const assets='/ambient/sky3d/';
@@ -39,8 +40,17 @@ export function BlenderClouds({night,condition}:{night:boolean;condition:Weather
  </div>;
 }
 
-export function BlenderAircraft({night,heading=0,scale=1,variant='airliner'}:{night:boolean;heading?:number;scale?:number;variant?:'airliner'|'glider'}){
- return <span className={`blender-aircraft aircraft-${variant}`} data-aircraft-model="blender3d" style={{transform:`rotate(${heading}deg) scale(${scale})`}}><img src={`${assets}${variant}-${night?'night':'day'}-blender-v1.png`} alt="" draggable={false}/>{night&&variant==='airliner'&&<><i className="blender-aircraft-light port"/><i className="blender-aircraft-light starboard"/></>}</span>;
+export type AircraftVariant='airliner'|'turboprop'|'business-jet'|'tv-helicopter'|'police-helicopter';
+
+export function BlenderAircraft({night,heading=0,facing=1,scale=1,variant='airliner'}:{night:boolean;heading?:number;facing?:1|-1;scale?:number;variant?:AircraftVariant}){
+ const helicopter=variant.endsWith('helicopter'),prefix=`/ambient/aircraft/${variant}-${night?'night':'day'}`,points=aircraftAnchors[variant];
+ const lights:ReadonlyArray<readonly[string,readonly[number,number]]>='port' in points?[['port',points.port],['starboard',points.starboard]]:[['beacon',points.beacon]];
+ return <span className={`blender-aircraft aircraft-${variant}`} data-aircraft-model="blender3d" data-aircraft-variant={variant} data-facing={facing} style={{transform:`rotate(${heading}deg) scale(${facing*scale},${scale})`}}>
+  <span className={helicopter?'blender-aircraft-body aircraft-hover':'blender-aircraft-body'}>
+   {(helicopter?[0,1,2]:[null]).map(frame=><img key={frame??'fixed'} className={frame===null?undefined:`aircraft-rotor-frame rotor-frame-${frame}`} src={`${prefix}${frame===null?'':`-${frame}`}-v1.png`} alt="" draggable={false}/>)}
+   {night&&lights.map(([name,point])=><i key={name} className={`blender-aircraft-light ${name}${variant==='police-helicopter'?' police':''}`} style={{left:`${point[0]*100}%`,top:`${point[1]*100}%`}}/>)}
+  </span>
+ </span>;
 }
 
 export function BlenderSun(){return <span className="ambient-orb ambient-sun blender-sun" data-sun-model="blender3d" aria-hidden="true"/>;}
