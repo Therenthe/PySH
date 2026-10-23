@@ -35,7 +35,9 @@ for(const scheme of ['dark','light'] as const){
   await capture(page,info,`closed-${scheme}`);await reveal(page);
   const geometry=await page.evaluate(()=>{const shadow=(window as any).drawerShadow;return{subtitle:shadow.querySelector('.subtitle').textContent,buttons:[...shadow.querySelectorAll('.action,.close')].map((e:any)=>{const r=e.getBoundingClientRect();return{width:r.width,height:r.height,left:r.left,right:r.right,bottom:r.bottom};}),panel:shadow.querySelector('.drawer').getBoundingClientRect().toJSON(),overflow:document.documentElement.scrollWidth>innerWidth};});
   expect(geometry.subtitle).toContain('YouTube');expect(geometry.overflow).toBe(false);expect(geometry.panel.bottom).toBeLessThan(480);
-  for(const button of geometry.buttons){expect(button.width).toBeGreaterThanOrEqual(48);expect(button.height).toBeGreaterThanOrEqual(48);expect(button.left).toBeGreaterThanOrEqual(0);expect(button.right).toBeLessThanOrEqual(800);expect(button.bottom).toBeLessThanOrEqual(480);}
+  // Translated DOMRects may report 47.999996px for an exact 48px CSS target.
+  // Quantize only that floating-point noise; the product threshold remains 48px.
+  for(const button of geometry.buttons){expect(Math.round(button.width*1000)/1000).toBeGreaterThanOrEqual(48);expect(Math.round(button.height*1000)/1000).toBeGreaterThanOrEqual(48);expect(button.left).toBeGreaterThanOrEqual(0);expect(button.right).toBeLessThanOrEqual(800);expect(button.bottom).toBeLessThanOrEqual(480);}
   expect(geometry.buttons[1].width).toBeGreaterThan(geometry.buttons[2].width);await capture(page,info,`open-${scheme}`);
   await press(page,'.close');expect(await visible(page)).toBe(false);await page.locator('#profile').tap();expect(await page.evaluate(()=>(window as any).drawerFixture.profileClicks)).toBe(2);expect(errors).toEqual([]);
  });

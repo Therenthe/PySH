@@ -31,7 +31,8 @@ for(const kind of ['stale','unavailable','expired'] as const)test(`warning data 
  if(kind==='expired'){await expect(page.locator('.weather-alert-notice')).toHaveCount(0);return;}
  const notice=page.getByRole('button',{name:ro?'Avertizări indisponibile':'Alerts unavailable'});await notice.tap();await expect(page.getByRole('dialog')).toContainText(kind==='stale'?(ro?'expirate':'out of date'):(ro?'nu este disponibil':'unavailable'));
  await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);
- await page.clock.runFor(16000);await expect(page.locator('.weather-alert-notice')).toHaveCount(0);
+ // Idle folding starts after keyboard focus leaves the weather card.
+ await page.locator('.navigation-toggle').focus();await page.clock.runFor(16000);await expect(page.locator('.weather-alert-notice')).toHaveCount(0);
 });
 
 test('alert eligibility rejects missing sources, future onset, stale and expired data including simulated extreme hazards',async({page})=>{
@@ -50,7 +51,7 @@ for(const theme of ['ink','night'])for(const hazard of ['flood','tornado'])test(
  await page.clock.runFor(2500);const illustration=page.locator('.scene-warning-illustration');
  await expect(illustration).toHaveAttribute('data-warning-hazard',hazard);
  await expect(illustration).toContainText(ro?'Ilustrație avertizare':'Warning illustration');
- const images=await illustration.locator('img').evaluateAll(elements=>elements.map(element=>(element as HTMLImageElement).complete&&(element as HTMLImageElement).naturalWidth>0));expect(images.every(Boolean)).toBeTruthy();expect(images.length).toBeLessThanOrEqual(3);
+ await expect.poll(()=>illustration.locator('img').evaluateAll(elements=>elements.length>0&&elements.every(element=>(element as HTMLImageElement).complete&&(element as HTMLImageElement).naturalWidth>0))).toBe(true);expect(await illustration.locator('img').count()).toBeLessThanOrEqual(3);
  await page.screenshot({path:info.outputPath(`warning-illustration-${hazard}-${theme}.png`)});
  await page.getByRole('button',{name:ro?'Avertizări meteo':'Weather alerts',exact:true}).tap();await expect(page.getByRole('dialog')).toContainText(ro?'nu imagini live':'not live imagery');await page.keyboard.press('Escape');
  f.report.alerts[0].severity='moderate';await page.clock.runFor(2500);await expect(illustration).toHaveCount(0);

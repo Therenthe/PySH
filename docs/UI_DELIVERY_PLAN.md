@@ -1,12 +1,17 @@
 # Plan urmărit de livrare UI/UX — 2026-10-04
 
-## Audit UI integral și rafinare — în verificare 23–24 octombrie
+## Audit UI integral și rafinare — instalat 24 octombrie
 
-Toate zonele hubului sunt reevaluate în EN/RO × Ink/Noapte. Baseline: 280 stări
-capturate independent; sertarul extern și suprafețele comune sunt rafinate,
-iar AUD-01/03–09 au remedieri cu probe locale. Urmează auditul independent al
-candidatului înghețat, regresia și verificarea pe Raspberry. [Plan și dovadă](evidence/ui-polish-2026-10-23.md).
-AUD-02 rămâne remediat anterior. Acceptarea completă nu este închisă prin acest lot.
+Runtime `e1a82fcc1327`, sursă `0c912de`: sertar extern rafinat, suprafețe și
+iconografie coerente, AUD-01/03–09 remediate și AUD-02 păstrat. Audit independent
+336 stări finale, EN/RO × teme; 650 Python / 82 extension PASS. Regresie 1328 cazuri,
+cu toate eșecurile inițiale ale probelor rezolvate prin retest pe aceeași producție.
+107 fișiere și 29 preferințe verificate; backup PC și precedentul 1371 păstrate,
+radio reluat. Tur nativ final: 64 capturi / patru contexte și trei reveniri YouTube PASS;
+preferințe/radio restaurate, Chromium normal și diagnostic închis. [Dovadă și limite](evidence/ui-polish-2026-10-23.md).
+
+Starea de mai sus înlocuiește cozile AUD inițiale din istoricul de mai jos;
+celelalte cerințe istorice rămân urmărite. Acceptarea completă rămâne OPEN.
 
 ## Oraș și animații — instalate pe `1371bbff602e`
 

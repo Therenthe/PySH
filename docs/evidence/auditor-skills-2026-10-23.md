@@ -1,8 +1,10 @@
 # Audit inițial cu skilluri UI/UX — 2026-10-23
 
-Actualizare ulterioară: AUD-02 este remediat pe `1371bbff602e`, sursă `6ad7ad5`,
-cu probe locale, audit independent și verificare pe panou. Celelalte 7 defecte
-și recomandarea APG rămân OPEN. [Dovada](city-polish-2026-10-23.md).
+Actualizare 24 octombrie: AUD-01/03–09 sunt remediate în domeniul probelor
+locale și al retestărilor pe `e1a82fcc1327`, sursă `0c912de`; AUD-02 este păstrat.
+[Dovada lotului](ui-polish-2026-10-23.md). Tabelul și stările OPEN de mai jos sunt
+constatările inițiale, păstrate ca istoric; nu reprezintă coada curentă.
+Acceptarea fizică integrală și conformitatea completă nu sunt deduse din acest lot.
 
 Triage inițial delimitat: **8 defecte de produs și o recomandare APG**, deduplicate;
 două priorități P1, șase P2 și una P3. Nu este acceptarea produsului sau o
