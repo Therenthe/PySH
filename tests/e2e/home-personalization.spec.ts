@@ -1,3 +1,4 @@
+import {openSettingsSection} from './settings-navigation';
 import {test,expect} from '@playwright/test';
 for(const theme of ['ink','night'])test(`personalized Home ${theme}: idle header, sizes, visibility, persisted drag and recovery`,async({page},info)=>{
  const ro=info.project.name.endsWith('ro');let failSave=false;
@@ -10,11 +11,11 @@ for(const theme of ['ink','night'])test(`personalized Home ${theme}: idle header
  await page.screenshot({path:info.outputPath(`personalized-active-${theme}.png`)});
  const settings=async()=>{await page.locator('.navigation-toggle').tap();await page.clock.runFor(300);await page.locator('.main-nav button').nth(3).tap();};
  const homeTab=()=>page.locator('.settings-tabs button').filter({hasText:ro?'Acasă':'Home'});
- await settings();
+ await settings();await openSettingsSection(page,'visualizer');
  for(const [label,size] of [[ro?'Mare':'Large','large'],[ro?'Echilibrat':'Balanced','balanced'],['Compact','compact']]){
   const trigger=page.getByRole('button',{name:ro?'Dimensiune vizualizator':'Visualizer size',exact:true});await trigger.scrollIntoViewIfNeeded();await trigger.tap();await page.getByRole('dialog').getByRole('radio',{name:label,exact:true}).tap();expect(state.preferences.visualizerSize).toBe(size);
   await page.locator('.main-nav button').nth(0).tap();await page.clock.runFor(16000);expect((await page.locator('.ambient-visualizer').boundingBox())!.height).toBe({compact:64,balanced:88,large:112}[size]);
-  await page.locator('.main-nav button').nth(3).tap();
+  await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'visualizer');
  }
  await homeTab().tap();
  for(const button of await page.locator('.settings-panel .switch').all()){const label=await button.getAttribute('aria-label');if(label?.startsWith(ro?'Afișează':'Show'))await button.tap();}

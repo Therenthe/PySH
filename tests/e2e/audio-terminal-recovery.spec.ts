@@ -1,3 +1,4 @@
+import {openSettingsSection} from './settings-navigation';
 import {expect,test,type Page,type Locator} from '@playwright/test';
 
 // Control/lifecycle fixtures only: this file does not certify media decoding or sound.
@@ -67,9 +68,9 @@ for(const theme of ['ink','night']){
   finally{await diagnostic();}
  });
  for(const terminal of ['setup','service'] as const)for(const mode of ['reject','accepted'] as const)test(`Terminal audio ${theme}: ${terminal} late ${mode} failure retains exact recovery ownership`,async({page},info)=>{
-  const ro=info.project.name.endsWith('ro');await page.clock.install();const f=await fixture(page,ro,theme,mode,true);await pendingOutput(page,ro);await page.locator('.main-nav button').nth(3).tap();
+  const ro=info.project.name.endsWith('ro');await page.clock.install();const f=await fixture(page,ro,theme,mode,true);await pendingOutput(page,ro);await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'diagnostics');
   if(terminal==='setup'){const rerun=ro?'Reia configurarea':'Run setup again';await page.getByRole('button',{name:rerun,exact:true}).tap();await page.locator('.dialog-actions').getByRole('button',{name:rerun,exact:true}).tap();await expect(page.locator('.setup-card')).toBeVisible();}
-  else{await page.locator('.settings-tabs button').last().tap();await page.locator('.dialog-actions button').last().tap();await expect(page.locator('.service-screen')).toBeVisible();}
+  else{await page.locator('.settings-system-actions>button').tap();await page.locator('.dialog-actions button').last().tap();await expect(page.locator('.service-screen')).toBeVisible();}
   const area=page.locator(terminal==='setup'?'.setup-audio-recovery':'.service-audio-recovery');await expect(area.getByRole('status')).toBeVisible();f.release();const alert=area.getByRole('alert');await expect(alert).toBeVisible();await expect(alert).toContainText(f.label+' second');
   const retry=alert.getByRole('button',{name:ro?'Încearcă din nou':'Try again',exact:true}),close=alert.getByRole('button',{name:ro?'Închide':'Close',exact:true});await hit(retry);await hit(close);await expect(alert.getByRole('button',{name:'Audio',exact:true})).toHaveCount(0);
   const node=(await area.elementHandle())!;await area.evaluate(el=>el.scrollTop=el.scrollHeight);const position=await area.evaluate(el=>el.scrollTop);await page.clock.runFor(2700);expect(await node.evaluate(el=>el.isConnected)).toBe(true);expect(await area.evaluate(el=>el.scrollTop)).toBe(position);await page.screenshot({path:info.outputPath(`${terminal}-${mode}-audio-recovery.png`)});

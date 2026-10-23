@@ -1,3 +1,4 @@
+import {openSettingsSection} from './settings-navigation';
 import {test,expect} from '@playwright/test';
 for(const theme of ['ink','night'])test(`decorative settings persist and govern the real sky ${theme}`,async({page},info)=>{
  test.setTimeout(60000);const ro=info.project.name.endsWith('ro');let fail=false;
@@ -5,7 +6,7 @@ for(const theme of ['ink','night'])test(`decorative settings persist and govern 
  await page.addInitScript(()=>{crypto.getRandomValues=((array:Uint32Array)=>{array.fill(0);return array;}) as typeof crypto.getRandomValues;});
  await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname;let json:any={ok:true};if(path==='/api/session')json={token:'fixture'};else if(path==='/api/state')json=state;else if(path==='/api/preferences'){if(fail)return route.fulfill({status:500,json:{error:'save_failed'}});Object.assign(state.preferences,route.request().postDataJSON());json=state.preferences;}else if(path==='/api/audio/visualization')json={available:true,status:'ready',waveform:Array.from({length:64},(_,i)=>Math.sin(i)*.4),bars:Array(16).fill(.3),peak:.4,rms:.2,silent:false};await route.fulfill({json});});
  await page.clock.install({time:new Date('2026-10-04T23:00:00Z')});await page.goto('/');
- const settings=async()=>{await page.locator('.main-nav button').nth(3).tap();await page.locator('.settings-tabs button').filter({hasText:ro?'Acasă':'Home'}).tap();};
+ const settings=async()=>{await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'ambient');};
  const aircraft=page.getByRole('button',{name:ro?'Aeronave decorative':'Decorative aircraft',exact:true}),dust=page.getByRole('button',{name:ro?'Praf lunar decorativ':'Decorative lunar dust',exact:true});
  await settings();await aircraft.scrollIntoViewIfNeeded();await expect(aircraft).toHaveAttribute('aria-pressed','true');await expect(dust).toHaveAttribute('aria-pressed','false');
  for(const button of [aircraft,dust]){const box=(await button.boundingBox())!;expect(box.width).toBeGreaterThanOrEqual(48);expect(box.height).toBeGreaterThanOrEqual(48);}

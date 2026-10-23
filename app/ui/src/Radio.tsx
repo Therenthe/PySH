@@ -29,6 +29,7 @@ export type RadioProps = {
   onPlayStation: (station: RadioStation) => void; onFavorite: (station: RadioStation) => void;
   onPlayPause: () => void; onStop: () => void; onPrevious: () => void; onNext: () => void;
   onVolume: (value: number) => void; onMute: () => void;
+  onOpenAudio?: () => void; onClearFilters?: () => void;
 };
 
 /** Catalog artwork is optional. Never request insecure URLs or LAN/IP hosts. */
@@ -61,7 +62,7 @@ export function Radio(props: RadioProps) {
     currentStation, currentUrl, stationName, trackTitle, playerState, playerKind = 'radio', pauses, canPlay, canStop, canPrevious, canNext,
     audioReady, volume, muted, visualizer, t, icon, isFavorite, isStationPausing,
     onSearch, onCountry, onLanguage, onFavoritesFilter, onRetry, onPlayStation, onFavorite,
-    onPlayPause, onStop, onPrevious, onNext, onVolume, onMute } = props;
+    onPlayPause, onStop, onPrevious, onNext, onVolume, onMute, onOpenAudio, onClearFilters } = props;
   const ro = language === 'ro';
   const key=(value:string)=>value.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase().trim();
   const items = favoritesOnly ? favorites.filter(station=>key(station.name||'').includes(key(query))&&key(station.country||'').includes(key(country))&&key(station.language||'').includes(key(radioLanguage))) : stations;
@@ -83,9 +84,10 @@ export function Radio(props: RadioProps) {
             <button className={`filter-button favorites-filter ${favoritesOnly ? 'active' : ''}`} onClick={onFavoritesFilter} aria-pressed={favoritesOnly}>
               <FavoriteIcon filled={favoritesOnly}/><span>{t('favorites')}</span><small>{favorites.length}</small>
             </button>
+
           </div>
         </div>
-        <div className="list-head"><span>{favoritesOnly ? t('favorites') : t('stations')}</span><small>{items.length}</small>{!favoritesOnly && <button className="radio-refresh" aria-label={t('retry')} onClick={onRetry} disabled={busy || loading}>{icon('refresh', 18)}</button>}</div>
+        <div className="list-head"><span>{favoritesOnly ? t('favorites') : t('stations')}</span><small>{items.length}</small>{(query||country||radioLanguage)&&onClearFilters&&<button className="icon-button radio-clear-filters" onClick={onClearFilters} disabled={busy} aria-label={ro?'Șterge căutarea și filtrele':'Clear search and filters'}>{icon('close',18)}</button>}{!favoritesOnly && <button className="radio-refresh" aria-label={t('retry')} onClick={onRetry} disabled={busy || loading}>{icon('refresh', 18)}</button>}</div>
         <div className={`scroll-list ${favoritesOnly ? 'radio-favorites' : ''}`} aria-busy={!favoritesOnly && loading}>
           {!favoritesOnly && loading ? <div className="empty-state" role="status">{t('loading')}</div>
             : !favoritesOnly && error ? <div className="empty-state" role="status">{icon('radio', 28)}<b>{ro ? 'Posturile nu sunt disponibile' : 'Stations unavailable'}</b><span>{ro ? 'Verifică rețeaua și încearcă din nou.' : 'Check the network and try again.'}</span><button className="outline" onClick={onRetry} disabled={busy}>{t('retry')}</button></div>
@@ -109,12 +111,13 @@ export function Radio(props: RadioProps) {
       </section>
       <section className="radio-side" aria-label={t('nowPlaying')}>
         <div className="mini-player">
+          {!audioReady && <div className="radio-output-recovery"><small className="radio-output-warning">{ro ? 'Alege o ieșire audio pentru redare.' : 'Select an audio output to play.'}</small>{onOpenAudio&&<button className="outline radio-output-action" onClick={onOpenAudio}>{ro?'Alege boxa':'Choose speaker'}</button>}</div>}
           {remembered&&<span className="radio-remembered">{ro ? 'Ultimul post' : 'Last station'}</span>}
           <StationArtwork station={isRadio ? currentStation : null} name={isRadio ? stationName : ''} large />
           <h2 className="radio-station-name"><MarqueeText text={title} active={playerState==='playing'}/></h2>
           {metadata && <span className="radio-track-name"><MarqueeText text={metadata} active={playerState==='playing'}/></span>}
           <small className={`state-text ${playerState}`} role="status">{!currentUrl&&!remembered?(ro?'Alege un post din listă.':'Choose a station from the list.'):status}</small>
-          {visualizer && <div className="radio-visualizer">{visualizer}</div>}
+          {visualizer && audioReady && <div className="radio-visualizer">{visualizer}</div>}
           <div className="player-controls">
             <button aria-label={ro ? 'Postul anterior' : 'Previous station'} disabled={busy || !isRadio || !canPrevious} onClick={onPrevious}>{icon('back', 20)}</button>
             <button className="play-large" aria-label={pauses ? t('pause') : t('play')} disabled={busy || (!pauses && (!canPlay || !audioReady))} onClick={onPlayPause}>{icon(pauses ? 'pause' : 'play', 27)}</button>
@@ -126,7 +129,7 @@ export function Radio(props: RadioProps) {
             <AudioVolume label={t('volume')} value={volume} disabled={busy || !audioReady} onChange={onVolume}/>
             <small className="radio-volume-value">{Math.round(Number.isFinite(volume) ? Math.max(0, Math.min(100, volume)) : 0)}%</small>
           </div>
-          {!audioReady && <small className="radio-output-warning">{ro ? 'Alege o ieșire audio pentru redare.' : 'Select an audio output to play.'}</small>}
+
         </div>
       </section>
     </div>

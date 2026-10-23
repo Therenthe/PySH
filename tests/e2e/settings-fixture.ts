@@ -1,3 +1,4 @@
+import {openSettingsSection} from './settings-navigation';
 import {expect,type Page} from '@playwright/test';
 export async function settingsFixture(page:Page,language:'en'|'ro',theme:'ink'|'night',time='2026-10-03T12:04:00Z'){
  await page.clock.install({time:new Date(time)});
@@ -7,8 +8,9 @@ export async function settingsFixture(page:Page,language:'en'|'ro',theme:'ink'|'
  state.weather.daily[0].sunrise_epoch=Date.parse('2026-10-03T04:15:00Z')/1000;state.weather.daily[0].sunset_epoch=Date.parse('2026-10-03T15:50:00Z')/1000;
  const writes:any[]=[],other:any[]=[],failKeys=new Set<string>();
  await page.route('**/api/**',async route=>{const req=route.request(),path=new URL(req.url()).pathname;let json:any={ok:true};if(path==='/api/session')json={token:'fixture'};else if(path==='/api/state')json=state;else if(path==='/api/radio')json={stations:[station]};else if(path==='/api/preferences'&&req.method()==='PATCH'){const body=req.postDataJSON();writes.push(body);if(Object.keys(body).some(key=>failKeys.has(key))){await route.fulfill({status:500,json:{error:'preferences_unavailable'}});return;}Object.assign(state.preferences,body);json=state.preferences;}else if(req.method()!=='GET')other.push({path,body:req.postDataJSON()});await route.fulfill({json});});
- await page.goto('/');await page.locator('.main-nav button').nth(3).tap();await expect(page.locator('.settings-panel')).toBeVisible();return{state,writes,other,failKeys};
+ await page.goto('/');await page.locator('.main-nav button').nth(3).tap();await expect(page.locator('.settings-panel')).toBeVisible();await openSettingsSection(page,'appearance');return{state,writes,other,failKeys};
 }
 export async function retainsSettingsAndRadio(page:Page,language:'en'|'ro'){
- await expect(page.locator('.settings-page')).toBeVisible();await expect(page.locator('.settings-tabs button').first()).toHaveClass(/active/);await expect(page.locator('.settings-panel h2')).toHaveText(language==='ro'?'Aspect':'Appearance');await expect(page.locator('.now-copy b')).toHaveText('Radio retained');await expect(page.locator('.now-copy span')).toHaveText('Retained song');await expect(page.locator('.now-state')).toHaveText(language==='ro'?'Se redă':'Playing');
+ await expect(page.locator('.settings-page')).toBeVisible();const section=await page.locator('.settings-panel').getAttribute('data-settings-section');await expect(page.locator('.settings-tabs [aria-current="page"]')).toHaveCount(1);
+ await page.locator('.main-nav button').nth(1).tap();await expect(page.locator('.radio-station-name')).toHaveText('Radio retained');await expect(page.locator('.radio-track-name')).toHaveText('Retained song');await expect(page.locator('.state-text')).toHaveText(language==='ro'?'Se redă':'Playing');await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,section!);
 }

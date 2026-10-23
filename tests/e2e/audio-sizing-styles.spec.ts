@@ -1,3 +1,4 @@
+import {openSettingsSection} from './settings-navigation';
 import {test,expect} from '@playwright/test';
 import {createHash} from 'node:crypto';
 
@@ -38,7 +39,7 @@ for(const theme of ['ink','night']){
   await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname;let json:any={ok:true};if(path==='/api/session')json={token:'fixture'};else if(path==='/api/state')json=state;else if(path==='/api/audio/visualization')json=signal();else if(path==='/api/preferences'){Object.assign(state.preferences,route.request().postDataJSON());json=state.preferences;}await route.fulfill({json});});
   await page.clock.install();await page.goto('/');
   // First exercise the real preference action, not only preloaded fixture values.
-  await page.locator('.main-nav button').nth(3).tap();
+  await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'visualizer');
   for(const [label,size] of [[ro?'Mare':'Large','large'],[ro?'Echilibrat':'Balanced','balanced'],['Compact','compact']]){
    const choice=page.getByRole('button',{name:ro?'Dimensiune vizualizator':'Visualizer size',exact:true});await choice.scrollIntoViewIfNeeded();await choice.tap();await page.getByRole('dialog').getByRole('radio',{name:label,exact:true}).tap();expect(state.preferences.visualizerSize).toBe(size);
   }

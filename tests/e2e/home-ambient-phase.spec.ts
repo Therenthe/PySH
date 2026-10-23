@@ -1,3 +1,4 @@
+import {openSettingsSection,openQuickControls} from './settings-navigation';
 import {test,expect,type Page} from '@playwright/test';
 async function fixture(page:Page,lang:string,theme:string){
  const actions:any[]=[],positions={weather:{x:.14,y:.18},forecast:{x:.34,y:.6},playback:{x:.2,y:.79},visualizer:{x:.4,y:.72}};
@@ -20,11 +21,11 @@ for(const theme of ['ink','night']){
  });
  test(`Home modal/BT prompt suspend ambient; settings choice and other page screensaver work in ${theme}`,async({page},info)=>{
  const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro?'ro':'en',theme);
- await page.getByRole('button',{name:ro?'Deschide setările':'Open settings',exact:true}).tap();await page.clock.fastForward(120000);await expect(page.getByRole('dialog')).toBeVisible();await expect(page.locator('.app')).toHaveAttribute('data-home-phase','interactive');await expect(page.locator('.pysh-screensaver')).toHaveCount(0);await page.getByRole('dialog').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();
+ await openQuickControls(page);await page.clock.fastForward(120000);await expect(page.getByRole('dialog')).toBeVisible();await expect(page.locator('.app')).toHaveAttribute('data-home-phase','interactive');await expect(page.locator('.pysh-screensaver')).toHaveCount(0);await page.getByRole('dialog').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();
  f.state.bluetooth.prompts=[{id:'one',kind:'confirmation',name:'Fixture speaker',value:'123456'}];await page.clock.runFor(2600);await page.clock.fastForward(31000);await expect(page.locator('.app')).toHaveAttribute('data-home-phase','interactive');f.state.bluetooth.prompts=[];await page.clock.runFor(2600);
- await page.locator('.main-nav button').nth(3).tap();const trigger=page.getByRole('button',{name:ro?'Vizualizare audio':'Audio visualization',exact:true});await trigger.scrollIntoViewIfNeeded();await trigger.tap();await page.clock.fastForward(120000);await expect(page.getByRole('dialog')).toBeVisible();await expect(page.locator('.pysh-screensaver')).toHaveCount(0);await page.getByRole('dialog').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();
+ await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'visualizer');const trigger=page.getByRole('button',{name:ro?'Vizualizare audio':'Audio visualization',exact:true});await trigger.scrollIntoViewIfNeeded();await trigger.tap();await page.clock.fastForward(120000);await expect(page.getByRole('dialog')).toBeVisible();await expect(page.locator('.pysh-screensaver')).toHaveCount(0);await page.getByRole('dialog').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();
  await page.clock.runFor(62000);await expect(page.locator('.pysh-screensaver')).toBeVisible();await page.locator('.saver-home').tap();await expect(page.locator('.pysh-screensaver')).toHaveCount(0);
- const preview=page.getByRole('button',{name:ro?'Previzualizează repausul':'Preview screensaver',exact:true});await preview.scrollIntoViewIfNeeded();await preview.tap();await expect(page.locator('.pysh-screensaver')).toBeVisible();
+ await openSettingsSection(page,'rest');const preview=page.getByRole('button',{name:ro?'Previzualizează repausul':'Preview screensaver',exact:true});await preview.scrollIntoViewIfNeeded();await preview.tap();await expect(page.locator('.pysh-screensaver')).toBeVisible();
  });
 }
 test('Home reduced-motion ambient transition keeps only clock/signal and keyboard wake is consumed',async({page},info)=>{

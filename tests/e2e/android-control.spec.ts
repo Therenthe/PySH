@@ -1,3 +1,4 @@
+import {openSettingsSection} from './settings-navigation';
 import {expect,test} from '@playwright/test';
 import {settingsFixture} from './settings-fixture';
 
@@ -33,7 +34,7 @@ for(const theme of ['ink','night'] as const){
  });
  test(`${theme}: menu enables service and revokes only the confirmed phone`,async({page},info)=>{
   const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro);
-  await page.locator('.settings-tabs').getByRole('button',{name:'Android App Control',exact:true}).tap();
+  await openSettingsSection(page,'androidControl');
   await page.locator('.android-control-panel h2').scrollIntoViewIfNeeded();
   await expect(page.locator('.android-control-panel')).toContainText(ro?'Activ':'Active');
   const toggle=page.getByRole('button',{name:ro?'Activează Android App Control':'Enable Android App Control'});

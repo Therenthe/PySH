@@ -1,3 +1,4 @@
+import {openSettingsSection,openQuickControls} from './settings-navigation';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { textLegibility } from './legibility';
 
@@ -65,7 +66,7 @@ for(const theme of ['ink','night'] as const){
   const ro=info.project.name==='touch-ro',f=await networkFixture(page,ro?'ro':'en',theme);
   const profile={id:'00000000-0000-4000-8000-000000000001',name:'Family Wi-Fi',ssid:'Protected Wi-Fi',type:'802-11-wireless',security:'secured',active:false};
   f.state.network.saved=[profile];await page.goto('/');
-  await page.locator('.main-nav button').nth(3).tap();await page.locator('.settings-tabs button').nth(2).tap();
+  await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'network');
   const change=page.locator('.settings-panel').getByRole('button',{name:`${ro?'Schimbă parola':'Change password'}: Family Wi-Fi`,exact:true});
   await change.tap();await withinViewport(page.locator('.keyboard-card'));await page.locator('.keyboard-card header button').tap();expect(f.connected).toEqual([]);
   f.connectError=true;await change.tap();await enterTestPassword(page,ro);
@@ -79,7 +80,7 @@ for(const theme of ['ink','night'] as const){
  test(`same SSID requires saved-profile selection and Forget confirmation ${theme}`,async({page},info)=>{
   const ro=info.project.name==='touch-ro',f=await networkFixture(page,ro?'ro':'en',theme);
   f.state.network.saved=['First profile','Second profile'].map((name,i)=>({id:`00000000-0000-4000-8000-00000000000${i+1}`,name,ssid:'Protected Wi-Fi',type:'802-11-wireless',security:'secured'}));
-  await page.goto('/');await page.getByRole('button',{name:ro?'Deschide setările':'Open settings',exact:true}).tap();
+  await page.goto('/');await openQuickControls(page);
   await page.locator('.quick-modal').getByRole('button',{name:`${ro?'Rețea':'Network'} Ethernet`,exact:true}).tap();
   await page.locator('.modal-card .network-row').filter({hasText:'Protected Wi-Fi'}).tap();
   await expect(page.locator('.profile-choices button')).toHaveCount(2);expect(f.connected).toEqual([]);
@@ -87,7 +88,7 @@ for(const theme of ['ink','night'] as const){
   expect(await textLegibility(page)).toEqual([]);
   await page.locator('.profile-choices button').filter({hasText:'Second profile'}).tap();await enterTestPassword(page,ro);
   expect(f.connected[0]).toEqual({ssid:'Protected Wi-Fi',password:'testpass',profile_id:'00000000-0000-4000-8000-000000000002'});
-  await page.getByRole('button',{name:ro?'Deschide setările':'Open settings',exact:true}).tap();await page.locator('.quick-modal').getByRole('button',{name:`${ro?'Rețea':'Network'} Ethernet`,exact:true}).tap();
+  await openQuickControls(page);await page.locator('.quick-modal').getByRole('button',{name:`${ro?'Rețea':'Network'} Ethernet`,exact:true}).tap();
   await page.locator('.modal-card').getByRole('button',{name:`${ro?'Uită rețeaua':'Forget network'}: First profile`,exact:true}).tap();
   expect(f.forgotten).toEqual([]);await page.locator('.dialog-actions').getByRole('button',{name:ro?'Anulează':'Cancel',exact:true}).tap();
   await expect(page.locator('.saved-network')).toHaveCount(2);expect(f.forgotten).toEqual([]);expect(f.unexpected).toEqual([]);
@@ -99,14 +100,14 @@ for (const theme of ['ink', 'night'] as const) {
     const ro=info.project.name==='touch-ro',f=await networkFixture(page,ro?'ro':'en',theme);
     f.state.network.devices=[{type:'ethernet',interface:'end0',state:'connected',ip:'192.0.2.10'},
       {type:'wifi',interface:'wlan0',state:'disconnected',ssid:null}];
-    await page.goto('/');await page.locator('.main-nav button').nth(3).tap();await page.locator('.settings-tabs button').nth(2).tap();
+    await page.goto('/');await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'network');
     const links=page.locator('.settings-panel .network-links');
     await expect(links.locator('[data-network-type="ethernet"]')).toContainText(ro?'Conectat':'Connected');
     await expect(links.locator('[data-network-type="ethernet"]')).toContainText('192.0.2.10');
     await expect(links.locator('[data-network-type="wifi"]')).toContainText(ro?'Neconectat':'Not connected');
     await withinViewport(links);expect(await textLegibility(page)).toEqual([]);
     await page.screenshot({path:info.outputPath('ethernet-wifi-separate.png')});
-    await page.getByRole('button',{name:ro?'Deschide setările':'Open settings',exact:true}).tap();
+    await openQuickControls(page);
     await page.locator('.quick-modal').getByRole('button',{name:`${ro?'Rețea':'Network'} Ethernet`,exact:true}).tap();
     const modalLinks=page.locator('.modal-card .network-links');
     await expect(modalLinks.locator('[data-network-type="wifi"]')).toContainText(ro?'Neconectat':'Not connected');
@@ -127,13 +128,13 @@ for (const theme of ['ink', 'night'] as const) {
     await expect(page.locator('html')).toHaveAttribute('lang', language);
     await page.screenshot({ path: testInfo.outputPath('home.png') });
     await page.locator('.main-nav').getByRole('button', { name: labels.settings, exact: true }).tap();
-    await page.locator('.settings-tabs').getByRole('button', { name: labels.network, exact: true }).tap();
+    await openSettingsSection(page,'network');
     await page.locator('.settings-panel').getByRole('button', { name: labels.scan, exact: true }).tap();
     const choices = page.locator('.network-choices');
     await expect(choices.getByRole('button', { name: `Open Wi-Fi ${labels.open} · 80%`, exact: true })).toBeVisible();
     await expect(choices.getByRole('button', { name: `Protected Wi-Fi ${labels.secured} · 65%`, exact: true })).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath('network-settings.png') });
-    await page.getByRole('button', { name: labels.quick, exact: true }).tap();
+    await openQuickControls(page);
     await page.locator('.quick-modal').getByRole('button', { name: `${labels.network} Ethernet`, exact: true }).tap();
     const modal = page.locator('.modal-card');
     await withinViewport(modal);

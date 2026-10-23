@@ -1,3 +1,4 @@
+import {openSettingsSection,openQuickControls} from './settings-navigation';
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import { textLegibility } from './legibility';
 
@@ -166,7 +167,7 @@ for(const theme of ['ink','night'] as const) {
   test(`city search explains empty results and ignores late old results ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);let release!:()=>void,oldDone=false;const gate=new Promise<void>(resolve=>release=resolve);
     await page.route('**/api/geocode?**',async route=>{const q=new URL(route.request().url()).searchParams.get('q');if(q==='a'){await gate;await route.fulfill({json:{results:[{name:'Old search city',latitude:1,longitude:2}]}});oldDone=true;}else await route.fulfill({json:{results:[]}});});
-    await page.goto('/');await page.locator('.main-nav button').nth(3).tap();await page.locator('.settings-tabs button').nth(1).tap();
+    await page.goto('/');await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'weather');
     const search=async(letter:string)=>{await page.locator('.settings-panel .setting-value').tap();for(let i=0;i<'București'.length;i++)await page.getByRole('button',{name:ro?'Șterge caracterul':'Delete character',exact:true}).tap();await page.locator('.keys').getByRole('button',{name:letter,exact:true}).tap();await page.locator('.final-row').getByRole('button',{name:ro?'Aplică':'Apply',exact:true}).tap();};
     await search('a');await expect(page.locator('.settings-panel [role=status]')).toHaveText(ro?'Se încarcă…':'Loading…');await search('b');await expect(page.locator('.settings-panel [role=status]')).toHaveText(ro?'Nu s-au găsit orașe':'No matching cities');
     release();await expect.poll(()=>oldDone).toBe(true);await expect(page.locator('.compact-geo')).toHaveCount(0);await expect(page.locator('.settings-panel [role=status]')).toHaveText(ro?'Nu s-au găsit orașe':'No matching cities');expect(f.state.preferences.location.name).toBe('București');expect(f.unexpected).toEqual([]);
@@ -286,11 +287,11 @@ for(const theme of ['ink','night'] as const) {
     f.state.appliance=true;f.state.preferences.screensaverMinutes=1;const prefs=JSON.stringify(f.state.preferences);await page.clock.install();
     await page.goto('/');await expect(page.locator('.home-layout')).toBeVisible();
     await page.locator('.main-nav button').nth(3).tap();
-    await page.locator('.settings-tabs .exit-tab').tap();
+    await openSettingsSection(page,'diagnostics');await page.locator('.settings-system-actions>button').tap();
     await expect(page.getByRole('dialog')).toContainText(ro?'Deschizi modul de service?':'Open service mode?');
     await capture(page,info,'service-confirmation',defects);
     await page.locator('.dialog-actions button').first().tap();expect(f.actions.some(a=>a.path==='/api/exit')).toBeFalsy();
-    await page.locator('.settings-tabs .exit-tab').tap();await page.locator('.dialog-actions button').last().tap();
+    await openSettingsSection(page,'diagnostics');await page.locator('.settings-system-actions>button').tap();await page.locator('.dialog-actions button').last().tap();
     await expect(page.locator('.service-screen')).toBeVisible();await expect(page.locator('.main-nav')).toHaveCount(0);
     await capture(page,info,'service-mode',defects);
     f.backendDown=true;await expect(page.locator('.error-strip')).toBeVisible({timeout:6000});await capture(page,info,'service-backend-error',defects);
@@ -311,11 +312,11 @@ for(const theme of ['ink','night'] as const) {
     await page.locator('.favorite-button').tap();await expect(page.locator('.favorite-button')).toHaveAttribute('aria-pressed','true');
     await page.locator('.favorite-button').tap();await expect(page.locator('.favorite-button')).toHaveAttribute('aria-pressed','false');
     await page.locator('.main-nav button').nth(3).tap();
-    await page.locator('.settings-tabs button').first().tap();
+    await openSettingsSection(page,'general');
     const before=f.actions.filter(a=>a.path==='/api/preferences').length;
     await page.locator('.setting-value').tap();await page.locator('.keyboard-card header button').tap();
     expect(f.actions.filter(a=>a.path==='/api/preferences')).toHaveLength(before);
-    await page.locator('.settings-tabs button').nth(5).tap();await page.locator('.settings-panel button.switch[aria-label=Radio]').tap();
+    await openSettingsSection(page,'home');await page.locator('.settings-panel button.switch[aria-label=Radio]').tap();
     await page.locator('.main-nav button').first().tap();await expect(page.locator('.shortcut')).toHaveCount(1);await expect(page.locator('.shortcut')).toContainText('Media');
     await page.reload();await expect(page.locator('.shortcut')).toHaveCount(1);
     expect(f.unexpected).toEqual([]);
@@ -339,13 +340,13 @@ for(const theme of ['ink','night'] as const) {
     f.media='empty';await nav(0);await nav(2);await expect(page.locator('.media-item')).toHaveCount(0);await capture(page,info,'media-empty',defects);
     f.media='error';await nav(0);await nav(2);await expect(page.locator('.error-strip')).toBeVisible();await capture(page,info,'media-error',defects);
     await nav(3);
-    for(let i=0;i<7;i++){await page.locator('.settings-tabs button').nth(i).tap();await capture(page,info,`settings-${['appearance','weather','network','bluetooth','audio','home','diagnostics'][i]}`,defects);}
-    await page.locator('.settings-tabs .exit-tab').tap();await capture(page,info,'exit-dialog',defects);await page.locator('.dialog-actions button').first().tap();expect(f.actions.some(a=>a.path==='/api/exit')).toBeFalsy();
+    for(const section of ['home','visualizer','ambient','appearance','rest','power','weather','network','bluetooth','audio','general','diagnostics','androidControl']){await openSettingsSection(page,section);await capture(page,info,`settings-${section}`,defects);}
+    await openSettingsSection(page,'diagnostics');await page.locator('.settings-system-actions>button').tap();await capture(page,info,'exit-dialog',defects);await page.locator('.dialog-actions button').first().tap();expect(f.actions.some(a=>a.path==='/api/exit')).toBeFalsy();
     await nav(0);
-    await page.getByRole('button',{name:ro?'Deschide setările':'Open settings',exact:true}).first().tap();await capture(page,info,'quick-settings',defects);
+    await openQuickControls(page);await capture(page,info,'quick-settings',defects);
     for(const [index,name] of [[0,'network'],[1,'bluetooth'],[2,'audio']] as const) {
       await page.locator('.quick-modal>button').nth(index).tap();await capture(page,info,`${name}-dialog`,defects);await closeModal(page,ro);
-      if(index<2)await page.getByRole('button',{name:ro?'Deschide setările':'Open settings',exact:true}).tap();
+      if(index<2)await openQuickControls(page);
     }
     await nav(1);await page.locator('.radio-toolbar .search-field').tap();await expect(page.locator('.keyboard-card')).toBeVisible();await capture(page,info,'keyboard',defects);
     await page.locator('.diacritics-row button').first().tap();await expect(page.locator('.keyboard-value')).toContainText('ă');await page.locator('.keyboard-card header button').tap();await expect(page.locator('.keyboard-card')).toHaveCount(0);
@@ -388,7 +389,7 @@ for(const theme of ['ink','night'] as const){
   }
   await wizard.getByRole('button',{name:ro?'Finalizează':'Finish setup',exact:false}).tap();await expect(page.locator('.home-layout')).toBeVisible();
   await page.locator('.main-nav button').nth(3).tap();
-  const rerun=ro?'Reia configurarea':'Run setup again',cancel=ro?'Anulează':'Cancel',leave=ro?'Ieși din configurare':'Leave setup';
+  await openSettingsSection(page,'diagnostics');const rerun=ro?'Reia configurarea':'Run setup again',cancel=ro?'Anulează':'Cancel',leave=ro?'Ieși din configurare':'Leave setup';
   await page.getByRole('button',{name:rerun,exact:true}).tap();await page.locator('.dialog-actions').getByRole('button',{name:cancel,exact:true}).tap();await expect(wizard).toHaveCount(0);
   await page.getByRole('button',{name:rerun,exact:true}).tap();await page.locator('.dialog-actions').getByRole('button',{name:rerun,exact:true}).tap();await expect(wizard).toBeVisible();
   await next();await next();await wizard.locator('.search-field button').tap();await expect(page.locator('.keyboard-card')).toBeVisible();

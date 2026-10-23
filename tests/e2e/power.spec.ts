@@ -1,3 +1,4 @@
+import {openSettingsSection} from './settings-navigation';
 import {expect,test} from '@playwright/test';
 import {settingsFixture} from './settings-fixture';
 
@@ -18,9 +19,9 @@ for(const theme of ['ink','night'] as const){
   const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro);
   await page.locator('.main-nav button').first().tap();
   expect(await page.locator('.remote-presence').evaluate(e=>e.nextElementSibling?.matches('button.top-network'))).toBe(true);
-  const power=page.getByRole('button',{name:ro?'Oprește PySH':'Turn off PySH',exact:true});
+  const power=page.getByRole('button',{name:ro?'Intră în standby':'Enter standby',exact:true});
   const box=await power.boundingBox();expect(box!.width).toBeGreaterThanOrEqual(48);expect(box!.height).toBeGreaterThanOrEqual(48);
-  await power.tap();await expect(page.getByRole('dialog',{name:ro?'Ecran și standby':'Display & standby'})).toBeVisible();
+  await power.tap();await expect(page.getByRole('dialog',{name:ro?'Luminozitate și standby':'Brightness & standby'})).toBeVisible();
   await page.locator('.power-summary button').tap();await expect(page.locator('.standby-screen')).toBeVisible();
   await page.locator('.standby-screen').tap({position:{x:40,y:40}});await expect(page.locator('.standby-screen')).toBeHidden();
   expect(f.commands).toEqual([{path:'/api/power',body:{standby:true}},{path:'/api/power',body:{standby:false}}]);
@@ -29,12 +30,12 @@ for(const theme of ['ink','night'] as const){
  });
  test(`${theme}: brightness timer daily schedule save and cancellation with actual readback`,async({page},info)=>{
   const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro);
-  await page.locator('.settings-tabs button').filter({hasText:ro?'Ecran / standby':'Display / standby'}).tap();
+  await openSettingsSection(page,'power');
   const slider=page.getByRole('slider',{name:ro?'Luminozitate ecran':'Screen brightness'});
   await slider.tap({position:{x:70,y:24}});expect(f.writes.at(-1).screenBrightness).toBeGreaterThan(0);expect(f.writes.at(-1).screenBrightness).toBeLessThan(80);
   await page.getByRole('button',{name:'30 min',exact:true}).tap();await expect(page.locator('.power-panel')).toContainText(ro?'Standby în 30 min':'Standby in 30 min');
   await page.getByRole('button',{name:ro?'Anulează temporizatorul':'Cancel timer'}).tap();await expect(page.locator('.power-panel')).toContainText(ro?'Fără temporizator':'No timer');
-  await page.getByRole('button',{name:ro?'Oprire zilnică':'Daily turn off',exact:true}).tap();await expect(page.getByRole('button',{name:ro?'Oprire zilnică':'Daily turn off',exact:true})).toHaveAttribute('aria-pressed','true');
+  await page.getByRole('button',{name:ro?'Standby zilnic':'Daily standby',exact:true}).tap();await expect(page.getByRole('button',{name:ro?'Standby zilnic':'Daily standby',exact:true})).toHaveAttribute('aria-pressed','true');
   await page.getByRole('button',{name:'23:00',exact:true}).tap();await expect(page.locator('.keyboard-card')).toBeVisible();
   for(let i=0;i<5;i++)await page.getByRole('button',{name:ro?'Șterge caracterul':'Delete character',exact:true}).tap();
   for(const key of ['2','2'])await page.locator('.key-row.row-0').getByRole('button',{name:key,exact:true}).tap();
@@ -48,7 +49,7 @@ for(const theme of ['ink','night'] as const){
   await page.screenshot({path:`.runtime/power-ui/${info.project.name}-${theme}.png`});
  });
  test(`${theme}: rejected writes and uncertain state stay visible and never auto-repeat`,async({page},info)=>{
-  const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro);await page.locator('.settings-tabs button').filter({hasText:ro?'Ecran / standby':'Display / standby'}).tap();
+  const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro);await openSettingsSection(page,'power');
   f.failKeys.add('screenBrightness');await page.getByRole('slider').tap({position:{x:70,y:24}});await expect(page.locator('.power-feedback')).toBeVisible();expect(f.state.preferences.screenBrightness).toBe(80);
   f.fail.write=true;await page.getByRole('button',{name:'30 min',exact:true}).tap();await expect(page.locator('.power-feedback')).toBeVisible();expect(f.state.power.timer.remainingSeconds).toBe(0);
   f.fail.write=false;f.fail.read=true;await page.getByRole('button',{name:'60 min',exact:true}).tap();await expect(page.locator('.power-feedback')).toBeVisible();
