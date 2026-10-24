@@ -1,4 +1,5 @@
-import {useEffect,useRef,useState} from 'react';
+import {useRef,useState} from 'react';
+import {useDialogFocus} from './useDialogFocus';
 import {RemoteIcon} from './PowerPanel';
 import './android-control.css';
 
@@ -39,9 +40,9 @@ export function AndroidPairingPrompt(props:Props){
 }
 function PairingDecision(props:Props&{pairing:AndroidControlState['pending'][number]}){
  const {pairing,ro}=props,text=words(ro),action=useControlAction(props);
- const decline=useRef<HTMLButtonElement>(null);
- useEffect(()=>{const previous=document.activeElement as HTMLElement|null;decline.current?.focus();return()=>{if(previous?.isConnected)previous.focus();};},[]);
- return <div className="android-pairing-scrim"><section className="android-pairing-card" role="dialog" aria-modal="true" aria-label={ro?'Conectare Android PySH':'PySH Android connection'}>
+ // Pairing always requires an explicit Yes/No; Escape must not decide it.
+ const dialog=useDialogFocus<HTMLElement>(()=>{},true);
+ return <div className="android-pairing-scrim"><section ref={dialog} className="android-pairing-card" role="dialog" aria-modal="true" aria-label={ro?'Conectare Android PySH':'PySH Android connection'}>
   <div className="android-pairing-heading"><span className="android-control-mark"><RemoteIcon/></span><span>{text.title}</span></div>
   <div className="android-pairing-body">
   <h2>{ro?'Accepți conectarea de la aplicația Android PySH?':'Accept a connection from the PySH Android app?'}</h2>
@@ -49,6 +50,6 @@ function PairingDecision(props:Props&{pairing:AndroidControlState['pending'][num
   <p>{ro?'Confirmă solicitarea pe care ai inițiat-o pe telefon.':'Confirm the request you started on your phone.'}</p>
   <ControlFeedback text={text} action={action}/>
   </div>
-  <div className="android-pairing-actions"><button ref={decline} className="outline" disabled={action.pending||action.uncertain} onClick={()=>action.change('/api/android-control/pairing',{requestId:pairing.requestId,accept:false})}>{text.no}</button><button className="primary" disabled={action.pending||action.uncertain} onClick={()=>action.change('/api/android-control/pairing',{requestId:pairing.requestId,accept:true})}>{text.yes}</button></div>
+  <div className="android-pairing-actions"><button data-dialog-initial className="outline" disabled={action.pending||action.uncertain} onClick={()=>action.change('/api/android-control/pairing',{requestId:pairing.requestId,accept:false})}>{text.no}</button><button className="primary" disabled={action.pending||action.uncertain} onClick={()=>action.change('/api/android-control/pairing',{requestId:pairing.requestId,accept:true})}>{text.yes}</button></div>
  </section></div>;
 }

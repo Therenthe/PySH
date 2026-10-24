@@ -20,3 +20,8 @@
 .city-building-entry:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
 .app .home-v2.ambient-home .city-radio-control{pointer-events:none}
 @media(prefers-reduced-motion:reduce){.city-entry,.city-entry>video{transition:none}.city-entry>.scene-precipitation{display:none}}
+
+.city-entry[data-direction=exit][data-phase=loading]{background:#070c10}
+.city-entry[data-direction=exit][data-phase=leaving]{background:transparent}
+.city-entry[data-direction=exit][data-phase=leaving]>video{opacity:1;transition:none}
+.app[data-city-entry-direction=exit][data-city-entry=loading]>.main-area,.app[data-city-entry-direction=exit][data-city-entry=loading]>.rail{opacity:0;pointer-events:none}

@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "blender": "5.2.2 LTS",
+  "source_master_sha256": "0e59b60f25e0b19ecd2fc38f30e6f2adcc74d457826e38081b9453678ec6656e",
+  "builder_sha256": "c960654213b8a439fe56a0c636f94352bf367bf31610054b2fbbc6f178fcd299",
+  "runtime_city_size": [
+    800,
+    208
+  ],
+  "static_resolution": [
+    1600,
+    570
+  ],
+  "fps": 24,
+  "frames": 60,
+  "duration_seconds": 2.5,
+  "audio": false,
+  "assets": [],
+  "unlit_baseplates": [
+    {
+      "name": "gothic-city-day-unlit-v1.png",
+      "bytes": 705930,
+      "sha256": "1f48c9ea21e138161ed5970d5bb99b8b986fbde774d1558689a14e7b44f8f0c7"
+    },
+    {
+      "name": "gothic-city-night-unlit-v1.png",
+      "bytes": 607563,
+      "sha256": "d2a71327c5cb90ab0f16580e3070102643e066efc6de794ffd822351519e9034"
+    }
+  ],
+  "window_banks": [
+    {
+      "name": "city-window-bank-0-v1.png",
+      "bytes": 166936,
+      "sha256": "95248609aee63b10ccd59c01a78a3e4d0e6478ac491ebc201c42ccc885326886",
+      "pane_components": 47,
+      "lit_pixels": 4948
+    },
+    {
+      "name": "city-window-bank-1-v1.png",
+      "bytes": 174168,
+      "sha256": "4b2c0ddb12a3d7e6c2fc3984483524fa9cbb4785cc9f0a547a52e28a62616562",
+      "pane_components": 61,
+      "lit_pixels": 6835
+    },
+    {
+      "name": "city-window-bank-2-v1.png",
+      "bytes": 164420,
+      "sha256": "417c724986721df311573800773280e8254df201b3478cd5425a2cb31cff6c6c",
+      "pane_components": 45,
+      "lit_pixels": 3686
+    }
+  ],
+  "window_pane_components": 153,
+  "wet_reflections": [
+    {
+      "name": "city-road-wet-day-v1.png",
+      "bytes": 55135,
+      "sha256": "71a0b437ec5bb0975c7b818323d44e9b743cb78abb72c26eba3f5ad5570ae772",
+      "visible_ground_pixels": 29865,
+      "max_alpha": 178
+    },
+    {
+      "name": "city-road-wet-night-v1.png",
+      "bytes": 61286,
+      "sha256": "b02069909a1e8e7c32986e46ecdff74ac256324cded59fec8c830dd8f1a43717",
+      "visible_ground_pixels": 29865,
+      "max_alpha": 178
+    }
+  ],
+  "window_occlusion": "Original opaque city holdouts; no light through foreground buildings",
+  "wet_geometry": "Existing deck footprint; Cycles reflection + actual opaque-city visibility mask; alpha0.70 for subtle compositing; camera-opaque transit objects excluded only from glossy rays, existing practical reflections favored1.8x at night"
+}

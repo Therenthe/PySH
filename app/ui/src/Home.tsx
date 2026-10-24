@@ -12,6 +12,7 @@ import {BlenderMoon,BlenderStars,BlenderClouds,BlenderSun} from './AmbientCelest
 import {AmbientEvents} from './AmbientEvents';
 import {CityDiorama,ScenePrecipitation,SceneWarningIllustration} from './CityDiorama';
 import {sceneWeather} from './sceneWeather';
+import {cityWindowLighting} from './cityAtmosphere';
 import {sceneAtmosphere} from './sceneAtmosphere';
 import {getCelestialScene} from './CelestialMotion';
 import { weatherCondition, weatherIsNight } from './weatherCondition';
@@ -32,7 +33,7 @@ function useAmbientCard(editing:boolean,wakeEpoch:number){
  useEffect(()=>{if(!expanded||focused)return;const timer=window.setTimeout(()=>setExpanded(false),15000);return()=>window.clearTimeout(timer);},[expanded,activity,focused]);
  return {expanded,focus:()=>setFocused(!!document.activeElement?.matches(':focus-visible')),blur:(event:React.FocusEvent<HTMLElement>)=>{if(!event.currentTarget.contains(event.relatedTarget as Node|null))setFocused(false);},toggle:()=>{setExpanded(v=>!v);setActivity(v=>v+1);},touch:()=>{setFocused(!!document.activeElement?.matches(':focus-visible'));setActivity(v=>v+1);}};
 }
-export function AmbientSky({code,isDay,darkSurface=false,stale,visibility,cloudCover,aircraft=true,lunarDust=false,now=new Date(),latitude,longitude,temperature,wind,radioPlaying=false,visualizeRadio=false,radioCanVisualize=false,bluetoothPowered=false,bluetoothConnected=false,wifiState='unknown',wifiActive=false,weatherAlerts,language='en'}:{code:unknown;isDay:unknown;darkSurface?:boolean;stale:boolean;visibility?:unknown;cloudCover?:unknown;aircraft?:boolean;lunarDust?:boolean;now?:Date;latitude?:unknown;longitude?:unknown;temperature?:unknown;wind?:unknown;radioPlaying?:boolean;visualizeRadio?:boolean;radioCanVisualize?:boolean;bluetoothPowered?:boolean;bluetoothConnected?:boolean;wifiState?:'off'|'disconnected'|'connecting'|'connected'|'unknown';wifiActive?:boolean;weatherAlerts?:WeatherAlertsDocument;language?:'en'|'ro'}){
+export function AmbientSky({code,isDay,darkSurface=false,stale,visibility,cloudCover,aircraft=true,lunarDust=false,now=new Date(),latitude,longitude,temperature,wind,radioPlaying=false,visualizeRadio=false,radioCanVisualize=false,bluetoothPowered=false,bluetoothConnected=false,wifiState='unknown',wifiActive=false,weatherAlerts,language='en',daily=[],timezone='UTC'}:{code:unknown;isDay:unknown;darkSurface?:boolean;stale:boolean;visibility?:unknown;cloudCover?:unknown;aircraft?:boolean;lunarDust?:boolean;now?:Date;latitude?:unknown;longitude?:unknown;temperature?:unknown;wind?:unknown;radioPlaying?:boolean;visualizeRadio?:boolean;radioCanVisualize?:boolean;bluetoothPowered?:boolean;bluetoothConnected?:boolean;wifiState?:'off'|'disconnected'|'connecting'|'connected'|'unknown';wifiActive?:boolean;weatherAlerts?:WeatherAlertsDocument;language?:'en'|'ro';daily?:any[];timezone?:string}){
  const minute=Math.floor(now.getTime()/60000),instant=useMemo(()=>new Date(minute*60000),[minute]);
  const celestial=useMemo(()=>getCelestialScene(instant,latitude,longitude),[instant,latitude,longitude]);
  const category=weatherCondition(stale?null:code),known=!['missing','unknown'].includes(category)&&(!!celestial||[true,false,0,1].includes(isDay as boolean|number)),night=known&&(celestial?.night??weatherIsNight(isDay as boolean|number|null));
@@ -43,7 +44,7 @@ export function AmbientSky({code,isDay,darkSurface=false,stale,visibility,cloudC
   <div className="ambient-scenery">{night&&openSky&&<BlenderStars/>}
 
  {openSky&&celestial&&[celestial.sun,celestial.moon].map((body,index)=>body.visible&&(index?night:!night)&&<div key={index} className="celestial-anchor" data-celestial-body={index?'moon':'sun'} data-altitude={body.altitude.toFixed(4)} data-azimuth={body.azimuth.toFixed(4)} style={{left:`${body.x}%`,top:`${body.y}%`}}>{index?<BlenderMoon now={instant}/>:<BlenderSun/>}</div>)}<Meteors enabled={night&&openSky}/><AmbientEvents enabled={known&&(aircraft||lunarDust)} aircraft={aircraft} night={night} moonVisible={moonVisible&&category==='clear'} moonPosition={celestial?.moon} lunarDust={lunarDust}/>{known&&<BlenderClouds night={night} condition={category} cover={atmosphere.cloudCover}/>}</div>
-  <ScenePrecipitation weather={weather}/><SceneWarningIllustration alerts={weatherAlerts} now={instant} language={language}/><CityDiorama night={night} darkSurface={darkSurface} weather={weather} radioPlaying={radioPlaying} visualizeRadio={visualizeRadio} radioCanVisualize={radioCanVisualize} bluetoothPowered={bluetoothPowered} bluetoothConnected={bluetoothConnected} wifiState={wifiState} wifiActive={wifiActive}/>
+  <ScenePrecipitation weather={weather}/><SceneWarningIllustration alerts={weatherAlerts} now={instant} language={language}/><CityDiorama windowLighting={cityWindowLighting(instant,timezone,daily,stale,latitude,longitude)} night={night} darkSurface={darkSurface} weather={weather} radioPlaying={radioPlaying} visualizeRadio={visualizeRadio} radioCanVisualize={radioCanVisualize} bluetoothPowered={bluetoothPowered} bluetoothConnected={bluetoothConnected} wifiState={wifiState} wifiActive={wifiActive}/>
 
  </div>;
 }

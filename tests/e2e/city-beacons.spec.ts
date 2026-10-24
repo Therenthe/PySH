@@ -21,7 +21,7 @@ for(const theme of ['ink','night'])for(const scene of [{name:'day-fog',day:true,
   expect(await page.locator('.scene-precipitation').evaluate(node=>node.parentElement?.classList.contains('ambient-sky'))).toBe(true);
   expect(await page.locator('.scene-precipitation').evaluate(node=>Number(getComputedStyle(node).zIndex))).toBeGreaterThan(await city.evaluate(node=>Number(getComputedStyle(node).zIndex)));
  }
- await expect(page.locator('.city-architecture')).toHaveAttribute('src',`/ambient/gothic-city-${scene.day?'day':'night'}-v4.png`);
+ await expect(page.locator('.city-architecture')).toHaveAttribute('src',`/ambient/gothic-city-${scene.day?'day':'night'}-unlit-v1.png`);
  const geometry=await page.locator('.city-radio-tower,.city-bluetooth').evaluateAll(nodes=>nodes.map(node=>{const r=node.getBoundingClientRect(),css=getComputedStyle(node);return{x:r.x,y:r.y,w:r.width,h:r.height,z:Number(css.zIndex)};}));
  expect(geometry).toHaveLength(2);expect(geometry.every(r=>r.w>=20&&r.h>=25&&r.x>=0&&r.y>=0&&r.x+r.w<=800&&r.y+r.h<=480)).toBe(true);
  await expect(city).toHaveAttribute('data-beacon-palette',!scene.day||theme==='night'?'night':'day');

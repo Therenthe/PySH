@@ -66,7 +66,8 @@ async function mainHome(page:Page,start:string,theme:string,language:string){
  const actions:any[]=[];
  const state={preferences:{language,theme,setupComplete:true,nightEnabled:false,screensaverMinutes:0,visualizerStyle:'off',homeCards:['weather','forecast','playback'],decorativeAircraft:false,decorativeLunarDust:false,timezone:'UTC',location:{name:'Fixture city',latitude:44.4,longitude:26.1},favorites:[],shortcuts:['radio','media']},network:{available:true,state:'connected',devices:[],saved:[]},bluetooth:{available:true,devices:[],prompts:[]},audio:{available:true,ready:true,volume:30,mute:false,outputs:[]},player:{state:'idle'},weather:{stale:false,current:{temperature_c:18,feels_like_c:17,weather_code:0,is_day:1},daily:Array.from({length:5},(_,i)=>({date:`2026-10-0${i+4}`,weather_code:0,max_c:20,min_c:10}))}};
  await page.route('**/api/**',route=>{const request=route.request(),path=new URL(request.url()).pathname;if(request.method()!=='GET')actions.push({path,body:request.postDataJSON()});return route.fulfill({json:path==='/api/session'?{token:'heart-home-fixture'}:path==='/api/state'?state:path==='/api/radio'?{stations:[]}:{ok:true}})});
- await page.clock.install({time:new Date(start)});await page.goto('/');await expect(page.locator('.ambient-home')).toBeVisible();await expect(page.locator('.app')).toHaveAttribute('data-home-phase','interactive');
+ // Hold the exact minute boundary while loading; setup wall time is not part of idle.
+ await page.clock.install({time:new Date(Date.parse(start)-1000)});await page.clock.pauseAt(new Date(start));await page.goto('/');await expect(page.locator('.ambient-home')).toBeVisible();await expect(page.locator('.app')).toHaveAttribute('data-home-phase','interactive');
  return actions;
 }
 for(const theme of ['ink','night']) for(const event of ['hour','matching']){

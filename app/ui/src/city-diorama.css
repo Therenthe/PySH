@@ -64,3 +64,7 @@
 @media(prefers-reduced-motion:reduce){.city-diorama *,.weather-particle,.sky-thunder .ambient-scenery::after,.sky-thunder-hail .ambient-scenery::after{animation:none!important}.city-metro{display:none}.city-diorama[data-wifi-active=true] .city-wifi-wave,.city-diorama[data-wifi=connecting] .city-wifi-wave,.city-radio-emission .city-signal-ring,.city-bluetooth.connected .city-signal-ring{opacity:.8}.weather-particle{transform:translateY(var(--particle-still-y));opacity:.15}.sky-thunder .ambient-scenery::after,.sky-thunder-hail .ambient-scenery::after{display:none}}
 @media(prefers-reduced-motion:reduce){.warning-tornado img,.warning-flood img{animation:none}.warning-tornado img:first-child{opacity:1}.city-heat-haze{animation:none}}
 @media(prefers-reduced-motion:reduce){.ambient-scenery::before,.ambient-sky .city-architecture,.ambient-sky .city-wifi{transition:none}}
+
+/* Blender-only layers share the opaque foundation camera; only light is faded. */
+.city-road-reflections,.city-window-bank{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;transition:opacity 1200ms ease}
+@media(prefers-reduced-motion:reduce){.city-road-reflections,.city-window-bank{transition:none}}

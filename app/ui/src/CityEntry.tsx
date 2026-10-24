@@ -9,13 +9,13 @@ export type CityEntryScene={night:boolean;darkSurface:boolean;weather:SceneWeath
 type Phase='loading'|'playing'|'leaving';
 
 /** One bounded Blender shot; navigation never changes playback or preferences. */
-export function CityEntry({destination,scene,language,onComplete,onCancel,onPhase}:{destination:CityDestination;scene:CityEntryScene;language:'en'|'ro';onComplete:()=>void;onCancel:()=>void;onPhase:(phase:Phase)=>void}){
+export function CityEntry({destination,direction='enter',scene,language,onComplete,onCancel,onPhase}:{destination:CityDestination;direction?:'enter'|'exit';scene:CityEntryScene;language:'en'|'ro';onComplete:()=>void;onCancel:()=>void;onPhase:(phase:Phase)=>void}){
  const video=useRef<HTMLVideoElement>(null),latest=useRef({onComplete,onCancel,onPhase});
  latest.current={onComplete,onCancel,onPhase};
  const settle=useRef<(destination:'destination'|'home')=>void>(()=>{});
  const dialog=useDialogFocus<HTMLDivElement>(()=>settle.current('home'));
  const [phase,setPhase]=useState<Phase>('loading');
- const src=`/ambient/city-entry-${destination}-${scene.night?'night':'day'}-v1.webm`;
+ const src=`/ambient/city-${direction==='exit'?'exit':'entry'}-${destination}-${scene.night?'night':'day'}-v1.webm`;
  useEffect(()=>{
   const element=video.current;if(!element)return;
   let disposed=false,settled=false,loadTimer:number|undefined,playTimer:number|undefined,leaveTimer:number|undefined;
@@ -47,8 +47,8 @@ export function CityEntry({destination,scene,language,onComplete,onCancel,onPhas
    element.removeAttribute('src');element.load();settle.current=()=>{};
   };
  },[src]);
- const ro=language==='ro',name=cityDestinationName(destination,language),title=ro?`Intrare în ${name}`:`Entering ${name}`;
- return <div ref={dialog} className={`city-entry ${destination==='radio'?'radio-city-entry':''} ${scene.night?'sky-night':'sky-day'}`} role="dialog" aria-modal="true" aria-label={title} data-destination={destination} data-phase={phase} data-actual-night={scene.night} data-dark-surface={scene.darkSurface} style={{'--entry-haze':scene.haze} as CSSProperties} tabIndex={-1}>
+ const ro=language==='ro',name=cityDestinationName(destination,language),title=direction==='exit'?(ro?`Înapoi în oraș · ${name}`:`Returning to the city · ${name}`):(ro?`Intrare în ${name}`:`Entering ${name}`);
+ return <div ref={dialog} className={`city-entry ${destination==='radio'?'radio-city-entry':''} ${scene.night?'sky-night':'sky-day'}`} role="dialog" aria-modal="true" aria-label={title} data-destination={destination} data-direction={direction} data-phase={phase} data-actual-night={scene.night} data-dark-surface={scene.darkSurface} style={{'--entry-haze':scene.haze} as CSSProperties} tabIndex={-1}>
   <video ref={video} src={src} muted playsInline preload="auto" disablePictureInPicture disableRemotePlayback aria-hidden="true"/>
   <div className="radio-entry-fog" aria-hidden="true"/>
   <ScenePrecipitation weather={scene.weather}/>
