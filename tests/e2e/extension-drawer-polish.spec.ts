@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { mkdirSync } from 'node:fs';
 
 // Owned service fixtures: no remote service, account, native keyboard or DRM.
+const deviceControls = readFileSync(new URL('../../app/browser-extension/command-controls.js', import.meta.url), 'utf8');
 const extension = readFileSync(new URL('../../app/browser-extension/return.js', import.meta.url), 'utf8');
 const evidence = '.runtime/ui-global-20261023/drawer';
 mkdirSync(evidence, { recursive: true });
@@ -16,10 +17,11 @@ async function fixture(page: Page, info: TestInfo, scheme: 'dark'|'light', servi
   await page.evaluate(language=>{
     const state={language,theme:document.documentElement.dataset.fixtureTheme,actions:[] as string[],profileClicks:0,returnCallbacks:[] as Function[],keyboardError:false};
     (window as any).drawerFixture=state;
-    (window as any).chrome={runtime:{sendMessage(message:{action:string},callback?:Function){state.actions.push(message.action);if(message.action.startsWith('return-'))state.returnCallbacks.push(callback!);else callback?.({ok:!state.keyboardError,language,theme:state.theme});}}};
+    (window as any).chrome={runtime:{sendMessage(message:{action:string},callback?:Function){state.actions.push(message.action);if(message.action.startsWith('return-'))state.returnCallbacks.push(callback!);else if(message.action==='controls-status')callback?.({ok:true,controls:{language,theme:state.theme,busy:false,audio:{available:true,ready:true,volume:40,mute:false,outputs:[{id:'fixture',label:'Fixture speaker',active:true}]},brightness:{available:true,value:80}}});else callback?.({ok:!state.keyboardError,language,theme:state.theme});}}};
     document.querySelector('#profile')!.addEventListener('click',()=>state.profileClicks++);
     const original=Element.prototype.attachShadow;Element.prototype.attachShadow=function(options){const shadow=original.call(this,options);if(this.tagName==='PI-HUB-RETURN')(window as any).drawerShadow=shadow;return shadow;};
   },info.project.name==='touch-ro'?'ro':'en');
+  await page.addScriptTag({content:deviceControls});
   await page.addScriptTag({content:extension});
 }
 async function visible(page:Page){return page.evaluate(()=>getComputedStyle((window as any).drawerShadow.querySelector('.drawer')).display!=='none');}
@@ -57,7 +59,7 @@ for(const scheme of ['dark','light'] as const){
   expect(await page.evaluate(()=>getComputedStyle((window as any).drawerShadow.querySelector('.status')).display)).toBe('block');await capture(page,info,`keyboard-error-${scheme}`);
   await page.evaluate(()=>(window as any).drawerFixture.keyboardError=false);await press(page,'.keyboard');
   expect(await page.evaluate(()=>(window as any).drawerShadow.querySelector('.keyboard').getAttribute('aria-pressed'))).toBe('true');await capture(page,info,`keyboard-on-${scheme}`);
-  await press(page,'.keyboard');expect(await page.evaluate(()=>(window as any).drawerFixture.actions.at(-1))).toBe('hide');expect(await page.evaluate(()=>(window as any).drawerShadow.querySelector('.keyboard').getAttribute('aria-pressed'))).toBe('false');
+  await reveal(page);await press(page,'.keyboard');expect(await page.evaluate(()=>(window as any).drawerFixture.actions.at(-1))).toBe('hide');expect(await page.evaluate(()=>(window as any).drawerShadow.querySelector('.keyboard').getAttribute('aria-pressed'))).toBe('false');
  });
  test(`drawer ${scheme}: keyboard focus remains inside open sheet, reduced motion and Escape`,async({page},info)=>{
   await fixture(page,info,scheme);await page.clock.install();await page.emulateMedia({reducedMotion:'reduce'});await page.keyboard.press('Alt+Shift+P');

@@ -2,6 +2,7 @@
 import asyncio
 from functools import wraps
 import contextlib
+from .external_controls import controls_snapshot
 from datetime import datetime, timezone
 import hmac
 import hashlib
@@ -762,6 +763,16 @@ async def external_navigation(request: Request, body: ExternalNavigation):
 async def external_context(request: Request):
     hub = request.app.state.hub
     return presentation_context(hub.store.value, hub.weather)
+
+
+@app.get("/api/external/controls")
+async def external_controls(request: Request):
+    hub = request.app.state.hub
+    changing = bool(hub._visualizer_suspended or hub.power.lock.locked())
+    power = await hub.power.snapshot()
+    return controls_snapshot(hub.snapshots["audio"], power,
+        presentation_context(hub.store.value, hub.weather),
+        changing or hub._visualizer_suspended or hub.power.lock.locked())
 
 
 @app.post("/api/external")

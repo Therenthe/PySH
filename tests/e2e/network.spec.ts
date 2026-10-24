@@ -81,14 +81,14 @@ for(const theme of ['ink','night'] as const){
   const ro=info.project.name==='touch-ro',f=await networkFixture(page,ro?'ro':'en',theme);
   f.state.network.saved=['First profile','Second profile'].map((name,i)=>({id:`00000000-0000-4000-8000-00000000000${i+1}`,name,ssid:'Protected Wi-Fi',type:'802-11-wireless',security:'secured'}));
   await page.goto('/');await openQuickControls(page);
-  await page.locator('.quick-modal').getByRole('button',{name:`${ro?'Rețea':'Network'} Ethernet`,exact:true}).tap();
+  await page.locator('.quick-controls-dialog').getByRole('button',{name:`${ro?'Rețea':'Network'} Ethernet`,exact:true}).tap();
   await page.locator('.modal-card .network-row').filter({hasText:'Protected Wi-Fi'}).tap();
   await expect(page.locator('.profile-choices button')).toHaveCount(2);expect(f.connected).toEqual([]);
   await withinViewport(page.locator('.modal-card'));await page.screenshot({path:info.outputPath('saved-profile-choice.png')});
   expect(await textLegibility(page)).toEqual([]);
   await page.locator('.profile-choices button').filter({hasText:'Second profile'}).tap();await enterTestPassword(page,ro);
   expect(f.connected[0]).toEqual({ssid:'Protected Wi-Fi',password:'testpass',profile_id:'00000000-0000-4000-8000-000000000002'});
-  await openQuickControls(page);await page.locator('.quick-modal').getByRole('button',{name:`${ro?'Rețea':'Network'} Ethernet`,exact:true}).tap();
+  await openQuickControls(page);await page.locator('.quick-controls-dialog').getByRole('button',{name:`${ro?'Rețea':'Network'} Ethernet`,exact:true}).tap();
   await page.locator('.modal-card').getByRole('button',{name:`${ro?'Uită rețeaua':'Forget network'}: First profile`,exact:true}).tap();
   expect(f.forgotten).toEqual([]);await page.locator('.dialog-actions').getByRole('button',{name:ro?'Anulează':'Cancel',exact:true}).tap();
   await expect(page.locator('.saved-network')).toHaveCount(2);expect(f.forgotten).toEqual([]);expect(f.unexpected).toEqual([]);
@@ -108,7 +108,7 @@ for (const theme of ['ink', 'night'] as const) {
     await withinViewport(links);expect(await textLegibility(page)).toEqual([]);
     await page.screenshot({path:info.outputPath('ethernet-wifi-separate.png')});
     await openQuickControls(page);
-    await page.locator('.quick-modal').getByRole('button',{name:`${ro?'Rețea':'Network'} Ethernet`,exact:true}).tap();
+    await page.locator('.quick-controls-dialog').getByRole('button',{name:`${ro?'Rețea':'Network'} Ethernet`,exact:true}).tap();
     const modalLinks=page.locator('.modal-card .network-links');
     await expect(modalLinks.locator('[data-network-type="wifi"]')).toContainText(ro?'Neconectat':'Not connected');
     await withinViewport(modalLinks);expect(await textLegibility(page)).toEqual([]);
@@ -135,7 +135,7 @@ for (const theme of ['ink', 'night'] as const) {
     await expect(choices.getByRole('button', { name: `Protected Wi-Fi ${labels.secured} · 65%`, exact: true })).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath('network-settings.png') });
     await openQuickControls(page);
-    await page.locator('.quick-modal').getByRole('button', { name: `${labels.network} Ethernet`, exact: true }).tap();
+    await page.locator('.quick-controls-dialog').getByRole('button', { name: `${labels.network} Ethernet`, exact: true }).tap();
     const modal = page.locator('.modal-card');
     await withinViewport(modal);
     await expect(modal.locator('.network-row').filter({ hasText: 'Open Wi-Fi' })).toContainText(labels.open);

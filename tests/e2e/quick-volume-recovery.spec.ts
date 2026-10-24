@@ -40,6 +40,7 @@ for (const theme of ['ink', 'night'] as const) {
       await page.locator('.quick-controls-button').tap();
       const quick = page.getByRole('dialog', {name: ro ? 'Comenzi rapide' : 'Quick controls', exact: true});
       await expect(quick).toBeVisible();
+      await quick.evaluate(async node=>{await Promise.all(node.getAnimations().map(animation=>animation.finished.catch(()=>{})));});
       const slider = quick.getByRole('slider', {name: ro ? 'Volum' : 'Volume', exact: true});
       const allSettings = quick.getByRole('button', {name: ro ? 'Toate setările' : 'All settings', exact: true});
       const before = (await slider.boundingBox())!;
@@ -142,10 +143,10 @@ for (const theme of ['ink', 'night'] as const) {
     });
     await page.goto('/');
     await page.locator('.quick-controls-button').tap();
-    await page.locator('.quick-modal>button').nth(2).tap();
-    const audio = page.getByRole('dialog', {name: 'Audio', exact: true});
+    await page.getByRole('button',{name:ro?'Ieșire audio':'Audio output',exact:true}).tap();
+    const audio = page.getByRole('dialog', {name:ro?'Comenzi rapide':'Quick controls',exact:true});
     await expect(audio).toBeVisible();
-    await audio.locator('.modal-list button').last().tap();
+    await audio.locator('.command-output-list button').last().tap();
     await expect(audio.getByRole('alert')).toContainText(longName);
     await audio.locator('header').getByRole('button', {name: ro ? 'Închide' : 'Close', exact: true}).tap();
     // The persistent recovery banner replaces the header; Settings remains an
@@ -155,6 +156,7 @@ for (const theme of ['ink', 'night'] as const) {
     const quick = page.getByRole('dialog', {name: ro ? 'Comenzi rapide' : 'Quick controls', exact: true});
     const alert = quick.getByRole('alert');
     await expect(alert).toContainText(longName);
+    await quick.evaluate(async node=>{await Promise.all(node.getAnimations().map(animation=>animation.finished.catch(()=>{})));});
     const bodyClip = (await quick.locator('.modal-body').boundingBox())!;
     for (const name of [ro ? 'Încearcă din nou' : 'Try again', ro ? 'Închide' : 'Close']) {
       const control = alert.getByRole('button', {name, exact: true});

@@ -45,8 +45,8 @@ function background() {
 }
 
 test('manifest has stable public-key ID and only native messaging and documentation navigation permissions', () => {
-  assert.equal(manifest.version,'1.3.0');
-  assert.equal(manifest.background.service_worker,'background-drawer-v3.js');
+  assert.equal(manifest.version,'1.4.0');
+  assert.equal(manifest.background.service_worker,'background-commands-v4.js');
   assert.match(source(manifest.background.service_worker),/importScripts\('background.js'\)/);
   assert.match(extensionId, /^[a-p]{32}$/);
   assert.deepEqual(manifest.permissions, ['nativeMessaging','webNavigation']);
@@ -103,7 +103,9 @@ test('documentation status and Return accept exact provider and owned recovery p
     await tick(); assert.equal(h.ports.length, 1);
     h.ports[0].onMessage.emit({ ok: true, language: 'ro' }); await tick();
     assert.deepEqual(status.replies, [{ ok: true, language: 'ro' }]);
-    h.request({ action: 'return' }, from);
+    const returned = h.request({ action: 'return' }, from);
+    await tick();
+    assert.deepEqual(returned.replies, [{ok:true}]);
     assert.deepEqual(h.removed, [7]);
     assert.equal(h.ports[0].closed, true);
   }
@@ -290,8 +292,10 @@ for (const language of ['en', 'ro']) test(`content controls localize ${language}
   assert.equal(message.textContent, language === 'ro' ? 'Tastatura nu este disponibilă. Reîncearcă.' : 'Keyboard unavailable. Try again.');
   keyboard.events.get('click')(); h.chrome.runtime.callback({ ok: true });
   assert.equal(message.style.display, 'none');
+  const beforeReturn=h.sent.filter(message=>message.action.startsWith('return-')).length;
   buttons.find(e => e.textContent === (language === 'ro' ? 'Acasă' : 'Home')).events.get('click')();
-  assert.deepEqual(h.sent.at(-1), { action: 'return-home' });
+  // Opening the drawer also refreshes its context; exactly one destination still dispatches.
+  assert.deepEqual(h.sent.filter(message=>message.action.startsWith('return-')).slice(beforeReturn),[{ action: 'return-home' }]);
 });
 
 test('content controls retract during fullscreen and remain revealable without account reads', () => {

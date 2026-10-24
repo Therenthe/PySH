@@ -345,7 +345,7 @@ for(const theme of ['ink','night'] as const) {
     await nav(0);
     await openQuickControls(page);await capture(page,info,'quick-settings',defects);
     for(const [index,name] of [[0,'network'],[1,'bluetooth'],[2,'audio']] as const) {
-      await page.locator('.quick-modal>button').nth(index).tap();await capture(page,info,`${name}-dialog`,defects);await closeModal(page,ro);
+      await page.locator(name==='audio'?'.command-output':`[data-command="${name}"]`).tap();await capture(page,info,`${name}-dialog`,defects);await closeModal(page,ro);
       if(index<2)await openQuickControls(page);
     }
     await nav(1);await page.locator('.radio-toolbar .search-field').tap();await expect(page.locator('.keyboard-card')).toBeVisible();await capture(page,info,'keyboard',defects);

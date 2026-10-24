@@ -50,15 +50,19 @@
   }
   // Brand and controls share the same restrained line icon language.
   if(document.createElementNS){const mark=document.createElementNS('http://www.w3.org/2000/svg','svg');mark.setAttribute('viewBox','0 0 40 40');mark.setAttribute('aria-hidden','true');const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d','M5 18 20 6l15 12v16H5ZM13 28v-7m7 7V16m7 12v-5');mark.append(path);identity.prepend(mark);}
-  label(close,'','m6 14 6-6 6 6');
+  label(close,'','m6 6 12 12M18 6 6 18');
   let ro = false, keyboardShown = false, retractTimer, blurTimer, revealAfterFullscreen = false;
   let service='';
   try{const hostname=new URL(location.href).hostname;service=hostname==='accounts.google.com'?'Google':[['youtube.com','YouTube'],['netflix.com','Netflix'],['spotify.com','Spotify']].find(([domain])=>hostname===domain||hostname.endsWith('.'+domain))?.[1]||'';}catch{}
-  let contextRequest=0;
+  let contextRequest=0, deviceControls;
+  let previousFocus;
+  const isolated=new Map();
+  function releaseIsolation(){for(const [element,value] of isolated)element.inert=value;isolated.clear();}
+  function isolate(){releaseIsolation();let branch=host;while(branch?.parentElement){for(const sibling of branch.parentElement.children)if(sibling!==branch&&'inert' in sibling){isolated.set(sibling,sibling.inert);sibling.inert=true;}branch=branch.parentElement;if(branch===document.documentElement)break;}}
   let keyboardNavigation = false;
   let returnPending = false, returnFailed = false, returnSequence = 0, returnDestination = 'home';
   function requestReturn(target = returnDestination) {
-    if (returnPending) return;
+    if (returnPending || deviceControls?.busy()) return;
     returnDestination = target;
     returnPending = true; returnFailed = false;
     const sequence = ++returnSequence;
@@ -85,12 +89,16 @@
     expose();
   }
   function localize() {
-    back.disabled = returnPending;
-    keyboard.disabled = returnPending;
+    back.disabled = returnPending || !!deviceControls?.busy();
+    keyboard.disabled = returnPending || !!deviceControls?.busy();
+    close.disabled = returnPending || !!deviceControls?.busy();
+    controls.setAttribute('aria-busy',String(returnPending||!!deviceControls?.busy()));
+    deviceControls?.returning(returnPending);
+    deviceControls?.localize(ro);
     back.setAttribute('aria-busy', String(returnPending));
     subtitle.textContent=[service,ro?'Alege unde continui':'Choose where to continue'].filter(Boolean).join(' · ');
     label(back, returnPending ? (ro ? 'Se revine…' : 'Returning…') : returnFailed ? (ro ? 'Reîncearcă revenirea' : 'Retry return') : (ro ? 'Acasă' : 'Home'), 'M3 10 12 3l9 7v11h-6v-7H9v7H3Z');
-    radio.disabled=media.disabled=returnPending;
+    radio.disabled=media.disabled=returnPending||!!deviceControls?.busy();
     label(radio,'Radio','M3 8h18v13H3ZM4 8 19 3M7 12h10M7 16h2m6 0h2');
     label(media,'Media','M3 5h18v16H3Zm6 4 7 4-7 4Z');
     close.setAttribute('aria-label',ro?'Închide comenzile PySH':'Close PySH controls');
@@ -104,17 +112,18 @@
     hint.textContent = ro ? 'Trage în jos din centrul marginii de sus pentru comenzile PySH.' : 'Swipe down from the top centre for PySH controls.';
   }
   function retract(deliberate = false) {
-    if (returnPending || returnFailed && !deliberate || !deliberate && keyboardNavigation && controls.contains(shadow.activeElement)) return;
+    if (returnPending || deviceControls?.busy() || returnFailed && !deliberate || !deliberate && keyboardNavigation && controls.contains(shadow.activeElement)) return;
     controls.style.display=shade.style.display=hint.style.display=message.style.display='none';
     reveal.setAttribute('aria-expanded','false');
     reveal.style.display = 'block';
+    releaseIsolation();
     clearTimeout(retractTimer);
   }
   function expose() {
     const wasClosed=controls.style.display==='none';
     controls.style.display='block';shade.style.display='block';reveal.setAttribute('aria-expanded','true');
     reveal.style.display = 'none';
-    if(wasClosed){refreshContext();close.focus?.({preventScroll:true});}
+    if(wasClosed){previousFocus=document.activeElement;isolate();refreshContext();deviceControls?.refresh();close.focus?.({preventScroll:true});}
     clearTimeout(retractTimer);
     retractTimer = setTimeout(retract, 8000);
   }
@@ -123,6 +132,7 @@
       const failed = Boolean(chrome.runtime.lastError || !result?.ok);
       if (!failed) keyboardShown = show;
       localize();
+      if(reportError&&!failed&&show){retract(true);if(previousFocus?.isConnected)previousFocus.focus?.({preventScroll:true});return;}
       if (reportError && !returnPending && !returnFailed) {
         message.textContent = failed ? (ro ? 'Tastatura nu este disponibilă. Reîncearcă.' : 'Keyboard unavailable. Try again.') : '';
         message.style.display = failed ? 'block' : 'none';
@@ -146,13 +156,18 @@
     if(event.altKey&&event.shiftKey&&event.key.toLowerCase()==='p'){keyboardNavigation=true;event.preventDefault();event.stopImmediatePropagation();if(controls.style.display==='none'){expose();close.focus?.();}else retract(true);return;}
     if(controls.style.display==='none')return;
     keyboardNavigation=true;clearTimeout(retractTimer);
+    event.stopImmediatePropagation();
     if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();retract(true);reveal.focus?.();}
-    if(event.key==='Tab'){event.stopImmediatePropagation();const order=[close,back,radio,media,keyboard].filter(button=>!button.disabled);const index=order.indexOf(shadow.activeElement);const next=(index+(event.shiftKey?-1:1)+order.length)%order.length;event.preventDefault();order[next].focus?.();}
+    if(event.key==='Tab'){event.stopImmediatePropagation();const order=controls.querySelectorAll?[...controls.querySelectorAll('button:not(:disabled),input:not(:disabled)')].filter(element=>element.getClientRects().length):[close,back,radio,media,keyboard].filter(button=>!button.disabled);const index=order.indexOf(shadow.activeElement);const next=(index+(event.shiftKey?-1:1)+order.length)%order.length;event.preventDefault();order[next].focus?.();}
   },true);
   controls.addEventListener('pointerdown',()=>{keyboardNavigation=false;expose();});
   controls.addEventListener('focusin',()=>{if(keyboardNavigation)clearTimeout(retractTimer);});
   controls.addEventListener('focusout',()=>{clearTimeout(retractTimer);retractTimer=setTimeout(retract,8000);});
-  actions.append(back,radio,media,keyboard);controls.append(heading,actions,hint,message);
+  if(typeof createPyshDeviceControls==='function'){
+    deviceControls=createPyshDeviceControls({context:keyboard,onBusy:()=>{localize();if(controls.style.display!=='none')expose();},onPresentation:value=>{ro=value.language==='ro';host.setAttribute('data-theme',value.theme);localize();},onPane:open=>{actions.style.display=open?'none':'grid';}});
+    actions.append(back,radio,media);controls.append(heading,actions,deviceControls.element,hint,message);styles.textContent+=deviceControls.style.textContent;
+  }else{actions.append(back,radio,media,keyboard);controls.append(heading,actions,hint,message);}
+  document.addEventListener('focusin',event=>{if(controls.style.display!=='none'&&event.target!==host)close.focus?.({preventScroll:true});},true);
   shadow.append(styles,shade,controls,reveal);
   function editable(element) {
     if (!element || element.disabled || element.readOnly) return false;
@@ -161,11 +176,12 @@
   }
   document.addEventListener('focusin', event => {
     clearTimeout(blurTimer);
+    if(event.target===host)return;
     keyboardAction(editable(event.target));
   }, true);
   document.addEventListener('focusout', () => {
     clearTimeout(blurTimer);
-    blurTimer = setTimeout(() => { if (!editable(document.activeElement)) keyboardAction(false); }, 200);
+    blurTimer = setTimeout(() => { if (document.activeElement!==host&&!editable(document.activeElement)) keyboardAction(false); }, 200);
   }, true);
   function leaveTyping() {
     clearTimeout(blurTimer);
@@ -178,7 +194,7 @@
   window.addEventListener('pagehide', leaveTyping);
   function attach() {
     const parent = document.fullscreenElement || document.documentElement;
-    if (parent && host.parentElement !== parent) parent.append(host);
+    if (parent && host.parentElement !== parent){releaseIsolation();parent.append(host);if(controls.style.display!=='none')isolate();}
   }
   let fullscreenGesture;
   const replacedFullscreen = () => ['VIDEO','AUDIO','IFRAME','IMG','CANVAS','OBJECT','EMBED'].includes(document.fullscreenElement?.tagName);
