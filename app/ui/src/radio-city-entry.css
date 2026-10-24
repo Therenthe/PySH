@@ -9,9 +9,10 @@
 .radio-entry-actions{position:absolute;top:10px;left:12px;right:12px;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--ink)}
 .radio-entry-actions>span{font-size:14px;font-weight:650;padding:7px 12px;border-radius:20px;background:var(--surface)}
 .radio-entry-actions>button{min-height:48px;min-width:84px;padding:0 16px;border:1px solid var(--line-dark);border-radius:24px;background:var(--paper);color:var(--ink);font-size:14px}
-.radio-city-entry[data-phase=leaving]{opacity:0;transition:opacity 160ms ease}
-.app[data-city-entry=playing]>.topbar,.app[data-city-entry=playing]>.rail,.app[data-city-entry=playing]>.page-content,.app[data-city-entry=leaving]>.topbar,.app[data-city-entry=leaving]>.rail,.app[data-city-entry=leaving]>.page-content{opacity:0;pointer-events:none;transition:opacity 180ms ease}
-.app[data-city-entry=playing]>.ambient-sky>.city-diorama,.app[data-city-entry=leaving]>.ambient-sky>.city-diorama{opacity:0;transition:opacity 180ms ease}
+.radio-city-entry[data-phase=leaving]{background:var(--bg)}
+.radio-city-entry[data-phase=leaving]>video,.radio-city-entry[data-phase=leaving]>.radio-entry-actions{opacity:0;transition:opacity 160ms ease;pointer-events:none}
+.app[data-city-entry=playing]>.main-area,.app[data-city-entry=playing]>.rail,.app[data-city-entry=leaving]>.main-area,.app[data-city-entry=leaving]>.rail{opacity:0;pointer-events:none;transition:opacity 180ms ease}
+.app[data-theme][data-city-entry=playing]>.ambient-sky>.city-diorama,.app[data-theme][data-city-entry=leaving]>.ambient-sky>.city-diorama{opacity:0;transition:opacity 180ms ease}
 .app .home-v2.ambient-home .city-radio-entry{position:absolute;left:calc(56.75vw - var(--home-origin-x,0px));bottom:22px;width:7.4375vw;min-width:48px;height:183px;min-height:48px;margin:0;padding:0;border:0;border-radius:8px;background:transparent;box-shadow:none;z-index:0;cursor:pointer}
 .city-radio-entry:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .app .home-v2.ambient-home .city-radio-control{pointer-events:none}

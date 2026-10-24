@@ -81,8 +81,7 @@ test('radio building navigation keeps ambient wake and playback controls indepen
  await page.route('**/ambient/radio-entry-*.webm',route=>route.abort());
  await advance(page,31000);await expect(page.locator('.app')).toHaveAttribute('data-home-phase','ambient');
  const box=(await button(page).boundingBox())!;await page.touchscreen.tap(box.x+box.width/2,box.y+box.height/2);await expect(page.locator('.app')).toHaveAttribute('data-home-phase','interactive');await expect(page.locator('.radio-city-entry')).toHaveCount(0);
- await expect(page.locator('.playback-expand')).toHaveAttribute('aria-expanded','false');await page.locator('.playback-expand').tap();await expect(page.locator('.playback-expand')).toHaveAttribute('aria-expanded','true');await expect(page.locator('.playback-toggle')).toBeVisible();
- await page.locator('.playback-expand').focus();await page.keyboard.press('Enter');await expect(page.locator('.playback-expand')).toHaveAttribute('aria-expanded','false');await expect(page.locator('.playback-expand')).toBeFocused();
+ await page.getByRole('button',{name:ro?'Comenzi rapide':'Quick controls',exact:true}).tap();const quick=page.locator('.quick-controls-dialog');await expect(quick).toBeVisible();const pause=quick.getByRole('button',{name:ro?/^Pauz/:/^Pause$/});await expect(pause).toBeVisible();await expect(pause).toBeEnabled();await quick.getByRole('button',{name:ro?/nchide$/:/^Close$/}).tap();await expect(quick).toHaveCount(0);
  await button(page).tap();await expect(page.locator('.radio-page')).toBeVisible();await expect(page.locator('.radio-city-entry')).toHaveCount(0);
  expect(JSON.stringify(f.state.preferences.homePositions)).toBe(saved);expect(f.actions).toEqual([]);await capture(page,'radio-navigation-preserves-playback');
 });

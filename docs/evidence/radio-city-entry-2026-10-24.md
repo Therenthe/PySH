@@ -42,6 +42,18 @@ BT front/quarter/edge/rear views and day/night city compositions. These authorin
 gates do not establish actual browser alpha, hardware decoding or touch feel.
 Exact frozen browser/native verification will be added after its gates finish.
 
+The first frozen candidate passed all30 new interaction cases. Its legacy scene
+run passed178/180; two tests retained the superseded building→expand-card gesture.
+Those test-only expectations were migrated to the existing Quick controls and
+Radio navigation, with isolated EN/RO retest2/2 PASS on unchanged runtime.
+
+Independent full-UI inspection then rejected Home-card/header leakage behind
+the transparent movie: the hide rule targeted direct topbar/content children,
+but the actual UI is inside main-area. R2 hides that container while preserving
+the live-sky sibling, explicitly outranks the manually dark daytime city layer,
+and releases the movie against the destination theme background rather than
+flashing the Home sky. The prepared first candidate was never activated.
+
 Cold TypeScript/Vite, structure/package checks PASS;650 Python PASS /32 platform
 skips and82 extension PASS. No global quality score or full product acceptance
 is claimed. Raw frames, probes, captures and device operations remain private.

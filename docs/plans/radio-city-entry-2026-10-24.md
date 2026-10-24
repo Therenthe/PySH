@@ -42,7 +42,9 @@ actual day/night selection.
 The building target works without radio playback or Wave visualization and is
 hidden only during Home arrangement. In ambient mode the first touch wakes;
 the next deliberate building touch enters. Existing Radio shortcuts still open
-Radio directly. The playback card keeps its own controls.
+Radio directly. This deliberately replaces Wave's earlier expand-card gesture
+on the building. Playback remains in the existing Quick controls and Radio
+menu; the Home playback card retains its expanded-state controls.
 
 Cancel/Escape returns to Home; Skip opens Radio. Failed/blocked media and bounded
 loading timeout open usable Radio instead of trapping the user. Hiding/unmounting
