@@ -2,9 +2,10 @@
 
 Hub tactil EN/RO pentru Raspberry Pi 4 (4 GB), LCD DSI 7″, 800 × 480: ceas, vreme, radio, media locală și conectivitate.
 
-Ultimul lot instalat: `8ee4e82b303a`, sursă `0ff10fa` — oraș Dark Deco variat,
-BT3D animat și antenă radio mai înaltă, lizibile în ceață. Verificare nativă,
-preferințe/radio restaurate. [Dovezi și limite](docs/evidence/city-v3-2026-10-24.md).
+Ultimul lot instalat: `40d0bedaf3fb`, sursă `91d5b71` — meteori mai lizibili,
+cu stelele rare și ritmul natural păstrate.46 teste țintite și clip cu mișcare
+naturală. [Dovezi](docs/evidence/night-sky-visibility-2026-10-24.md) ·
+[Conceptul vizual Home pentru specialist](docs/HOME_VISUAL_CONCEPT.md).
 
 Vizualizatorul Undă este acum integrat în clădirea radio: circuite neon Blender
 conduse de semnalul audio, cu intensitate nocturnă și control tactil al playerului.
