@@ -36,17 +36,21 @@ Transparența nu trebuie să compromită citirea textului.
 
 Redarea are un singur context coerent: numele postului sau fișierului, metadate
 și comenzi tactile. Pe Home, modul Undă al radioului îmbracă fațada clădirii radio
-cu neon. Atingerea clădirii readuce playerul. Celelalte stiluri păstrează
+cu neon. Atingerea clădirii pornește o intrare cinematică și deschide Radio;
+comenzile redării rămân în Comenzi rapide și Radio. Celelalte stiluri păstrează
 vizualizarea separată și dimensiunea aleasă de utilizator.
 
 ## Scena ca indicator al dispozitivului
 
 Bluetooth are o rună 3D montată liber, fără placă neagră; trei benzi animate
-progresiv și un nucleu stabil diferențiază conectarea de simpla alimentare.
+progresiv diferențiază conectarea de simpla alimentare. Runa face ocazional o
+rotație3D completă, redată din32 poziții Blender; suportul rămâne fix. Mișcarea
+se oprește când scena nu este vizibilă sau utilizatorul reduce animațiile.
 Decorul se întunecă separat de luminile serviciilor, inclusiv în tema Noapte
 folosită ziua. Paleta neon de zi contrastează cu piatra și ceața.
-Clădirea Wi-Fi reflectă starea conexiunii și
-ruta activă. Antena radio emite în timpul redării, iar neonul fațadei urmărește
+Clădirea Wi-Fi reflectă starea conexiunii și ruta activă prin trei unde
+progresive, fără router sau lampă vizibilă. Antena radio emite în timpul redării,
+iar neonul fațadei urmărește
 semnalul audio măsurat și se stinge la pauză, mute sau lipsă de semnal.
 
 Luminile funcționale sunt deasupra vălului atmosferic din prim-plan, pentru a
@@ -65,6 +69,15 @@ După inactivitate, cardurile se restrâng, apoi Home păstrează scena, ceasul 
 vizualizarea audio. Prima atingere readuce comenzile, fără să execute accidental
 o acțiune. Tranzițiile trebuie să explice schimbarea de stare; pulsațiile nu
 trebuie să simuleze o conectare sau o redare care nu există.
+
+Intrarea Radio durează2,5s: o cameră Blender în perspectivă coboară spre ușile
+Art Deco, în timp ce mașinile, metroul și pietonii se mișcă. Cerul transparent
+păstrează vremea și corpurile cerești reale. Anulează revine Acasă, Omite duce
+direct în Radio; mișcarea redusă elimină traversarea. Nu schimbă redarea audio.
+Randările locale800×480 înlocuiesc o scenă3D calculată în timp real pe Pi.
+
+Alte intrări sunt doar propuneri: cinematograf→Media, clădirea BT→Sunet și boxe,
+clădirea Wi-Fi→Internet și telefon, turn central→Setări. Nu au comenzi noi.
 
 ## Cer, vreme și teme
 

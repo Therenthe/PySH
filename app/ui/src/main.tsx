@@ -133,7 +133,14 @@ function App(){
  const lang=hub.preferences.language||'en', t=(k:string)=>{const key=hub.appliance?({exit:'serviceMode',exitConfirm:'serviceConfirm',exitMessage:'serviceMessage',confirmExit:'enterService'} as Record<string,string>)[k]||k:k;return words[lang][key]||words.en[key]||key};
  const recoveryActive=!!cityEntry||!!hub.androidControl?.pending?.length||!!deleteSelection||deletePending||!!audioPending||!!audioFailure||!!btPending||!!btFailure||geoSaving||geoStatus==='loading'||!!geoFailure||!!ambientSaving||documentPending||localMediaPending||externalMediaPending||Object.keys(promptPending).length>0||Object.keys(promptFailure).length>0||!!favoritePending||!!favoriteFailure;
  useEffect(()=>{if(cityEntry&&(page!=='home'||homeEditing||revisitSetup||hub.serviceMode||hub.power?.standby||hub.bluetooth.prompts?.length||hub.androidControl?.pending?.length||modal||keyboard)){cityEntryLock.current=false;setCityEntry(null);}},[cityEntry,page,homeEditing,revisitSetup,hub.serviceMode,hub.power?.standby,hub.bluetooth.prompts?.length,hub.androidControl?.pending?.length,modal,keyboard]);
- useEffect(()=>{if(page!=='radio'||!radioEntryFocus.current)return;radioEntryFocus.current=false;const frame=requestAnimationFrame(()=>{const target=document.querySelector<HTMLElement>('.radio-page .search-field');if(target&&!target.closest('[inert]'))target.focus({preventScroll:true});});return()=>cancelAnimationFrame(frame);},[page]);
+ useEffect(()=>{
+  if(page!=='radio'){radioEntryFocus.current=false;return;}
+  // Auto-hiding navigation saves a preference and briefly disables controls.
+  if(!radioEntryFocus.current||busy||audioPending)return;
+  let frame:number,attempts=0;
+  const focus=()=>{const target=document.querySelector<HTMLButtonElement>('.radio-page .search-field');if(target&&!target.disabled&&!target.closest('[inert]')){target.focus({preventScroll:true});if(document.activeElement===target){radioEntryFocus.current=false;return;}}if(++attempts<8)frame=requestAnimationFrame(focus);};
+  frame=requestAnimationFrame(focus);return()=>cancelAnimationFrame(frame);
+ },[page,busy,audioPending]);
  useEffect(()=>{
   let timer:number;
   const reset=()=>{clearTimeout(timer);if(page!=='home'&&!busy&&!recoveryActive&&!err&&!hub.serviceMode&&!revisitSetup&&hub.preferences.setupComplete&&hub.preferences.screensaverMinutes>0&&!video&&!keyboard&&!modal&&!choiceOpen&&!homeEditing&&!hub.bluetooth.prompts?.length)timer=window.setTimeout(()=>setScreensaver(true),hub.preferences.screensaverMinutes*60000)};

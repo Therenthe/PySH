@@ -65,3 +65,31 @@ retaining exact facade bounds and minimum48px checks instead of weakening them.
 Cold TypeScript/Vite, structure/package checks PASS;650 Python PASS /32 platform
 skips and82 extension PASS. No global quality score or full product acceptance
 is claimed. Raw frames, probes, captures and device operations remain private.
+
+## Exact R3 browser and first native gates
+
+R3 runtime `b115fcdaa2c7`, production source
+`024ee82eb90eca86799db20643a387b0c09f19a0`, passed210/210 browser cases,
+144 captures across16 EN/RO/theme/weather contexts,40 accessibility cases and
+10 usability groups. No viewport overflow, page errors or unintended API writes.
+Browser decoding confirms transparent sky and opaque ground/threshold; the live
+sky remains visible while the old Home UI and original city are cleared.
+
+Installation verified165 runtime hashes and29 preferences against a PC backup;
+the gateway, Ethernet and original radio selection were preserved. Native BT
+sampling confirms the running Blender atlas through more than12 distinct poses.
+The first sampling probe interleaved slow screenshot requests with the3.2s turn;
+in-page RAF sampling removed that measurement limitation on unchanged runtime.
+
+Native first-touch wake passed after removing Playwright's actionability trial
+click: an independent local reproduction showed that trial emitted trusted mouse
+input before the intended CDP touch. A separate probe received physical touches
+while awaiting idle and timed out; it is not counted as a product pass.
+
+Actual native playback opened Radio with sound preserved and decoded60 frames
+over approximately2.6s. Focus instrumentation then found a real R3 defect: Radio
+Search was briefly disabled by navigation auto-hide's preference save when the
+one-shot focus attempt ran. Later enablement never retried it. R4 retains the
+pending intent through that save/audio busy interval, verifies successful focus,
+cancels on departure and bounds readiness retries. Exact R4 browser and native
+results follow after verification; R3's native delivery gate was not accepted.

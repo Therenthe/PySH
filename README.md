@@ -2,15 +2,17 @@
 
 Hub tactil EN/RO pentru Raspberry Pi 4 (4 GB), LCD DSI 7″, 800 × 480: ceas, vreme, radio, media locală și conectivitate.
 
-Ultimul lot instalat: `3565bf558bc4`, sursă `dd08201` — BT3D fără placa neagră,
-unde progresive și tuburi radio Blender lizibile și pe fațada de zi. Intensitatea
-urmează sunetul real.42 retestări radio/BT,46 capturi independente și9 stări
-native cu preferințele originale; baza R3 are204 teste și14 stări native.
-[Dovezi](docs/evidence/radio-bt-readability-2026-10-24.md) ·
+Ultimul lot instalat: `b115fcdaa2c7`, sursă `024ee82` — atingerea clădirii Radio
+pornește o intrare cinematică Blender cu mașini, metrou, pietoni și uși animate,
+apoi deschide Radio. BT se rotește ocazional în3D; Wi-Fi arată numai unde.
+210/210 verificări browser,144 capturi independente,40 probe de accesibilitate
+și10 grupe de utilizabilitate PASS.
+[Dovezi și limite](docs/evidence/radio-city-entry-2026-10-24.md) ·
 [Conceptul vizual Home pentru specialist](docs/HOME_VISUAL_CONCEPT.md).
 
 Vizualizatorul Undă este acum integrat în clădirea radio: circuite neon Blender
-conduse de semnalul audio, cu intensitate nocturnă și control tactil al playerului.
+conduse de semnalul audio, cu intensitate nocturnă. Comenzile redării sunt în
+Comenzi rapide și Radio; atingerea clădirii este acum intrarea cinematică.
 [Plan și verificări](docs/plans/radio-building-neon-2026-10-24.md) ·
 [Dovezi](docs/evidence/radio-building-neon-2026-10-24.md).
 

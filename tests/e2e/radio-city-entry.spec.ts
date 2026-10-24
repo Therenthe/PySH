@@ -39,6 +39,16 @@ for(const theme of ['ink','night'])for(const day of [true,false])test(`Radio doo
  await expect(page.locator('.radio-page')).toBeVisible({timeout:9000});await expect(dialog(page)).toHaveCount(0);await expect(page.locator('.station-list')).toBeVisible();await expect(page.locator('.radio-page .search-field')).toBeEnabled();await expect(page.locator('.radio-page .search-field')).toBeFocused();await capture(page,'radio-after-real-clip');await page.locator('.radio-page .search-field').tap();await expect(page.locator('.keyboard-card[role=dialog]')).toBeVisible();await page.locator('.keyboard-card').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();await expect(page.locator('.radio-page')).toBeVisible();stable(f);
 });
 
+for(const theme of ['ink','night'])test(`Radio arrival ${theme}: navigation auto-hide pending preferences retains destination focus`,async({page},info)=>{
+ const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro?'ro':'en',theme);f.state.preferences.navigationAutoHide=true;await page.clock.runFor(2700);
+ const saved=JSON.stringify({preferences:f.state.preferences,player:f.state.player,audio:f.state.audio});let release!:()=>void,started!:()=>void;const held=new Promise<void>(resolve=>release=resolve),requestStarted=new Promise<void>(resolve=>started=resolve);
+ await page.route('**/api/preferences',async route=>{const request=route.request();expect(request.method()).toBe('PATCH');const body=request.postDataJSON();f.writes.push({path:'/api/preferences',body});Object.assign(f.state.preferences,body);started();await held;await route.fulfill({json:f.state.preferences});});
+ await page.clock.resume();await entry(page).tap();await expect(dialog(page)).toHaveAttribute('data-phase','playing');await expect(page.locator('.radio-page')).toBeVisible({timeout:9000});await requestStarted;
+ const search=page.locator('.radio-page .search-field');await expect(search).toBeDisabled();await page.waitForTimeout(350);await expect(search).not.toBeFocused();await capture(page,'radio-arrival-preferences-pending');release();
+ await expect(search).toBeEnabled();await expect(search).toBeFocused();await page.keyboard.press('Enter');await expect(page.locator('.keyboard-card[role=dialog]')).toBeVisible();await page.keyboard.press('Escape');await expect(page.locator('.keyboard-card')).toHaveCount(0);await expect(search).toBeFocused();await capture(page,'radio-arrival-focus-after-preferences');
+ expect(f.writes).toEqual([{path:'/api/preferences',body:{navigationCollapsed:true}}]);expect(f.errors).toEqual([]);expect(JSON.stringify({preferences:f.state.preferences,player:f.state.player,audio:f.state.audio})).toBe(saved);
+});
+
 for(const theme of ['ink','night'])test(`Radio entry ${theme}: cancel Escape skip and repeated input are bounded and preserve audio`,async({page},info)=>{
  const ro=info.project.name.endsWith('ro'),release=await holdClip(page),f=await fixture(page,ro?'ro':'en',theme);
  await entry(page).tap();await expect(dialog(page)).toHaveAttribute('data-phase','loading');await expect(page.locator('.topbar')).toHaveCSS('opacity','0');await cancel(page,ro).tap();await expect(dialog(page)).toHaveCount(0);await expect(entry(page)).toBeFocused();
