@@ -1,18 +1,23 @@
 # PySH status
 
-Installed P1 runtime34f8210d72fe/code887fc97f; full product acceptance OPEN.
-Original Radio neon, Blender floating Explore names and common command surface
-are installed and natively verified. Five actual20minute label rounds complete.
+Installed runtimef97f14d6b651; code sourcedc6bee32ac8c69225aef062c2ac2fd539e9c7326.
+Previous34f8210d72fe retained. Full product acceptance remains OPEN.
 
-P2 Radio is a verified-source candidate awaiting pinned native delivery:
-explicit Favorites/Discover, responsive genuine artwork, full paused identity,
-resolved-stream row selection and immediate collection contrast.28focused UI
-cases PASS; favorite/product regressions passed during integration.
+Original colored Radio neon, Blender floating Explore names and common command
+sheet are installed. Five actual20minute label rounds complete. Radio now has
+explicit Favorites/Discover, responsive genuine artwork, complete paused identity,
+resolved-stream selection and immediate contrast-safe collection feedback.
+
+76distinct scoped native checks passed on the current English/night800x480
+session, including actual artwork and retained-source playback/mute.214runtime
+hashes/29preferences and PCbackup verified; exact preferences/audio/radio restored,
+diagnostic ports closed. Earlier failed attempts remain documented.
 
 - [Radio evidence](docs/evidence/ui-ux-radio-2026-10-25.md)
 - [Command surface](docs/evidence/ui-ux-commands-2026-10-25.md)
 - [Approved plan](docs/plans/ui-ux-2026-10-24.md)
 
-Home arrangement assistance, real Media metadata/Continue watching and scoped
-motion/feedback remain pending. Proposal6 stays excluded; no21:30 automation
-or public screen stream. Raw state, accounts and backups remain private.
+Next: Home arrangement assistance/scoped motion, then real Media metadata and
+Continue watching. Proposal6 stays excluded; no21:30 automation or public stream.
+Physical/acoustic/DRM/global stability acceptance remains separate. Raw state,
+accounts and backups are private.

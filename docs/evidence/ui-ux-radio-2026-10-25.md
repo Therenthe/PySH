@@ -1,7 +1,8 @@
 # Radio library hierarchy —25October2026
 
-P2 is a verified local-source candidate, not yet installed. Device remains on
-P1 runtime34f8210d72fe/public887fc97f. P3/P4/P7 remain planned; proposal6 excluded.
+P2 is installed as runtimef97f14d6b651/code
+dc6bee32ac8c69225aef062c2ac2fd539e9c7326. Previous P1 runtime34f8210d72fe
+is retained. Scoped native verification passed; full product acceptance is OPEN. P3/P4/P7 remain planned; proposal6 excluded.
 
 ## Behavior
 
@@ -56,3 +57,27 @@ skips). Pinned native delivery is recorded below when complete.
 
 No backend/API/dependency/preference schema or account change is introduced.
 Physical touch, audible output, DRM and full product acceptance remain OPEN.
+
+## Pinned native delivery
+
+Frozen locale7fb88432b2165bbc5fb1aafa95edc3ae9c03225/tree472288ac and public
+codedc6bee32/tree3a367d37 were verified across806public source files. Runtime214
+files,29preferences, unchanged Ethernet/gateway and a separate PCbackup with
+verified contents/checksum were confirmed. ArchiveSHA256:
+53133391ec94922b72e4d9b26e58de9b487d71ef3c9a7db003f8fec11d319728.
+
+Current English/night800x480 native verification passed76distinct named checks,
+covering pinned loaded assets, one actual player, genuine decoded station logo,
+station/track identity, Favorites/Discover without favorite mutation, open/closed
+navigation geometry, hidden touch-scroll bars, same-source pause/resume, real mute
+and crossed-speaker feedback. No new station/output/network/standby was selected.
+All actual control state and original preferences/player were restored.
+
+The first native run passed read-only/transport probes then checked mute while
+the preceding operation intentionally still disabled controls. That harness result
+is retained; the repeat waits for control availability and passed, including mute.
+No product bug is inferred from that premature assertion. Both cleanups confirmed
+exact preferences/audio/radio restoration and closed debug ports. Two genuine
+auto-hide preference writes were admitted; no unexpected writes or page errors.
+A fresh ordinary Wayland frame is inspected after cleanup. Physical-finger,
+speaker-audibility, native EN/RO/theme matrix and global stability remain OPEN.
