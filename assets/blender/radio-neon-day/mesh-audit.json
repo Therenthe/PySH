@@ -1,0 +1,857 @@
+[
+  {
+    "name": "Zone_01_Wave_0",
+    "profile": "render",
+    "eps": 2.9e-05,
+    "tol": 0.000572,
+    "gap": 0.002858,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_01_Wave_0": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_01_Wave_1",
+    "profile": "render",
+    "eps": 2.9e-05,
+    "tol": 0.000572,
+    "gap": 0.002858,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_01_Wave_1": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_01_Wave_2",
+    "profile": "render",
+    "eps": 2.9e-05,
+    "tol": 0.000572,
+    "gap": 0.002858,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_01_Wave_2": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_01_Cornice_1.56",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_01_Cornice_1.56": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_01_Cornice_4.94",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_01_Cornice_4.94": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_01_Corner",
+    "profile": "render",
+    "eps": 0.000346,
+    "tol": 0.006912,
+    "gap": 0.034558,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_01_Corner": {
+        "tris": 60,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_02_Wave_0",
+    "profile": "render",
+    "eps": 3.9e-05,
+    "tol": 0.000788,
+    "gap": 0.003942,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_02_Wave_0": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_02_Wave_1",
+    "profile": "render",
+    "eps": 3.9e-05,
+    "tol": 0.000788,
+    "gap": 0.003942,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_02_Wave_1": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_02_Wave_2",
+    "profile": "render",
+    "eps": 3.9e-05,
+    "tol": 0.000788,
+    "gap": 0.003942,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_02_Wave_2": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_02_Cornice_1.56",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_02_Cornice_1.56": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_02_Cornice_4.94",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_02_Cornice_4.94": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_02_Crown_0",
+    "profile": "render",
+    "eps": 0.000139,
+    "tol": 0.002771,
+    "gap": 0.013857,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_02_Crown_0": {
+        "tris": 60,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_03_Wave_0",
+    "profile": "render",
+    "eps": 4.5e-05,
+    "tol": 0.0009,
+    "gap": 0.004502,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_03_Wave_0": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_03_Wave_1",
+    "profile": "render",
+    "eps": 4.5e-05,
+    "tol": 0.0009,
+    "gap": 0.004502,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_03_Wave_1": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_03_Wave_2",
+    "profile": "render",
+    "eps": 4.5e-05,
+    "tol": 0.0009,
+    "gap": 0.004502,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_03_Wave_2": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_03_Cornice_1.56",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_03_Cornice_1.56": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_03_Cornice_4.94",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_03_Cornice_4.94": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_04_Wave_0",
+    "profile": "render",
+    "eps": 3.7e-05,
+    "tol": 0.000736,
+    "gap": 0.003681,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_04_Wave_0": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_04_Wave_1",
+    "profile": "render",
+    "eps": 3.7e-05,
+    "tol": 0.000736,
+    "gap": 0.003681,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_04_Wave_1": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_04_Wave_2",
+    "profile": "render",
+    "eps": 3.7e-05,
+    "tol": 0.000736,
+    "gap": 0.003681,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_04_Wave_2": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_04_Cornice_1.56",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_04_Cornice_1.56": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_04_Cornice_4.94",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_04_Cornice_4.94": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_04_Crown_1",
+    "profile": "render",
+    "eps": 0.000107,
+    "tol": 0.00214,
+    "gap": 0.010699,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_04_Crown_1": {
+        "tris": 60,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_05_Wave_0",
+    "profile": "render",
+    "eps": 3.7e-05,
+    "tol": 0.000736,
+    "gap": 0.003681,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_05_Wave_0": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_05_Wave_1",
+    "profile": "render",
+    "eps": 3.7e-05,
+    "tol": 0.000736,
+    "gap": 0.003681,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_05_Wave_1": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_05_Wave_2",
+    "profile": "render",
+    "eps": 3.7e-05,
+    "tol": 0.000736,
+    "gap": 0.003681,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_05_Wave_2": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_05_Cornice_1.56",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_05_Cornice_1.56": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_05_Cornice_4.94",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_05_Cornice_4.94": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_06_Wave_0",
+    "profile": "render",
+    "eps": 4.5e-05,
+    "tol": 0.0009,
+    "gap": 0.004502,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_06_Wave_0": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_06_Wave_1",
+    "profile": "render",
+    "eps": 4.5e-05,
+    "tol": 0.0009,
+    "gap": 0.004502,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_06_Wave_1": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_06_Wave_2",
+    "profile": "render",
+    "eps": 4.5e-05,
+    "tol": 0.0009,
+    "gap": 0.004502,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_06_Wave_2": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_06_Cornice_1.56",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_06_Cornice_1.56": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_06_Cornice_4.94",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_06_Cornice_4.94": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_06_Crown_2",
+    "profile": "render",
+    "eps": 7.6e-05,
+    "tol": 0.00152,
+    "gap": 0.007601,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_06_Crown_2": {
+        "tris": 60,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_07_Wave_0",
+    "profile": "render",
+    "eps": 3.9e-05,
+    "tol": 0.000788,
+    "gap": 0.003942,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_07_Wave_0": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_07_Wave_1",
+    "profile": "render",
+    "eps": 3.9e-05,
+    "tol": 0.000788,
+    "gap": 0.003942,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_07_Wave_1": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_07_Wave_2",
+    "profile": "render",
+    "eps": 3.9e-05,
+    "tol": 0.000788,
+    "gap": 0.003942,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_07_Wave_2": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_07_Cornice_1.56",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_07_Cornice_1.56": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_07_Cornice_4.94",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_07_Cornice_4.94": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_08_Wave_0",
+    "profile": "render",
+    "eps": 2.9e-05,
+    "tol": 0.000572,
+    "gap": 0.002858,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_08_Wave_0": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_08_Wave_1",
+    "profile": "render",
+    "eps": 2.9e-05,
+    "tol": 0.000572,
+    "gap": 0.002858,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_08_Wave_1": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_08_Wave_2",
+    "profile": "render",
+    "eps": 2.9e-05,
+    "tol": 0.000572,
+    "gap": 0.002858,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_08_Wave_2": {
+        "tris": 300,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_08_Cornice_1.56",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_08_Cornice_1.56": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_08_Cornice_4.94",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000393,
+    "gap": 0.001965,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_08_Cornice_4.94": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Zone_08_Corner",
+    "profile": "render",
+    "eps": 0.000346,
+    "tol": 0.006912,
+    "gap": 0.034558,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Zone_08_Corner": {
+        "tris": 60,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  }
+]

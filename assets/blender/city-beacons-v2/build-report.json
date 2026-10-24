@@ -1,0 +1,213 @@
+{
+  "schema": 2,
+  "blender": "5.2.2 LTS",
+  "samples": 64,
+  "preview": false,
+  "layouts": {
+    "bluetooth": {
+      "crop_px": {
+        "x": 290,
+        "y": 45,
+        "width": 114,
+        "height": 105
+      },
+      "crop_percent": {
+        "left": 18.125,
+        "top": 7.894736842105263,
+        "width": 7.125,
+        "height": 18.421052631578945
+      },
+      "parts": [
+        "hardware",
+        "core",
+        "ring-1",
+        "ring-2",
+        "ring-3"
+      ],
+      "filename": "city-beacon-bluetooth-{part}-{day|night}-v2.png"
+    },
+    "radio": {
+      "crop_px": {
+        "x": 908,
+        "y": 9,
+        "width": 119,
+        "height": 151
+      },
+      "crop_percent": {
+        "left": 56.75,
+        "top": 1.5789473684210527,
+        "width": 7.4375,
+        "height": 26.49122807017544
+      },
+      "parts": [
+        "hardware",
+        "core",
+        "ring-1",
+        "ring-2",
+        "ring-3"
+      ],
+      "filename": "city-beacon-radio-{part}-{day|night}-v2.png"
+    }
+  },
+  "parts": 54,
+  "vertices": 4072,
+  "triangles": 6296,
+  "assets": [
+    {
+      "name": "city-beacon-bluetooth-hardware-day-v2.png",
+      "bytes": 4247,
+      "sha256": "523965c0e3a024d8403ffe93dc370c6225767ce5752f2df62fc70a51eb3336b6",
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-beacon-bluetooth-core-day-v2.png",
+      "bytes": 3188,
+      "sha256": "0a5c6f5e97c1508e744966f5aff0c0908f4d4a83861e57808d8ee83c7fb25bd7",
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-beacon-bluetooth-ring-1-day-v2.png",
+      "bytes": 1421,
+      "sha256": "67606ce9981f3a566e0271c982ab675098a0a957ef38423ace90948d5072221a",
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-beacon-bluetooth-ring-2-day-v2.png",
+      "bytes": 1837,
+      "sha256": "c87d79e22736aff4b113dea4084d013d31455c16e72caca7bcfbedc690f74cb5",
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-beacon-bluetooth-ring-3-day-v2.png",
+      "bytes": 2243,
+      "sha256": "e0d5a843afb24da493e169761e2638c65d46f3dbc707cf6b278ebc320780885a",
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-beacon-radio-hardware-day-v2.png",
+      "bytes": 9159,
+      "sha256": "3ed7177f31f3d0211c583cae69a16de66820ffb979e4a5679cd80723af70f463",
+      "rgba_decoded_bytes": 71876
+    },
+    {
+      "name": "city-beacon-radio-core-day-v2.png",
+      "bytes": 410,
+      "sha256": "f47810747364d92a20d84007f165372369a43e3e4d7ac2a03076132decff4d24",
+      "rgba_decoded_bytes": 71876
+    },
+    {
+      "name": "city-beacon-radio-ring-1-day-v2.png",
+      "bytes": 1010,
+      "sha256": "5247459a3be7172bd7c33ad413349d270c65405e838e7152a83047c5227758c4",
+      "rgba_decoded_bytes": 71876
+    },
+    {
+      "name": "city-beacon-radio-ring-2-day-v2.png",
+      "bytes": 1434,
+      "sha256": "7bdb9537b1aa1aa73726bcd4ccaf5bbd522b52b51cbfe026c6cb33c1362700fb",
+      "rgba_decoded_bytes": 71876
+    },
+    {
+      "name": "city-beacon-radio-ring-3-day-v2.png",
+      "bytes": 1928,
+      "sha256": "493d448817936b08d014df5933c70160e075cd7c62645c6c0d01492aa165411b",
+      "rgba_decoded_bytes": 71876
+    },
+    {
+      "name": "city-beacon-bluetooth-hardware-night-v2.png",
+      "bytes": 3995,
+      "sha256": "fd9a69116cb4bff5bbfd830fd9cbecbee4c2427997cc77280218285f5c7d083c",
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-beacon-bluetooth-core-night-v2.png",
+      "bytes": 3925,
+      "sha256": "b2e9817d30f2bb638be587091ec0c16c153f2144e69590ceb2b09ff583c05d9a",
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-beacon-bluetooth-ring-1-night-v2.png",
+      "bytes": 1906,
+      "sha256": "4538cb9067597203cb950126e21e17f3a473087274d59cee4be9b1056e355215",
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-beacon-bluetooth-ring-2-night-v2.png",
+      "bytes": 2394,
+      "sha256": "eeee3bb6f22089085b67b40e1fedb53e09a0b20a98d5687959dd73d41d6c0f05",
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-beacon-bluetooth-ring-3-night-v2.png",
+      "bytes": 2894,
+      "sha256": "7577cd3fb97a218820cd33809e75f2f4e6dd4a98306da1204e4053c581321036",
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-beacon-radio-hardware-night-v2.png",
+      "bytes": 10473,
+      "sha256": "1eaf6bf303539c557a38bae20059402aaa76872bbc5f5f637b7a562273ad447f",
+      "rgba_decoded_bytes": 71876
+    },
+    {
+      "name": "city-beacon-radio-core-night-v2.png",
+      "bytes": 567,
+      "sha256": "79350c42f2ec7300a9a7d69dd1d707d2d03ea203a70dc542062a6b5123c74f34",
+      "rgba_decoded_bytes": 71876
+    },
+    {
+      "name": "city-beacon-radio-ring-1-night-v2.png",
+      "bytes": 1336,
+      "sha256": "cf285c1d16de2f5b06f1b4fa2bc815650cb7af9cb39adbc7ade2f2d2ea00a434",
+      "rgba_decoded_bytes": 71876
+    },
+    {
+      "name": "city-beacon-radio-ring-2-night-v2.png",
+      "bytes": 1904,
+      "sha256": "78e80cbeb3918762602bd5da45bc48b84c2980a46c54523d09c489dd9190f0ac",
+      "rgba_decoded_bytes": 71876
+    },
+    {
+      "name": "city-beacon-radio-ring-3-night-v2.png",
+      "bytes": 2419,
+      "sha256": "71bc309faa45cfe8b1c59bba8afce6d1f614d966eb6f3bc46330f07ce8e3655f",
+      "rgba_decoded_bytes": 71876
+    }
+  ],
+  "encoded_bytes": 58690,
+  "rgba_decoded_bytes": 1197560,
+  "no_solid_bluetooth_background": true,
+  "day_palette": {
+    "bluetooth": [
+      0.007,
+      0.055,
+      0.25
+    ],
+    "radio": [
+      0.006,
+      0.105,
+      0.085
+    ]
+  },
+  "night_palette": {
+    "bluetooth": [
+      0.025,
+      0.42,
+      0.98
+    ],
+    "radio": [
+      0.2,
+      0.85,
+      0.57
+    ]
+  },
+  "audit": {
+    "pass": true,
+    "scope": "closed props separately",
+    "errors": 0,
+    "warnings": 0
+  },
+  "source_city_sha256": "de1780281dc2ca21a9492015dfedf46be8e14794641e12e32364af1771fe1a79",
+  "builder_sha256": "938021e5fcaf5bb155e21474d569b04691b7c05d6e2eff51dc646d1092dba272",
+  "limits": "Offline authored geometry; runtime travelling opacity/state/lifecycle and actual native performance remain separate acceptance."
+}

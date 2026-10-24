@@ -4,9 +4,9 @@ import {currentWeatherAlerts,type WeatherAlertsDocument} from './weatherAlertMod
 import './city-diorama.css';
 import {RadioBuildingNeon} from './RadioBuildingNeon';
 
-/** Original Blender-authored geometry, lit and rendered offline. Runtime uses two
- * flat image layers: no WebGL context or hidden 3D renderer competes with video. */
-export function CityDiorama({night,weather,radioPlaying=false,visualizeRadio=false,radioCanVisualize=false,bluetoothPowered=false,bluetoothConnected=false,wifiState='unknown',wifiActive=false}:{night:boolean;weather:SceneWeather;radioPlaying?:boolean;visualizeRadio?:boolean;radioCanVisualize?:boolean;bluetoothPowered?:boolean;bluetoothConnected?:boolean;wifiState?:'off'|'disconnected'|'connecting'|'connected'|'unknown';wifiActive?:boolean}) {
+/** Original Blender geometry rendered offline; small raster layers avoid a live
+ * WebGL context competing with video and touch on the appliance. */
+export function CityDiorama({night,darkSurface=false,weather,radioPlaying=false,visualizeRadio=false,radioCanVisualize=false,bluetoothPowered=false,bluetoothConnected=false,wifiState='unknown',wifiActive=false}:{night:boolean;darkSurface?:boolean;weather:SceneWeather;radioPlaying?:boolean;visualizeRadio?:boolean;radioCanVisualize?:boolean;bluetoothPowered?:boolean;bluetoothConnected?:boolean;wifiState?:'off'|'disconnected'|'connecting'|'connected'|'unknown';wifiActive?:boolean}) {
  const [active,setActive]=useState(!document.hidden);
  const [inView,setInView]=useState(true),city=useRef<HTMLDivElement>(null);
  useEffect(()=>{const change=()=>setActive(!document.hidden);document.addEventListener('visibilitychange',change);return()=>document.removeEventListener('visibilitychange',change);},[]);
@@ -15,10 +15,12 @@ export function CityDiorama({night,weather,radioPlaying=false,visualizeRadio=fal
   const observer=new IntersectionObserver(([entry])=>setInView(entry.isIntersecting));
   observer.observe(city.current);return()=>observer.disconnect();
  },[]);
- return <div ref={city} aria-hidden="true" className="ambient-city city-diorama" data-city-version="blender-v3" data-season={weather.season} data-thermal={weather.heat?'heat':'normal'} data-radio-emitting={radioPlaying} data-bluetooth={bluetoothPowered?(bluetoothConnected?'connected':'on'):'off'} data-wifi={wifiState} data-wifi-active={wifiState==='connected'&&wifiActive} data-animate={active&&inView} data-freezing={weather.freezing}>
+ const palette=night||darkSurface?'night':'day';
+ const emission=(service:'radio'|'bluetooth')=><><img className="city-signal-core" src={`/ambient/city-beacon-${service}-core-${palette}-v2.png`} alt="" draggable={false}/>{[1,2,3].map(ring=><img key={ring} className="city-signal-ring" data-ring={ring} style={{'--ring-order':ring-1} as CSSProperties} src={`/ambient/city-beacon-${service}-ring-${ring}-${palette}-v2.png`} alt="" draggable={false}/>)}</>;
+ return <div ref={city} aria-hidden="true" className="ambient-city city-diorama" data-city-version="blender-v3" data-beacon-palette={palette} data-season={weather.season} data-thermal={weather.heat?'heat':'normal'} data-radio-emitting={radioPlaying} data-bluetooth={bluetoothPowered?(bluetoothConnected?'connected':'on'):'off'} data-wifi={wifiState} data-wifi-active={wifiState==='connected'&&wifiActive} data-animate={active&&inView} data-freezing={weather.freezing}>
   {weather.heat&&<div className="city-heat-haze"/>}
   <img className="city-architecture" src={`/ambient/gothic-city-${night?'night':'day'}-v3.png`} alt="" draggable={false}/>
-  {visualizeRadio&&<RadioBuildingNeon night={night} enabled={radioCanVisualize} active={active&&inView}/>}
+  {visualizeRadio&&<RadioBuildingNeon night={night} darkSurface={darkSurface} enabled={radioCanVisualize} active={active&&inView}/>}
   <div className="city-wifi" aria-hidden="true">
    <img className="city-wifi-hardware" src={`/ambient/city-wifi-${night?'night':'day'}-v1.png`} alt="" draggable={false}/>
    <img className="city-wifi-emission" src="/ambient/city-wifi-emission-v1.png" alt="" draggable={false}/>
@@ -27,12 +29,12 @@ export function CityDiorama({night,weather,radioPlaying=false,visualizeRadio=fal
   <div className="city-metro-track"><img className="city-metro" src="/ambient/metro-v2.png" alt="" draggable={false}/></div>
   <div className="city-ground-mist"/>
   <div className="city-radio-tower">
-   <img className="city-radio-hardware" src={`/ambient/city-beacon-radio-${night?'night':'day'}-v1.png`} alt="" draggable={false}/>
-   {radioPlaying&&<div className="city-radio-emitter"><img className="city-radio-emission" src="/ambient/city-beacon-radio-emission-v1.png" alt="" draggable={false}/></div>}
+   <img className="city-radio-hardware" src={`/ambient/city-beacon-radio-hardware-${palette}-v2.png`} alt="" draggable={false}/>
+   {radioPlaying&&<div className="city-radio-emitter"><div className="city-radio-emission">{emission('radio')}</div></div>}
   </div>
   {bluetoothPowered&&<div className={`city-bluetooth ${bluetoothConnected?'connected':''}`}>
-   <img className="city-bluetooth-hardware" src={`/ambient/city-beacon-bluetooth-${night?'night':'day'}-v1.png`} alt="" draggable={false}/>
-   <img className="city-bluetooth-emission" src="/ambient/city-beacon-bluetooth-emission-v1.png" alt="" draggable={false}/>
+   <img className="city-bluetooth-hardware" src={`/ambient/city-beacon-bluetooth-hardware-${palette}-v2.png`} alt="" draggable={false}/>
+   <div className="city-bluetooth-emission">{emission('bluetooth')}</div>
   </div>}
   {weather.freezing&&<div className="city-frost"/>}
  </div>;

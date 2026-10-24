@@ -23,7 +23,7 @@ async function target(locator:Locator){const box=await locator.boundingBox();exp
 
 for(const theme of ['ink','night'])for(const day of [false,true])test(`radio neon ${theme} actual-${day?'day':'night'}: eight Blender zones respond to genuine amplitude`,async({page},info)=>{
  const f=await fixture(page,info.project.name.endsWith('ro')?'ro':'en',theme,day);
- await expect(neon(page)).toHaveAttribute('data-signal-status','ready');await expect(neon(page)).toHaveAttribute('data-neon-night',String(!day));await expect(zones(page)).toHaveCount(8);
+ await expect(neon(page)).toHaveAttribute('data-signal-status','ready');await expect(neon(page)).toHaveAttribute('data-neon-night',String(!day));await expect(neon(page)).toHaveAttribute('data-neon-palette',!day||theme==='night'?'night':'day');await expect(zones(page)).toHaveCount(8);
  await zones(page).evaluateAll(nodes=>Promise.all(nodes.map(node=>(node as HTMLImageElement).decode())));
  expect(await zones(page).evaluateAll(nodes=>nodes.every(node=>{const image=node as HTMLImageElement;return image.naturalWidth>0&&image.naturalHeight>0&&image.src.includes('/ambient/');}))).toBe(true);
  const low=await opacities(page);
@@ -31,10 +31,24 @@ for(const theme of ['ink','night'])for(const day of [false,true])test(`radio neo
  // jump can run the900ms fetch deadline before mocked response-body delivery.
  const fresh=page.waitForResponse(async response=>{if(new URL(response.url()).pathname!=='/api/audio/visualization'||!response.ok())return false;const sample=await response.json().catch(()=>null);return sample?.available===true&&sample?.peak===.9&&sample?.bars?.[0]===.9;});
  f.sample.bars=Array.from({length:16},(_,i)=>i<8?.9:.4);f.sample.rms=.6;f.sample.peak=.9;await advance(page,200);await fresh;
- await expect(neon(page)).toHaveAttribute('data-signal-status','ready');await expect.poll(async()=>Math.max(...await opacities(page))).toBeGreaterThan(day?.18:.8);
- const high=await opacities(page);expect(Math.max(...high)).toBeLessThanOrEqual(day?.22:1);if(!day)expect(Math.max(...high)).toBeGreaterThan(.8);expect(high.some((value,i)=>value>low[i]+.02)).toBe(true);expect(new Set(high.map(value=>value.toFixed(3))).size).toBeGreaterThan(1);
+ await expect(neon(page)).toHaveAttribute('data-signal-status','ready');await expect.poll(async()=>Math.max(...await opacities(page))).toBeGreaterThan(.8);
+ const high=await opacities(page);expect(Math.max(...high)).toBeLessThanOrEqual(1);expect(Math.max(...high)).toBeGreaterThan(.8);expect(high.some((value,i)=>value>low[i]+.02)).toBe(true);expect(new Set(high.map(value=>value.toFixed(3))).size).toBeGreaterThan(1);
  expect(await zones(page).evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).animationName==='none'))).toBe(true);
  await expect(page.locator('.ambient-home .audio-visualizer')).toHaveCount(0);await expect(button(page)).toHaveAccessibleName(/Fixture Radio/);await target(button(page));await capture(page,`neon-${theme}-${day?'day':'night'}-measured`);expect(f.actions).toEqual([]);
+});
+
+for(const theme of ['ink','night'])test(`radio neon ${theme}: measured quiet-output day fog retains genuine PCM visibility`,async({page},info)=>{
+ const f=await fixture(page,info.project.name.endsWith('ro')?'ro':'en',theme,true);
+ // Representative measured range from the device, with output volume3. This
+ // controlled fixture changes no device audio or weather and invents no gain.
+ f.state.audio.volume=3;Object.assign(f.state.weather.current,{weather_code:45,visibility_m:100,cloud_cover_pct:100});
+ f.sample.bars=Array.from({length:16},(_,i)=>.24+i*.01);f.sample.rms=.2479;f.sample.peak=.672;
+ await advance(page);await expect(neon(page)).toHaveAttribute('data-signal-status','ready');await expect(neon(page)).toHaveAttribute('data-neon-night','false');await expect(neon(page)).toHaveAttribute('data-neon-palette',theme==='night'?'night':'day');
+ await expect.poll(async()=>Math.max(...await opacities(page))).toBeGreaterThan(.6);
+ const values=await opacities(page);for(let i=0;i<8;i++)expect(values[i]).toBeCloseTo(Math.sqrt(f.sample.bars[i*2+1]),5);
+ expect(Number(await page.locator('.ambient-sky').getAttribute('data-haze'))).toBeGreaterThan(.75);
+ expect(await zones(page).evaluateAll((nodes,night)=>nodes.every(node=>(node as HTMLImageElement).src.includes(night?'/radio-neon-zone-':'/radio-neon-day-zone-')),theme==='night')).toBe(true);
+ await advance(page,31000);await expect(page.locator('.app')).toHaveAttribute('data-home-phase','ambient');await capture(page,`measured-day-fog-${theme}`);expect(f.actions).toEqual([]);
 });
 
 for(const theme of ['ink','night'])test(`radio neon ${theme}: pause mute zero unavailable malformed silent never imply a party`,async({page},info)=>{
