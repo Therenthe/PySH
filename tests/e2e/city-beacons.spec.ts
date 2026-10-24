@@ -17,6 +17,10 @@ async function motionSamples(page:Page,selector:string){
 for(const theme of ['ink','night'])for(const scene of [{name:'day-fog',day:true,code:45},{name:'night-fog',day:false,code:45},{name:'night-clear',day:false,code:0},{name:'day-rain',day:true,code:63}])test(`city beacons ${theme} ${scene.name}: mounted readable status survives weather`,async({page},info)=>{
  const f=await fixture(page,info.project.name.endsWith('ro')?'ro':'en',theme,scene.day,scene.code);
  const city=page.locator('.city-diorama');await expect(city).toHaveAttribute('data-bluetooth','connected');await expect(city).toHaveAttribute('data-radio-emitting','true');
+ if(scene.name==='day-rain'){
+  expect(await page.locator('.scene-precipitation').evaluate(node=>node.parentElement?.classList.contains('ambient-sky'))).toBe(true);
+  expect(await page.locator('.scene-precipitation').evaluate(node=>Number(getComputedStyle(node).zIndex))).toBeGreaterThan(await city.evaluate(node=>Number(getComputedStyle(node).zIndex)));
+ }
  await expect(page.locator('.city-architecture')).toHaveAttribute('src',`/ambient/gothic-city-${scene.day?'day':'night'}-v3.png`);
  const geometry=await page.locator('.city-radio-tower,.city-bluetooth').evaluateAll(nodes=>nodes.map(node=>{const r=node.getBoundingClientRect(),css=getComputedStyle(node);return{x:r.x,y:r.y,w:r.width,h:r.height,z:Number(css.zIndex)};}));
  expect(geometry).toHaveLength(2);expect(geometry.every(r=>r.w>=20&&r.h>=25&&r.x>=0&&r.y>=0&&r.x+r.w<=800&&r.y+r.h<=480)).toBe(true);
@@ -24,7 +28,7 @@ for(const theme of ['ink','night'])for(const scene of [{name:'day-fog',day:true,
  if(theme==='night'&&scene.day){
   // Manual Night must dim scenery without dimming real service indicators.
   // Their old common-ancestor filter passed state tests but erased the signs.
-  await expect(page.locator('.ambient-sky')).toHaveCSS('filter','none');await expect(page.locator('.ambient-scenery')).toHaveCSS('filter','brightness(0.4)');await expect(city).toHaveCSS('opacity','1');await expect(page.locator('.city-scenery')).toHaveCSS('opacity','0.8');
+  await expect(page.locator('.ambient-sky')).toHaveCSS('filter','none');await expect(page.locator('.ambient-scenery')).toHaveCSS('filter','brightness(0.4)');await expect(city).toHaveCSS('opacity','1');await expect(page.locator('.city-scenery')).toHaveCSS('opacity','0.8');await expect(page.locator('.city-scenery')).toHaveCSS('filter','brightness(0.4)');
   const attenuation=await page.locator('.city-signal-core').evaluateAll(nodes=>nodes.map(node=>{const chain=[];for(let parent:Element|null=node;parent;parent=parent.parentElement){const style=getComputedStyle(parent);if(style.filter!=='none'||Number(style.opacity)<1)chain.push({className:parent.className,filter:style.filter,opacity:style.opacity});if(parent.classList.contains('ambient-sky'))break;}return chain;}));expect(attenuation).toEqual([[],[]]);
  }
  const assets=await page.locator('.city-radio-hardware,.city-bluetooth-hardware,.city-signal-core,.city-signal-ring').evaluateAll(nodes=>nodes.map(node=>{const image=node as HTMLImageElement;return{loaded:image.complete&&image.naturalWidth>0&&image.naturalHeight>0,src:image.getAttribute('src')};}));

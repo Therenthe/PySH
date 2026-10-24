@@ -175,6 +175,7 @@
 /* Dim scenery for a manually dark UI; emitted signals keep their own palette. */
 .app[data-theme=night]>.ambient-sky:not(.sky-night){filter:none}
 .app[data-theme=night]>.ambient-sky:not(.sky-night)>.ambient-scenery{filter:brightness(.4)}
+.app[data-theme=night]>.ambient-sky:not(.sky-night)>.scene-precipitation,.app[data-theme=night]>.ambient-sky:not(.sky-night)>.scene-warning-illustration{filter:brightness(.4)}
 .app[data-theme=night]>.ambient-sky:not(.sky-night)>.city-diorama{opacity:1}
 .app[data-theme=night]>.ambient-sky:not(.sky-night) .city-scenery{filter:brightness(.4);opacity:.8}
 .app .ambient-home .playback-caption .eyebrow,.app .ambient-home .playback-caption .player-state{line-height:17px}

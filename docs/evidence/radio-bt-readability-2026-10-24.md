@@ -39,6 +39,10 @@ temporary inverse filter was also rejected. Sky/background and city scenery
 now have separate dimming layers; mounted service lights and measured neon
 remain outside them. Actual weather and day/night determination stay unchanged.
 The rejected runtime20e2ab5ceade was prepared only, never activated.
+The second candidate restored readable lights but put rain behind the city in
+manual Night UI. Precipitation and warning illustrations remain direct sky
+siblings with their original foreground order, dimmed independently of scenery.
+That prepared candidate9817e3d98a39 was also superseded without activation.
 
 Asset previews were independently reviewed at native size. Runtime/frozen-source
 checks and final actual-device evidence follow below after their gates complete.
