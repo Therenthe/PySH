@@ -3,6 +3,7 @@ import type {SceneWeather} from './sceneWeather';
 import {currentWeatherAlerts,type WeatherAlertsDocument} from './weatherAlertModel';
 import './city-diorama.css';
 import {RadioBuildingNeon} from './RadioBuildingNeon';
+import {BluetoothRune} from './BluetoothRune';
 
 /** Original Blender geometry rendered offline; small raster layers avoid a live
  * WebGL context competing with video and touch on the appliance. */
@@ -27,17 +28,16 @@ export function CityDiorama({night,darkSurface=false,weather,radioPlaying=false,
   </div>
   {visualizeRadio&&<RadioBuildingNeon night={night} darkSurface={darkSurface} enabled={radioCanVisualize} active={active&&inView}/>}
   <div className="city-wifi" aria-hidden="true">
-   <img className="city-wifi-hardware" src={`/ambient/city-wifi-${night?'night':'day'}-v1.png`} alt="" draggable={false}/>
-   <img className="city-wifi-emission" src="/ambient/city-wifi-emission-v1.png" alt="" draggable={false}/>
-   <i className="city-wifi-lamp"/>
+   <div className="city-wifi-emission">{[1,2,3].map(band=><img key={band} className="city-wifi-wave" data-band={band} style={{'--ring-order':band-1} as CSSProperties} src={`/ambient/city-wifi-wave-${band}-${palette}-motion-v1.png`} alt="" draggable={false}/>)}</div>
   </div>
   <div className="city-radio-tower">
    <img className="city-radio-hardware" src={`/ambient/city-beacon-radio-hardware-${palette}-v2.png`} alt="" draggable={false}/>
    {radioPlaying&&<div className="city-radio-emitter"><div className="city-radio-emission">{emission('radio')}</div></div>}
   </div>
   {bluetoothPowered&&<div className={`city-bluetooth ${bluetoothConnected?'connected':''}`}>
-   <img className="city-bluetooth-hardware" src={`/ambient/city-beacon-bluetooth-hardware-${palette}-v2.png`} alt="" draggable={false}/>
-   <div className="city-bluetooth-emission">{emission('bluetooth')}</div>
+   <img className="city-bluetooth-hardware" src={`/ambient/city-bluetooth-support-${palette}-motion-v1.png`} alt="" draggable={false}/>
+   <BluetoothRune key={`${palette}-${bluetoothConnected}`} palette={palette} connected={bluetoothConnected} active={active&&inView}/>
+   <div className="city-bluetooth-emission">{[1,2,3].map(band=><img key={band} className="city-signal-ring" data-ring={band} style={{'--ring-order':band-1} as CSSProperties} src={`/ambient/city-beacon-bluetooth-ring-${band}-${palette}-v2.png`} alt="" draggable={false}/>)}</div>
   </div>}
  </div>;
 }

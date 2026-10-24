@@ -7,20 +7,16 @@
 .ambient-sky:not(.sky-neutral) .city-architecture{opacity:var(--city-visibility,1);transition:opacity 900ms ease}
 /* Foreground forms remain readable; luminous service signs sit above this veil. */
 .city-ground-mist{position:absolute;inset:0;z-index:2;background:linear-gradient(transparent 12%,rgb(170 185 189 / .32));opacity:var(--ground-haze,0);pointer-events:none}
-/* Crop bounds come from the existing Blender camera and the x6.3 roof apex.
-   Association is a static lamp; only the actual Wi-Fi route emits signal arcs. */
+/* Only the actual Wi-Fi route emits waves. No router or dot covers the roof. */
 .city-wifi{position:absolute;left:69.75%;top:26.842105%;width:4.5625%;height:15.614035%;z-index:3;pointer-events:none}
 .city-wifi img{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.city-wifi-emission{opacity:0}
-.city-wifi-lamp{position:absolute;left:49.928226%;top:49.88196%;width:2.5px;height:2.5px;transform:translate(-50%,-50%);border-radius:50%;background:#48645f;opacity:.4}
-.city-diorama[data-wifi=connected] .city-wifi-lamp{background:#b0edc9;opacity:1;box-shadow:0 0 3px #8bd6ae55}
-.city-diorama[data-wifi-active=true] .city-wifi-emission{opacity:.72;animation:city-wifi-transmission 6.8s ease-in-out infinite}
-.city-diorama[data-wifi=connecting] .city-wifi-emission{opacity:.38;animation:city-wifi-search 2.8s ease-in-out infinite}
-.city-diorama[data-wifi=connecting] .city-wifi-lamp{background:#e6c99a;opacity:.9}
-.city-diorama[data-wifi=off] .city-wifi-hardware,.city-diorama[data-wifi=unknown] .city-wifi-hardware{filter:saturate(.3) brightness(.72)}
-.city-diorama[data-wifi=off] .city-wifi-lamp,.city-diorama[data-wifi=unknown] .city-wifi-lamp{opacity:0}
+.city-wifi-emission{position:absolute;inset:0;opacity:0}
+.city-wifi-wave{opacity:0}
+.city-diorama[data-wifi-active=true] .city-wifi-emission{opacity:1}
+.city-diorama[data-wifi-active=true] .city-wifi-wave{opacity:.4;animation:city-signal-flow 3.6s ease-in-out infinite;animation-delay:calc(var(--ring-order) * 1.2s)}
+.city-diorama[data-wifi=connecting] .city-wifi-emission{opacity:.55}
+.city-diorama[data-wifi=connecting] .city-wifi-wave{opacity:.4;animation:city-wifi-search 2.8s ease-in-out infinite;animation-delay:calc(var(--ring-order) * .8s)}
 .ambient-sky:not(.sky-neutral) .city-wifi{opacity:1}
-@keyframes city-wifi-transmission{0%,60%,100%{opacity:.48}20%,35%{opacity:.82}}
 @keyframes city-wifi-search{0%,100%{opacity:.12}45%,60%{opacity:.52}}
 .city-metro-track{position:absolute;left:0;right:0;bottom:14.7%;height:8.5%;overflow:hidden}
 .city-metro{position:absolute;bottom:0;width:17%;height:auto;max-height:100%;object-fit:contain;animation:city-metro-passage 100s linear infinite;animation-delay:-15s}
@@ -33,6 +29,9 @@
 .city-radio-emission{position:absolute;inset:0;opacity:1}
 .city-bluetooth{position:absolute;left:18.125%;top:7.894737%;width:7.125%;height:18.421053%;z-index:3;pointer-events:none}
 .city-bluetooth-emission{position:absolute;inset:0;opacity:0}
+.city-bluetooth-rune{position:absolute;left:28.07017544%;top:10.47619048%;width:43.85964912%;height:73.33333333%;background-size:3200% 100%;background-position:0% 0%;background-repeat:no-repeat;pointer-events:none}
+.city-bluetooth-rune[data-turning=true]{animation:city-bluetooth-turn 3.2s steps(31,end) 1}
+@keyframes city-bluetooth-turn{from{background-position:0% 0%}to{background-position:100% 0%}}
 .city-bluetooth.connected .city-bluetooth-emission{opacity:1}
 .city-signal-core{opacity:1}
 .city-radio-emission .city-signal-ring,.city-bluetooth.connected .city-signal-ring{opacity:.4;animation:city-signal-flow 3.6s ease-in-out infinite;animation-delay:calc(var(--ring-order) * 1.2s)}
@@ -61,6 +60,6 @@
 .warning-flood img{width:100%;height:100%;object-fit:fill;animation:warning-water 9s ease-in-out infinite alternate}
 @keyframes warning-water{from{transform:translateX(-1%)}to{transform:translateX(1%)}}
 .warning-scene-caption{position:absolute;right:12px;bottom:8px;padding:4px 8px;border-radius:6px;background:#15242bdd;color:#e7e6d9;font-size:14px;line-height:18px}
-@media(prefers-reduced-motion:reduce){.city-diorama *,.weather-particle,.sky-thunder .ambient-scenery::after,.sky-thunder-hail .ambient-scenery::after{animation:none!important}.city-metro{display:none}.city-radio-emission .city-signal-ring,.city-bluetooth.connected .city-signal-ring{opacity:.8}.weather-particle{transform:translateY(var(--particle-still-y));opacity:.15}.sky-thunder .ambient-scenery::after,.sky-thunder-hail .ambient-scenery::after{display:none}}
+@media(prefers-reduced-motion:reduce){.city-diorama *,.weather-particle,.sky-thunder .ambient-scenery::after,.sky-thunder-hail .ambient-scenery::after{animation:none!important}.city-metro{display:none}.city-diorama[data-wifi-active=true] .city-wifi-wave,.city-diorama[data-wifi=connecting] .city-wifi-wave,.city-radio-emission .city-signal-ring,.city-bluetooth.connected .city-signal-ring{opacity:.8}.weather-particle{transform:translateY(var(--particle-still-y));opacity:.15}.sky-thunder .ambient-scenery::after,.sky-thunder-hail .ambient-scenery::after{display:none}}
 @media(prefers-reduced-motion:reduce){.warning-tornado img,.warning-flood img{animation:none}.warning-tornado img:first-child{opacity:1}.city-heat-haze{animation:none}}
 @media(prefers-reduced-motion:reduce){.ambient-scenery::before,.ambient-sky .city-architecture,.ambient-sky .city-wifi{transition:none}}

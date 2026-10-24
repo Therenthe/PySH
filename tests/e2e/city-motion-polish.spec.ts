@@ -23,7 +23,7 @@ for(const theme of ['ink','night'])test(`quiet city ${theme}: constant metro cro
  await expect(page.locator('.city-diorama')).toHaveAttribute('data-city-version','blender-v3');
  await expect(page.locator('.city-architecture')).toHaveAttribute('src',`/ambient/gothic-city-${theme==='night'?'night':'day'}-v3.png`);
  await expect(page.locator('.city-metro')).toHaveAttribute('src','/ambient/metro-v2.png');
- await expect(page.locator('.city-wifi-hardware')).toHaveAttribute('src',`/ambient/city-wifi-${theme==='night'?'night':'day'}-v1.png`);
+ await expect(page.locator('.city-wifi-hardware,.city-wifi-lamp')).toHaveCount(0);await expect(page.locator('.city-wifi-wave')).toHaveCount(3);
  const frames=[];for(const time of [16000,19000,22000,62000,65000,68000])frames.push(await metroFrame(page,time));
  expect(frames[0]).toMatchObject({duration:100000,easing:'linear',direction:1,opacity:1});
  expect(frames[1].x-frames[0].x,JSON.stringify(frames)).toBeGreaterThan(0);
@@ -45,7 +45,7 @@ for(const theme of ['ink','night'])test(`quiet city ${theme}: constant metro cro
  await page.emulateMedia({reducedMotion:'reduce'});
  await expect(page.locator('.city-metro')).toHaveCSS('display','none');
  await expect(page.locator('.city-wifi-emission')).toHaveCSS('animation-name','none');
- await expect(page.locator('.city-wifi-emission')).toHaveCSS('opacity','0.72');
+ await expect(page.locator('.city-wifi-emission')).toHaveCSS('opacity','1');await expect(page.locator('.city-wifi-wave').first()).toHaveCSS('opacity','0.8');
  await expect(page.locator('.city-radio-emission .city-signal-ring').first()).toHaveCSS('animation-name','none');expect(Number(await page.locator('.city-radio-emission .city-signal-ring').first().evaluate(node=>getComputedStyle(node).opacity))).toBeGreaterThan(0);
  await expect(page.locator('.city-bluetooth.connected .city-signal-ring').first()).toHaveCSS('animation-name','none');expect(Number(await page.locator('.city-bluetooth-emission').evaluate(node=>getComputedStyle(node).opacity))).toBeGreaterThan(0);
  await page.screenshot({path:info.outputPath(`${theme}-reduced-motion.png`)});
@@ -69,14 +69,14 @@ test('city pauses for offscreen or hidden independently, then resumes only when 
 test('city signal states follow actual route, playback and Bluetooth without mutation',async({page})=>{
  const {state,mutations}=await fixture(page);
  const city=page.locator('.city-diorama'),emission=page.locator('.city-wifi-emission');
- await expect(city).toHaveAttribute('data-wifi-active','true');await expect(emission).toHaveCSS('animation-name','city-wifi-transmission');
+ await expect(city).toHaveAttribute('data-wifi-active','true');await expect(page.locator('.city-wifi-wave').first()).toHaveCSS('animation-name','city-signal-flow');
  state.network.active_type='ethernet';state.network.active_interface='end0';state.network.devices.push({type:'ethernet',interface:'end0',state:'connected',signal:0});
  state.player.state='paused';state.bluetooth.devices=[];
  await page.clock.runFor(2600);
  await expect(city).toHaveAttribute('data-wifi','connected');await expect(city).toHaveAttribute('data-wifi-active','false');await expect(emission).toHaveCSS('opacity','0');
  await expect(page.locator('.city-radio-emitter')).toHaveCount(0);await expect(city).toHaveAttribute('data-bluetooth','on');await expect(page.locator('.city-bluetooth-emission')).toHaveCSS('opacity','0');await expect(page.locator('.city-bluetooth-emission')).toHaveCSS('animation-name','none');
  state.network.devices[0].state='connecting';await page.clock.runFor(2600);
- await expect(city).toHaveAttribute('data-wifi','connecting');await expect(emission).toHaveCSS('animation-name','city-wifi-search');
+ await expect(city).toHaveAttribute('data-wifi','connecting');await expect(page.locator('.city-wifi-wave').first()).toHaveCSS('animation-name','city-wifi-search');
  state.network.wireless_enabled=false;state.bluetooth.powered=false;await page.clock.runFor(2600);
  await expect(city).toHaveAttribute('data-wifi','off');await expect(emission).toHaveCSS('opacity','0');await expect(page.locator('.city-bluetooth')).toHaveCount(0);
  expect(mutations).toEqual([]);

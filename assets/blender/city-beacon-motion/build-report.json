@@ -1,0 +1,215 @@
+{
+  "blender": "5.2.2 LTS",
+  "samples": 64,
+  "layout": {
+    "schema": 1,
+    "resolution": [
+      1600,
+      570
+    ],
+    "bluetooth": {
+      "wrapper_crop": {
+        "x": 290,
+        "y": 45,
+        "width": 114,
+        "height": 105
+      },
+      "glyph_tile": {
+        "x": 322,
+        "y": 56,
+        "width": 50,
+        "height": 77
+      },
+      "tile_offset_in_wrapper": {
+        "x": 32,
+        "y": 11
+      },
+      "atlas": {
+        "columns": 32,
+        "rows": 1,
+        "width": 1600,
+        "height": 77,
+        "frame_count": 32,
+        "duration_seconds": 3.2,
+        "steps": 31,
+        "first_last_front": true,
+        "rotation_axis": "world Z",
+        "angles_radians": [
+          0.0,
+          0.01611849593996718,
+          0.06430858617971481,
+          0.14407577518177175,
+          0.25460154364472365,
+          0.3947517476188792,
+          0.5630882563579358,
+          0.7578837094865382,
+          0.9771392420552225,
+          1.2186049955996932,
+          1.4798032047332126,
+          1.7580536223724186,
+          2.0505010226993603,
+          2.354144499642118,
+          2.6658682602319854,
+          2.9824735968556633,
+          3.300711710323922,
+          3.617317046947601,
+          3.9290408075374676,
+          4.232684284480226,
+          4.525131684807167,
+          4.803382102446374,
+          5.064580311579892,
+          5.306046065124362,
+          5.525301597693048,
+          5.720097050821651,
+          5.888433559560707,
+          6.028583763534862,
+          6.139109531997814,
+          6.218876720999871,
+          6.267066811239618,
+          6.283185307179586
+        ]
+      },
+      "files": {
+        "atlas": "city-bluetooth-turn-{day|night}-{idle|connected}-v1.png",
+        "support": "city-bluetooth-support-{day|night}-motion-v1.png"
+      }
+    },
+    "wifi": {
+      "crop": {
+        "x": 1116,
+        "y": 153,
+        "width": 73,
+        "height": 89
+      },
+      "roof_world": [
+        6.3,
+        0.4,
+        4.58
+      ],
+      "wave_center_world": [
+        6.3,
+        0.295,
+        5.24
+      ],
+      "hardware_visible": false,
+      "lamp_visible": false,
+      "files": "city-wifi-wave-{1|2|3}-{day|night}-motion-v1.png"
+    }
+  },
+  "parts": 9,
+  "vertices": 708,
+  "triangles": 1220,
+  "assets": [
+    {
+      "name": "city-bluetooth-support-day-motion-v1.png",
+      "bytes": 1461,
+      "sha256": "7ce747ca227d99c175d0024d57d1f0152dd93316321e0d2e1edeb3b3275defd9",
+      "width": 114,
+      "height": 105,
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-bluetooth-turn-day-idle-v1.png",
+      "bytes": 74877,
+      "sha256": "992d7819242589dcdff3493f85f8e5464fc23e03281c9515e31f87135fcb3782",
+      "width": 1600,
+      "height": 77,
+      "rgba_decoded_bytes": 492800
+    },
+    {
+      "name": "city-bluetooth-turn-day-connected-v1.png",
+      "bytes": 94742,
+      "sha256": "ce5f5b3e0e08de715d3b63803c4d930fa427cae770e797a73914b27258201068",
+      "width": 1600,
+      "height": 77,
+      "rgba_decoded_bytes": 492800
+    },
+    {
+      "name": "city-wifi-wave-1-day-motion-v1.png",
+      "bytes": 582,
+      "sha256": "aa7b5fda5546a7942c37ccaea893cf1c5513c33b1c4913da959bf337413c8713",
+      "width": 73,
+      "height": 89,
+      "rgba_decoded_bytes": 25988
+    },
+    {
+      "name": "city-wifi-wave-2-day-motion-v1.png",
+      "bytes": 921,
+      "sha256": "5d32c6d4ea59dbeecdacf45572f40efdd650a03918f338fe48ff548d069cd805",
+      "width": 73,
+      "height": 89,
+      "rgba_decoded_bytes": 25988
+    },
+    {
+      "name": "city-wifi-wave-3-day-motion-v1.png",
+      "bytes": 1213,
+      "sha256": "d85491f738e0c645693c436030b7020793e981e39b8ed5acc0c4dbbde0993fd0",
+      "width": 73,
+      "height": 89,
+      "rgba_decoded_bytes": 25988
+    },
+    {
+      "name": "city-bluetooth-support-night-motion-v1.png",
+      "bytes": 1433,
+      "sha256": "2ea6a0e3a81d8a28f5e8f44ae738864a2371191c9be82ac4b69784c9fe27d644",
+      "width": 114,
+      "height": 105,
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-bluetooth-turn-night-idle-v1.png",
+      "bytes": 67608,
+      "sha256": "60ae927ee817fa8b1847be167b6c42e78d961b3322de91d4cf87acf7d69718fa",
+      "width": 1600,
+      "height": 77,
+      "rgba_decoded_bytes": 492800
+    },
+    {
+      "name": "city-bluetooth-turn-night-connected-v1.png",
+      "bytes": 110210,
+      "sha256": "f83f5c4ef49f4a0f50ab3162502f430c8529991ca3caa86faa9c507cd5b114dc",
+      "width": 1600,
+      "height": 77,
+      "rgba_decoded_bytes": 492800
+    },
+    {
+      "name": "city-wifi-wave-1-night-motion-v1.png",
+      "bytes": 902,
+      "sha256": "d8ea0b531a56df23b206465eb88f5e14c7ea2278b37088ba69118fb1a9c2d222",
+      "width": 73,
+      "height": 89,
+      "rgba_decoded_bytes": 25988
+    },
+    {
+      "name": "city-wifi-wave-2-night-motion-v1.png",
+      "bytes": 1395,
+      "sha256": "58b5d86b4f92d7200cce4e428534cb1d46484b2e9dfab86e8e3579e2620e37c8",
+      "width": 73,
+      "height": 89,
+      "rgba_decoded_bytes": 25988
+    },
+    {
+      "name": "city-wifi-wave-3-night-motion-v1.png",
+      "bytes": 1814,
+      "sha256": "1ab85a074bf72964d9cadc70380c9d07306e5bb080f6879d889733e020456e2f",
+      "width": 73,
+      "height": 89,
+      "rgba_decoded_bytes": 25988
+    }
+  ],
+  "encoded_bytes": 357158,
+  "rgba_decoded_bytes": 2222888,
+  "first_last_pixels_identical": true,
+  "post_transform_animated": false,
+  "genuine_3d_axis": "Z",
+  "wifi_router_geometry": false,
+  "wifi_lamp_geometry": false,
+  "audit": {
+    "pass": true,
+    "errors": 0,
+    "warnings": 0
+  },
+  "source_beacons_sha256": "104e589f443775de70f68403d326d77678ab1f216a0453dee9271e446c806010",
+  "builder_sha256": "55bb67fbe8758677232d1c152041d61ec525d90670edc6441a0d2c9f5cf2b0f5",
+  "limits": "Authored sprite animation, not realtime3D. State/lifecycle/schedule/reducedmotion and actual device performance require integration tests."
+}

@@ -1,0 +1,44 @@
+{
+  "scope": "Offline libvpx full decode and first/last alpha samples; not native hardware acceptance",
+  "passed": true,
+  "themes": [
+    {
+      "theme": "day",
+      "codec": "VP8",
+      "size": [
+        800,
+        480
+      ],
+      "duration_seconds": 2.5,
+      "fps": 24,
+      "decoded_frames": 60,
+      "full_decode_exit": 0,
+      "metadata_alpha_mode_1": true,
+      "stream_fps24": true,
+      "duration_250": true,
+      "full_frame_count60": true,
+      "first_sky_alpha": 0,
+      "first_ground_alpha": 255,
+      "last_sampled_all_opaque": true
+    },
+    {
+      "theme": "night",
+      "codec": "VP8",
+      "size": [
+        800,
+        480
+      ],
+      "duration_seconds": 2.5,
+      "fps": 24,
+      "decoded_frames": 60,
+      "full_decode_exit": 0,
+      "metadata_alpha_mode_1": true,
+      "stream_fps24": true,
+      "duration_250": true,
+      "full_frame_count60": true,
+      "first_sky_alpha": 0,
+      "first_ground_alpha": 255,
+      "last_sampled_all_opaque": true
+    }
+  ]
+}

@@ -12,15 +12,16 @@ for(const night of [false,true])test(`Blender rooftop Wi-Fi ${night?'night':'day
  await fixture(page);
  const show=(state:string,active:boolean)=>page.evaluate(({night,state,active})=>(window as any).showCityWifi(night,state,active),{night,state,active});
  await show('connected',false);
- const city=page.locator('.city-diorama'),roof=page.locator('.city-wifi'),emission=page.locator('.city-wifi-emission'),lamp=page.locator('.city-wifi-lamp');
+ const city=page.locator('.city-diorama'),roof=page.locator('.city-wifi'),emission=page.locator('.city-wifi-emission'),waves=page.locator('.city-wifi-wave');
  await expect(city).toHaveAttribute('data-wifi','connected');
  await expect(city).toHaveAttribute('data-wifi-active','false');
  await expect(roof).toBeVisible();
  await expect(emission).toHaveCSS('opacity','0');
  await expect(emission).toHaveCSS('animation-name','none');
- await expect(lamp).toHaveCSS('opacity','1');
+ await expect(page.locator('.city-wifi-hardware,.city-wifi-lamp')).toHaveCount(0);
+ await roof.locator('img').evaluateAll(nodes=>Promise.all(nodes.map(node=>(node as HTMLImageElement).decode())));
  const images=await roof.locator('img').evaluateAll(images=>images.map(node=>({width:(node as HTMLImageElement).naturalWidth,height:(node as HTMLImageElement).naturalHeight,loaded:(node as HTMLImageElement).complete})));
- expect(images).toEqual([{width:73,height:89,loaded:true},{width:73,height:89,loaded:true}]);
+ expect(images).toEqual(Array.from({length:3},()=>({width:73,height:89,loaded:true})));
  // The crop keeps the source camera's full-city proportions, without reflow
  // moving the prop off its x6.3 pitched roof when the display width changes.
  for(const width of [800,700]){
@@ -35,24 +36,21 @@ for(const night of [false,true])test(`Blender rooftop Wi-Fi ${night?'night':'day
  await page.screenshot({path:info.outputPath(`wifi-${night?'night':'day'}-standby.png`)});
  await show('connected',true);
  await expect(city).toHaveAttribute('data-wifi-active','true');
- await expect(emission).toHaveCSS('animation-name','city-wifi-transmission');
+ await expect(waves.first()).toHaveCSS('animation-name','city-signal-flow');
  await page.screenshot({path:info.outputPath(`wifi-${night?'night':'day'}-active.png`)});
  await show('connecting',true);
  await expect(city).toHaveAttribute('data-wifi-active','false');
- await expect(emission).toHaveCSS('animation-name','city-wifi-search');
+ await expect(waves.first()).toHaveCSS('animation-name','city-wifi-search');
  await show('disconnected',true);
  await expect(emission).toHaveCSS('opacity','0');
  await expect(emission).toHaveCSS('animation-name','none');
- await expect(lamp).not.toHaveCSS('opacity','1');
  await show('off',true);
  await expect(city).toHaveAttribute('data-wifi-active','false');
  await expect(emission).toHaveCSS('opacity','0');
  await expect(emission).toHaveCSS('animation-name','none');
- await expect(lamp).toHaveCSS('opacity','0');
  await page.screenshot({path:info.outputPath(`wifi-${night?'night':'day'}-off.png`)});
  await show('unknown',false);
  await expect(emission).toHaveCSS('opacity','0');
- await expect(lamp).toHaveCSS('opacity','0');
  await show('connected',true);
  await page.emulateMedia({reducedMotion:'reduce'});
  await expect(emission).toHaveCSS('animation-name','none');
@@ -60,7 +58,7 @@ for(const night of [false,true])test(`Blender rooftop Wi-Fi ${night?'night':'day
  // API association this presentation flag never changes network truth.
  await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));});
  await expect(city).toHaveAttribute('data-animate','false');
- await expect(emission).toHaveCSS('animation-play-state','paused');
+ await expect(waves.first()).toHaveCSS('animation-play-state','paused');
  await expect(city).toHaveAttribute('data-wifi-active','true');
  expect(await roof.evaluate(node=>getComputedStyle(node).pointerEvents)).toBe('none');
 });

@@ -14,7 +14,7 @@ async function fixture(page:Page,language:string,theme:string,day=false){
  return {state,sample,actions,positions,reads:()=>reads};
 }
 const neon=(page:Page)=>page.locator('.city-radio-neon');
-const button=(page:Page)=>page.locator('.city-radio-control');
+const button=(page:Page)=>page.locator('button.city-radio-entry');
 const zones=(page:Page)=>neon(page).locator('[data-neon-zone]');
 const opacities=(page:Page)=>zones(page).evaluateAll(nodes=>nodes.map(node=>Number((node as HTMLElement).style.opacity)));
 async function advance(page:Page,ms=2700){await page.clock.runFor(ms);}
@@ -34,7 +34,7 @@ for(const theme of ['ink','night'])for(const day of [false,true])test(`radio neo
  await expect(neon(page)).toHaveAttribute('data-signal-status','ready');await expect.poll(async()=>Math.max(...await opacities(page))).toBeGreaterThan(.8);
  const high=await opacities(page);expect(Math.max(...high)).toBeLessThanOrEqual(1);expect(Math.max(...high)).toBeGreaterThan(.8);expect(high.some((value,i)=>value>low[i]+.02)).toBe(true);expect(new Set(high.map(value=>value.toFixed(3))).size).toBeGreaterThan(1);
  expect(await zones(page).evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).animationName==='none'))).toBe(true);
- await expect(page.locator('.ambient-home .audio-visualizer')).toHaveCount(0);await expect(button(page)).toHaveAccessibleName(/Fixture Radio/);await target(button(page));await capture(page,`neon-${theme}-${day?'day':'night'}-measured`);expect(f.actions).toEqual([]);
+ await expect(page.locator('.ambient-home .audio-visualizer')).toHaveCount(0);await expect(button(page)).toHaveAccessibleName(/Radio/);await target(button(page));await capture(page,`neon-${theme}-${day?'day':'night'}-measured`);expect(f.actions).toEqual([]);
 });
 
 for(const theme of ['ink','night'])test(`radio neon ${theme}: measured quiet-output day fog retains genuine PCM visibility`,async({page},info)=>{
@@ -76,13 +76,15 @@ test('radio neon lifecycle: one reader, hidden and offscreen stop, reduced motio
  await page.locator('.navigation-toggle').tap();await page.locator('.main-nav button').nth(2).tap();await expect(page.locator('.ambient-home')).toHaveCount(0);before=f.reads();await advance(page,1100);expect(f.reads()-before).toBeLessThanOrEqual(1);expect(f.actions.filter(action=>action.path!=='/api/preferences'||!('navigationCollapsed' in action.body))).toEqual([]);
 });
 
-test('radio neon controls: ambient first touch wakes, second expands, collapse returns focus and no transport or preference mutation',async({page},info)=>{
+test('radio building navigation keeps ambient wake and playback controls independent',async({page},info)=>{
  const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro?'ro':'en','night'),saved=JSON.stringify(f.positions);
- await expect(button(page)).toBeVisible();await advance(page,31000);await expect(page.locator('.app')).toHaveAttribute('data-home-phase','ambient');await expect(page.locator('.ambient-dock')).toBeHidden();await capture(page,'neon-ambient');
- const b=(await button(page).boundingBox())!;await page.touchscreen.tap(b.x+b.width/2,b.y+b.height/2);await expect(page.locator('.app')).toHaveAttribute('data-home-phase','interactive');await expect(button(page)).toHaveAttribute('aria-expanded','false');expect(f.actions).toEqual([]);
- await button(page).tap();await expect(button(page)).toHaveAttribute('aria-expanded','true');await expect(page.locator('.playback-toggle')).toBeVisible();await capture(page,'neon-expanded-transport');
- await page.locator('.playback-expand').focus();await page.keyboard.press('Enter');await expect(button(page)).toHaveAttribute('aria-expanded','false');await expect(button(page)).toBeFocused();await page.keyboard.press('Enter');await expect(button(page)).toHaveAttribute('aria-expanded','true');await page.keyboard.press('Space');await expect(button(page)).toHaveAttribute('aria-expanded','false');
- expect(JSON.stringify(f.state.preferences.homePositions)).toBe(saved);expect(f.actions).toEqual([]);
+ await page.route('**/ambient/radio-entry-*.webm',route=>route.abort());
+ await advance(page,31000);await expect(page.locator('.app')).toHaveAttribute('data-home-phase','ambient');
+ const box=(await button(page).boundingBox())!;await page.touchscreen.tap(box.x+box.width/2,box.y+box.height/2);await expect(page.locator('.app')).toHaveAttribute('data-home-phase','interactive');await expect(page.locator('.radio-city-entry')).toHaveCount(0);
+ await expect(page.locator('.playback-expand')).toHaveAttribute('aria-expanded','false');await page.locator('.playback-expand').tap();await expect(page.locator('.playback-expand')).toHaveAttribute('aria-expanded','true');await expect(page.locator('.playback-toggle')).toBeVisible();
+ await page.locator('.playback-expand').focus();await page.keyboard.press('Enter');await expect(page.locator('.playback-expand')).toHaveAttribute('aria-expanded','false');await expect(page.locator('.playback-expand')).toBeFocused();
+ await button(page).tap();await expect(page.locator('.radio-page')).toBeVisible();await expect(page.locator('.radio-city-entry')).toHaveCount(0);
+ expect(JSON.stringify(f.state.preferences.homePositions)).toBe(saved);expect(f.actions).toEqual([]);await capture(page,'radio-navigation-preserves-playback');
 });
 
 test('radio neon boundary: Off other styles local media hidden card and arrange retain saved visualizer anchor',async({page},info)=>{
@@ -90,7 +92,7 @@ test('radio neon boundary: Off other styles local media hidden card and arrange 
  await expect(neon(page)).toBeVisible();f.state.preferences.visualizerStyle='bars';await advance(page);await expect(neon(page)).toHaveCount(0);await expect(page.locator('.ambient-home .audio-visualizer[data-signal-style=bars]')).toBeVisible();
  f.state.preferences.visualizerStyle='off';await advance(page);await expect(neon(page)).toHaveCount(0);await expect(page.locator('.ambient-home .audio-visualizer')).toHaveCount(0);
  f.state.preferences.visualizerStyle='wave';f.state.player.kind='audio';f.state.player.title='Fixture track';await advance(page);await expect(neon(page)).toHaveCount(0);await expect(page.locator('.ambient-home .audio-visualizer[data-signal-style=wave]')).toBeVisible();
- f.state.player.kind='radio';f.state.preferences.homeCards=['weather','forecast'];await advance(page);await expect(neon(page)).toHaveCount(0);await expect(button(page)).toHaveCount(0);
+ f.state.player.kind='radio';f.state.preferences.homeCards=['weather','forecast'];await advance(page);await expect(neon(page)).toHaveCount(0);await expect(button(page)).toBeVisible();
  f.state.preferences.homeCards=['weather','forecast','playback'];await advance(page);await expect(neon(page)).toBeVisible();
  await page.locator('.navigation-toggle').tap();await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'home');await page.getByRole('button',{name:ro?'Aranjează Acasă':'Arrange Home',exact:true}).tap();await expect(page.locator('.ambient-home')).toHaveAttribute('data-layout-editing','true');await expect(neon(page)).toHaveCount(0);await expect(page.locator('[data-layout-handle=visualizer]')).toBeVisible();await expect(page.locator('.ambient-home .audio-visualizer[data-signal-style=wave]')).toBeVisible();await capture(page,'neon-arrange-legacy-anchor');
  await page.getByRole('button',{name:ro?'Gata':'Done',exact:true}).tap();await expect(page.locator('.ambient-home')).toHaveAttribute('data-layout-editing','false');await expect(neon(page)).toBeVisible();expect(JSON.stringify(f.state.preferences.homePositions)).toBe(saved);expect(f.actions.filter(action=>action.path==='/api/preferences'&&action.body.homePositions)).toHaveLength(1);expect(f.actions.find(action=>action.path==='/api/preferences'&&action.body.homePositions).body.homePositions).toEqual(f.positions);
@@ -98,19 +100,12 @@ test('radio neon boundary: Off other styles local media hidden card and arrange 
 
 
 
-test('radio neon control follows Blender crop for every size with rail open, retracted and after idle',async({page},info)=>{
+test('radio building target contains facade for every size with rail open, retracted and after idle',async({page},info)=>{
  const f=await fixture(page,info.project.name.endsWith('ro')?'ro':'en','night');await expect(neon(page)).toHaveAttribute('data-signal-status','ready');
- for(const size of ['compact','balanced','large']){
-  f.state.preferences.visualizerSize=size;await advance(page);
-  for(const rail of ['retracted','open']){
-   if(await page.locator('.app').getAttribute('data-navigation')!==rail){await page.locator('.navigation-toggle').tap();await advance(page,400);}
-   await expect(page.locator('.app')).toHaveAttribute('data-navigation',rail);
-   const aligned=async()=>{const n=(await neon(page).boundingBox())!,b=(await button(page).boundingBox())!;return Math.max(Math.abs(n.x-b.x),Math.abs(n.y-b.y),Math.abs(n.width-b.width),Math.abs(n.height-b.height));};
-   await expect.poll(aligned).toBeLessThan(1);await target(button(page));
-   await advance(page,31000);await expect(page.locator('.app')).toHaveAttribute('data-home-phase','ambient');await test.info().attach('alignment-'+size+'-'+rail,{body:JSON.stringify({neon:await neon(page).boundingBox(),control:await button(page).boundingBox(),styles:await button(page).evaluate(el=>{const s=getComputedStyle(el);return {left:s.left,bottom:s.bottom,padding:s.padding,margin:s.margin,transform:s.transform};})}),contentType:'application/json'});await expect.poll(aligned).toBeLessThan(1);
-   const b=(await button(page).boundingBox())!;await page.touchscreen.tap(b.x+b.width-5,b.y+5);await expect(page.locator('.app')).toHaveAttribute('data-home-phase','interactive');await expect(button(page)).toHaveAttribute('aria-expanded','false');await expect.poll(aligned).toBeLessThan(1);
-   await page.touchscreen.tap(b.x+b.width-5,b.y+5);await expect(button(page)).toHaveAttribute('aria-expanded','true');await page.locator('.playback-expand').tap();await expect(button(page)).toHaveAttribute('aria-expanded','false');
-   await capture(page,`neon-alignment-${size}-${rail}`);
-  }
- }
+ const aligned=async()=>{const n=(await neon(page).boundingBox())!,b=(await button(page).boundingBox())!;expect(b.x).toBeLessThanOrEqual(n.x+1);expect(b.y).toBeLessThan(n.y);expect(b.x+b.width).toBeGreaterThanOrEqual(n.x+n.width-1);expect(b.y+b.height).toBeGreaterThan(n.y+n.height);await target(button(page));};
+ for(const size of ['compact','balanced','large']){f.state.preferences.visualizerSize=size;await advance(page);for(const rail of ['retracted','open']){
+  if(await page.locator('.app').getAttribute('data-navigation')!==rail){await page.locator('.navigation-toggle').tap();await advance(page,400);}
+  await expect(page.locator('.app')).toHaveAttribute('data-navigation',rail);await aligned();await capture(page,`entry-alignment-${size}-${rail}`);
+ }}
+ await page.locator('.navigation-toggle').blur();await advance(page,31000);await aligned();await capture(page,'entry-alignment-ambient');
 });

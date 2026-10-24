@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "resolution": [
+    800,
+    480
+  ],
+  "frames": 60,
+  "fps": 24,
+  "duration_seconds": 2.5,
+  "codec": "VP8",
+  "container": "WebM",
+  "alpha": true,
+  "audio": false,
+  "first_frame": "Wide perspective city near Home lower208px framing; root applies subtle transition rather than assuming exact orthographic match.",
+  "end_frame": "Opaque dark vestibule fills view before Radio handoff.",
+  "weather": "No sky/celestial/weather pixels. Transparent footage retains actual live sky underneath.",
+  "city_source_sha256": "df870081b01e0635f480ac82bd2c29c1f49ed4e3ecfe82ce23ce39d86351daa2",
+  "door_world": {
+    "center": [
+      3,
+      -0.3,
+      0.99
+    ],
+    "original_radio_center": [
+      3,
+      0.64
+    ],
+    "front_face_y": 0.04
+  },
+  "signal": "No decorative service beacons or fake device/audio-state emissions in clip.",
+  "builder_sha256": "c990979d6db5ae2e67c9f36afcf265b229e27d8ae3173324a1952783ea03dd95"
+}
