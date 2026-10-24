@@ -1,0 +1,13 @@
+.city-wayfinding{position:fixed;inset:0;z-index:12;pointer-events:none;--city-top:calc(100vh - 208px)}
+.city-wayfinding-sign{position:absolute;left:var(--sign-x);top:calc(var(--city-top) + var(--sign-y));width:var(--sign-w);height:var(--sign-h);pointer-events:none}
+.city-wayfinding-art{position:absolute;inset:0;width:100%;height:100%;background-position:100% 0%;background-repeat:no-repeat;pointer-events:none}
+.city-wayfinding-target{position:absolute;left:calc(var(--target-x) - var(--sign-x));top:calc(var(--target-y) - var(--sign-y) - 24px);width:var(--target-w);min-width:48px;height:48px;min-height:48px;border:0;background:transparent;padding:0;pointer-events:auto;cursor:pointer;border-radius:2px}
+.city-wayfinding[data-art-status=loading]{visibility:hidden}
+.city-wayfinding[data-state=closing] .city-wayfinding-target{pointer-events:none}
+.city-wayfinding-target:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.city-wayfinding-sign:has(.city-wayfinding-target:is(:active,:focus-visible)) .city-wayfinding-art{filter:brightness(1.15)}
+.city-wayfinding-fallback{position:absolute;left:108px;right:16px;bottom:100px;display:flex;flex-wrap:wrap;gap:8px;pointer-events:auto}
+.city-wayfinding-fallback button{min-height:48px;background:var(--paper);color:var(--ink);padding:8px 12px;border:1px solid var(--line-dark);border-radius:8px}
+
+.app .city-wayfinding-target[data-pressed=true]:not(:disabled){box-shadow:none}
+.city-wayfinding-sign:has(.city-wayfinding-target[data-pressed=true]) .city-wayfinding-art{filter:brightness(1.15)}

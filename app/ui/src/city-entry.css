@@ -25,3 +25,12 @@
 .city-entry[data-direction=exit][data-phase=leaving]{background:transparent}
 .city-entry[data-direction=exit][data-phase=leaving]>video{opacity:1;transition:none}
 .app[data-city-entry-direction=exit][data-city-entry=loading]>.main-area,.app[data-city-entry-direction=exit][data-city-entry=loading]>.rail{opacity:0;pointer-events:none}
+
+/* Explore is an explicit, temporary map. Card positions and expansion are retained. */
+.app .topbar .city-explore-toggle{display:flex;align-items:center;gap:7px;min-height:48px;max-width:220px;padding:0 8px;color:var(--ink);background:transparent;border:0;border-radius:8px;font-size:14px;font-weight:650;white-space:nowrap}
+.app .ambient-home.city-exploring>:is(.ambient-weather,.ambient-forecast,.ambient-dock,.ambient-visualizer){visibility:hidden;pointer-events:none}
+.app .ambient-home .city-explore-hint{position:absolute;right:14px;top:66px;z-index:7;max-width:260px;margin:0;color:var(--ambient-text);background:color-mix(in srgb,var(--ambient-panel) 75%,transparent);padding:8px 12px;border-radius:8px;font-size:14px}
+.app .ambient-home.city-exploring .city-building-entry{visibility:hidden;pointer-events:none}
+.app .topbar .city-explore-toggle:active{transform:scale(.98)}
+@media(prefers-reduced-motion:reduce){.app .topbar .city-explore-toggle:active{transform:none}}
+.app .ambient-home.city-exploring>:is(.ambient-weather,.ambient-forecast,.ambient-dock,.ambient-visualizer){opacity:0;transition:opacity 160ms ease,visibility 0s 160ms}
