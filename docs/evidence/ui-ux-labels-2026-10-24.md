@@ -1,5 +1,10 @@
 # Floating city labels — five timed design rounds
 
+Delivered: runtime8778974040f4, code sourceeea57079501727eedc9b97f034d71799c1f1bc9c,
+public code tree4c44a28b83da6be067685fae0aa4d260db839ea3. Previous051701e134b6
+is retained. All211runtime hashes and29preferences were verified after a PC
+backup checksum/content check. Radio resumed; Ethernet/gateway stayed unchanged.
+
 The user rejected the earlier labels and requested subtler, understandable
 Blender labels with beauty as the primary criterion. Five serial1200second
 candidate windows were completed, adapting the finite experiment/retain/log
@@ -87,3 +92,21 @@ Native acceptance/publication are still pending at this source checkpoint.
 All14 atlas/source-provenance checks PASS separately, including the explicit
 Windows render-byte versus Git-LF source/contract identities. Original upstream
 font license whitespace is retained verbatim.
+
+Final native run:50checks PASS in the current English/night800×480 session,
+all five decoded camera entries and canonical destinations. Five labels decode,
+48px targets remain exposed/nonoverlapping, close/Escape restores focus, and
+eight original neon layers respond to actual nonquiet device PCM. One60interval
+Home sample has p95=16.7ms/max33.3ms; route samples have p95=16.7–33.2ms and
+max33.4ms, with zero intervals over50ms. These bounded samples are not global
+stability, physical-touch, speaker-audibility or composited-contrast certification.
+
+Two native harness failures are retained: stationary-locator waiting conflicts
+with intentional float, so the final audit clicks exposed current-centre
+coordinates; a blanket write guard rejected normal navigation auto-hide saves.
+The final guard permits only the exact existing navigationCollapsed:true patch
+under auto-hide, counts those five expected writes, and rejects every other
+write. All other preferences/player/output/network stayed unchanged. The native
+operator restored the complete original preference/radio snapshot afterwards,
+closed diagnostic ports, and a fresh normal-session Wayland frame was inspected.
+The private viewer remains PC-loopback-only; no public stream was created.

@@ -1,24 +1,22 @@
 # PySH status
 
-PySH runs on Raspberry Pi4 with a native800×480 touchscreen appliance session.
-Complete product acceptance remains OPEN; the application is under active development.
+Installed runtime: `8778974040f4`; code source: `eea57079501727eedc9b97f034d71799c1f1bc9c`.
+Previous runtime `051701e134b6` is retained. Full product acceptance remains OPEN.
 
-The Radio facade's original colored neon has been restored independently of
-whether the Home playback card is visible. Actual device PCM and preserved
-preferences/audio were verified on the preceding installed milestone.
+Explore City now offers subtle Blender-authored floating names for Media,
+Sound, Settings, Radio and Internet. Five actual20minute design rounds are
+complete. The current native English/night800x480 session passed50checks,
+including five real camera entries/canonical routes and actual PCM/neon.
+211runtime hashes,29preferences and the PCbackup were verified. Original
+preferences/radio were restored and diagnostic ports closed. No public stream
+was introduced. Synthetic input is not physical-touch or global stability acceptance.
 
-The current source adds Explore City with subtle Blender-authored floating
-names for Media, Sound, Settings, Radio and Internet. Five actual20minute
-design rounds are complete. EN/RO, both themes,48px targets, reduced motion,
-fallbacks and focus recovery have bounded PC evidence. Native acceptance of
-this new candidate is pending; source/render tests do not certify physical touch.
-
-- [Label research and evidence](docs/evidence/ui-ux-labels-2026-10-24.md)
+- [Delivery and evidence](docs/evidence/ui-ux-labels-2026-10-24.md)
 - [Five-round plan](docs/plans/label-autoresearch-2026-10-24.md)
-- [Approved delivery order](docs/plans/ui-ux-2026-10-24.md)
+- [Approved next work](docs/plans/ui-ux-2026-10-24.md)
 - [Definition of Done](docs/DEFINITION_OF_DONE.md)
 
-Next approved work: coherent command sheet, Radio Favorites/Discover, Home
-arrangement assistance, real Media metadata/Continue watching and consistent
-motion/feedback. Saved Home arrangements (proposal6) remains excluded.
-No21:30 automation is active. Raw device state, accounts and backups are private.
+Next: coherent command sheet, Radio Favorites/Discover, Home arrangement
+assistance, real Media metadata/Continue watching and consistent feedback.
+Saved Home arrangements (proposal6) remains excluded. No21:30 automation is active.
+Private raw evidence, device state, accounts and backups remain outside GitHub.

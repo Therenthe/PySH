@@ -84,3 +84,9 @@ reload and a softer instruction background.26ENRO UI checks and isolated
 TypeScript PASS;4 settled-composition and2 stronger animation-presence retests
 PASS. No candidate is yet installed. Reproducible public export, full source/
 runtime verification and native800x480 acceptance follow before delivery.
+
+Delivery verified:8778974040f4 installed from publiceea57079;211file hashes,
+29preferences and PCbackup verified, prior051701e134b6 retained. Native50checks
+and five real entries/canonical routes PASS. Normal session/preferences/radio
+restored and debug closed. The finite five-round request is complete; the wider
+approved UI plan remains active, with P1 next and proposal6 excluded.
