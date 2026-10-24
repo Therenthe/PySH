@@ -177,7 +177,7 @@
 .app[data-theme=night]>.ambient-sky:not(.sky-night)>.ambient-scenery{filter:brightness(.4)}
 .app[data-theme=night]>.ambient-sky:not(.sky-night)>.scene-precipitation,.app[data-theme=night]>.ambient-sky:not(.sky-night)>.scene-warning-illustration{filter:brightness(.4)}
 .app[data-theme=night]>.ambient-sky:not(.sky-night)>.city-diorama{opacity:1}
-.app[data-theme=night]>.ambient-sky:not(.sky-night) .city-scenery{filter:brightness(.4);opacity:.8}
+.app[data-theme=night]>.ambient-sky:not(.sky-night) .city-scenery{filter:brightness(.4);opacity:1}
 .app .ambient-home .playback-caption .eyebrow,.app .ambient-home .playback-caption .player-state{line-height:17px}
 .app .ambient-home .playback-source{line-height:22px;margin:2px 0}
 .app .ambient-home .playback-metadata{line-height:17px;margin:1px 0 0}

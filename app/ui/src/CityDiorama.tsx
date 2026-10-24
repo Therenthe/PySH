@@ -18,11 +18,12 @@ export function CityDiorama({night,darkSurface=false,weather,radioPlaying=false,
  },[]);
  const palette=night||darkSurface?'night':'day';
  const emission=(service:'radio'|'bluetooth')=><><img className="city-signal-core" src={`/ambient/city-beacon-${service}-core-${palette}-v2.png`} alt="" draggable={false}/>{[1,2,3].map(ring=><img key={ring} className="city-signal-ring" data-ring={ring} style={{'--ring-order':ring-1} as CSSProperties} src={`/ambient/city-beacon-${service}-ring-${ring}-${palette}-v2.png`} alt="" draggable={false}/>)}</>;
- return <div ref={city} aria-hidden="true" className="ambient-city city-diorama" data-city-version="blender-v3" data-beacon-palette={palette} data-season={weather.season} data-thermal={weather.heat?'heat':'normal'} data-radio-emitting={radioPlaying} data-bluetooth={bluetoothPowered?(bluetoothConnected?'connected':'on'):'off'} data-wifi={wifiState} data-wifi-active={wifiState==='connected'&&wifiActive} data-animate={active&&inView} data-freezing={weather.freezing}>
+ return <div ref={city} aria-hidden="true" className="ambient-city city-diorama" data-city-version="blender-v4" data-beacon-palette={palette} data-season={weather.season} data-thermal={weather.heat?'heat':'normal'} data-radio-emitting={radioPlaying} data-bluetooth={bluetoothPowered?(bluetoothConnected?'connected':'on'):'off'} data-wifi={wifiState} data-wifi-active={wifiState==='connected'&&wifiActive} data-animate={active&&inView} data-freezing={weather.freezing}>
   <div className="city-scenery">
    {weather.heat&&<div className="city-heat-haze"/>}
-   <img className="city-architecture" src={`/ambient/gothic-city-${night?'night':'day'}-v3.png`} alt="" draggable={false}/>
-   <div className="city-metro-track"><img className="city-metro" src="/ambient/metro-v2.png" alt="" draggable={false}/></div>
+   <img className="city-architecture" src={`/ambient/gothic-city-${night?'night':'day'}-v4.png`} alt="" draggable={false}/>
+   <div className="city-metro-track"><img className="city-metro" src="/ambient/metro-v4.png" alt="" draggable={false}/></div>
+   <img className="city-rail-front" src={`/ambient/gothic-city-rail-front-${night?'night':'day'}-v4.png`} alt="" draggable={false}/>
    <div className="city-ground-mist"/>
    {weather.freezing&&<div className="city-frost"/>}
   </div>

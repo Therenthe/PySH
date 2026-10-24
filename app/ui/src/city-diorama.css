@@ -3,8 +3,9 @@
 .ambient-sky .city-diorama{position:absolute;inset:auto 0 0;width:100%;height:208px;opacity:1;pointer-events:none;isolation:isolate;color:inherit;z-index:1}
 .city-scenery{position:absolute;inset:0;pointer-events:none}
 .city-architecture{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
-.sky-neutral .city-architecture{filter:saturate(.35);opacity:.6}
-.ambient-sky:not(.sky-neutral) .city-architecture{opacity:var(--city-visibility,1);transition:opacity 900ms ease}
+.sky-neutral .city-architecture{filter:saturate(.35)}
+.city-architecture{opacity:1}
+.city-rail-front{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
 /* Foreground forms remain readable; luminous service signs sit above this veil. */
 .city-ground-mist{position:absolute;inset:0;z-index:2;background:linear-gradient(transparent 12%,rgb(170 185 189 / .32));opacity:var(--ground-haze,0);pointer-events:none}
 /* Only the actual Wi-Fi route emits waves. No router or dot covers the roof. */
@@ -18,10 +19,10 @@
 .city-diorama[data-wifi=connecting] .city-wifi-wave{opacity:.4;animation:city-wifi-search 2.8s ease-in-out infinite;animation-delay:calc(var(--ring-order) * .8s)}
 .ambient-sky:not(.sky-neutral) .city-wifi{opacity:1}
 @keyframes city-wifi-search{0%,100%{opacity:.12}45%,60%{opacity:.52}}
-.city-metro-track{position:absolute;left:0;right:0;bottom:14.7%;height:8.5%;overflow:hidden}
-.city-metro{position:absolute;bottom:0;width:17%;height:auto;max-height:100%;object-fit:contain;animation:city-metro-passage 100s linear infinite;animation-delay:-15s}
+.city-metro-track{position:absolute;left:0;right:0;bottom:14.9937838316%;height:8.5%;overflow:hidden}
+.city-metro{position:absolute;bottom:0;width:10.3363541667%;height:auto;max-height:100%;object-fit:contain;animation:city-metro-passage 100s linear infinite;animation-delay:-15s}
 /* Each 18s crossing has constant speed; direction changes only beyond the crop. */
-@keyframes city-metro-passage{0%,8%{transform:translateX(-110%);opacity:0}8.01%{opacity:1}26%{transform:translateX(600%);opacity:1}26.01%,58%{transform:translateX(600%) scaleX(-1);opacity:0}58.01%{opacity:1}76%{transform:translateX(-110%) scaleX(-1);opacity:1}76.01%,100%{transform:translateX(-110%) scaleX(-1);opacity:0}}
+@keyframes city-metro-passage{0%,8%{transform:translateX(-110%);opacity:0}8.01%{opacity:1}26%{transform:translateX(calc(100vw + 10px));opacity:1}26.01%,58%{transform:translateX(calc(100vw + 10px)) scaleX(-1);opacity:0}58.01%{opacity:1}76%{transform:translateX(-110%) scaleX(-1);opacity:1}76.01%,100%{transform:translateX(-110%) scaleX(-1);opacity:0}}
 /* Crops share the original Blender1600x570 camera; no runtime 3D or glow filter. */
 .city-radio-tower{position:absolute;left:56.75%;top:1.578947%;width:7.4375%;height:26.491228%;z-index:3;pointer-events:none}
 .city-radio-tower img,.city-bluetooth img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}

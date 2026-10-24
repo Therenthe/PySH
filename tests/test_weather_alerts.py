@@ -6,6 +6,7 @@ import json
 
 import pytest
 
+from services.backend import weather_alerts as alerts_module
 from services.backend.weather_alerts import WeatherAlerts, FEED, LIMIT, _cap_url, _xml, _NoRedirect
 
 NOW = datetime(2026, 10, 23, 16, tzinfo=timezone.utc)
@@ -255,3 +256,56 @@ def test_xml_rejects_entities_encodings_and_oversize(raw):
 def test_invalid_or_foreign_location_never_fetches(tmp_path,monkeypatch,location):
     alerts,calls=adapter(tmp_path,monkeypatch,feed())
     assert snapshot(alerts,location)["state"] == "unavailable" and calls == []
+
+
+@pytest.mark.parametrize("warning", [False, True], ids=["verified-empty-country-feed", "linked-cap-warning"])
+def test_meteoalarm_content_negotiation_through_real_fetch_boundary(tmp_path, monkeypatch, warning):
+    """Provider's observed406 behaviour must not be hidden by mocking _fetch."""
+    from urllib.error import HTTPError
+
+    calls = []
+    documents = {FEED: feed(entry(link=URL)) if warning else feed(), URL: cap()}
+
+    class Response:
+        status = 200
+
+        def __init__(self, url):
+            self.url = url
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_):
+            pass
+
+        def geturl(self):
+            return self.url
+
+        def read(self, limit):
+            assert limit == LIMIT + 1
+            return documents[self.url].encode("utf-8")
+
+    class Opener:
+        def open(self, request, *, timeout):
+            assert timeout == 8.0
+            assert request.get_header("User-agent") == "PiSmartHub/1.0"
+            calls.append(request.full_url)
+            if request.get_header("Accept") != "*/*":
+                raise HTTPError(request.full_url, 406, "Not Acceptable", {}, None)
+            return Response(request.full_url)
+
+    monkeypatch.setattr(alerts_module, "build_opener", lambda handler: Opener())
+    result = snapshot(WeatherAlerts(tmp_path))
+    assert result["state"] == "available" and result["error"] is None
+    assert calls == ([FEED, URL] if warning else [FEED])
+    assert len(result["alerts"]) == int(warning)
+    if warning:
+        assert result["alerts"][0]["description"] == "Text oficial"
+
+
+@pytest.mark.parametrize("document", ["<html><body>Service unavailable</body></html>", "<feed/>"])
+def test_non_atom_xml_never_becomes_verified_empty_coverage(tmp_path, monkeypatch, document):
+    alerts, _ = adapter(tmp_path, monkeypatch, document)
+    result = snapshot(alerts)
+    assert result["state"] == "unavailable" and result["error"] == "weather_alerts_unavailable"
+    assert result["updated_at"] is None and result["alerts"] == []

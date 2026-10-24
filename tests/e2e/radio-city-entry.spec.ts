@@ -18,7 +18,7 @@ const skip=(page:Page,ro:boolean)=>dialog(page).getByRole('button',{name:ro?'Omi
 async function target(locator:Locator){const box=await locator.boundingBox();expect(box).not.toBeNull();expect(box!.width).toBeGreaterThanOrEqual(48);expect(box!.height).toBeGreaterThanOrEqual(48);expect(box!.x).toBeGreaterThanOrEqual(0);expect(box!.y).toBeGreaterThanOrEqual(0);expect(box!.x+box!.width).toBeLessThanOrEqual(800);expect(box!.y+box!.height).toBeLessThanOrEqual(480);}
 async function capture(page:Page,name:string){await page.screenshot({path:test.info().outputPath(name+'.png')});expect(await page.evaluate(()=>document.documentElement.scrollWidth>800||document.documentElement.scrollHeight>480)).toBe(false);}
 function stable(f:Awaited<ReturnType<typeof fixture>>){expect(f.writes).toEqual([]);expect(f.errors).toEqual([]);expect(JSON.stringify({preferences:f.state.preferences,player:f.state.player,audio:f.state.audio})).toBe(f.saved);}
-async function holdClip(page:Page){let release!:()=>void;const held=new Promise<void>(resolve=>release=resolve);await page.route('**/ambient/radio-entry-*.webm',async route=>{await held;await route.continue().catch(()=>{});});return release;}
+async function holdClip(page:Page){let release!:()=>void;const held=new Promise<void>(resolve=>release=resolve);await page.route('**/ambient/city-entry-radio-*.webm',async route=>{await held;await route.continue().catch(()=>{});});return release;}
 async function hidden(page:Page,value:boolean){await page.evaluate(value=>{Object.defineProperty(document,'hidden',{configurable:true,value});document.dispatchEvent(new Event('visibilitychange'));},value);}
 
 for(const theme of ['ink','night'])test(`Radio building ${theme}: independent accessible entry, ambient wake and no other building navigation`,async({page},info)=>{
@@ -59,7 +59,7 @@ for(const theme of ['ink','night'])test(`Radio entry ${theme}: cancel Escape ski
 
 for(const mode of ['load-error','play-rejection','load-timeout'])test(`Radio entry ${mode}: usable fallback without playback or preference mutation`,async({page},info)=>{
  const ro=info.project.name.endsWith('ro');let release=()=>{};
- if(mode==='load-error')await page.route('**/ambient/radio-entry-*.webm',route=>route.abort('failed'));
+ if(mode==='load-error')await page.route('**/ambient/city-entry-radio-*.webm',route=>route.abort('failed'));
  if(mode==='play-rejection')await page.addInitScript(()=>{HTMLMediaElement.prototype.play=function(){return Promise.reject(new DOMException('Isolated playback rejection','NotAllowedError'));};});
  if(mode==='load-timeout')release=await holdClip(page);
  const f=await fixture(page,ro?'ro':'en','night');await entry(page).tap();if(mode==='load-timeout')await page.clock.runFor(3000);await expect(page.locator('.radio-page')).toBeVisible({timeout:5000});await expect(dialog(page)).toHaveCount(0);await page.clock.runFor(50);await expect(page.locator('.radio-page .search-field')).toBeFocused();release();await page.clock.runFor(1000);await capture(page,'entry-'+mode+'-fallback');stable(f);

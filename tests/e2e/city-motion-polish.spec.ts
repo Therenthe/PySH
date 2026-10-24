@@ -20,9 +20,9 @@ async function metroFrame(page:Page,time:number){
 
 for(const theme of ['ink','night'])test(`quiet city ${theme}: constant metro crossings, bounded signals and static reduced-motion meaning`,async({page},info)=>{
  await fixture(page,theme,info.project.name.endsWith('ro')?'ro':'en');
- await expect(page.locator('.city-diorama')).toHaveAttribute('data-city-version','blender-v3');
- await expect(page.locator('.city-architecture')).toHaveAttribute('src',`/ambient/gothic-city-${theme==='night'?'night':'day'}-v3.png`);
- await expect(page.locator('.city-metro')).toHaveAttribute('src','/ambient/metro-v2.png');
+ await expect(page.locator('.city-diorama')).toHaveAttribute('data-city-version','blender-v4');
+ await expect(page.locator('.city-architecture')).toHaveAttribute('src',`/ambient/gothic-city-${theme==='night'?'night':'day'}-v4.png`);
+ await expect(page.locator('.city-metro')).toHaveAttribute('src','/ambient/metro-v4.png');
  await expect(page.locator('.city-wifi-hardware,.city-wifi-lamp')).toHaveCount(0);await expect(page.locator('.city-wifi-wave')).toHaveCount(3);
  const frames=[];for(const time of [16000,19000,22000,62000,65000,68000])frames.push(await metroFrame(page,time));
  expect(frames[0]).toMatchObject({duration:100000,easing:'linear',direction:1,opacity:1});

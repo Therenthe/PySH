@@ -29,8 +29,8 @@ for(const kind of ['stale','unavailable','expired'] as const)test(`warning data 
  const ro=info.project.name.endsWith('ro');await fixture(page,ro,'night',kind);
  await expect(page.locator('.weather-alert-notice.has-alerts')).toHaveCount(0);
  if(kind==='expired'){await expect(page.locator('.weather-alert-notice')).toHaveCount(0);return;}
- const notice=page.getByRole('button',{name:ro?'Avertizări indisponibile':'Alerts unavailable'});await notice.tap();await expect(page.getByRole('dialog')).toContainText(kind==='stale'?(ro?'expirate':'out of date'):(ro?'nu este disponibil':'unavailable'));
- await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);
+ const notice=page.getByRole('button',{name:ro?'Avertizări indisponibile':'Alerts unavailable'});await notice.tap();await expect(page.getByRole('dialog')).toContainText(kind==='stale'?(ro?'expirate':'out of date'):(ro?'reîncearcă automat':'retries automatically'));
+ await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);await expect(notice).toBeFocused();
  // Idle folding starts after keyboard focus leaves the weather card.
  await page.locator('.navigation-toggle').focus();await page.clock.runFor(16000);await expect(page.locator('.weather-alert-notice')).toHaveCount(0);
 });
@@ -72,4 +72,17 @@ test('an expired warning closes its dialog and a later warning does not reopen i
  await notice.tap();await expect(page.getByRole('dialog')).toBeVisible();
  f.report.alerts[0].expires='2026-10-23T17:59:59Z';await page.clock.runFor(2500);await expect(page.getByRole('dialog')).toHaveCount(0);
  f.report.alerts[0].id='second-isolated-fixture';f.report.alerts[0].expires='2026-10-23T20:00:00Z';await page.clock.runFor(2500);await expect(notice).toBeVisible();await expect(page.getByRole('dialog')).toHaveCount(0);
+});
+
+test('an open warning dialog prevents ambient sleep and closes on the first Escape',async({page},info)=>{
+ const ro=info.project.name.endsWith('ro');await fixture(page,ro,'night','active');
+ await page.getByRole('button',{name:ro?'Avertizări meteo':'Weather alerts',exact:true}).tap();await expect(page.getByRole('dialog')).toBeVisible();
+ await page.clock.runFor(31000);await expect(page.locator('.app')).toHaveAttribute('data-home-phase','interactive');
+ await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);await expect(page.getByRole('button',{name:ro?'Avertizări meteo':'Weather alerts',exact:true})).toBeFocused();
+});
+
+test('official clear snapshot returns focus to weather when the warning trigger disappears',async({page},info)=>{
+ const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro,'night','active');const notice=page.getByRole('button',{name:ro?'Avertizări meteo':'Weather alerts',exact:true});
+ await notice.tap();await expect(page.getByRole('dialog')).toBeVisible();f.report.alerts=[];await page.clock.runFor(2700);
+ await expect(page.getByRole('dialog')).toHaveCount(0);await expect(notice).toHaveCount(0);await expect(page.locator('.weather-heading')).toBeFocused();
 });

@@ -29,7 +29,7 @@ export function Media({language,media,loading=false,busy=false,localMediaPending
  const search=async()=>{if(!onSearch||pending||searchPending)return;setSearchPending(true);try{const result=await onSearch(query);if(result!==null)setQuery(result.trim());}finally{setSearchPending(false);}};
  const deleteLabel=ro?'Șterge fișierul':'Delete file';
  return <div className="media-page media-redesign">
-  <header className="media-heading"><h1>{t('media')}</h1><div className="media-sections" role="group" aria-label={ro?'Sursă media':'Media source'}>
+  <header className="media-heading"><h1 tabIndex={-1}>{t('media')}</h1><div className="media-sections" role="group" aria-label={ro?'Sursă media':'Media source'}>
    <button className={section==='files'?'selected':''} aria-pressed={section==='files'} onClick={()=>setSection('files')}>{icon('folder',20)}<span>{t('onDevice')}</span></button>
    <button className={section==='services'?'selected':''} aria-pressed={section==='services'} onClick={()=>setSection('services')}>{icon('globe',20)}<span>{t('services')}</span></button>
   </div></header>

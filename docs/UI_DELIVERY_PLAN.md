@@ -132,3 +132,7 @@ Reperul utilizatorului „Varianta Back” este păstrat separat. Lotul nou păs
 Verificarea lotului300f/source86b0:1112browser/603Python PASS,32platform skips;81hashuri/29preferințe verificate după update; cer/YouTube/rețea auditate nativ și Ethernet↔Wi-Fi cu radio continuu confirmat fizic. Rândurile UI anterioare rămân cerințe, iar acceptarea lor completă se face în matricea de produs.
 
 Corecția ulterioară cerută de utilizator: un singur simbol pentru ruta activă în bară, Ethernet redesenat și clădire Wi-Fi Blender cu asociere statică/activitate după rută. Instalat0b/sourcee533,619Python/104browser afectate PASS și nativ84hashuri/29preferințe/un singur simbol/rută kernel/clădire verificate. Rutarea și cerințele anterioare sunt păstrate.
+
+## Grounded city and approved destinations —24 October2026
+
+Candidate work, not installed acceptance: [tracked plan](plans/city-destinations-2026-10-24.md) and [evidence](evidence/city-destinations-2026-10-24.md). Includes viewport-centered clock, official-alert transport repair/modal idle guard, grounded rails/city edges and five canonical cinematic destinations. Further visual improvements remain proposals only.

@@ -20,9 +20,10 @@ for(const theme of ['ink','night'])for(const scene of scenes)test(`Blender city 
  await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname;await route.fulfill({json:path==='/api/session'?{token:'scene-browser-fixture'}:path==='/api/state'?state:{ok:true}})});
  await page.clock.install({time:now});await page.goto('/');
  const city=page.locator('.city-diorama');await expect(city).toBeVisible();
- await expect(city).toHaveAttribute('data-city-version','blender-v3');
+ await expect(city).toHaveAttribute('data-city-version','blender-v4');
  await expect(city).toHaveAttribute('data-radio-emitting','true');
  await expect(city).toHaveAttribute('data-bluetooth','connected');
+ await page.locator('.city-architecture,.city-metro,.city-rail-front').evaluateAll(nodes=>Promise.all(nodes.map(node=>(node as HTMLImageElement).decode())));
  const assets=await page.locator('.city-architecture,.city-metro').evaluateAll(nodes=>nodes.map(el=>({loaded:(el as HTMLImageElement).complete&&(el as HTMLImageElement).naturalWidth>0,src:(el as HTMLImageElement).getAttribute('src')})));
  expect(assets.every(asset=>asset.loaded)).toBeTruthy();
  await expect(page.locator('.ambient-star-texture,.city-material')).toHaveCount(0);

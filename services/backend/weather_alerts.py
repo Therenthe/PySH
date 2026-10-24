@@ -202,7 +202,8 @@ class WeatherAlerts:
         if url != FEED and not _cap_url(url):
             raise ValueError("untrusted_weather_alert_source")
         opener = build_opener(_NoRedirect())
-        with opener.open(Request(url, headers={"User-Agent": "PiSmartHub/1.0", "Accept": "application/atom+xml,application/cap+xml"}), timeout=self.timeout) as response:
+        # Meteoalarm rejects explicit XML Accept types with406; validate the XML below.
+        with opener.open(Request(url, headers={"User-Agent": "PiSmartHub/1.0", "Accept": "*/*"}), timeout=self.timeout) as response:
             if response.geturl() != url or response.status != 200:
                 raise ValueError("weather_alert_response")
             data = response.read(LIMIT + 1)
