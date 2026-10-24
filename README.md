@@ -2,9 +2,11 @@
 
 Hub tactil EN/RO pentru Raspberry Pi 4 (4 GB), LCD DSI 7″, 800 × 480: ceas, vreme, radio, media locală și conectivitate.
 
-Ultimul lot instalat: `40d0bedaf3fb`, sursă `91d5b71` — meteori mai lizibili,
-cu stelele rare și ritmul natural păstrate.46 teste țintite și clip cu mișcare
-naturală. [Dovezi](docs/evidence/night-sky-visibility-2026-10-24.md) ·
+Ultimul lot instalat: `016160798d6f`, sursă `7db433b` — BT3D fără placa neagră
+și unde progresive. Neonul este condus de sunetul real; contrastul materialului
+de zi este încă în corecție după verificarea preferințelor originale.
+204 teste de browser,46 capturi independente și14 stări native documentate.
+[Dovezi](docs/evidence/radio-bt-readability-2026-10-24.md) ·
 [Conceptul vizual Home pentru specialist](docs/HOME_VISUAL_CONCEPT.md).
 
 Vizualizatorul Undă este acum integrat în clădirea radio: circuite neon Blender

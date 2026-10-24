@@ -49,6 +49,7 @@ for(const theme of ['ink','night'])for(const hazard of ['flood','tornado'])test(
  const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro,theme,'active');
  f.report.alerts[0].hazard=hazard;f.report.alerts[0].severity='extreme';
  await page.clock.runFor(2500);const illustration=page.locator('.scene-warning-illustration');
+ expect(await illustration.evaluate(node=>node.parentElement?.classList.contains('ambient-sky'))).toBe(true);
  await expect(illustration).toHaveAttribute('data-warning-hazard',hazard);
  await expect(illustration).toContainText(ro?'Ilustrație avertizare':'Warning illustration');
  await expect.poll(()=>illustration.locator('img').evaluateAll(elements=>elements.length>0&&elements.every(element=>(element as HTMLImageElement).complete&&(element as HTMLImageElement).naturalWidth>0))).toBe(true);expect(await illustration.locator('img').count()).toBeLessThanOrEqual(3);

@@ -41,8 +41,11 @@ vizualizarea separată și dimensiunea aleasă de utilizator.
 
 ## Scena ca indicator al dispozitivului
 
-Bluetooth are un semn 3D montat pe o clădire; emisia animată diferențiază
-conectarea de simpla alimentare. Clădirea Wi-Fi reflectă starea conexiunii și
+Bluetooth are o rună 3D montată liber, fără placă neagră; trei benzi animate
+progresiv și un nucleu stabil diferențiază conectarea de simpla alimentare.
+Decorul se întunecă separat de luminile serviciilor, inclusiv în tema Noapte
+folosită ziua. Paleta neon de zi contrastează cu piatra și ceața.
+Clădirea Wi-Fi reflectă starea conexiunii și
 ruta activă. Antena radio emite în timpul redării, iar neonul fațadei urmărește
 semnalul audio măsurat și se stinge la pauză, mute sau lipsă de semnal.
 

@@ -15,11 +15,12 @@ import numpy as np
 sys.path.insert(0,str(Path(__file__).parent))
 import build_radio_neon as N
 
-# Linear material values: dark stained teal, cobalt, plum and brass, with a
-# restrained self-lit core. Day contrast comes from mounted dark tubing rather
-# than a pale night emission reduced by a second presentation gain.
-PALETTE=[(.004,.045,.055),(.004,.025,.08),(.014,.019,.10),(.055,.009,.052),
-         (.065,.012,.045),(.005,.035,.065),(.004,.045,.04),(.10,.035,.004)]
+# The installed fog scene has dark masonry, so dark day paint disappeared at
+# healthy measured amplitudes. Porcelain/cyan/gold cores create local value
+# contrast without increasing audio amplitudes or adding a broad glow cloud.
+PALETTE=[(.60,.90,.82),(.43,.82,.96),(.50,.70,.98),(.78,.69,.93),
+         (.92,.72,.80),(.47,.86,.91),(.69,.93,.75),(.98,.79,.40)]
+EMISSION=1.4
 CROP={'x':909,'y':136,'width':118,'height':281}
 
 
@@ -83,7 +84,7 @@ def main():
                 sh=mat.node_tree.nodes['Principled BSDF']
                 sh.inputs['Base Color'].default_value=(*PALETTE[i],1)
                 sh.inputs['Emission Color'].default_value=(*PALETTE[i],1)
-                sh.inputs['Emission Strength'].default_value=.28
+                sh.inputs['Emission Strength'].default_value=EMISSION
                 sh.inputs['Roughness'].default_value=.46
                 sh.inputs['Metallic'].default_value=.25
     ld=bpy.data.lights.new('Day_Facade_Soft_Key','AREA');ld.energy=220;ld.shape='DISK';ld.size=7
@@ -98,10 +99,10 @@ def main():
         for j,c in enumerate(zones):c.hide_render=(i!=j)
         raw=private/f'raw-day-{i+1:02d}.png';s.render.filepath=str(raw);bpy.ops.render.render(write_still=True,scene=s.name)
         arr=N.read_rgba(raw)
-        # A subpixel, dark local halo supports antialiasing without recreating
+        # A subpixel local halo supports antialiasing without recreating
         # a night bloom cloud. RGB is taken from the Blender-rendered material.
         alpha=arr[:,:,3:4];halo=np.zeros_like(arr)
-        halo[:,:,:3]=np.asarray(PALETTE[i])[None,None,:]*1.7
+        halo[:,:,:3]=np.asarray(PALETTE[i])[None,None,:]
         halo[:,:,3:4]=np.clip(N.blur(alpha,.7)*.14,0,.12)
         finished=N.over(halo,arr);overlays.append(finished)
         crop=finished[CROP['y']:CROP['y']+CROP['height'],CROP['x']:CROP['x']+CROP['width']]
@@ -127,7 +128,7 @@ def main():
     report={'schema':1,'blender':bpy.app.version_string,'source_night_sha256':sha(original),'city_day_v3_sha256':sha(city),
             'city_resolution':[1600,570],'crop_px':CROP,'crop_percent':{'left':56.8125,'top':136/5.7,'width':7.375,'height':281/5.7},
             'zones':8,'tubes':45,'mesh_vertices':sum(len(o.data.vertices) for o in tubes),'triangles':sum(len(f.vertices)-2 for o in tubes for f in o.data.polygons),
-            'palette_linear':PALETTE,'emission_strength':.28,'day_runtime_gain':1,'halo_sigma_px':.7,'halo_alpha_max':.12,
+            'palette_linear':PALETTE,'emission_strength':EMISSION,'day_runtime_gain':1,'halo_sigma_px':.7,'halo_alpha_max':.12,
             'assets':assets,'encoded_bytes':sum(a['bytes'] for a in assets),'rgba_decoded_bytes':118*281*4*8,
             'geometry_unchanged':True,'night_protected_hashes':protected_hashes,'audit':{'pass':True,'parts':45,'errors':sum(len(g['errors']) for g in gates),'warnings':sum(len(g['warnings']) for g in gates)},
             'signal_contract':'Eight adjacent pairs of 16 measured temporal PCM amplitudes; no frequency-band claim, no synthetic runtime loop.',

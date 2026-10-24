@@ -25,109 +25,109 @@
   "triangles": 7948,
   "palette_linear": [
     [
-      0.004,
-      0.045,
-      0.055
+      0.6,
+      0.9,
+      0.82
     ],
     [
-      0.004,
-      0.025,
-      0.08
+      0.43,
+      0.82,
+      0.96
     ],
     [
-      0.014,
-      0.019,
-      0.1
+      0.5,
+      0.7,
+      0.98
     ],
     [
-      0.055,
-      0.009,
-      0.052
+      0.78,
+      0.69,
+      0.93
     ],
     [
-      0.065,
-      0.012,
-      0.045
+      0.92,
+      0.72,
+      0.8
     ],
     [
-      0.005,
-      0.035,
-      0.065
+      0.47,
+      0.86,
+      0.91
     ],
     [
-      0.004,
-      0.045,
-      0.04
+      0.69,
+      0.93,
+      0.75
     ],
     [
-      0.1,
-      0.035,
-      0.004
+      0.98,
+      0.79,
+      0.4
     ]
   ],
-  "emission_strength": 0.28,
+  "emission_strength": 1.4,
   "day_runtime_gain": 1,
   "halo_sigma_px": 0.7,
   "halo_alpha_max": 0.12,
   "assets": [
     {
       "name": "radio-neon-day-zone-01.png",
-      "bytes": 2789,
-      "sha256": "f533ca887a369efbf6721f96ffc8bd8b2561a6712e21607d4157d6f4eba3d1e2",
+      "bytes": 2574,
+      "sha256": "b4f276d4910574af848481b8b55103fcfec20272111604b1257e5d251b28c9c8",
       "width": 118,
       "height": 281
     },
     {
       "name": "radio-neon-day-zone-02.png",
-      "bytes": 2498,
-      "sha256": "82e0a263a2870890169e39e3558a5f944f71bd3177b2ded193e027dfed16ebaf",
+      "bytes": 2434,
+      "sha256": "364e4d7ef2d8c331b74284c8fe3436f351c479037e2ed021cedd7fe925920732",
       "width": 118,
       "height": 281
     },
     {
       "name": "radio-neon-day-zone-03.png",
-      "bytes": 2014,
-      "sha256": "ee0604f8f0310ffdad1416bd68e5540af935f5ef8ce9487aac7520e38a57fc95",
+      "bytes": 2138,
+      "sha256": "e6195a3ecdba55355c8a9f6f89a9d5a5caacaab71ab5fe75820b56fbe8020096",
       "width": 118,
       "height": 281
     },
     {
       "name": "radio-neon-day-zone-04.png",
-      "bytes": 2450,
-      "sha256": "c8e9c712445786c248706409b786411949c3e69bd7693ec48ccf6a2acb1d6dd4",
+      "bytes": 2442,
+      "sha256": "e0586cd35f2866f67e002ab3ba74ba7bf0b18426e7776e88db9bfe945ada5e4f",
       "width": 118,
       "height": 281
     },
     {
       "name": "radio-neon-day-zone-05.png",
-      "bytes": 1905,
-      "sha256": "4d0ae503a96823e3f25e20ad502a0083f41d8c3f5780ec4cd9e1db2ad582722f",
+      "bytes": 1924,
+      "sha256": "76280f9747728516068d764d9db29773a588b741f532105e2a3c2a392ba2ffa7",
       "width": 118,
       "height": 281
     },
     {
       "name": "radio-neon-day-zone-06.png",
-      "bytes": 2495,
-      "sha256": "aabadf07e91b2172855f85868f93d0bd9d7bb62fff343abd38320004e182860d",
+      "bytes": 2413,
+      "sha256": "433c57cd01290124d0f7faf960e7f29c4faddb623f6ce48b4eb4b8724179b529",
       "width": 118,
       "height": 281
     },
     {
       "name": "radio-neon-day-zone-07.png",
-      "bytes": 1713,
-      "sha256": "411f6c6d177b04ef3239f73c025f76d7a0d001d112ce22f7068fab6a2dc48d6f",
+      "bytes": 1780,
+      "sha256": "9a21897a13561b642bb32184aa776a0026490f9cb256bfcfd7316691339d01db",
       "width": 118,
       "height": 281
     },
     {
       "name": "radio-neon-day-zone-08.png",
-      "bytes": 2840,
-      "sha256": "cc050f79e9dbf14ee09c2ddd971bf63651797ed0bf01fac5b5e5b84bef84b81c",
+      "bytes": 2539,
+      "sha256": "8a2865ac6db4ad48adc87452955d410ee860cb208f50e445d911cef35f873384",
       "width": 118,
       "height": 281
     }
   ],
-  "encoded_bytes": 18704,
+  "encoded_bytes": 18244,
   "rgba_decoded_bytes": 1061056,
   "geometry_unchanged": true,
   "night_protected_hashes": {
@@ -149,6 +149,6 @@
   },
   "signal_contract": "Eight adjacent pairs of 16 measured temporal PCM amplitudes; no frequency-band claim, no synthetic runtime loop.",
   "limits": "Review fog is a documented illustrative veil, not a live weather screenshot. Actual runtime visibility/signal must be verified separately.",
-  "builder_sha256": "6227b47eb179bbd5f2498e31bfdb5fb97d280fb40159e484a3231f52a073b75f",
+  "builder_sha256": "4ab65c0d0a2ebd891c21f90c6c2387d0703b445d1cb8c43959bcece844210deb",
   "helper_sha256": "4d7bd3a1acf013d6e6184b469caeedf61ed6fb0e10edb8d41dfe2653d76593ff"
 }

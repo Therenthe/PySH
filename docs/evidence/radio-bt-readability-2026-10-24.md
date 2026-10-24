@@ -44,6 +44,57 @@ manual Night UI. Precipitation and warning illustrations remain direct sky
 siblings with their original foreground order, dimmed independently of scenery.
 That prepared candidate9817e3d98a39 was also superseded without activation.
 
-Asset previews were independently reviewed at native size. Runtime/frozen-source
-checks and final actual-device evidence follow below after their gates complete.
-This scoped change does not certify a global score or complete product release.
+## R3 installation and verification
+
+Installed runtime `016160798d6f`, GitHub production source
+`7db433b4a388b2d2d43147dfa5b096fa05b1ace7`, public tree
+`6662a61f03c292a6911c1d0f861d511195682427`. Canonical local source is
+`1e224abd0006ec32ce99f2c724618e39d00eeaa6`; later documentation/test commits
+do not change the installed runtime.
+
+- Exact frozen production:204/204 browser cases PASS, no failures, retries or
+  skips. Late test-only warning-layer assertion:8/8 against the same runtime.
+- Independent full UI review:46 captures /16 contexts, EN/RO, Ink/Night,
+  actual-scene day-fog, night-fog, night-clear and day-rain. Zero page errors,
+  overflow or API writes. Three phase probes retain visible cores and sequence
+  all six rings. Controlled-night frames retain stars, Moon and a naturally
+  scheduled meteor; those fixtures do not represent actual Pi weather.
+- Real installed Chromium:14 captures at800×480, actual daytime WMO45 fog,
+  connected Bluetooth and measured radio output. All six rings change opacity;
+  facade amplitude changes reach0.702. Both themes keep the signal outside
+  ancestor dimming. Facade touch opens controls; pause and mute extinguish
+  visualization; UI Play resumes; first ambient touch wakes without also
+  activating the underlying control. Card arrangements remain unchanged.
+- PC backup contents/checksum verified before activation;151 installed hashes
+  and29 preferences verified. Previous runtime40d0bedaf3fb retained. Gateway and
+  Ethernet unchanged; original radio resumed. Diagnostic browsers/listeners
+  closed; all preferences and playback restored. Final private Wayland frame
+  captured through the existing PC-loopback viewer after restoration.
+- TypeScript, Vite, repository structure and package checks PASS;650 Python
+  cases PASS /32 platform skips and82 extension cases PASS.
+
+The independent review rejected two prepared candidates before installation;
+their functional PASS did not override the observed visual defects. A private
+visual fixture had encoding artifacts in location/track text; production
+translations were not changed, and actual native text/captures are the final
+comparison. Raw frames, recordings, operator scripts and backups remain private.
+
+## Post-restoration daylight finding
+
+The final original-preference Ink/day-fog image exposed a remaining visual
+blocker: day circuits merged with the dark radio facade. The earlier native
+Night view could not certify this context. A second read-only observation of
+the unchanged original preferences sampled eight states: visible document,
+loaded day PNGs, ready/active signal, and maximum opacity0.56–0.68. Healthy
+PCM and DOM state exclude a missing reader or lifecycle problem. Independent
+review found nearly-black tube pixels against dark masonry, whereas night
+tubes had much higher luminance. All preferences/playback were restored again.
+
+The day Blender material is corrected with porcelain/icy-cyan/warm-gold tube
+cores, without amplitude normalization, fake animation or a global filter
+workaround. An authored0.65-opacity composition over the actual Ink/day-fog
+capture is visibly clearer; this preview does not certify an installed result.
+R3's scoped visual
+gate remains OPEN for this daylight context until new actual native proof.
+Native CDP touch does not establish physical-finger/acoustic acceptance or
+sustained Pi performance. All30 complete product criteria remain OPEN.
