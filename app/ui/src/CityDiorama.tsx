@@ -15,9 +15,9 @@ export function CityDiorama({night,weather,radioPlaying=false,visualizeRadio=fal
   const observer=new IntersectionObserver(([entry])=>setInView(entry.isIntersecting));
   observer.observe(city.current);return()=>observer.disconnect();
  },[]);
- return <div ref={city} aria-hidden="true" className="ambient-city city-diorama" data-city-version="blender-v2" data-season={weather.season} data-thermal={weather.heat?'heat':'normal'} data-radio-emitting={radioPlaying} data-bluetooth={bluetoothPowered?(bluetoothConnected?'connected':'on'):'off'} data-wifi={wifiState} data-wifi-active={wifiState==='connected'&&wifiActive} data-animate={active&&inView} data-freezing={weather.freezing}>
+ return <div ref={city} aria-hidden="true" className="ambient-city city-diorama" data-city-version="blender-v3" data-season={weather.season} data-thermal={weather.heat?'heat':'normal'} data-radio-emitting={radioPlaying} data-bluetooth={bluetoothPowered?(bluetoothConnected?'connected':'on'):'off'} data-wifi={wifiState} data-wifi-active={wifiState==='connected'&&wifiActive} data-animate={active&&inView} data-freezing={weather.freezing}>
   {weather.heat&&<div className="city-heat-haze"/>}
-  <img className="city-architecture" src={`/ambient/gothic-city-${night?'night':'day'}-v2.png`} alt="" draggable={false}/>
+  <img className="city-architecture" src={`/ambient/gothic-city-${night?'night':'day'}-v3.png`} alt="" draggable={false}/>
   {visualizeRadio&&<RadioBuildingNeon night={night} enabled={radioCanVisualize} active={active&&inView}/>}
   <div className="city-wifi" aria-hidden="true">
    <img className="city-wifi-hardware" src={`/ambient/city-wifi-${night?'night':'day'}-v1.png`} alt="" draggable={false}/>
@@ -25,8 +25,15 @@ export function CityDiorama({night,weather,radioPlaying=false,visualizeRadio=fal
    <i className="city-wifi-lamp"/>
   </div>
   <div className="city-metro-track"><img className="city-metro" src="/ambient/metro-v2.png" alt="" draggable={false}/></div>
-  {radioPlaying&&<div className="city-radio-emitter"><i/><i/><span/></div>}
-  {bluetoothPowered&&<div className={`city-bluetooth ${bluetoothConnected?'connected':''}`}><svg viewBox="0 0 20 24"><path d="m4 6 12 12-6 5V1l6 5L4 18"/></svg><i/></div>}
+  <div className="city-ground-mist"/>
+  <div className="city-radio-tower">
+   <img className="city-radio-hardware" src={`/ambient/city-beacon-radio-${night?'night':'day'}-v1.png`} alt="" draggable={false}/>
+   {radioPlaying&&<div className="city-radio-emitter"><img className="city-radio-emission" src="/ambient/city-beacon-radio-emission-v1.png" alt="" draggable={false}/></div>}
+  </div>
+  {bluetoothPowered&&<div className={`city-bluetooth ${bluetoothConnected?'connected':''}`}>
+   <img className="city-bluetooth-hardware" src={`/ambient/city-beacon-bluetooth-${night?'night':'day'}-v1.png`} alt="" draggable={false}/>
+   <img className="city-bluetooth-emission" src="/ambient/city-beacon-bluetooth-emission-v1.png" alt="" draggable={false}/>
+  </div>}
   {weather.freezing&&<div className="city-frost"/>}
  </div>;
 }

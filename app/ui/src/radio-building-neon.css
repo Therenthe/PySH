@@ -1,5 +1,5 @@
 /* Blender crop909,136,118,281 in the original1600×570 camera. */
-.city-radio-neon{position:absolute;left:56.8125%;top:23.859649%;width:7.375%;height:49.298246%;opacity:var(--city-visibility,1);pointer-events:none}
+.city-radio-neon{position:absolute;left:56.8125%;top:23.859649%;width:7.375%;height:49.298246%;z-index:3;pointer-events:none}
 .city-radio-neon img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;transition:opacity 90ms linear;pointer-events:none}
 .city-radio-neon[data-animate=false] img{transition:none}
 /* Sky spans the app, including the rail. Convert its viewport x into Home's

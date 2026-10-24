@@ -1,0 +1,76 @@
+{
+  "version": 3,
+  "blender": "5.2.2 LTS",
+  "resolution": [
+    1600,
+    570
+  ],
+  "vertices": 15609,
+  "triangles": 23940,
+  "objects": 23,
+  "radio_anchor": [
+    60.49,
+    18.001
+  ],
+  "bluetooth_anchor": [
+    21.678,
+    20.945
+  ],
+  "wifi_roof_world": [
+    6.3,
+    0.4,
+    4.58
+  ],
+  "camera": {
+    "position": [
+      0,
+      -42,
+      14
+    ],
+    "target": [
+      0,
+      0,
+      3.7
+    ],
+    "ortho_scale": 28.6
+  },
+  "seed": 241026,
+  "architecture": [
+    "sawtooth-brick-factory",
+    "chamfered-cinema-palace",
+    "asymmetric-buttressed-office",
+    "monumental-deco-lantern",
+    "stepped-oxblood-deco",
+    "industrial-chimney-water-tank",
+    "chamfered-financial-exchange",
+    "colonnaded-exchange",
+    "pitched-industrial-apartment",
+    "deco-street-shops"
+  ],
+  "preserved_landmark_indices": [
+    3,
+    10,
+    12
+  ],
+  "limits": "Offline transparent raster architecture; intentional separate architectural parts and open decorative window panes; not watertight/game export. Actual browser/fog/native acceptance separate.",
+  "closed_parts_audited": 1774,
+  "intentional_open_planes": 26,
+  "delivery_errors": 0,
+  "delivery_warnings": 0,
+  "assets": [
+    {
+      "name": "gothic-city-night-v3.png",
+      "bytes": 493982,
+      "sha256": "cea515fb2b556c60b54e2ee0b64e1265ba33d502795a552522cfe4202248b556"
+    },
+    {
+      "name": "gothic-city-day-v3.png",
+      "bytes": 556229,
+      "sha256": "d42377bd174267aa4752e87ccdddd654e5105d3313d5f4f830541e2e986a0d63"
+    }
+  ],
+  "encoded_bytes": 1050211,
+  "rgba_decoded_bytes": 7296000,
+  "builder_sha256": "2adf41909527bc3ddf0943a842e023ab1f7b6ce145fa7c3c8ad704300da52ed2",
+  "source_sha256": "df870081b01e0635f480ac82bd2c29c1f49ed4e3ecfe82ce23ce39d86351daa2"
+}

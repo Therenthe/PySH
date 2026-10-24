@@ -20,7 +20,7 @@ for(const theme of ['ink','night'])for(const scene of scenes)test(`Blender city 
  await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname;await route.fulfill({json:path==='/api/session'?{token:'scene-browser-fixture'}:path==='/api/state'?state:{ok:true}})});
  await page.clock.install({time:now});await page.goto('/');
  const city=page.locator('.city-diorama');await expect(city).toBeVisible();
- await expect(city).toHaveAttribute('data-city-version','blender-v2');
+ await expect(city).toHaveAttribute('data-city-version','blender-v3');
  await expect(city).toHaveAttribute('data-radio-emitting','true');
  await expect(city).toHaveAttribute('data-bluetooth','connected');
  const assets=await page.locator('.city-architecture,.city-metro').evaluateAll(nodes=>nodes.map(el=>({loaded:(el as HTMLImageElement).complete&&(el as HTMLImageElement).naturalWidth>0,src:(el as HTMLImageElement).getAttribute('src')})));
@@ -40,7 +40,7 @@ for(const theme of ['ink','night'])for(const scene of scenes)test(`Blender city 
  await page.clock.runFor(1000);
  await page.screenshot({path:info.outputPath(`${theme}-${scene.name}.png`)});
  await page.emulateMedia({reducedMotion:'reduce'});
- const animations=await page.locator('.weather-particle,.city-metro,.city-radio-emitter>i').evaluateAll(elements=>elements.map(el=>getComputedStyle(el).animationName));
+ const animations=await page.locator('.weather-particle,.city-metro,.city-radio-emission,.city-bluetooth-emission').evaluateAll(elements=>elements.map(el=>getComputedStyle(el).animationName));
  expect(animations.every(name=>name==='none')).toBeTruthy();
 });
 

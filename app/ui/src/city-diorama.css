@@ -1,12 +1,14 @@
 /* Blender materials provide the detail; restrained composite motion keeps Pi4
    video and touch responsive. Every decorative layer is pointer-transparent. */
-.ambient-sky .city-diorama{position:absolute;inset:auto 0 0;width:100%;height:208px;opacity:1;pointer-events:none;isolation:isolate;color:inherit}
+.ambient-sky .city-diorama{position:absolute;inset:auto 0 0;width:100%;height:208px;opacity:1;pointer-events:none;isolation:isolate;color:inherit;z-index:1}
 .city-architecture{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
 .sky-neutral .city-architecture{filter:saturate(.35);opacity:.6}
 .ambient-sky:not(.sky-neutral) .city-architecture{opacity:var(--city-visibility,1);transition:opacity 900ms ease}
+/* Foreground forms remain readable; luminous service signs sit above this veil. */
+.city-ground-mist{position:absolute;inset:0;z-index:2;background:linear-gradient(transparent 12%,rgb(170 185 189 / .32));opacity:var(--ground-haze,0);pointer-events:none}
 /* Crop bounds come from the existing Blender camera and the x6.3 roof apex.
    Association is a static lamp; only the actual Wi-Fi route emits signal arcs. */
-.city-wifi{position:absolute;left:69.75%;top:26.842105%;width:4.5625%;height:15.614035%;pointer-events:none}
+.city-wifi{position:absolute;left:69.75%;top:26.842105%;width:4.5625%;height:15.614035%;z-index:3;pointer-events:none}
 .city-wifi img{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .city-wifi-emission{opacity:0}
 .city-wifi-lamp{position:absolute;left:49.928226%;top:49.88196%;width:2.5px;height:2.5px;transform:translate(-50%,-50%);border-radius:50%;background:#48645f;opacity:.4}
@@ -16,23 +18,23 @@
 .city-diorama[data-wifi=connecting] .city-wifi-lamp{background:#e6c99a;opacity:.9}
 .city-diorama[data-wifi=off] .city-wifi-hardware,.city-diorama[data-wifi=unknown] .city-wifi-hardware{filter:saturate(.3) brightness(.72)}
 .city-diorama[data-wifi=off] .city-wifi-lamp,.city-diorama[data-wifi=unknown] .city-wifi-lamp{opacity:0}
-.ambient-sky:not(.sky-neutral) .city-wifi{opacity:var(--city-visibility,1);transition:opacity 900ms ease}
+.ambient-sky:not(.sky-neutral) .city-wifi{opacity:1}
 @keyframes city-wifi-transmission{0%,60%,100%{opacity:.48}20%,35%{opacity:.82}}
 @keyframes city-wifi-search{0%,100%{opacity:.12}45%,60%{opacity:.52}}
 .city-metro-track{position:absolute;left:0;right:0;bottom:14.7%;height:8.5%;overflow:hidden}
 .city-metro{position:absolute;bottom:0;width:17%;height:auto;max-height:100%;object-fit:contain;animation:city-metro-passage 100s linear infinite;animation-delay:-15s}
 /* Each 18s crossing has constant speed; direction changes only beyond the crop. */
 @keyframes city-metro-passage{0%,8%{transform:translateX(-110%);opacity:0}8.01%{opacity:1}26%{transform:translateX(600%);opacity:1}26.01%,58%{transform:translateX(600%) scaleX(-1);opacity:0}58.01%{opacity:1}76%{transform:translateX(-110%) scaleX(-1);opacity:1}76.01%,100%{transform:translateX(-110%) scaleX(-1);opacity:0}}
-.city-radio-emitter{position:absolute;left:60.49%;top:18.001%;width:38px;height:38px;transform:translate(-50%,-50%);color:#9acfb9}
-.sky-day .city-radio-emitter{color:#477566}
-.city-radio-emitter>i{position:absolute;inset:9px;border:1px solid currentColor;border-radius:50%;opacity:0;animation:city-transmission 6.8s linear infinite}
-.city-radio-emitter>i:nth-child(2){animation-delay:1.6s}
-.city-radio-emitter>span{position:absolute;left:18px;top:18px;width:3px;height:3px;background:currentColor;border-radius:50%}
-@keyframes city-transmission{0%{transform:scale(.45);opacity:0}8%{opacity:.46}58%,100%{transform:scale(1.65);opacity:0}}
-.city-bluetooth{position:absolute;left:21.678%;top:20.945%;width:19px;height:25px;transform:translate(-50%,-100%);color:#9bb1be;filter:drop-shadow(0 0 3px #76a3c830)}
-.city-bluetooth svg{width:16px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.city-bluetooth.connected{color:#8ecbdf}.city-bluetooth.connected i{position:absolute;right:0;bottom:1px;width:4px;height:4px;border-radius:50%;background:#8bd6ae}
-.sky-day .city-bluetooth{color:#657c81;filter:none}.sky-day .city-bluetooth.connected{color:#466c76}.sky-day .city-bluetooth.connected i{background:#4e8068}
+/* Crops share the original Blender1600x570 camera; no runtime 3D or glow filter. */
+.city-radio-tower{position:absolute;left:56.75%;top:1.578947%;width:7.4375%;height:26.491228%;z-index:3;pointer-events:none}
+.city-radio-tower img,.city-bluetooth img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
+.city-radio-emitter{position:absolute;inset:0;pointer-events:none}
+.city-radio-emission{opacity:.75;animation:city-radio-broadcast 6.8s ease-in-out infinite}
+.city-bluetooth{position:absolute;left:18.125%;top:7.894737%;width:7.125%;height:18.421053%;z-index:3;pointer-events:none}
+.city-bluetooth-emission{opacity:0}
+.city-bluetooth.connected .city-bluetooth-emission{opacity:.85;animation:city-bluetooth-link 4.8s ease-in-out infinite}
+@keyframes city-radio-broadcast{0%,100%{opacity:.45}35%,55%{opacity:1}}
+@keyframes city-bluetooth-link{0%,100%{opacity:.35}40%,60%{opacity:.95}}
 .city-frost{position:absolute;left:0;right:0;bottom:0;height:10%;background:linear-gradient(transparent,#d5e6eb20);pointer-events:none}
 .ambient-sky.sky-day[data-thermal=heat]{background:linear-gradient(170deg,#ece4d4,#d4d7c4 65%,#a3b1a5)}
 .city-heat-haze{position:absolute;inset:-55% -5% 8%;background:radial-gradient(ellipse at 50% 34%,#dba4654a,transparent 68%);animation:city-heat-shimmer 9s ease-in-out infinite alternate;pointer-events:none}
@@ -46,7 +48,7 @@
 .sky-thunder,.sky-thunder-hail{--storm-shade:#15222d}
 .sky-thunder::after,.sky-thunder-hail::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 37% 4%,#c9dbe9,transparent 65%);opacity:0;animation:weather-distant-lightning 31s 7s ease-in-out infinite;pointer-events:none;z-index:0}
 @keyframes weather-distant-lightning{0%,94%,100%{opacity:0}96%{opacity:.14}98%{opacity:0}}
-.ambient-sky::before{content:'';position:absolute;inset:48% -10% 0;background:linear-gradient(transparent,#aab9bd90);opacity:var(--ground-haze,0);transition:opacity 900ms ease;z-index:2;pointer-events:none}
+.ambient-sky::before{content:'';position:absolute;inset:48% -10% 0;background:linear-gradient(transparent,#aab9bd90);opacity:var(--ground-haze,0);transition:opacity 900ms ease;z-index:0;pointer-events:none}
 .city-diorama[data-animate=false] *{animation-play-state:paused!important}
 .scene-warning-illustration{position:absolute;inset:0;pointer-events:none;z-index:2}
 .warning-tornado{position:absolute;width:82px;height:172px;left:76%;bottom:65px;opacity:.55}
@@ -57,6 +59,6 @@
 .warning-flood img{width:100%;height:100%;object-fit:fill;animation:warning-water 9s ease-in-out infinite alternate}
 @keyframes warning-water{from{transform:translateX(-1%)}to{transform:translateX(1%)}}
 .warning-scene-caption{position:absolute;right:12px;bottom:8px;padding:4px 8px;border-radius:6px;background:#15242bdd;color:#e7e6d9;font-size:14px;line-height:18px}
-@media(prefers-reduced-motion:reduce){.city-diorama *,.weather-particle,.sky-thunder::after,.sky-thunder-hail::after{animation:none!important}.city-metro{display:none}.city-radio-emitter>i:first-child{opacity:.5;transform:none}.weather-particle{transform:translateY(var(--particle-still-y));opacity:.15}.sky-thunder::after,.sky-thunder-hail::after{display:none}}
+@media(prefers-reduced-motion:reduce){.city-diorama *,.weather-particle,.sky-thunder::after,.sky-thunder-hail::after{animation:none!important}.city-metro{display:none}.city-radio-emission{opacity:.8}.city-bluetooth.connected .city-bluetooth-emission{opacity:.85}.weather-particle{transform:translateY(var(--particle-still-y));opacity:.15}.sky-thunder::after,.sky-thunder-hail::after{display:none}}
 @media(prefers-reduced-motion:reduce){.warning-tornado img,.warning-flood img{animation:none}.warning-tornado img:first-child{opacity:1}.city-heat-haze{animation:none}}
 @media(prefers-reduced-motion:reduce){.ambient-sky::before,.ambient-sky .city-architecture,.ambient-sky .city-wifi{transition:none}}
