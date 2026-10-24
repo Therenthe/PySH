@@ -101,7 +101,7 @@ test('radio neon boundary: Off other styles local media hidden card and arrange 
 
 test('radio building target contains facade for every size with rail open, retracted and after idle',async({page},info)=>{
  const f=await fixture(page,info.project.name.endsWith('ro')?'ro':'en','night');await expect(neon(page)).toHaveAttribute('data-signal-status','ready');
- const aligned=async()=>{const n=(await neon(page).boundingBox())!,b=(await button(page).boundingBox())!;expect(b.x).toBeLessThanOrEqual(n.x+1);expect(b.y).toBeLessThan(n.y);expect(b.x+b.width).toBeGreaterThanOrEqual(n.x+n.width-1);expect(b.y+b.height).toBeGreaterThan(n.y+n.height);await target(button(page));};
+ const aligned=async()=>{await expect(async()=>{await advance(page,120);const n=(await neon(page).boundingBox())!,b=(await button(page).boundingBox())!;expect(b.x).toBeLessThanOrEqual(n.x+1);expect(b.y).toBeLessThan(n.y);expect(b.x+b.width).toBeGreaterThanOrEqual(n.x+n.width-1);expect(b.y+b.height).toBeGreaterThan(n.y+n.height);await target(button(page));}).toPass({timeout:3000,intervals:[50,100,200]});};
  for(const size of ['compact','balanced','large']){f.state.preferences.visualizerSize=size;await advance(page);for(const rail of ['retracted','open']){
   if(await page.locator('.app').getAttribute('data-navigation')!==rail){await page.locator('.navigation-toggle').tap();await advance(page,400);}
   await expect(page.locator('.app')).toHaveAttribute('data-navigation',rail);await aligned();await capture(page,`entry-alignment-${size}-${rail}`);

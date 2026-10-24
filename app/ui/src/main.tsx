@@ -82,7 +82,7 @@ function App(){
  const [homeEditing,setHomeEditing]=useState(false),[headerIdle,setHeaderIdle]=useState(false);
  const [choiceOpen,setChoiceOpen]=useState(false);
  const [cityEntry,setCityEntry]=useState<({scene:RadioEntryScene;phase:'loading'|'playing'|'leaving';id:number})|null>(null);
- const cityEntryLock=useRef(false),cityEntrySerial=useRef(0);
+ const cityEntryLock=useRef(false),cityEntrySerial=useRef(0),radioEntryFocus=useRef(false);
  const [homeAmbient,setHomeAmbient]=useState(false),[homeWakeEpoch,setHomeWakeEpoch]=useState(0);
  const ambientRef=useRef(false),wakeGesture=useRef<{pointers:Set<number>;key:string|null;click:boolean}>({pointers:new Set(),key:null,click:false});
  const [revisitSetup,setRevisitSetup]=useState(false);
@@ -133,6 +133,7 @@ function App(){
  const lang=hub.preferences.language||'en', t=(k:string)=>{const key=hub.appliance?({exit:'serviceMode',exitConfirm:'serviceConfirm',exitMessage:'serviceMessage',confirmExit:'enterService'} as Record<string,string>)[k]||k:k;return words[lang][key]||words.en[key]||key};
  const recoveryActive=!!cityEntry||!!hub.androidControl?.pending?.length||!!deleteSelection||deletePending||!!audioPending||!!audioFailure||!!btPending||!!btFailure||geoSaving||geoStatus==='loading'||!!geoFailure||!!ambientSaving||documentPending||localMediaPending||externalMediaPending||Object.keys(promptPending).length>0||Object.keys(promptFailure).length>0||!!favoritePending||!!favoriteFailure;
  useEffect(()=>{if(cityEntry&&(page!=='home'||homeEditing||revisitSetup||hub.serviceMode||hub.power?.standby||hub.bluetooth.prompts?.length||hub.androidControl?.pending?.length||modal||keyboard)){cityEntryLock.current=false;setCityEntry(null);}},[cityEntry,page,homeEditing,revisitSetup,hub.serviceMode,hub.power?.standby,hub.bluetooth.prompts?.length,hub.androidControl?.pending?.length,modal,keyboard]);
+ useEffect(()=>{if(page!=='radio'||!radioEntryFocus.current)return;radioEntryFocus.current=false;const frame=requestAnimationFrame(()=>{const target=document.querySelector<HTMLElement>('.radio-page .search-field');if(target&&!target.closest('[inert]'))target.focus({preventScroll:true});});return()=>cancelAnimationFrame(frame);},[page]);
  useEffect(()=>{
   let timer:number;
   const reset=()=>{clearTimeout(timer);if(page!=='home'&&!busy&&!recoveryActive&&!err&&!hub.serviceMode&&!revisitSetup&&hub.preferences.setupComplete&&hub.preferences.screensaverMinutes>0&&!video&&!keyboard&&!modal&&!choiceOpen&&!homeEditing&&!hub.bluetooth.prompts?.length)timer=window.setTimeout(()=>setScreensaver(true),hub.preferences.screensaverMinutes*60000)};
@@ -389,10 +390,11 @@ function App(){
  const saverStep=current.kind==='radio'?stationIndex>=0&&stationChoices.length>1:false;
  const currentPlaying=['playing','paused','buffering','connecting'].includes(current.state);
  const cityVisualizer=prefs.visualizerStyle==='wave'&&current.kind==='radio'&&!!current.url&&(prefs.homeCards||defaults.homeCards).includes('playback')&&!homeEditing&&!screensaver;
+ const arriveFromCity=()=>{radioEntryFocus.current=true;navigate('radio');};
  const enterRadioBuilding=()=>{
   if(cityEntryLock.current||page!=='home'||homeEditing||recoveryActive||busy||err)return;
   cityEntryLock.current=true;
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){navigate('radio');cityEntryLock.current=false;return;}
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){arriveFromCity();cityEntryLock.current=false;return;}
   const celestial=getCelestialScene(clock,prefs.location?.latitude,prefs.location?.longitude);
   setCityEntry({id:++cityEntrySerial.current,phase:'loading',scene:{night:celestial?.night??weatherIsNight(w.current?.is_day),darkSurface:effectiveTheme(clock,prefs,w)==='night',weather:sceneWeather(w.current?.weather_code,!!stale,w.current?.temperature_c,w.current?.wind_kmh,clock,prefs.location?.latitude),haze:sceneAtmosphere(w.current?.weather_code,!!stale,w.current?.visibility_m,w.current?.cloud_cover_pct).haze}});
  };
@@ -462,7 +464,7 @@ function App(){
   {video&&<LocalVideo key={video.path} item={video} t={t} audio={hub.audio} audioPending={audioControlsBusy} audioFeedback={audioPending||audioFailure?audioFeedback:undefined} onAudio={change=>audioAction(change)} onClose={()=>setVideo(null)}/>}
   {hub.bluetooth.prompts?.map((p:any)=>{const locked=promptLocks.current.has(p.id),blocked=locked||promptConsumed.current.has(p.id),pending=promptPending[p.id],failure=promptFailure[p.id];return <Modal recovery={audioFeedback} key={p.id} title={t('pairingRequest')} closeDisabled={blocked} onClose={()=>replyPrompt({id:p.id,accept:false})}><p className="modal-copy">{p.name||p.address} · {t('speakerPrompt')}</p>{p.value&&<div className="pair-code">{p.value}</div>}{pending&&<p role="status">{pending==='action'?(lang==='ro'?'Se trimite răspunsul…':'Sending reply…'):(lang==='ro'?'Răspuns trimis. Se verifică starea…':'Reply sent. Checking status…')}</p>}{failure&&<div role="alert" className="network-feedback"><p>{promptStateText(failure)}</p><button className="outline" disabled={locked} onClick={()=>retryPrompt(p.id)}>{t('retry')}</button></div>}{['pin_code','passkey'].includes(p.kind)&&<button className="setting-value pairing-input" disabled={blocked} onClick={()=>askPrompt(p)}>{t('enterText')}<Icon name="plus"/></button>}<div className="dialog-actions"><button className="outline" disabled={blocked} onClick={()=>replyPrompt({id:p.id,accept:false})}>{t('reject')}</button>{!['pin_code','passkey'].includes(p.kind)&&<button className="primary" disabled={blocked} onClick={()=>replyPrompt({id:p.id,accept:true})}>{t('accept')}</button>}</div></Modal>})}
   {keyboard&&<Keyboard title={keyboard.title} initial={keyboard.value} password={keyboard.password} onCancel={()=>finishKeyboard(keyboard,null)} onSave={(v:string)=>finishKeyboard(keyboard,v)} t={t}/>}
-  {cityEntry&&page==='home'&&<RadioCityEntry key={cityEntry.id} scene={cityEntry.scene} language={lang} onPhase={phase=>setCityEntry(previous=>previous?{...previous,phase}:null)} onCancel={()=>{cityEntryLock.current=false;setCityEntry(null);}} onComplete={()=>{cityEntryLock.current=false;setCityEntry(null);navigate('radio');}}/>}
+  {cityEntry&&page==='home'&&<RadioCityEntry key={cityEntry.id} scene={cityEntry.scene} language={lang} onPhase={phase=>setCityEntry(previous=>previous?{...previous,phase}:null)} onCancel={()=>{cityEntryLock.current=false;setCityEntry(null);}} onComplete={()=>{cityEntryLock.current=false;setCityEntry(null);arriveFromCity();}}/>}
   {toast&&<div className="toast"><Icon name="check" size={17}/>{toast}</div>}{screensaver&&prefs.setupComplete&&!revisitSetup&&<ScreenSaver layout={prefs.screensaverLayout||'clock'} visualizer={prefs.visualizerStyle!=='off'?<AudioVisualizer style={prefs.visualizerStyle||'off'} canVisualize={current.state==='playing'&&!!hub.audio.ready&&!hub.audio.mute&&Number(hub.audio.volume)>0} language={lang}/>:undefined} time={formatTime} date={formatDate} language={lang} theme={effectiveTheme(clock,prefs,w)} player={{...current,station_name:radioStationName}} canPlay={!busy&&(miniPauses||miniCanPlay&&!!hub.audio.ready)} canPrevious={!busy&&!!hub.audio.ready&&(current.kind==='radio'?saverStep:!!current.canPrevious)} canNext={!busy&&!!hub.audio.ready&&(current.kind==='radio'?saverStep:!!current.canNext)} onPlayPause={miniTransport} onPrevious={()=>current.kind==='radio'?changeStation(-1):playerAction('previous')} onNext={()=>current.kind==='radio'?changeStation(1):playerAction('next')} onWake={()=>setScreensaver(false)}/>}
  </main>;
 

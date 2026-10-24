@@ -54,6 +54,14 @@ the live-sky sibling, explicitly outranks the manually dark daytime city layer,
 and releases the movie against the destination theme background rather than
 flashing the Home sky. The prepared first candidate was never activated.
 
+R2's independent usability and keyboard/modal reviews found no blocker. Their
+minor observations were polished before device delivery: loading now clears
+the old Home header beneath its action row, and successful/error/skip/reduced
+handoff moves focus into Radio without opening the keyboard. Cancel still
+restores the building trigger. The remaining legacy geometry assertion sampled
+an intermediate rail/ResizeObserver frame; R3 waits for settled containment,
+retaining exact facade bounds and minimum48px checks instead of weakening them.
+
 Cold TypeScript/Vite, structure/package checks PASS;650 Python PASS /32 platform
 skips and82 extension PASS. No global quality score or full product acceptance
 is claimed. Raw frames, probes, captures and device operations remain private.
