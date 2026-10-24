@@ -9,7 +9,7 @@ export function createMeteor(id:number,rng:()=>number=random):Meteor{
  const distance=170+rng()*250,speed=175+rng()*205,radians=angle*Math.PI/180;
  return {id,left:right?8+rng()*45:42+rng()*53,top:3+rng()*36,
   length:38+rng()*92,angle,dx:Math.cos(radians)*distance,dy:Math.sin(radians)*distance,
-  duration:distance/speed*1000,brightness:.38+rng()*.55,thickness:1+rng()*.9};
+  duration:distance/speed*1000,brightness:.68+rng()*.32,thickness:1+rng()*.9};
 }
 
 // Fresh, bounded decorative bursts, not a forecast of astronomical events.
