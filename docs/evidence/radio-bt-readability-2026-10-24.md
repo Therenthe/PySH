@@ -32,6 +32,14 @@ celestial state and the data-neon-night flag remain independent of UI theme.
 Card retreat/ambient wake and saved arrangements are unchanged: missing cards
 in the baseline were deliberately hidden by the requested idle behavior.
 
+The first exact-source browser run passed180 functional regressions, but its
+independent visual review rejected manual Night UI over actual daytime fog:
+the legacy whole-sky brightness filter still dimmed every emitted signal. A
+temporary inverse filter was also rejected. Sky/background and city scenery
+now have separate dimming layers; mounted service lights and measured neon
+remain outside them. Actual weather and day/night determination stay unchanged.
+The rejected runtime20e2ab5ceade was prepared only, never activated.
+
 Asset previews were independently reviewed at native size. Runtime/frozen-source
 checks and final actual-device evidence follow below after their gates complete.
 This scoped change does not certify a global score or complete product release.

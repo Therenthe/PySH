@@ -21,6 +21,12 @@ for(const theme of ['ink','night'])for(const scene of [{name:'day-fog',day:true,
  const geometry=await page.locator('.city-radio-tower,.city-bluetooth').evaluateAll(nodes=>nodes.map(node=>{const r=node.getBoundingClientRect(),css=getComputedStyle(node);return{x:r.x,y:r.y,w:r.width,h:r.height,z:Number(css.zIndex)};}));
  expect(geometry).toHaveLength(2);expect(geometry.every(r=>r.w>=20&&r.h>=25&&r.x>=0&&r.y>=0&&r.x+r.w<=800&&r.y+r.h<=480)).toBe(true);
  await expect(city).toHaveAttribute('data-beacon-palette',!scene.day||theme==='night'?'night':'day');
+ if(theme==='night'&&scene.day){
+  // Manual Night must dim scenery without dimming real service indicators.
+  // Their old common-ancestor filter passed state tests but erased the signs.
+  await expect(page.locator('.ambient-sky')).toHaveCSS('filter','none');await expect(page.locator('.ambient-scenery')).toHaveCSS('filter','brightness(0.4)');await expect(city).toHaveCSS('opacity','1');await expect(page.locator('.city-scenery')).toHaveCSS('opacity','0.8');
+  const attenuation=await page.locator('.city-signal-core').evaluateAll(nodes=>nodes.map(node=>{const chain=[];for(let parent:Element|null=node;parent;parent=parent.parentElement){const style=getComputedStyle(parent);if(style.filter!=='none'||Number(style.opacity)<1)chain.push({className:parent.className,filter:style.filter,opacity:style.opacity});if(parent.classList.contains('ambient-sky'))break;}return chain;}));expect(attenuation).toEqual([[],[]]);
+ }
  const assets=await page.locator('.city-radio-hardware,.city-bluetooth-hardware,.city-signal-core,.city-signal-ring').evaluateAll(nodes=>nodes.map(node=>{const image=node as HTMLImageElement;return{loaded:image.complete&&image.naturalWidth>0&&image.naturalHeight>0,src:image.getAttribute('src')};}));
  expect(assets).toHaveLength(10);expect(assets.every(asset=>asset.loaded&&asset.src?.includes('/ambient/city-beacon-')&&asset.src?.endsWith('-v2.png'))).toBe(true);
  if(scene.code===45){const haze=Number(await page.locator('.ambient-sky').getAttribute('data-haze'));expect(haze).toBeGreaterThan(.75);const mistZ=await page.locator('.city-ground-mist').evaluate(node=>Number(getComputedStyle(node).zIndex));expect(geometry.every(r=>r.z>mistZ)).toBe(true);expect(Number(await page.locator('.city-ground-mist').evaluate(node=>getComputedStyle(node).opacity))).toBeGreaterThan(0);}

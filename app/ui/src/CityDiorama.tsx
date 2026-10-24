@@ -18,16 +18,19 @@ export function CityDiorama({night,darkSurface=false,weather,radioPlaying=false,
  const palette=night||darkSurface?'night':'day';
  const emission=(service:'radio'|'bluetooth')=><><img className="city-signal-core" src={`/ambient/city-beacon-${service}-core-${palette}-v2.png`} alt="" draggable={false}/>{[1,2,3].map(ring=><img key={ring} className="city-signal-ring" data-ring={ring} style={{'--ring-order':ring-1} as CSSProperties} src={`/ambient/city-beacon-${service}-ring-${ring}-${palette}-v2.png`} alt="" draggable={false}/>)}</>;
  return <div ref={city} aria-hidden="true" className="ambient-city city-diorama" data-city-version="blender-v3" data-beacon-palette={palette} data-season={weather.season} data-thermal={weather.heat?'heat':'normal'} data-radio-emitting={radioPlaying} data-bluetooth={bluetoothPowered?(bluetoothConnected?'connected':'on'):'off'} data-wifi={wifiState} data-wifi-active={wifiState==='connected'&&wifiActive} data-animate={active&&inView} data-freezing={weather.freezing}>
-  {weather.heat&&<div className="city-heat-haze"/>}
-  <img className="city-architecture" src={`/ambient/gothic-city-${night?'night':'day'}-v3.png`} alt="" draggable={false}/>
+  <div className="city-scenery">
+   {weather.heat&&<div className="city-heat-haze"/>}
+   <img className="city-architecture" src={`/ambient/gothic-city-${night?'night':'day'}-v3.png`} alt="" draggable={false}/>
+   <div className="city-metro-track"><img className="city-metro" src="/ambient/metro-v2.png" alt="" draggable={false}/></div>
+   <div className="city-ground-mist"/>
+   {weather.freezing&&<div className="city-frost"/>}
+  </div>
   {visualizeRadio&&<RadioBuildingNeon night={night} darkSurface={darkSurface} enabled={radioCanVisualize} active={active&&inView}/>}
   <div className="city-wifi" aria-hidden="true">
    <img className="city-wifi-hardware" src={`/ambient/city-wifi-${night?'night':'day'}-v1.png`} alt="" draggable={false}/>
    <img className="city-wifi-emission" src="/ambient/city-wifi-emission-v1.png" alt="" draggable={false}/>
    <i className="city-wifi-lamp"/>
   </div>
-  <div className="city-metro-track"><img className="city-metro" src="/ambient/metro-v2.png" alt="" draggable={false}/></div>
-  <div className="city-ground-mist"/>
   <div className="city-radio-tower">
    <img className="city-radio-hardware" src={`/ambient/city-beacon-radio-hardware-${palette}-v2.png`} alt="" draggable={false}/>
    {radioPlaying&&<div className="city-radio-emitter"><div className="city-radio-emission">{emission('radio')}</div></div>}
@@ -36,7 +39,6 @@ export function CityDiorama({night,darkSurface=false,weather,radioPlaying=false,
    <img className="city-bluetooth-hardware" src={`/ambient/city-beacon-bluetooth-hardware-${palette}-v2.png`} alt="" draggable={false}/>
    <div className="city-bluetooth-emission">{emission('bluetooth')}</div>
   </div>}
-  {weather.freezing&&<div className="city-frost"/>}
  </div>;
 }
 

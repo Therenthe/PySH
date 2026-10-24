@@ -39,10 +39,10 @@ export function AmbientSky({code,isDay,darkSurface=false,stale,visibility,cloudC
  const moonVisible=!!(openSky&&celestial?.moon.visible);
  const weather=sceneWeather(code,stale,temperature,wind,instant,latitude);
  return <div className={`ambient-sky ${known?(night?'sky-night':'sky-day'):'sky-neutral'} sky-${category}`} data-thermal={weather.heat?'heat':'normal'} data-haze={atmosphere.haze.toFixed(3)} data-sky-cover={atmosphere.cloudCover} style={{'--ground-haze':atmosphere.haze,'--city-visibility':1-atmosphere.haze*.25,'--sky-transmission':atmosphere.transmission} as CSSProperties} aria-hidden="true">
- {night&&openSky&&<BlenderStars/>}
+  <div className="ambient-scenery">{night&&openSky&&<BlenderStars/>}
 
  {openSky&&celestial&&[celestial.sun,celestial.moon].map((body,index)=>body.visible&&(index?night:!night)&&<div key={index} className="celestial-anchor" data-celestial-body={index?'moon':'sun'} data-altitude={body.altitude.toFixed(4)} data-azimuth={body.azimuth.toFixed(4)} style={{left:`${body.x}%`,top:`${body.y}%`}}>{index?<BlenderMoon now={instant}/>:<BlenderSun/>}</div>)}<Meteors enabled={night&&openSky}/><AmbientEvents enabled={known&&(aircraft||lunarDust)} aircraft={aircraft} night={night} moonVisible={moonVisible&&category==='clear'} moonPosition={celestial?.moon} lunarDust={lunarDust}/>{known&&<BlenderClouds night={night} condition={category} cover={atmosphere.cloudCover}/>}<ScenePrecipitation weather={weather}/>
- <SceneWarningIllustration alerts={weatherAlerts} now={instant} language={language}/><CityDiorama night={night} darkSurface={darkSurface} weather={weather} radioPlaying={radioPlaying} visualizeRadio={visualizeRadio} radioCanVisualize={radioCanVisualize} bluetoothPowered={bluetoothPowered} bluetoothConnected={bluetoothConnected} wifiState={wifiState} wifiActive={wifiActive}/>
+  <SceneWarningIllustration alerts={weatherAlerts} now={instant} language={language}/></div><CityDiorama night={night} darkSurface={darkSurface} weather={weather} radioPlaying={radioPlaying} visualizeRadio={visualizeRadio} radioCanVisualize={radioCanVisualize} bluetoothPowered={bluetoothPowered} bluetoothConnected={bluetoothConnected} wifiState={wifiState} wifiActive={wifiActive}/>
 
  </div>;
 }

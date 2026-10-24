@@ -18,7 +18,7 @@
 .ambient-rain{position:absolute;inset:0;background:repeating-linear-gradient(110deg,transparent 0 42px,#adc2d722 43px 44px,transparent 45px 90px);opacity:.45}
 .ambient-snow{position:absolute;inset:0;background-image:radial-gradient(circle,#fff9 1px,transparent 2px);background-size:47px 53px;opacity:.5}
 .ambient-city{position:absolute;bottom:0;left:0;width:100%;height:115px;color:#203735;opacity:.33}
-.app[data-theme=night] .ambient-sky:not(.sky-night){filter:brightness(.55)}
+.ambient-scenery{position:absolute;inset:0;background:inherit;pointer-events:none}
 .app[data-theme=night] .ambient-city{color:#03090e;opacity:.8}
 .app>.ambient-sky.sky-night .ambient-city{color:#050b12;opacity:1}
 .app>.ambient-sky.sky-night .ambient-city .city-backdrop{fill:#2a4153;opacity:.48}
@@ -172,7 +172,11 @@
 .app .topbar{background:var(--bg)}
 .app>.home-layout-toolbar{position:fixed;z-index:30;top:0;left:70px;right:8px;min-height:58px}
 .app .topbar-idle .icon-button{background:transparent}
-.app[data-theme=night]>.ambient-sky:not(.sky-night){filter:brightness(.4)}
+/* Dim scenery for a manually dark UI; emitted signals keep their own palette. */
+.app[data-theme=night]>.ambient-sky:not(.sky-night){filter:none}
+.app[data-theme=night]>.ambient-sky:not(.sky-night)>.ambient-scenery{filter:brightness(.4)}
+.app[data-theme=night]>.ambient-sky:not(.sky-night)>.city-diorama{opacity:1}
+.app[data-theme=night]>.ambient-sky:not(.sky-night) .city-scenery{filter:brightness(.4);opacity:.8}
 .app .ambient-home .playback-caption .eyebrow,.app .ambient-home .playback-caption .player-state{line-height:17px}
 .app .ambient-home .playback-source{line-height:22px;margin:2px 0}
 .app .ambient-home .playback-metadata{line-height:17px;margin:1px 0 0}
