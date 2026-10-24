@@ -415,7 +415,7 @@ function App(){
  const changeStation=(direction:number)=>{if(stationIndex>=0&&stationChoices.length>1)return playStation(stationChoices[(stationIndex+direction+stationChoices.length)%stationChoices.length])};
  const saverStep=current.kind==='radio'?stationIndex>=0&&stationChoices.length>1:false;
  const currentPlaying=['playing','paused','buffering','connecting'].includes(current.state);
- const cityVisualizer=prefs.visualizerStyle==='wave'&&current.kind==='radio'&&!!current.url&&(prefs.homeCards||defaults.homeCards).includes('playback')&&!homeEditing&&!screensaver;
+ const cityVisualizer=prefs.visualizerStyle==='wave'&&current.kind==='radio'&&!!current.url&&!homeEditing&&!screensaver;
  const arriveFromCity=(destination:CityDestination)=>{
   cityReturnFocus.current=destination;
   const targetPage=destination==='radio'?'radio':destination==='media'?'media':'settings';

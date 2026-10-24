@@ -91,7 +91,7 @@ test('radio neon boundary: Off other styles local media hidden card and arrange 
  await expect(neon(page)).toBeVisible();f.state.preferences.visualizerStyle='bars';await advance(page);await expect(neon(page)).toHaveCount(0);await expect(page.locator('.ambient-home .audio-visualizer[data-signal-style=bars]')).toBeVisible();
  f.state.preferences.visualizerStyle='off';await advance(page);await expect(neon(page)).toHaveCount(0);await expect(page.locator('.ambient-home .audio-visualizer')).toHaveCount(0);
  f.state.preferences.visualizerStyle='wave';f.state.player.kind='audio';f.state.player.title='Fixture track';await advance(page);await expect(neon(page)).toHaveCount(0);await expect(page.locator('.ambient-home .audio-visualizer[data-signal-style=wave]')).toBeVisible();
- f.state.player.kind='radio';f.state.preferences.homeCards=['weather','forecast'];await advance(page);await expect(neon(page)).toHaveCount(0);await expect(button(page)).toBeVisible();
+ f.state.player.kind='radio';f.state.preferences.homeCards=['weather','forecast'];await advance(page);await expect(neon(page)).toBeVisible();await expect(page.locator('.ambient-dock')).toHaveCount(0);await expect(button(page)).toBeVisible();
  f.state.preferences.homeCards=['weather','forecast','playback'];await advance(page);await expect(neon(page)).toBeVisible();
  await page.locator('.navigation-toggle').tap();await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'home');await page.getByRole('button',{name:ro?'Aranjează Acasă':'Arrange Home',exact:true}).tap();await expect(page.locator('.ambient-home')).toHaveAttribute('data-layout-editing','true');await expect(neon(page)).toHaveCount(0);await expect(page.locator('[data-layout-handle=visualizer]')).toBeVisible();await expect(page.locator('.ambient-home .audio-visualizer[data-signal-style=wave]')).toBeVisible();await capture(page,'neon-arrange-legacy-anchor');
  await page.getByRole('button',{name:ro?'Gata':'Done',exact:true}).tap();await expect(page.locator('.ambient-home')).toHaveAttribute('data-layout-editing','false');await expect(neon(page)).toBeVisible();expect(JSON.stringify(f.state.preferences.homePositions)).toBe(saved);expect(f.actions.filter(action=>action.path==='/api/preferences'&&action.body.homePositions)).toHaveLength(1);expect(f.actions.find(action=>action.path==='/api/preferences'&&action.body.homePositions).body.homePositions).toEqual(f.positions);
@@ -107,4 +107,17 @@ test('radio building target contains facade for every size with rail open, retra
   await expect(page.locator('.app')).toHaveAttribute('data-navigation',rail);await aligned();await capture(page,`entry-alignment-${size}-${rail}`);
  }}
  await page.locator('.navigation-toggle').blur();await advance(page,31000);await aligned();await capture(page,'entry-alignment-ambient');
+});
+
+for(const theme of ['ink','night'])test(`radio facade ${theme}: hidden playback card preserves measured colored neon`,async({page},info)=>{
+ const f=await fixture(page,info.project.name.endsWith('ro')?'ro':'en',theme);
+ await expect(neon(page)).toHaveAttribute('data-signal-status','ready');
+ f.state.preferences.homeCards=['weather','forecast'];await advance(page);
+ await expect(page.locator('.ambient-dock')).toHaveCount(0);
+ await expect(neon(page)).toHaveAttribute('data-signal-status','ready');await expect(zones(page)).toHaveCount(8);
+ await zones(page).evaluateAll(nodes=>Promise.all(nodes.map(n=>(n as HTMLImageElement).decode())));
+ expect((await opacities(page)).some(value=>value>0)).toBe(true);
+ await advance(page,31000);await expect(page.locator('.app')).toHaveAttribute('data-home-phase','ambient');
+ await expect(neon(page)).toBeVisible();await capture(page,`neon-hidden-card-${theme}`);
+ expect(f.state.preferences.homeCards).toEqual(['weather','forecast']);expect(f.actions).toEqual([]);
 });
