@@ -64,3 +64,13 @@ the candidate fix as installed or grant a new native UI/product acceptance.
 This file records a candidate change. Final installed build, UI state and native
 provider confirmation are recorded by the serial delivery owner after deployment.
 Whole-product acceptance remains OPEN.
+
+## Installed recovery
+
+Runtime `ca9ff15300c7`, published source `aa2f5e07db7fe2debd9c3ea942632a7ebab7501e`,
+was installed with a verified separate-PC backup. Actual kiosk API returned
+`available`, no error, no partial result and zero applicable alerts, updated
+at13:35:53UTC. The native Home capture no longer has the unavailable warning
+trigger. No TLS/source/parser/location/cache guard was relaxed. An active
+severe-weather event was not observed live; isolated CAP cases remain fixture
+evidence. Full product acceptance stays OPEN.

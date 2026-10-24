@@ -1,7 +1,9 @@
 import {openSettingsSection} from './settings-navigation';
 import {expect,type Page} from '@playwright/test';
-export async function settingsFixture(page:Page,language:'en'|'ro',theme:'ink'|'night',time='2026-10-03T12:04:00Z'){
- await page.clock.install({time:new Date(time)});
+export async function settingsFixture(page:Page,language:'en'|'ro',theme:'ink'|'night',time='2026-10-03T12:04:00Z',pauseClock=false){
+ // Boundary tests opt into a paused clock so setup wall time cannot cross sunrise or sunset.
+ await page.clock.install({time:new Date(Date.parse(time)-(pauseClock?1000:0))});
+ if(pauseClock)await page.clock.pauseAt(new Date(time));
  const station={uuid:'11111111-1111-4111-8111-111111111111',name:'Radio retained',url:'https://radio.example.org/retained'};
  const state:any={preferences:{language,theme,setupComplete:true,nightEnabled:false,nightMode:'solar',nightStart:'22:00',nightEnd:'07:00',screensaverMinutes:0,timezone:'Europe/Bucharest',location:{name:'București · Sector 5',latitude:44.4,longitude:26.07},lastStation:station,favorites:[],accent:'sage'},network:{available:true,state:'connected'},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{kind:'radio',state:'playing',url:station.url,station_name:station.name,title:'Retained song'},weather:{timezone:'Europe/Bucharest',stale:false,current:{temperature_c:13,is_day:1,weather_code:0},daily:[{date:'2026-10-03',sunrise_epoch:1791000900,sunset_epoch:1791042600}]} };
  // Provider UTC epochs: 2026-10-03 04:15Z / 15:50Z (07:15 /18:50 Bucharest).

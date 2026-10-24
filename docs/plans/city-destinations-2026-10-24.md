@@ -23,10 +23,10 @@ astronomy, network/SSH and the private loopback test viewer.
 - [x] Export lightweight transparent-sky day/night movies and grounded city assets.
 - [x] Integrate five accessible, distinct destinations using one bounded lifecycle.
 - [x] Fix measured clock geometry and official alert transport root cause.
-- [ ] Run exact-source functional, visual and accessibility regression.
-- [ ] Publish and verify source/package, verify PC backup, install pinned candidate.
-- [ ] Verify native decoding/controls, live alerts, clock and ground composition.
-- [ ] Restore original state, close owned diagnostics, record evidence/proposals.
+- [x] Run exact-source functional, visual and accessibility regression.
+- [x] Publish and verify source/package, verify PC backup, install pinned candidate.
+- [x] Verify native decoding/controls, live alerts, clock and ground composition.
+- [x] Restore original state, close owned diagnostics, record evidence/proposals.
 
 ## Acceptance boundaries
 
@@ -39,3 +39,8 @@ Official warning failure stays distinct from a fresh empty official snapshot.
 Controlled warning fixtures are labelled; weather severity is never inferred
 from sky animation or WMO code. All full-product criteria remain OPEN until
 their own complete same-candidate acceptance, regardless of this scoped result.
+
+Delivered runtime `ca9ff15300c7`, source `aa2f5e0`. Full regression retains its
+1512PASS/8FAIL ledger; classified bounded retests and native evidence are in
+the linked report. Installed native checks pass without altering real weather.
+All full-product criteria remain OPEN.

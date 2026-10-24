@@ -48,6 +48,8 @@ for(const signal of ['off','bars']) for(const theme of ['ink','night']) for(cons
   await expect.poll(async()=>(await page.locator('.ambient-weather').boundingBox())!.width).toBeLessThanOrEqual(250);
   if(signal==='bars'){await expect(page.locator('.ambient-dock')).toBeHidden();await expect(page.locator('.ambient-visualizer')).toBeVisible();expect((await page.locator('.ambient-visualizer').boundingBox())!.height).toBe(64);await expect(page.locator('.signal-station img')).toBeVisible();}else{await expect(page.locator('.playback-toggle')).toBeVisible();await expect(page.locator('.playback-expand .radio-artwork img')).toBeVisible();}
   await page.screenshot({path:info.outputPath(`ambient-compact-${theme}-${scene}.png`)});
+  // A slow screenshot can cross Home's idle threshold; wake before a card gesture.
+  await page.touchscreen.tap(780,100);await expect(page.locator('.app')).toHaveAttribute('data-home-phase','interactive');
   await page.locator('.weather-heading').click();
   await expect(page.locator('.ambient-metrics')).toBeVisible();
   await page.locator('.ambient-forecast').click();await expect(page.locator('.forecast-day')).toHaveCount(5);

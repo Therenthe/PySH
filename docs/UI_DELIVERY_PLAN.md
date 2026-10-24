@@ -135,4 +135,4 @@ Corecția ulterioară cerută de utilizator: un singur simbol pentru ruta activ�
 
 ## Grounded city and approved destinations —24 October2026
 
-Candidate work, not installed acceptance: [tracked plan](plans/city-destinations-2026-10-24.md) and [evidence](evidence/city-destinations-2026-10-24.md). Includes viewport-centered clock, official-alert transport repair/modal idle guard, grounded rails/city edges and five canonical cinematic destinations. Further visual improvements remain proposals only.
+Installed bounded runtime `ca9ff15300c7`, source `aa2f5e0`: [tracked plan](plans/city-destinations-2026-10-24.md) and [evidence](evidence/city-destinations-2026-10-24.md). Includes viewport-centered clock, official-alert transport repair/modal idle guard, grounded rails/city edges and five canonical cinematic destinations. Native five-destination/return/decoder/transport checks pass; genuine official alerts available. Full regression1512/1520 PASS has eight classified failures and separate bounded retests. Complete product acceptance remains OPEN. Further visual improvements remain proposals only.

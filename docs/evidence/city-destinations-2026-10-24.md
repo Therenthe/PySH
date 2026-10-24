@@ -119,3 +119,100 @@ An independent12-case retest passed before the full rerun. The valid Wave tests
 for Arrange's temporary placeholder and local audio remain unchanged. Legacy
 movie expectations now address the actual city-entry-radio asset. Runtime layout
 preferences are neither rewritten nor reset by these test-only changes.
+
+## R4 complete regression and follow-up
+
+Pinned local source `8ae90254ced74f7f14e73027635b86dcc049454d`, tree
+`603a335707c394ddc5a233cabe54cfaf6af2c8f3`, runtime `ca9ff15300c7`.
+The complete1520-case run finished:1512PASS,8FAIL,0skipped,0flaky, zero retries.
+It is not reported as a clean full-suite pass. Independent focused follow-up
+classifies each failure and retains the original results.
+
+One ambient-home failure attempted to expand a card after the legitimate30s
+idle phase had hidden it. A test-only blank touch now explicitly returns to
+interactive before that action; every original assertion remains unchanged.
+All48 cases pass against the identical frozen R4 runtime, without retries.
+Two solar cases used a running fixture clock seeded only two seconds before
+sunset; setup consumed that margin. A save-recovery case lacked initial
+navigation readiness. Original10 bounded cases pass; six controlled-delay
+negative probes reproduce those errors. Test-only explicit clock/readiness
+preconditions then pass all10 cases and all six delayed probes, without
+changing any behavioral assertion. The three media failures reached the existing2.5s load guard: their Range
+requests received no response headers under the concurrent suite burst and
+were canceled. Captures show usable Radio after bounded fallback, rather than
+a stranded transition. The fourth trace shows Quick Controls already open
+while the input driver exceeded its5s acknowledgement budget. All four original
+cases pass unchanged in a single-worker, zero-retry bounded run (21.1s).
+These separate results do not turn the original1512/8 ledger into1520/1520.
+
+The candidate's published source is `aa2f5e07db7fe2debd9c3ea942632a7ebab7501e`,
+verified public tree `bba2bba52dd64f19f785195122fc8f405f5ec39c`:722 blobs,
+including719 nonexcluded local files and three retained operational documents.
+Five existing private operational-document exclusions remain unchanged.
+The180-file archive is staged and the separate PC backup is checksum/content
+verified; staging does not certify installation or native behavior.
+
+## Installed R4 candidate
+
+The source branch was advanced with an expected-head lease, without force.
+Preparation verified archive bytes, exact180 runtime files, and a readable
+checksum/content-verified backup on the separate PC before activation.
+Activation installed `ca9ff15300c7` with published source `aa2f5e07db7fe2debd9c3ea942632a7ebab7501e`.
+The previous `eaa8c82585e4` is retained. All180 installed hashes and29 preferences
+match; Ethernet identity, gateway pointer/files and both services are unchanged.
+The previously playing radio was resumed and its progress/output readiness
+verified. This is runtime delivery, not flashing or a full product release.
+Native destination/decoder/provider proof is recorded separately below.
+
+## Native kiosk verification and restoration
+
+All five actual day movies completed naturally on the installed Raspberry,
+with the original real weather and saved preferences. Synthetic CDP touch
+verified canonical destination focus and focus on the originating building
+after returning Home. All20 natural/Cancel/Skip/reduced-motion route checks
+preserved radio identity/state, volume, mute and output readiness. Reduced
+motion opened directly with no new movie. A separately paused approach
+capture avoids screenshot overhead inside natural decoding measurements.
+
+| Destination | Elapsed ms | Frames | Dropped | Corrupt |
+| --- | ---: | ---: | ---: | ---: |
+| Media |2652.4|60|1|0|
+| Sound |2647.6|60|4|0|
+| Internet |2615.6|60|4|0|
+| Settings |2599.1|60|2|0|
+| Radio |2607.3|60|2|0|
+
+The physical viewport clock center measured399.992px. The bottom four native
+source rows are fully opaque, with both architecture/scenery computed opacity1.
+Actual provider state was `available`, no error/partial result, with zero
+applicable warnings and an update timestamp13:35:53UTC. This is a genuine empty
+snapshot, not certification of a live severe-weather alert; active warnings
+and night/movie combinations retain their separately labelled browser coverage.
+
+The first native attempt passed Media decoding/arrival but rejected the rounded
+48px navigation button because its transparent corners failed an overly strict
+rectangular hit probe. Original evidence is retained. The private harness now
+uses center/cardinal probes for rounded controls, while preserving48px bounding
+measurements and the original five-point facade probes. No product code changed.
+The subsequent complete native run passed.
+
+Cleanup restored the exact original preferences and radio, removed its owned
+service override and closed temporary browser debugging/SSH forwarding ports.
+A fresh Wayland frame after restoration was inspected at800×480. The preexisting
+read-only live viewer remains bound only to PC127.0.0.1:18765, without a public
+relay. Native CDP touch is not a new physical-finger/acoustic acceptance.
+
+## Proposals only
+
+Not implemented: weather-driven wet-road reflections; gradual window lighting
+at dawn/dusk; a short reverse camera journey when returning to the originating
+building. Each requires user agreement before a separate implementation.
+All30 complete product criteria remain OPEN; this bounded delivery does not
+claim a global10/10 visual score or completed product acceptance.
+
+A separate reviewer inspected the actual original Home, paused Media approach,
+finished Home and fresh post-restoration Wayland PNGs, all800×480, together
+with the native report/cleanup receipt. The bounded scene, edge/rail continuity,
+clock, no Home-layer leakage during approach, decoder and restoration checks
+were accepted. This does not certify new physical finger/audio observations
+or the complete application's unrelated open criteria.

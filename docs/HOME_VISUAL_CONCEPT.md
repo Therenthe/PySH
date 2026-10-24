@@ -24,7 +24,7 @@ din serial și nici o schimbare arbitrară a vremii reale.
 
 ## Informație și compoziție
 
-Ceasul este reperul principal din bara de sus. Data, conexiunea activă și accesul
+Ceasul este centrat pe viewportul fizic, independent de navigația laterală, și este reperul principal din bara de sus. Data, conexiunea activă și accesul
 la comenzi sunt secundare. Bara poate deveni transparentă după inactivitate,
 iar navigația din stânga este retractabilă.
 
@@ -76,8 +76,15 @@ păstrează vremea și corpurile cerești reale. Anulează revine Acasă, Omite 
 direct în Radio; mișcarea redusă elimină traversarea. Nu schimbă redarea audio.
 Randările locale800×480 înlocuiesc o scenă3D calculată în timp real pe Pi.
 
-Alte intrări sunt doar propuneri: cinematograf→Media, clădirea BT→Sunet și boxe,
-clădirea Wi-Fi→Internet și telefon, turn central→Setări. Nu au comenzi noi.
+Cele patru intrări aprobate completează Radio: cinematograf→Media, clădirea
+BT→Sunet și boxe, clădirea Wi-Fi→Internet și telefon, turn central→Setări.
+Fiecare folosește propriul parcurs Blender de2,5s, cu aceleași comenzi
+Anulează/Omite și destinațiile existente. La revenirea Acasă, focusul se
+întoarce la clădirea de origine. Mișcarea redusă deschide direct destinația.
+
+Orașul are bază opacă, șine și structură continuă dincolo de marginile scenei.
+Culeele din prim-plan acoperă intrarea și ieșirea metroului, iar roțile urmăresc
+nivelul șinelor. Atmosfera meteo rămâne un strat separat de suportul solid.
 
 ## Cer, vreme și teme
 
