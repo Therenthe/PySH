@@ -2,10 +2,10 @@
 
 Hub tactil EN/RO pentru Raspberry Pi 4 (4 GB), LCD DSI 7″, 800 × 480: ceas, vreme, radio, media locală și conectivitate.
 
-Ultimul lot instalat: `016160798d6f`, sursă `7db433b` — BT3D fără placa neagră
-și unde progresive. Neonul este condus de sunetul real; contrastul materialului
-de zi este încă în corecție după verificarea preferințelor originale.
-204 teste de browser,46 capturi independente și14 stări native documentate.
+Ultimul lot instalat: `3565bf558bc4`, sursă `dd08201` — BT3D fără placa neagră,
+unde progresive și tuburi radio Blender lizibile și pe fațada de zi. Intensitatea
+urmează sunetul real.42 retestări radio/BT,46 capturi independente și9 stări
+native cu preferințele originale; baza R3 are204 teste și14 stări native.
 [Dovezi](docs/evidence/radio-bt-readability-2026-10-24.md) ·
 [Conceptul vizual Home pentru specialist](docs/HOME_VISUAL_CONCEPT.md).
 

@@ -3,7 +3,7 @@
 The actual morning capture showed a black Bluetooth plate, faint radio arcs and
 no discernible facade visualization. Read-only diagnosis confirmed Wave and all
 three Home cards enabled, radio playing, output ready and unmuted. Measured PCM
-was healthy: peak about0.63–0.69, RMS0.22–0.28 and maximum temporal bin0.35–0.39.
+was healthy: peak about0.63â€“0.69, RMS0.22â€“0.28 and maximum temporal bin0.35â€“0.39.
 This was not missing data or an output-volume normalization problem.
 
 Day Wave multiplied square-root amplitude by0.22 and reused pale night colors.
@@ -59,7 +59,7 @@ do not change the installed runtime.
   overflow or API writes. Three phase probes retain visible cores and sequence
   all six rings. Controlled-night frames retain stars, Moon and a naturally
   scheduled meteor; those fixtures do not represent actual Pi weather.
-- Real installed Chromium:14 captures at800×480, actual daytime WMO45 fog,
+- Real installed Chromium:14 captures at800Ã—480, actual daytime WMO45 fog,
   connected Bluetooth and measured radio output. All six rings change opacity;
   facade amplitude changes reach0.702. Both themes keep the signal outside
   ancestor dimming. Facade touch opens controls; pause and mute extinguish
@@ -85,7 +85,7 @@ The final original-preference Ink/day-fog image exposed a remaining visual
 blocker: day circuits merged with the dark radio facade. The earlier native
 Night view could not certify this context. A second read-only observation of
 the unchanged original preferences sampled eight states: visible document,
-loaded day PNGs, ready/active signal, and maximum opacity0.56–0.68. Healthy
+loaded day PNGs, ready/active signal, and maximum opacity0.56â€“0.68. Healthy
 PCM and DOM state exclude a missing reader or lifecycle problem. Independent
 review found nearly-black tube pixels against dark masonry, whereas night
 tubes had much higher luminance. All preferences/playback were restored again.
@@ -98,3 +98,47 @@ R3's scoped visual
 gate remains OPEN for this daylight context until new actual native proof.
 Native CDP touch does not establish physical-finger/acoustic acceptance or
 sustained Pi performance. All30 complete product criteria remain OPEN.
+
+## Final R4 correction and installed result
+
+Runtime `3565bf558bc4`, GitHub production source
+`dd08201788dc3340d36f16bafae3053144c5317d`, public tree
+`8078318c0f42febb5efaa085cbc8572274ab8497`. Canonical local source
+`b72f4e296861a0561ffd07b1171bd1d1a7951a60`. Later documentation commits
+do not change this installed source.
+
+Exactly eight runtime files differ from R3: the day facade PNGs. JavaScript,
+CSS, backend, extension and other runtime files are byte-identical. Porcelain,
+cyan, violet and warm-gold materials with emission1.4 replace nearly-black tubes;
+the small local halo,45 closed meshes, camera/crop and real-amplitude logic are
+retained. Eight PNGs total18,244 encoded bytes /1,061,056 decoded RGBA.
+All45 render gates pass; nine original night source/asset hashes remain intact.
+
+R4 verification:
+
+- 42/42 targeted radio/beacon cases PASS and46 independently reviewed captures
+  across16 EN/RO/theme/weather contexts, no page errors, overflow or API writes.
+  Fixture text encoding is corrected in this matrix. The prior204-case R3 run
+  and14 native control states remain separately labelled as R3 evidence.
+- Original installed Ink preferences, actual daytime fog and real radio output:
+  nine native800Ã—480 captures, eight changing signal samples, loaded day PNGs
+  and clear mounted waveform bands. No preference/playback/weather mutation by
+  the observation script. Independent native review closes the daylight visual
+  finding; BT glyph and radio mast/arcs remain visible without a black housing.
+- The first native R4 probe incorrectly required every musical sample to exceed
+  opacity0.3; one quiet passage reached0.27. The private harness was corrected to
+  require an audible sample plus genuine variation. Unchanged runtime retest
+  PASS; no artificial amplitude floor or audio normalization was introduced.
+- PC backup checksum/contents verified;151 installed hashes and29 preferences
+  verified, previous runtime016160798d6f retained. Radio resumed, gateway and
+  Ethernet unchanged. Cleanup restores original preferences/playback and closes
+  both diagnostic ports. Existing viewer remains bound to PC127.0.0.1 only.
+- Cold TypeScript/Vite, source/package checks PASS. Backend/extension code is
+  unchanged from the650 Python PASS /32 platform skips and82 extension PASS.
+
+The two bounded visual findings are closed. Cards remain intentionally hidden
+in ambient mode and return on first touch; the city facade is the Wave radio
+visualizer. No global score, new physical-finger/acoustic acceptance, sustained
+performance acceptance or complete product release is claimed. All30 full
+product criteria remain OPEN. Private raw native evidence/backups stay outside
+GitHub; only this redacted account of the checks is published.
