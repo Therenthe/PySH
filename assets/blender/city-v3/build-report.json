@@ -72,5 +72,7 @@
   "encoded_bytes": 1050211,
   "rgba_decoded_bytes": 7296000,
   "builder_sha256": "2adf41909527bc3ddf0943a842e023ab1f7b6ce145fa7c3c8ad704300da52ed2",
-  "source_sha256": "df870081b01e0635f480ac82bd2c29c1f49ed4e3ecfe82ce23ce39d86351daa2"
+  "source_sha256": "df870081b01e0635f480ac82bd2c29c1f49ed4e3ecfe82ce23ce39d86351daa2",
+  "canonical_builder_sha256": "9591564c08bf644088f610f29037e7d51b35499ef6c025a5c87629362609c02f",
+  "builder_hash_note": "builder_sha256 records authoring checkout bytes; canonical_builder_sha256 records Git LF bytes."
 }

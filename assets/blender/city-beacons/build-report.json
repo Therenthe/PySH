@@ -85,5 +85,7 @@
   },
   "city_source_sha256": "de1780281dc2ca21a9492015dfedf46be8e14794641e12e32364af1771fe1a79",
   "builder_sha256": "c1fb833aeea619f6664386945a79017fde6454dd841137428bc70224075c5249",
-  "limits": "Offline orthographic hardware and emission sprites. Runtime state/lifecycle/pulse and native readability/performance remain integration acceptance."
+  "limits": "Offline orthographic hardware and emission sprites. Runtime state/lifecycle/pulse and native readability/performance remain integration acceptance.",
+  "canonical_builder_sha256": "c1fb833aeea619f6664386945a79017fde6454dd841137428bc70224075c5249",
+  "builder_hash_note": "builder_sha256 records authoring checkout bytes; canonical_builder_sha256 records Git LF bytes."
 }

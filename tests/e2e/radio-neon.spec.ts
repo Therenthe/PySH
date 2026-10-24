@@ -26,7 +26,12 @@ for(const theme of ['ink','night'])for(const day of [false,true])test(`radio neo
  await expect(neon(page)).toHaveAttribute('data-signal-status','ready');await expect(neon(page)).toHaveAttribute('data-neon-night',String(!day));await expect(zones(page)).toHaveCount(8);
  await zones(page).evaluateAll(nodes=>Promise.all(nodes.map(node=>(node as HTMLImageElement).decode())));
  expect(await zones(page).evaluateAll(nodes=>nodes.every(node=>{const image=node as HTMLImageElement;return image.naturalWidth>0&&image.naturalHeight>0&&image.src.includes('/ambient/');}))).toBe(true);
- const low=await opacities(page);f.sample.bars=Array.from({length:16},(_,i)=>i<8?.9:.4);f.sample.rms=.6;f.sample.peak=.9;await advance(page,1200);
+ const low=await opacities(page);
+ // Wait for this changed network sample and its rendered state. A long virtual
+ // jump can run the900ms fetch deadline before mocked response-body delivery.
+ const fresh=page.waitForResponse(async response=>{if(new URL(response.url()).pathname!=='/api/audio/visualization'||!response.ok())return false;const sample=await response.json().catch(()=>null);return sample?.available===true&&sample?.peak===.9&&sample?.bars?.[0]===.9;});
+ f.sample.bars=Array.from({length:16},(_,i)=>i<8?.9:.4);f.sample.rms=.6;f.sample.peak=.9;await advance(page,200);await fresh;
+ await expect(neon(page)).toHaveAttribute('data-signal-status','ready');await expect.poll(async()=>Math.max(...await opacities(page))).toBeGreaterThan(day?.18:.8);
  const high=await opacities(page);expect(Math.max(...high)).toBeLessThanOrEqual(day?.22:1);if(!day)expect(Math.max(...high)).toBeGreaterThan(.8);expect(high.some((value,i)=>value>low[i]+.02)).toBe(true);expect(new Set(high.map(value=>value.toFixed(3))).size).toBeGreaterThan(1);
  expect(await zones(page).evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).animationName==='none'))).toBe(true);
  await expect(page.locator('.ambient-home .audio-visualizer')).toHaveCount(0);await expect(button(page)).toHaveAccessibleName(/Fixture Radio/);await target(button(page));await capture(page,`neon-${theme}-${day?'day':'night'}-measured`);expect(f.actions).toEqual([]);
