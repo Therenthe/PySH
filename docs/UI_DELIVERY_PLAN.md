@@ -136,3 +136,12 @@ Corecția ulterioară cerută de utilizator: un singur simbol pentru ruta activ�
 ## Grounded city and approved destinations —24 October2026
 
 Installed bounded runtime `ca9ff15300c7`, source `aa2f5e0`: [tracked plan](plans/city-destinations-2026-10-24.md) and [evidence](evidence/city-destinations-2026-10-24.md). Includes viewport-centered clock, official-alert transport repair/modal idle guard, grounded rails/city edges and five canonical cinematic destinations. Native five-destination/return/decoder/transport checks pass; genuine official alerts available. Full regression1512/1520 PASS has eight classified failures and separate bounded retests. Complete product acceptance remains OPEN. Further visual improvements remain proposals only.
+
+## Solar windows, wet pavement and returns —24October2026
+
+Installed bounded runtime `aec5fbd53684`, production source `90426ab9`.
+Rain-only Blender reflections, gradual real solar-window banks and five outward
+journeys are verified. Native10 unheld clips/25 transport checks and independent
+visual/usability/keyboard evidence are recorded in
+[evidence](evidence/city-atmosphere-2026-10-24.md). The57px handoff and prompt
+focus defects were reproduced and repaired; complete product acceptance stays OPEN.

@@ -2,14 +2,14 @@
 
 Hub tactil EN/RO pentru Raspberry Pi 4 (4 GB), LCD DSI 7″, 800 × 480: ceas, vreme, radio, media locală și conectivitate.
 
-Ultimul lot instalat: `ca9ff15300c7`, sursă `aa2f5e0` — oraș cu bază și șine
-continue, cinci intrări Blender spre Media, Sunet, Internet, Setări și Radio.
-Ceasul este centrat pe ecran, iar alertele oficiale meteo răspund din nou.
-Pe Pi: toate cele cinci intrări, revenirea, Anulează/Omite și mișcarea redusă
-verificate; preferințele și radioul păstrate. Animații2,6s,60 cadre,1–4 pierdute,
-fără cadre corupte. Regresia completă1512/1520 PASS are opt eșecuri clasificate
-și retestate separat; nu este declarată1520/1520.
-[Dovezi și limite](docs/evidence/city-destinations-2026-10-24.md) ·
+Ultimul lot instalat: `aec5fbd53684`, sursă `90426ab9` — reflexii pe carosabil
+legate de ploaia reală, ferestre aprinse gradual la apus/răsărit și revenire
+cinematică din Media, Sunet, Internet, Setări și Radio. Traficul continuă înainte;
+ultimul cadru corespunde panoramei Acasă, fără salt de scară.
+Pe Pi:10 filme complete,60 cadre fiecare,0–3 pierdute, fără cadre corupte;
+25 verificări de transport/focus trecute. Preferințele și radioul sunt păstrate.
+Ploaia și tranzițiile solare controlate sunt testate separat de vremea reală.
+[Dovezi și limite](docs/evidence/city-atmosphere-2026-10-24.md) ·
 [Conceptul vizual Home pentru specialist](docs/HOME_VISUAL_CONCEPT.md).
 
 Vizualizatorul Undă este acum integrat în clădirea radio: circuite neon Blender

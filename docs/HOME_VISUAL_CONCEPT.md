@@ -116,3 +116,20 @@ cu lizibilitatea și răspunsul tactil. Criteriile de mai sus sunt obiective de
 analiză, nu o certificare globală 10/10. Verificările și limitele curente sunt în
 [dovezile orașului](evidence/city-v3-2026-10-24.md) și
 [vizibilitatea cerului](evidence/night-sky-visibility-2026-10-24.md).
+
+## Atmosfera orașului și întoarcerea
+
+Ferestrele sunt trei grupuri de lumină Blender separate de baza opacă. Se
+aprind și se sting treptat în jurul apusului/răsăritului real al locației; tema
+manuală nu le aprinde artificial la prânz. Fără date solare valide, numai
+calculul astronomic local cu coordonate valide poate furniza starea.
+
+Reflexiile calde și reci apar discret pe carosabil numai la ploaie actuală, cu
+intensitate adaptată precipitațiilor. Zăpada, gheața, datele lipsă sau expirate
+nu sunt prezentate ca o ploaie nouă. Baza și șinele rămân solide.
+
+Înapoi spre Acasă din clădirea de origine retrage camera timp de2,5s, în timp
+ce mașinile și pietonii continuă înainte. Proiecția finală corespunde exact
+panoramei Home. Anulează păstrează ecranul curent, Omite duce direct Acasă;
+mișcarea redusă elimină filmul. Focusul revine clădirii originale, inclusiv
+după întreruperi de siguranță tratate prin dialogurile de conectare.

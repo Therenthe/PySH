@@ -13,9 +13,9 @@ transparent raster layers and silent movies, no runtime Blender/WebGL.
 - [x] Author and visually compare aligned Blender window/reflection layers.
 - [x] Export camera-out journeys with actors moving forward and proper portals.
 - [x] Integrate weather/solar layers and all five canonical return paths.
-- [ ] Independent visual, usability and focus review on exact frozen source.
-- [ ] Publish/verify source, PC backup, install and native decode/restore checks.
-- [ ] Record evidence and close only this bounded goal.
+- [x] Independent visual, usability and focus review on exact frozen source.
+- [x] Publish/verify source, PC backup, install and native decode/restore checks.
+- [x] Record evidence and close only this bounded goal.
 
 Windows use current local-date sunrise/sunset with a30-minute smooth transition,
 staggered across three banks. Invalid/stale provider timing falls back only to
@@ -39,3 +39,13 @@ and repeat affected exact-source/movie/handoff gates.
 R2 also fixes a four-context prompt-withdrawal focus defect using local pending
 city focus; the shared dialog helper is unchanged. Public regression reproduces
 4/4 failures on R1 before the fix. Repeat exact-source reviews before delivery.
+
+Final candidate source1258e026, runtimeaec5fbd53684, published production
+source90426ab9. R3 prompt ownership8public/8private/12branchsmokes pass;52
+existing Android/focus regression cases pass.760 public source blobs verified.
+197 installed hashes/29 preferences and separate PC backup verified; native
+route/decode/real-atmosphere checks are running before bounded completion.
+
+Delivered final runtimeaec5fbd53684/source90426ab9. Native10clips/25checks and
+restoration pass, with original dry weather and solar-level1. Full scope evidence
+is linked above; complete application acceptance remains OPEN.

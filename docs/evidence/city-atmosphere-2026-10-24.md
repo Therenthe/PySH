@@ -119,3 +119,72 @@ focused and Escape unable to decide a pairing request. The local city pending
 focus now waits for either Bluetooth or Android prompt ownership to end.
 The shared hook implementation and all17 atmosphere resources remain unchanged.
 Existing four BT public tests are preserved and four Android tests extend them.
+
+## Installed R3 and native verification
+
+Final local source1258e026bad7f30d17cec5c9c399d1cac910b719, tree
+bf273d5358e02b5753317ff38ed401cc465d781b. Published production source
+90426ab9ae8b154ac49e4b7b8b9652c24c275cd8, tree1c53e8b95bb9fae9f72caa02c5f0af0404dca3aa,
+all760 public blobs verified against the complete expected catalog. Existing
+five private operational-document exclusions are retained. Runtime
+aec5fbd53684 contains197 verified files; separate-PC backup checksum AND
+readable contents verified before activation. Previous ca9ff15300c7 retained.
+All29 preferences, Ethernet identity and gateway files/pointer are unchanged;
+the originally playing radio was resumed and output/progress verified.
+
+R3 passes52/52 existing Android/focus browser regressions. Independent
+accessibility passes8 public regressions,8 private BT/Android ownership groups,
+12 selector branches and4 static focus checks. Both BT and Android findings
+are closed; no automatic pairing decision is introduced. Android dialog No
+focus, inert background, keyboard wrap and Escape-without-decision are observed.
+Independent comparison verifies68 UI modules and all137 ambient files unchanged
+from R2; only main and AndroidControl changed, shared hook unchanged.
+
+The R3 visual review passes8 representative captures, all inspected. It reuses
+R2's10 encoded movie/handoff and52-capture result through exact asset identity,
+with the two focus changes explicitly reviewed. One actual R3 handoff repeats
+y296/y296, mean silhouette error0.025px, maximum1px.
+
+On the actual kiosk, synthetic CDP touch completes five natural entry/exit pairs,
+five canceled outward shots, five skipped returns and five reduced-motion
+returns. Canonical destination/origin focus and25 transport checks pass.
+Natural decoding is measured without screenshots; a separate paused return
+frame provides visual evidence.
+
+| Destination | Direction | Elapsed ms | Frames | Dropped | Corrupt |
+| --- | --- | ---: | ---: | ---: | ---: |
+|media|enter|2618.5|60|1|0|
+|media|exit|2843.7|60|2|0|
+|audio|enter|2629.3|60|2|0|
+|audio|exit|2803.7|60|0|0|
+|network|enter|2646.9|60|3|0|
+|network|exit|2860.9|60|3|0|
+|settings|enter|2652.4|60|1|0|
+|settings|exit|2887.5|60|3|0|
+|radio|enter|2639.8|60|1|0|
+|radio|exit|2989.1|60|2|0|
+
+Native clock center399.992px; foundation source rows fully opaque and both
+architecture/scenery opacity1. Actual window source is solar, level1, with
+three banks; wet level0 matches real dry weather. No fake weather or clock
+was installed on the Pi for these checks. Rain intensity, dusk/dawn gradients
+and malformed/stale-weather variants are separately labelled local fixtures,
+not live severe-weather/physical observation. Alerts remain genuinely available
+with zero applicable records.
+
+Cleanup restores all original preferences and radio, removes the owned user
+service override, closes debugging/forwarding ports and external windows.
+A fresh post-restoration Wayland PNG is inspected at800×480. The preexisting
+private live viewer remains only on PC127.0.0.1:18765, without public relay.
+Original OS/storage/network/account profiles remain unchanged.
+
+This closes the approved three-effect scope, not complete product acceptance.
+All30 full-product criteria remain OPEN; synthetic touch and routing checks
+do not create a new physical-finger/acoustic/DRM or sustained-performance pass.
+
+A separate reviewer read the actual native report/cleanup and directly inspected
+the original Home, paused outward Media view, finished Home and fresh
+post-restoration800×480 frame. The bounded composition, continuous support,
+return staging, actual solar/dry state,10 natural decoders and restoration
+are accepted. This explicitly does not relabel local rain/gradient fixtures
+as actual live weather on the Raspberry.
