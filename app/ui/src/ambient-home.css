@@ -82,20 +82,20 @@
 @media(prefers-reduced-motion:reduce){.ambient-stars circle,.ambient-meteor{animation:none}.ambient-meteor{display:none}}
 
 /* Cards leave the sky visible after15s. Reopening renews their independent timer. */
-.app .ambient-home .ambient-weather{transition:width 300ms ease}
+.app .ambient-home .ambient-weather{transition:width var(--motion-panel,300ms) var(--motion-ease,ease)}
 .app .home-v2.ambient-home .ambient-weather.card-compact{width:min(250px,calc((100% - 124px)/2))}
 .app .ambient-home .weather-top .weather-heading{display:flex;flex-direction:column;align-items:flex-start;text-align:left;flex:1;min-width:0;width:auto;height:auto;min-height:48px;border:0;border-radius:8px;padding:0;background:transparent}
 .app .ambient-home .weather-location{display:block;max-width:100%;font-size:16px;line-height:1.2;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .app .ambient-home .ambient-weather.card-compact .ambient-weather-body{grid-template-columns:minmax(0,1fr)}
 .app .ambient-home .ambient-metrics[hidden]{display:none}
-.app .ambient-home .ambient-forecast{display:block;text-align:left;min-height:80px;transition:width 300ms ease;padding:7px 12px;cursor:pointer}
+.app .ambient-home .ambient-forecast{display:block;text-align:left;min-height:80px;transition:width var(--motion-panel,300ms) var(--motion-ease,ease);padding:7px 12px;cursor:pointer}
 .app .ambient-home .ambient-forecast.card-compact{width:186px}
 .app .ambient-home .ambient-forecast.card-compact .forecast-line{grid-template-columns:1fr}
 .app .ambient-home .ambient-forecast.card-compact .forecast-day{padding:0}
 .app .ambient-home .ambient-forecast.card-compact .weather-attribution{font-size:14px}
 .app .home-v2.ambient-home{grid-template-rows:minmax(176px,1fr) 84px auto}
 .app .home-v2.ambient-home.ambient-has-signal{grid-template-rows:minmax(160px,1fr) 80px 32px auto}
-.app .ambient-home .ambient-dock{width:100%;height:88px;align-self:end;justify-self:center;transition:width 300ms ease,height 300ms ease;align-items:center}
+.app .ambient-home .ambient-dock{width:100%;height:88px;align-self:end;justify-self:center;transition:width var(--motion-panel,300ms) var(--motion-ease,ease),height var(--motion-panel,300ms) var(--motion-ease,ease);align-items:center}
 .app .ambient-home .playback-expand{display:flex;align-items:center;gap:10px;min-width:0;min-height:64px;width:100%;padding:0;border:0;background:transparent;text-align:left;color:var(--ambient-text);border-radius:8px}
 .app .ambient-home .playback-expand .playback-copy{min-width:0;flex:1}
 .app .ambient-home .playback-expand .radio-artwork{width:48px;height:48px;flex:0 0 48px}
@@ -114,7 +114,7 @@
 @keyframes ambient-snowfall{from{background-position:0 0}to{background-position:15px 53px}}
 @media(prefers-reduced-motion:reduce){.app .ambient-home .ambient-weather,.app .ambient-home .ambient-forecast,.app .ambient-home .ambient-dock{transition:none}.ambient-clouds,.ambient-rain,.ambient-snow{animation:none}}
 .app .home-v2.ambient-home.ambient-has-signal{grid-template-rows:minmax(160px,1fr) 80px 48px auto}
-.app .ambient-home .ambient-visualizer{width:min(660px,100%);height:48px;min-height:48px;border:0;background:transparent;padding:0;position:relative;color:var(--ambient-text);border-radius:14px;transition:height 300ms ease}
+.app .ambient-home .ambient-visualizer{width:min(660px,100%);height:48px;min-height:48px;border:0;background:transparent;padding:0;position:relative;color:var(--ambient-text);border-radius:14px;transition:height var(--motion-panel,300ms) var(--motion-ease,ease)}
 .app .home-v2.ambient-home.playback-in-signal{grid-template-rows:minmax(176px,1fr) 80px 88px}
 .app .ambient-home.playback-in-signal .ambient-visualizer:not(.city-radio-control){height:88px;min-height:88px;padding-bottom:30px}
 .app .ambient-home.playback-in-signal .ambient-dock{display:none}
@@ -206,6 +206,7 @@
 /* Arrange works with the same compact footprints that remain after Done. */
 .app .ambient-home[data-layout-editing=true] .ambient-dock{display:grid}
 .app .ambient-home[data-layout-editing=true] .playback-expand{pointer-events:none}
+.app .ambient-home[data-layout-editing=true]{animation:none}
 .app .ambient-home[data-layout-editing=true] *{transition:none}
 /* The carrier is the leading point; its trail extends backward along the flight axis. */
 .ambient-meteor.meteor-transient{width:0;height:0;background:none;border:0;transform-origin:0 0;pointer-events:none;animation:meteor-flight var(--meteor-duration) linear both}
@@ -230,7 +231,7 @@
 .app[data-home-phase=ambient] .ambient-visualizer{pointer-events:none;cursor:default}
 @media(prefers-reduced-motion:reduce){.app[data-home-phase=ambient] .topbar{transition:none}}
 /* Fade the controls together, retaining their saved geometry throughout wake. */
-.app[data-home-phase] :is(.rail,.topbar-title,.topbar-right,.date-label,.ambient-weather,.ambient-forecast,.ambient-dock,.signal-station,.toast){opacity:1;transition:width 300ms ease,height 300ms ease,flex-basis 220ms ease,padding 220ms ease,opacity 220ms ease,visibility 0s}
+.app[data-home-phase] :is(.rail,.topbar-title,.topbar-right,.date-label,.ambient-weather,.ambient-forecast,.ambient-dock,.signal-station,.toast){opacity:1;transition:width var(--motion-panel,300ms) var(--motion-ease,ease),height var(--motion-panel,300ms) var(--motion-ease,ease),flex-basis 220ms ease,padding 220ms ease,opacity 220ms ease,visibility 0s}
 .app[data-home-phase=ambient] :is(.rail,.topbar-title,.topbar-right,.date-label,.ambient-weather,.ambient-forecast,.ambient-dock,.signal-station,.toast){opacity:0;transition-delay:0s,0s,0s,0s,0s,220ms}
 @media(prefers-reduced-motion:reduce){.app[data-home-phase] :is(.rail,.topbar-title,.topbar-right,.date-label,.ambient-weather,.ambient-forecast,.ambient-dock,.signal-station,.toast){transition:none}}
 
@@ -251,3 +252,30 @@
 .app .ambient-home[data-layout-editing=true] .ambient-visualizer{grid-column:1/-1;grid-row:2}
 .app .ambient-home[data-layout-editing=true] .ambient-dock{grid-column:1/-1;grid-row:3}
 .app[data-theme=ink] .ambient-home[data-layout-editing=true] .ambient-visualizer .home-drag-handle{color:var(--ink)}
+
+/* The options row is disclosed, so it never permanently covers compact grips. */
+.app>.home-layout-toolbar{display:block;padding:5px 8px;min-height:58px}
+.home-layout-primary,.home-layout-tools{display:flex;align-items:center;gap:8px;min-width:0}
+.home-layout-primary>span{flex:1;min-width:0;font-size:14px;line-height:18px}
+.home-layout-primary fieldset{border:0;margin:0;padding:0;min-width:0;flex:0 1 160px}
+.home-layout-primary .touch-choice-trigger{width:100%;max-width:160px}
+.home-layout-primary .touch-choice-trigger>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.home-layout-tools{padding-top:6px;flex-wrap:wrap}
+.home-layout-tools button{flex:1;white-space:nowrap}
+.app .home-layout-toolbar button[aria-pressed=true]{background:var(--accent-strong);color:var(--bg)}
+.home-layout-hint{font-size:14px;line-height:18px;margin:4px 0 0;color:var(--muted)}
+.app .ambient-home .home-alignment-guide{position:absolute;z-index:7;pointer-events:none;margin:0;border:0;background:var(--accent-strong);opacity:.65}
+.app .ambient-home .home-alignment-guide[data-axis=x]{top:0;bottom:0;width:1px}
+.app .ambient-home .home-alignment-guide[data-axis=y]{left:0;right:0;height:1px}
+.app .ambient-home .home-alignment-guide[data-snapped=true]{opacity:1}
+.app .ambient-home [data-layout-preview=true]{outline:2px dashed var(--accent-strong);outline-offset:-2px}
+.app .ambient-home[data-layout-editing=true] .home-drag-handle:disabled{visibility:hidden}
+
+.home-layout-tools[hidden]{display:none}
+@media(max-width:760px){.home-layout-primary>span{display:none}.home-layout-primary fieldset{flex:1}}
+
+.app .ambient-home :is([data-layout-preview=true],[data-layout-preview-companion=true]) :is(.mini-controls,.ambient-shortcuts,.weather-top .icon-button){visibility:visible}
+
+.app .home-layout-toolbar .home-layout-done{background:var(--accent);color:var(--accent-ink,var(--paper));border-color:var(--accent)}
+/* Inert previews retain live appearance without brightening genuinely unavailable actions. */
+.app .ambient-home :is([data-layout-preview=true],[data-layout-preview-companion=true]) button[data-layout-preview-enabled=true]:disabled{opacity:1}

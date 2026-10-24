@@ -33,7 +33,7 @@ for(const theme of ['ink','night'])test(`personalized Home ${theme}: idle header
   await page.getByRole('button',{name:ro?'Gata':'Done',exact:true}).tap();expect(state.preferences.homePositions[key]).toBeDefined();const saved={...state.preferences.homePositions[key]};await page.reload();await expect(page.locator(`[data-home-positioned=true]`)).toBeVisible();expect(state.preferences.homePositions[key]).toEqual(saved);
  }
  await page.locator('.main-nav button').nth(3).tap();await homeTab().tap();await page.getByRole('button',{name:ro?'Aranjează Acasă':'Arrange Home',exact:true}).tap();
- await page.getByRole('button',{name:ro?'Resetează':'Reset',exact:true}).tap();failSave=true;await page.getByRole('button',{name:ro?'Gata':'Done',exact:true}).tap();await expect(page.locator('.home-layout-toolbar [role=alert]')).toBeVisible();await expect(page.locator('[data-layout-editing=true]')).toBeVisible();
+ await page.getByRole('button',{name:ro?'Opțiuni':'Options',exact:true}).tap();await page.getByRole('button',{name:ro?'Resetează':'Reset',exact:true}).tap();failSave=true;await page.getByRole('button',{name:ro?'Gata':'Done',exact:true}).tap();await expect(page.locator('.home-layout-toolbar [role=alert]')).toBeVisible();await expect(page.locator('[data-layout-editing=true]')).toBeVisible();
  await page.getByRole('button',{name:ro?'Anulează':'Cancel',exact:true}).tap();expect(state.preferences.homePositions.visualizer).toBeDefined();
  await page.screenshot({path:info.outputPath(`personalized-layout-${theme}.png`)});
 });

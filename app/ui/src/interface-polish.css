@@ -81,3 +81,20 @@
  .app :is(.settings-tabs button,.touch-choice-options button,.media-sections button){transition:background-color 150ms ease,color 150ms ease}
 }
 .app.reduce-motion :is(.settings-tabs button,.touch-choice-options button,.media-sections button){transition:none}
+
+/* Shared interaction timings; scenery and measured audio retain their own timing. */
+.app{--motion-press:100ms;--motion-control:140ms;--motion-panel:220ms;--motion-ease:cubic-bezier(.2,.8,.2,1)}
+@media(prefers-reduced-motion:no-preference){
+ .app button{transition:background-color var(--motion-control) ease,border-color var(--motion-control) ease,box-shadow var(--motion-control) ease}
+ .app .main-nav::before{transition:transform var(--motion-panel) var(--motion-ease)}
+ .app .navigation-toggle{transition:left var(--motion-panel) var(--motion-ease),background-color var(--motion-control) ease}
+ .app .topbar{transition:background-color var(--motion-panel) ease,border-color var(--motion-panel) ease,color var(--motion-panel) ease}
+ .app .media-redesign :is(.media-item,.service-row){transition:background-color var(--motion-control) ease,transform var(--motion-press) ease}
+}
+.app button[data-pressed=true]:not(:disabled),.app .ambient-home [role=button][data-pressed=true]:not([aria-disabled=true]){box-shadow:inset 0 0 0 2px var(--accent-strong)}
+.app button[data-pressed=true]:not(:disabled){transition:none}
+.app .ambient-home[data-layout-editing=true] *{transition:none}
+@media(prefers-reduced-motion:reduce){
+ .app :is(button,.ambient-home [role=button],.rail,.navigation-toggle,.topbar,.main-nav::before,.ambient-weather,.ambient-forecast,.ambient-dock,.ambient-visualizer,.media-redesign .media-item,.media-redesign .service-row){transition:none;animation:none}
+ .app .media-redesign :is(.media-item,.service-row):active{transform:none}
+}
