@@ -1,24 +1,18 @@
 # PySH status
 
-Installed runtime34f8210d72fe; code source887fc97f70c289650b3763d4c5b19d7497ddc332.
-Previous8778974040f4 retained. Full product acceptance remains OPEN.
+Installed P1 runtime34f8210d72fe/code887fc97f; full product acceptance OPEN.
+Original Radio neon, Blender floating Explore names and common command surface
+are installed and natively verified. Five actual20minute label rounds complete.
 
-Original colored Radio neon and subtle Blender floating Explore names are
-installed; five real20minute design rounds are complete. The common command
-sheet now works in Hub and official service views: Home/Radio/Media, volume,
-mute, brightness and output. Existing-profile native worker/resources, three
-Return journeys, actual controls and Keyboard/focus/fullscreen were verified.
+P2 Radio is a verified-source candidate awaiting pinned native delivery:
+explicit Favorites/Discover, responsive genuine artwork, full paused identity,
+resolved-stream row selection and immediate collection contrast.28focused UI
+cases PASS; favorite/product regressions passed during integration.
 
-214runtime hashes/29preferences and the separate PCbackup were verified.
-Original preferences/audio/radio restored; debug ports closed. Earlier failed
-native settling and cleanup attempts remain documented, not hidden.
-
-- [Command surface evidence](docs/evidence/ui-ux-commands-2026-10-25.md)
-- [Labels evidence](docs/evidence/ui-ux-labels-2026-10-24.md)
+- [Radio evidence](docs/evidence/ui-ux-radio-2026-10-25.md)
+- [Command surface](docs/evidence/ui-ux-commands-2026-10-25.md)
 - [Approved plan](docs/plans/ui-ux-2026-10-24.md)
 
-Next: Radio hierarchy/logos, Home arrangement assistance, real Media metadata/
-Continue watching and consistent motion/feedback. Saved Home arrangements6
-remain excluded. No21:30 automation or public stream is active. Physical,
-audible, DRM and full stability acceptance remain separate; raw state/accounts/
-backups are private.
+Home arrangement assistance, real Media metadata/Continue watching and scoped
+motion/feedback remain pending. Proposal6 stays excluded; no21:30 automation
+or public screen stream. Raw state, accounts and backups remain private.

@@ -75,24 +75,31 @@ export function Radio(props: RadioProps) {
     <div className="radio-columns">
       <section className="station-list" aria-label={t('stations')}>
         <div className="radio-toolbar">
-          <button className="search-field" onClick={onSearch} disabled={busy} aria-label={t('searchStations')}>
-            {icon('search', 20)}<span>{query || t('searchStations')}</span>
-          </button>
+          <div className="radio-library-tabs" role="group" aria-label={ro ? 'Biblioteca radio' : 'Radio library'}>
+            <button className={`radio-library-tab favorites-filter ${favoritesOnly ? 'active' : ''}`} onClick={() => { if (!favoritesOnly) onFavoritesFilter(); }} aria-pressed={favoritesOnly} aria-label={t('favorites')}>
+              <FavoriteIcon filled={favoritesOnly}/><span>{t('favorites')}</span><small aria-hidden="true">{favorites.length}</small>
+            </button>
+            <button className={`radio-library-tab discover-filter ${!favoritesOnly ? 'active' : ''}`} onClick={() => { if (favoritesOnly) onFavoritesFilter(); }} aria-pressed={!favoritesOnly}>
+              {icon('search', 20)}<span>{ro ? 'Descoperă' : 'Discover'}</span>
+            </button>
+          </div>
+          <div className="radio-search-row">
+            <button className="search-field" onClick={onSearch} disabled={busy} aria-label={t('searchStations')}>
+              {icon('search', 20)}<span>{query || t('searchStations')}</span>
+            </button>
+            {!favoritesOnly && <button className="radio-refresh" aria-label={t('retry')} onClick={onRetry} disabled={busy || loading}>{icon('refresh', 18)}</button>}
+          </div>
           <div className="radio-filter-pills">
             <button className="filter-button" onClick={onCountry} disabled={busy}>{icon('globe', 16)}<span>{country || t('country')}</span></button>
             <button className="filter-button" onClick={onLanguage} disabled={busy}><span>{radioLanguage || t('language')}</span></button>
-            <button className={`filter-button favorites-filter ${favoritesOnly ? 'active' : ''}`} onClick={onFavoritesFilter} aria-pressed={favoritesOnly}>
-              <FavoriteIcon filled={favoritesOnly}/><span>{t('favorites')}</span><small>{favorites.length}</small>
-            </button>
-
+            {(query||country||radioLanguage)&&onClearFilters&&<button className="icon-button radio-clear-filters" onClick={onClearFilters} disabled={busy} aria-label={ro?'Șterge căutarea și filtrele':'Clear search and filters'}>{icon('close',18)}</button>}
           </div>
         </div>
-        <div className="list-head"><span>{favoritesOnly ? t('favorites') : t('stations')}</span><small>{items.length}</small>{(query||country||radioLanguage)&&onClearFilters&&<button className="icon-button radio-clear-filters" onClick={onClearFilters} disabled={busy} aria-label={ro?'Șterge căutarea și filtrele':'Clear search and filters'}>{icon('close',18)}</button>}{!favoritesOnly && <button className="radio-refresh" aria-label={t('retry')} onClick={onRetry} disabled={busy || loading}>{icon('refresh', 18)}</button>}</div>
         <div className={`scroll-list ${favoritesOnly ? 'radio-favorites' : ''}`} aria-busy={!favoritesOnly && loading}>
           {!favoritesOnly && loading ? <div className="empty-state" role="status">{t('loading')}</div>
             : !favoritesOnly && error ? <div className="empty-state" role="status">{icon('radio', 28)}<b>{ro ? 'Posturile nu sunt disponibile' : 'Stations unavailable'}</b><span>{ro ? 'Verifică rețeaua și încearcă din nou.' : 'Check the network and try again.'}</span><button className="outline" onClick={onRetry} disabled={busy}>{t('retry')}</button></div>
             : items.length ? items.map((station, index) => {
-              const selected = Boolean(isRadio && currentUrl && currentUrl === (station.url || station.url_resolved));
+              const selected = Boolean(isRadio && currentUrl && [station.url,station.url_resolved].includes(currentUrl));
               const favorite = isFavorite(station);
               return <div className={`station-row ${selected ? 'selected' : ''}`} key={station.stationuuid || station.uuid || station.url || `${station.name}-${index}`}>
                 <button className={`station-main ${favorite ? 'favorite-row' : ''}`} aria-label={`${t(isStationPausing(station) ? 'pause' : 'play')} · ${station.name}`} disabled={busy} onClick={() => onPlayStation(station)}>
@@ -103,8 +110,9 @@ export function Radio(props: RadioProps) {
                 <button className={`favorite-button ${favorite ? 'favorited' : ''}`} disabled={busy || favoriteBusy} aria-busy={favoriteBusy} onClick={() => onFavorite(station)} aria-label={`${favorite ? t('removeFavorite') : t('addFavorite')}: ${station.name}`} aria-pressed={favorite}><FavoriteIcon filled={favorite}/></button>
               </div>;
             }) : <div className={`empty-state ${favoritesOnly ? 'favorites-empty' : ''}`}>
-              {icon('radio', 28)}<b>{favoritesOnly ? t('favoritesEmpty') : t('noStations')}</b>
-              <span>{favoritesOnly ? (ro ? 'Atinge inima unui post pentru a-l păstra aici.' : 'Tap a station heart to save it here.') : t('searchHint')}</span>
+              {icon('radio', 28)}<b>{favoritesOnly && !favorites.length ? t('favoritesEmpty') : t('noStations')}</b>
+              <span>{favoritesOnly && !favorites.length ? (ro ? 'Atinge inima unui post pentru a-l păstra aici.' : 'Tap a station heart to save it here.') : t('searchHint')}</span>
+              {favoritesOnly && !favorites.length && <button className="outline radio-discover-action" onClick={onFavoritesFilter}>{ro ? 'Descoperă posturi' : 'Discover stations'}</button>}
               {!favoritesOnly && <button className="outline" onClick={onRetry} disabled={busy}>{t('retry')}</button>}
             </div>}
         </div>
@@ -112,11 +120,15 @@ export function Radio(props: RadioProps) {
       <section className="radio-side" aria-label={t('nowPlaying')}>
         <div className="mini-player">
           {!audioReady && <div className="radio-output-recovery"><small className="radio-output-warning">{ro ? 'Alege o ieșire audio pentru redare.' : 'Select an audio output to play.'}</small>{onOpenAudio&&<button className="outline radio-output-action" onClick={onOpenAudio}>{ro?'Alege boxa':'Choose speaker'}</button>}</div>}
-          {remembered&&<span className="radio-remembered">{ro ? 'Ultimul post' : 'Last station'}</span>}
-          <StationArtwork station={isRadio ? currentStation : null} name={isRadio ? stationName : ''} large />
-          <h2 className="radio-station-name"><MarqueeText text={title} active={playerState==='playing'}/></h2>
-          {metadata && <span className="radio-track-name"><MarqueeText text={metadata} active={playerState==='playing'}/></span>}
-          <small className={`state-text ${playerState}`} role="status">{!currentUrl&&!remembered?(ro?'Alege un post din listă.':'Choose a station from the list.'):status}</small>
+          <div className="radio-player-heading">
+            <StationArtwork station={isRadio ? currentStation : null} name={isRadio ? stationName : ''} large />
+            <div className="radio-player-copy">
+              {remembered&&<span className="radio-remembered">{ro ? 'Ultimul post' : 'Last station'}</span>}
+              <h2 className={`radio-station-name ${playerState==='playing' ? '' : 'is-static'}`}>{playerState==='playing' ? <MarqueeText text={title} active/> : title}</h2>
+              {metadata && <span className={`radio-track-name ${playerState==='playing'?'':'is-static'}`}>{playerState==='playing'?<MarqueeText text={metadata} active/>:metadata}</span>}
+              <small className={`state-text ${playerState}`} role="status">{!currentUrl&&!remembered?(ro?'Alege un post din listă.':'Choose a station from the list.'):status}</small>
+            </div>
+          </div>
           {visualizer && audioReady && <div className="radio-visualizer">{visualizer}</div>}
           <div className="player-controls">
             <button aria-label={ro ? 'Postul anterior' : 'Previous station'} disabled={busy || !isRadio || !canPrevious} onClick={onPrevious}>{icon('back', 20)}</button>
@@ -125,7 +137,7 @@ export function Radio(props: RadioProps) {
             <button aria-label={t('stop')} disabled={busy || !canStop} onClick={onStop}>{icon('stop', 17)}</button>
           </div>
           <div className="radio-volume">
-            <button aria-label={muted ? t('unmute') : t('mute')} aria-pressed={muted} disabled={busy || !audioReady} onClick={onMute}>{icon('speaker', 19)}</button>
+            <button aria-label={muted ? t('unmute') : t('mute')} aria-pressed={muted} disabled={busy || !audioReady} onClick={onMute}>{muted ? <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4zM17 9l5 6m0-6-5 6"/></svg> : icon('speaker', 19)}</button>
             <AudioVolume label={t('volume')} value={volume} disabled={busy || !audioReady} onChange={onVolume}/>
             <small className="radio-volume-value">{Math.round(Number.isFinite(volume) ? Math.max(0, Math.min(100, volume)) : 0)}%</small>
           </div>
