@@ -1,3 +1,4 @@
+import {openSettingsSection} from './settings-navigation';
 import {test,expect} from '@playwright/test';import {readFileSync} from 'node:fs';
 for(const theme of ['ink','night'])test(`weather attribution stays informational without external navigation ${theme}`,async({page},info)=>{
  const ro=info.project.name.endsWith('ro');const documents:string[]=[],popups:string[]=[];
@@ -10,7 +11,7 @@ for(const theme of ['ink','night'])test(`weather attribution stays informational
  await check();await page.screenshot({path:info.outputPath(`weather-no-link-expanded-${theme}.png`)});
  await page.clock.runFor(16000);await check();await page.screenshot({path:info.outputPath(`weather-no-link-compact-${theme}.png`)});
  await page.locator('.weather-heading').tap();await expect(page.locator('.weather-heading')).toHaveAttribute('aria-expanded','true');await check();
- await page.locator('.main-nav button').nth(3).tap();await page.locator('.settings-tabs button').filter({hasText:ro?'Vreme':'Weather'}).tap();
+ await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'weather');
  const credit=page.locator('.settings-panel .weather-source');await expect(credit).toContainText('Open-Meteo');await expect(credit).toContainText('CC BY 4.0');await expect(credit.locator('a,button,[role=button]')).toHaveCount(0);await expect(page.locator('.weather-provenance')).toContainText(ro?'rotunjește':'rounds');await credit.tap();expect(documents).toEqual([]);expect(popups).toEqual([]);
  await page.screenshot({path:info.outputPath(`weather-informational-credit-${theme}.png`)});
  await page.locator('.settings-tabs button').filter({hasText:ro?'Acasă':'Home'}).tap();await page.getByRole('button',{name:ro?'Aranjează Acasă':'Arrange Home',exact:true}).tap();await expect(page.locator('.ambient-home')).toHaveAttribute('data-layout-editing','true');await check();await page.getByRole('button',{name:ro?'Anulează':'Cancel',exact:true}).tap();

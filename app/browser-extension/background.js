@@ -114,13 +114,26 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
   if (!allowed(sender) || !message || typeof message !== 'object' ||
       Array.isArray(message) || Object.keys(message).length !== 1 ||
       !Object.hasOwn(message, 'action')) return;
-  if (message.action === 'return') {
+  if (['return', 'return-home', 'return-radio', 'return-media'].includes(message.action)) {
+    const target = message.action.slice(7);
     generation += 1;
-    keyboardWindow = undefined;
-    const oldPort = keyboardPort;
-    keyboardPort = undefined;
-    try { oldPort?.disconnect(); } catch {}
-    removeOwnedWindow(sender.tab.windowId).then(respond);
+    // Destination commands pass through our fixed native owner bridge before
+    // closing this owned window. An unacknowledged destination stays recoverable.
+    const returnToHub = async () => {
+      if (target) {
+        const destinationRequest = pending.then(() => keyboard(target));
+        pending = destinationRequest.then(() => undefined, () => undefined);
+        const destination = await destinationRequest;
+        if (!destination?.ok) return { ok: false, error: 'return_unavailable' };
+      }
+      generation += 1;
+      keyboardWindow = undefined;
+      const oldPort = keyboardPort;
+      keyboardPort = undefined;
+      try { oldPort?.disconnect(); } catch {}
+      return removeOwnedWindow(sender.tab.windowId);
+    };
+    returnToHub().then(respond).catch(() => respond({ ok: false, error: 'return_unavailable' }));
     return true;
   } else if (['status', 'show', 'hide'].includes(message.action)) {
     const requestedGeneration = generation;

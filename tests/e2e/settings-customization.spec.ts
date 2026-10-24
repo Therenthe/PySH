@@ -1,3 +1,4 @@
+import {openSettingsSection} from './settings-navigation';
 import {test,expect} from '@playwright/test';
 import {effectiveTheme} from '../../app/ui/src/themeSchedule';
 import {lunarPhase} from '../../app/ui/src/Moon';
@@ -27,12 +28,12 @@ for(const theme of ['ink','night'])test(`touch choices persist across clock/poll
  await page.getByRole('button',{name:ro?'Ascunde navigarea':'Hide navigation',exact:true}).tap();await page.clock.runFor(350);
  await expect.poll(()=>page.locator('.main-area').evaluate(el=>el.getBoundingClientRect().width)).toBeGreaterThan(width+100);
  await page.getByRole('button',{name:ro?'Arată navigarea':'Show navigation',exact:true}).tap();await page.clock.runFor(350);await expect.poll(()=>page.locator('.rail').evaluate(el=>el.getBoundingClientRect().width)).toBeGreaterThan(100);
- await page.locator('.rail button').filter({hasText:ro?'Setări':'Settings'}).click();
- const trigger=page.getByRole('button',{name:ro?'Vizualizare audio':'Audio visualization',exact:true});await trigger.scrollIntoViewIfNeeded();await trigger.tap();
+ await page.locator('.rail button').filter({hasText:ro?'Setări':'Settings'}).click();await openSettingsSection(page,'home');
+ await openSettingsSection(page,'visualizer');const trigger=page.getByRole('button',{name:ro?'Vizualizare audio':'Audio visualization',exact:true});await trigger.scrollIntoViewIfNeeded();await trigger.tap();
  const dialog=page.getByRole('dialog');await expect(dialog).toBeVisible();
  const old=await dialog.elementHandle();await page.clock.runFor(6200);await expect(dialog).toBeVisible();expect(await old?.evaluate(node=>node.isConnected)).toBe(true);
  await dialog.getByRole('radio',{name:ro?'Undă':'Wave',exact:true}).tap();await expect(dialog).toBeHidden();expect(state.preferences.visualizerStyle).toBe('wave');
- const timer=page.getByRole('button',{name:ro?'Ceas de repaus':'Clock screensaver',exact:true});await timer.scrollIntoViewIfNeeded();await timer.tap();await page.clock.runFor(3200);await dialog.getByRole('radio',{name:ro?'10 minute':'10 minutes',exact:true}).tap();expect(state.preferences.screensaverMinutes).toBe(10);
+ await openSettingsSection(page,'rest');const timer=page.getByRole('button',{name:ro?'Ceas de repaus':'Clock screensaver',exact:true});await timer.scrollIntoViewIfNeeded();await timer.tap();await page.clock.runFor(3200);await dialog.getByRole('radio',{name:ro?'10 minute':'10 minutes',exact:true}).tap();expect(state.preferences.screensaverMinutes).toBe(10);
  const layout=page.getByRole('button',{name:ro?'Aspect repaus':'Screensaver layout',exact:true});await layout.scrollIntoViewIfNeeded();await layout.tap();await dialog.getByRole('radio',{name:ro?'Doar vizualizator':'Visualizer only'}).tap();
  const preview=page.getByRole('button',{name:ro?'Previzualizează repausul':'Preview screensaver'});await preview.scrollIntoViewIfNeeded();await preview.tap();
  await expect(page.locator('.saver-full-signal .audio-visualizer svg')).toBeVisible();await expect(page.locator('.saver-clock')).toBeHidden();await expect(page.locator('.saver-home')).toBeHidden();

@@ -53,6 +53,9 @@ class Preferences(BaseModel):
     nightStart: str = Field(default="22:00", pattern=r"^(?:[01]\d|2[0-3]):[0-5]\d$")
     nightEnd: str = Field(default="07:00", pattern=r"^(?:[01]\d|2[0-3]):[0-5]\d$")
     screensaverMinutes: int = Field(default=5, ge=0, le=120)
+    screenBrightness: int = Field(default=100, ge=1, le=100, strict=True)
+    dailyStandbyEnabled: bool = Field(default=False, strict=True)
+    dailyStandbyTime: str = Field(default='23:00', pattern=r'^(?:[01]\d|2[0-3]):[0-5]\d$')
     visualizerStyle: Literal["off", "wave", "bars", "orbit", "ribbon", "mirror", "rings"] = "off"
     visualizerSize: Literal["compact", "balanced", "large"] = "compact"
     homeCards: list[Literal["weather", "forecast", "playback"]] = Field(default_factory=lambda:["weather", "forecast", "playback"], max_length=3)

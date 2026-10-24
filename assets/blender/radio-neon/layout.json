@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "city_resolution": [
+    1600,
+    570
+  ],
+  "crop_px": {
+    "x": 909,
+    "y": 136,
+    "width": 118,
+    "height": 281
+  },
+  "crop_percent": {
+    "left": 56.8125,
+    "top": 23.859649122807017,
+    "width": 7.375,
+    "height": 49.29824561403509
+  },
+  "assets": [
+    "radio-neon-zone-01.png",
+    "radio-neon-zone-02.png",
+    "radio-neon-zone-03.png",
+    "radio-neon-zone-04.png",
+    "radio-neon-zone-05.png",
+    "radio-neon-zone-06.png",
+    "radio-neon-zone-07.png",
+    "radio-neon-zone-08.png"
+  ],
+  "signal": "Each zone is one adjacent pair of the 16 real temporal audio bins; not a frequency spectrum or automatic loop.",
+  "source_city_sha256": "de1780281dc2ca21a9492015dfedf46be8e14794641e12e32364af1771fe1a79",
+  "radio_building": {
+    "index": 10,
+    "world_center": [
+      3,
+      0.64
+    ],
+    "height": 5.3,
+    "width": 1.7,
+    "facade_y": 0.04
+  },
+  "night_gain": 1,
+  "day_gain": 0.2,
+  "transparent": true
+}

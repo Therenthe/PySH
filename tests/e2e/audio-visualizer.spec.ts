@@ -1,3 +1,5 @@
+// Floating visualizer coverage remains on other styles or local media;
+// radio Wave facade behavior is exercised separately in radio-neon.spec.ts.
 import {test,expect} from '@playwright/test';
 import {textLegibility} from './legibility';
 for(const theme of ['ink','night'])for(const style of ['wave','bars','orbit','ribbon','mirror','rings']){
@@ -16,10 +18,9 @@ for(const theme of ['ink','night'])for(const style of ['wave','bars','orbit','ri
    await route.fulfill({json});
   });
   await page.clock.install();await page.goto('/');
-  await expect(page.locator('.audio-visualizer svg')).toBeVisible();
-  if(style==='wave')expect(await page.locator('.audio-visualizer svg').evaluate(svg=>svg.querySelector('path')!.getBoundingClientRect().width/svg.getBoundingClientRect().width)).toBeGreaterThan(.95);
-  signalValid=false;await page.clock.runFor(1200);await expect(page.locator('.audio-visualizer')).toContainText(ro?'indisponibil':'unavailable');
-  signalValid=true;await page.clock.runFor(1200);await expect(page.locator('.audio-visualizer svg')).toBeVisible();
+  if(style==='wave')await expect(page.locator('.city-radio-neon')).toHaveAttribute('data-signal-status','ready');else await expect(page.locator('.audio-visualizer svg')).toBeVisible();
+  signalValid=false;await page.clock.runFor(1200);if(style==='wave')await expect(page.locator('.city-radio-neon')).toHaveAttribute('data-signal-status','unavailable');else await expect(page.locator('.audio-visualizer')).toContainText(ro?'indisponibil':'unavailable');
+  signalValid=true;await page.clock.runFor(1200);if(style==='wave')await expect(page.locator('.city-radio-neon')).toHaveAttribute('data-signal-status','ready');else await expect(page.locator('.audio-visualizer svg')).toBeVisible();
   await page.locator('.main-nav button').nth(1).tap();
   await expect(page.locator('.radio-station-name')).toHaveText('Radio One');
   await expect(page.locator('.radio-track-name')).toHaveText('Artist · Song');

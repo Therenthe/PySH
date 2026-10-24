@@ -4,21 +4,21 @@
 .ambient-sky{position:absolute;inset:0;z-index:0;overflow:hidden;background:linear-gradient(170deg,#e7edf0,#b8ccd0 65%,#889e9c);color:#fff}
 .ambient-sky.sky-night{background:radial-gradient(ellipse at 85% 10%,#213747,transparent 65%),linear-gradient(#080e19,#142d39 72%,#344341)}
 .ambient-sky.sky-neutral{background:linear-gradient(135deg,#d8dedb,#a9b7b3)}
-.ambient-sky.sky-overcast,.ambient-sky.sky-fog{background:linear-gradient(#8b9ca5,#c7d0cc)}
-.ambient-sky.sky-night.sky-overcast,.ambient-sky.sky-night.sky-fog{background:linear-gradient(#19232c,#344344)}
+.ambient-sky[data-sky-cover=overcast]{background:linear-gradient(#8b9ca5,#c7d0cc)}
+.ambient-sky.sky-night[data-sky-cover=overcast]{background:linear-gradient(#19232c,#344344)}
 .ambient-stars{position:absolute;inset:0;width:100%;height:100%;opacity:.65}
 .city-material{opacity:.72}
 .ambient-orb{position:absolute;right:23px;top:23px;width:90px;height:90px;border-radius:50%}
 .ambient-moon{background:none;filter:drop-shadow(0 0 12px #a8cbd320)}
 .ambient-sun{background:radial-gradient(circle at 35% 30%,#fff8d9,#e8c98a);box-shadow:0 0 24px #e4ba7940}
-.celestial-anchor{position:absolute;width:90px;height:90px;transform:translate(-50%,-50%);pointer-events:none}
+.celestial-anchor{position:absolute;width:90px;height:90px;transform:translate(-50%,-50%);pointer-events:none;opacity:var(--sky-transmission,1)}
 .app>.ambient-sky .celestial-anchor .ambient-orb{position:relative;top:auto;right:auto;display:block}
 .sky-day .celestial-anchor .ambient-moon{opacity:.55;filter:none}
 .ambient-clouds{position:absolute;inset:0;background:radial-gradient(ellipse at 80% 15%,#f7fbff65 0 10%,transparent 27%),radial-gradient(ellipse at 95% 27%,#ecf1f74a 0 15%,transparent 37%)}
 .ambient-rain{position:absolute;inset:0;background:repeating-linear-gradient(110deg,transparent 0 42px,#adc2d722 43px 44px,transparent 45px 90px);opacity:.45}
 .ambient-snow{position:absolute;inset:0;background-image:radial-gradient(circle,#fff9 1px,transparent 2px);background-size:47px 53px;opacity:.5}
 .ambient-city{position:absolute;bottom:0;left:0;width:100%;height:115px;color:#203735;opacity:.33}
-.app[data-theme=night] .ambient-sky:not(.sky-night){filter:brightness(.55)}
+.ambient-scenery{position:absolute;inset:0;background:inherit;pointer-events:none}
 .app[data-theme=night] .ambient-city{color:#03090e;opacity:.8}
 .app>.ambient-sky.sky-night .ambient-city{color:#050b12;opacity:1}
 .app>.ambient-sky.sky-night .ambient-city .city-backdrop{fill:#2a4153;opacity:.48}
@@ -116,7 +116,7 @@
 .app .home-v2.ambient-home.ambient-has-signal{grid-template-rows:minmax(160px,1fr) 80px 48px auto}
 .app .ambient-home .ambient-visualizer{width:min(660px,100%);height:48px;min-height:48px;border:0;background:transparent;padding:0;position:relative;color:var(--ambient-text);border-radius:14px;transition:height 300ms ease}
 .app .home-v2.ambient-home.playback-in-signal{grid-template-rows:minmax(176px,1fr) 80px 88px}
-.app .ambient-home.playback-in-signal .ambient-visualizer{height:88px;min-height:88px;padding-bottom:30px}
+.app .ambient-home.playback-in-signal .ambient-visualizer:not(.city-radio-control){height:88px;min-height:88px;padding-bottom:30px}
 .app .ambient-home.playback-in-signal .ambient-dock{display:none}
 .app .ambient-home .signal-station{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:8px;height:30px;color:var(--ambient-text);font-size:14px}
 .app .ambient-home .signal-station>span:last-child{max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -139,9 +139,9 @@
 .app .ambient-home .ambient-visualizer{grid-row:3;cursor:pointer}
 .app .ambient-home .ambient-dock{grid-row:4;height:80px;padding:7px 12px}
 .app .ambient-home [data-home-positioned=true]{margin:0}
-.app .ambient-home.playback-in-signal .ambient-visualizer{height:64px;min-height:64px;padding-bottom:28px;width:min(380px,100%)}
-.app .ambient-home.playback-in-signal[data-visualizer-size=balanced] .ambient-visualizer{height:88px;min-height:88px;width:min(520px,100%)}
-.app .ambient-home.playback-in-signal[data-visualizer-size=large] .ambient-visualizer{height:112px;min-height:112px;width:min(660px,100%)}
+.app .ambient-home.playback-in-signal .ambient-visualizer:not(.city-radio-control){height:64px;min-height:64px;padding-bottom:28px;width:min(380px,100%)}
+.app .ambient-home.playback-in-signal[data-visualizer-size=balanced] .ambient-visualizer:not(.city-radio-control){height:88px;min-height:88px;width:min(520px,100%)}
+.app .ambient-home.playback-in-signal[data-visualizer-size=large] .ambient-visualizer:not(.city-radio-control){height:112px;min-height:112px;width:min(660px,100%)}
 .ambient-clouds{background:none;width:100%;height:250px;opacity:.85}
 .sky-mainly-clear .ambient-clouds{opacity:.7}
 .sky-overcast .ambient-clouds,.sky-rain .ambient-clouds,.sky-snow .ambient-clouds{opacity:1}
@@ -172,18 +172,28 @@
 .app .topbar{background:var(--bg)}
 .app>.home-layout-toolbar{position:fixed;z-index:30;top:0;left:70px;right:8px;min-height:58px}
 .app .topbar-idle .icon-button{background:transparent}
-.app[data-theme=night]>.ambient-sky:not(.sky-night){filter:brightness(.4)}
+/* Dim scenery for a manually dark UI; emitted signals keep their own palette. */
+.app[data-theme=night]>.ambient-sky:not(.sky-night){filter:none}
+.app[data-theme=night]>.ambient-sky:not(.sky-night)>.ambient-scenery{filter:brightness(.4)}
+.app[data-theme=night]>.ambient-sky:not(.sky-night)>.scene-precipitation,.app[data-theme=night]>.ambient-sky:not(.sky-night)>.scene-warning-illustration{filter:brightness(.4)}
+.app[data-theme=night]>.ambient-sky:not(.sky-night)>.city-diorama{opacity:1}
+.app[data-theme=night]>.ambient-sky:not(.sky-night) .city-scenery{filter:brightness(.4);opacity:1}
 .app .ambient-home .playback-caption .eyebrow,.app .ambient-home .playback-caption .player-state{line-height:17px}
 .app .ambient-home .playback-source{line-height:22px;margin:2px 0}
 .app .ambient-home .playback-metadata{line-height:17px;margin:1px 0 0}
 .app .home-v2.ambient-home .ambient-dock{padding:7px 12px}
 /* E-Ink transport remains readable when its actual weather scene is nocturnal. */
 .app[data-theme=ink]:has(>.ambient-sky.sky-night) .ambient-visualizer{--signal-ink:#d7ebe7;--ambient-text:#f4f7fb;--muted:#d0d9da}
+/* Only text gets a stable backing: the signal and city keep their clear canvas. */
+.app .ambient-home .ambient-visualizer{--signal-caption-bg:#fbfaf5f5;--signal-caption-text:#23251f}
+.app[data-theme=night] .ambient-home .ambient-visualizer,.app:has(>.ambient-sky.sky-night) .ambient-home .ambient-visualizer{--signal-caption-bg:#0c1720f5;--signal-caption-text:#f1f3ee}
+.app .ambient-home .signal-station>span:last-child,.app .ambient-home .audio-visualizer:is(.signal-empty,.signal-level)>span{padding:3px 9px;border-radius:8px;background:var(--signal-caption-bg);color:var(--signal-caption-text);line-height:20px;font-weight:500}
+.app .ambient-home .audio-visualizer:is(.signal-empty,.signal-level)>span{max-width:calc(100% - 16px);text-align:center}
 /* The chosen signal size applies whether the transport is open or folded. */
 .app .home-v2.ambient-home{container-type:inline-size}
-.app .ambient-home .ambient-visualizer{height:64px;min-height:64px;width:min(380px,100%)}
-.app .ambient-home[data-visualizer-size=balanced] .ambient-visualizer{height:88px;min-height:88px;width:min(520px,100%)}
-.app .ambient-home[data-visualizer-size=large] .ambient-visualizer{height:112px;min-height:112px;width:min(660px,100%)}
+.app .ambient-home .ambient-visualizer:not(.city-radio-control){height:64px;min-height:64px;width:min(380px,100%)}
+.app .ambient-home[data-visualizer-size=balanced] .ambient-visualizer:not(.city-radio-control){height:88px;min-height:88px;width:min(520px,100%)}
+.app .ambient-home[data-visualizer-size=large] .ambient-visualizer:not(.city-radio-control){height:112px;min-height:112px;width:min(660px,100%)}
 .app .home-v2.ambient-home.transport-expanded{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}
 .app .ambient-home.transport-expanded .ambient-weather{grid-column:1;grid-row:1;margin:0;width:calc((100cqw - 16px)/2);max-width:500px}
 .app .ambient-home.transport-expanded .ambient-weather.card-compact{width:min(250px,calc((100cqw - 16px)/2))}

@@ -1,0 +1,198 @@
+{
+  "pass": true,
+  "blender": "5.2.2 LTS",
+  "source_original_unchanged": true,
+  "editable_master_sha256": "0e59b60f25e0b19ecd2fc38f30e6f2adcc74d457826e38081b9453678ec6656e",
+  "camera_paths": [
+    {
+      "destination": "media",
+      "frames": 60,
+      "camera_max_error": 0,
+      "camera_segment_collisions": 0,
+      "late_rays": 14,
+      "matching_portal_only": true
+    },
+    {
+      "destination": "audio",
+      "frames": 60,
+      "camera_max_error": 0,
+      "camera_segment_collisions": 0,
+      "late_rays": 14,
+      "matching_portal_only": true
+    },
+    {
+      "destination": "settings",
+      "frames": 60,
+      "camera_max_error": 0,
+      "camera_segment_collisions": 0,
+      "late_rays": 14,
+      "matching_portal_only": true
+    },
+    {
+      "destination": "radio",
+      "frames": 60,
+      "camera_max_error": 0,
+      "camera_segment_collisions": 0,
+      "late_rays": 14,
+      "matching_portal_only": true
+    },
+    {
+      "destination": "network",
+      "frames": 60,
+      "camera_max_error": 0,
+      "camera_segment_collisions": 0,
+      "late_rays": 14,
+      "matching_portal_only": true
+    }
+  ],
+  "mesh_parts": 405,
+  "mesh_errors": 0,
+  "mesh_warnings": 0,
+  "movies": [
+    {
+      "name": "city-entry-media-day-v1.webm",
+      "frames_decoded": 60,
+      "resolution": [
+        800,
+        480
+      ],
+      "sky_alpha": 0,
+      "opening_ground_alpha": 255,
+      "threshold_alpha": 255,
+      "pass": true
+    },
+    {
+      "name": "city-entry-media-night-v1.webm",
+      "frames_decoded": 60,
+      "resolution": [
+        800,
+        480
+      ],
+      "sky_alpha": 0,
+      "opening_ground_alpha": 255,
+      "threshold_alpha": 255,
+      "pass": true
+    },
+    {
+      "name": "city-entry-audio-day-v1.webm",
+      "frames_decoded": 60,
+      "resolution": [
+        800,
+        480
+      ],
+      "sky_alpha": 0,
+      "opening_ground_alpha": 255,
+      "threshold_alpha": 255,
+      "pass": true
+    },
+    {
+      "name": "city-entry-audio-night-v1.webm",
+      "frames_decoded": 60,
+      "resolution": [
+        800,
+        480
+      ],
+      "sky_alpha": 0,
+      "opening_ground_alpha": 255,
+      "threshold_alpha": 255,
+      "pass": true
+    },
+    {
+      "name": "city-entry-settings-day-v1.webm",
+      "frames_decoded": 60,
+      "resolution": [
+        800,
+        480
+      ],
+      "sky_alpha": 0,
+      "opening_ground_alpha": 255,
+      "threshold_alpha": 255,
+      "pass": true
+    },
+    {
+      "name": "city-entry-settings-night-v1.webm",
+      "frames_decoded": 60,
+      "resolution": [
+        800,
+        480
+      ],
+      "sky_alpha": 0,
+      "opening_ground_alpha": 255,
+      "threshold_alpha": 255,
+      "pass": true
+    },
+    {
+      "name": "city-entry-radio-day-v1.webm",
+      "frames_decoded": 60,
+      "resolution": [
+        800,
+        480
+      ],
+      "sky_alpha": 0,
+      "opening_ground_alpha": 255,
+      "threshold_alpha": 255,
+      "pass": true
+    },
+    {
+      "name": "city-entry-radio-night-v1.webm",
+      "frames_decoded": 60,
+      "resolution": [
+        800,
+        480
+      ],
+      "sky_alpha": 0,
+      "opening_ground_alpha": 255,
+      "threshold_alpha": 255,
+      "pass": true
+    },
+    {
+      "name": "city-entry-network-day-v1.webm",
+      "frames_decoded": 60,
+      "resolution": [
+        800,
+        480
+      ],
+      "sky_alpha": 0,
+      "opening_ground_alpha": 255,
+      "threshold_alpha": 255,
+      "pass": true
+    },
+    {
+      "name": "city-entry-network-night-v1.webm",
+      "frames_decoded": 60,
+      "resolution": [
+        800,
+        480
+      ],
+      "sky_alpha": 0,
+      "opening_ground_alpha": 255,
+      "threshold_alpha": 255,
+      "pass": true
+    }
+  ],
+  "metro_visible_rgba_and_alpha_identical": true,
+  "metro": {
+    "original": "metro-v2.png",
+    "original_sha256": "5706b00660cd33c83febbacaadfde94f375e7718e9f339e4ebe0e91929a897fd",
+    "lossless_alpha_bounds": [
+      29,
+      15,
+      478,
+      75
+    ],
+    "resolution": [
+      449,
+      60
+    ],
+    "visible_size_at_800": [
+      82.69083333333333,
+      11.049999999999999
+    ],
+    "css_width_percent": 10.336354166666666,
+    "css_track_bottom_percent": 14.993783831596375,
+    "front_wheel_baseline_y_at_480": 448.81292963027954,
+    "motion": "Use fullviewport travel calc(100vw +10px), not old600% of image width; the trimmed element is narrower. Foreground abutment layer must paint after train."
+  },
+  "reviewer_sha256": "e7d6bc79d606791c7d619a77143450bd465dfcde606f18187628a5eada711463",
+  "limits": "Offline authoring/codec/source gates; native UI/touch/decode and aesthetics require independent application/device review."
+}

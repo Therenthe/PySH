@@ -6,10 +6,10 @@ const keys:HomeKey[]=['weather','forecast','playback','visualizer'];
 export function useHomeLayout(positions:HomePositions,editing:boolean){
  const root=useRef<HTMLDivElement>(null),nodes=useRef<Partial<Record<HomeKey,HTMLElement>>>({}),observer=useRef<ResizeObserver|null>(null);
  const [draft,setDraft]=useState<HomePositions>(positions),[sizes,setSizes]=useState<Record<string,{width:number;height:number}>>({});
- const [selected,setSelected]=useState<HomeKey|null>(null);
+ const [selected,setSelected]=useState<HomeKey|null>(null),[originX,setOriginX]=useState(0);
  const drag=useRef<{key:HomeKey;pointer:number;x:number;y:number;left:number;top:number}|null>(null);
  useEffect(()=>{if(!editing)setDraft(positions);},[editing,positions]);
- const measure=()=>{const next:Record<string,{width:number;height:number}>={};for(const [key,node] of Object.entries(nodes.current)){if(node){const r=node.getBoundingClientRect();next[key]={width:r.width,height:r.height};}}setSizes(old=>JSON.stringify(old)===JSON.stringify(next)?old:next);};
+ const measure=()=>{if(root.current)setOriginX(root.current.getBoundingClientRect().left);const next:Record<string,{width:number;height:number}>={};for(const [key,node] of Object.entries(nodes.current)){if(node){const r=node.getBoundingClientRect();next[key]={width:r.width,height:r.height};}}setSizes(old=>JSON.stringify(old)===JSON.stringify(next)?old:next);};
  const refs=useMemo(()=>Object.fromEntries(keys.map(key=>[key,(node:HTMLElement|null)=>{const previous=nodes.current[key];if(previous)observer.current?.unobserve(previous);if(node){nodes.current[key]=node;observer.current?.observe(node);}else delete nodes.current[key];}])) as Record<HomeKey,(node:HTMLElement|null)=>void>,[]);
  useLayoutEffect(()=>{const ro=new ResizeObserver(measure);observer.current=ro;if(root.current)ro.observe(root.current);Object.values(nodes.current).forEach(node=>node&&ro.observe(node));measure();return()=>{ro.disconnect();observer.current=null;};},[]);
  // Store the nearest edge, not a compact card's top-left corner. Growth then
@@ -24,5 +24,5 @@ export function useHomeLayout(positions:HomePositions,editing:boolean){
   onKeyDown:(e:React.KeyboardEvent<HTMLButtonElement>)=>{const delta:Record<string,[number,number]>={ArrowLeft:[-10,0],ArrowRight:[10,0],ArrowUp:[0,-10],ArrowDown:[0,10]};if(!delta[e.key]||!root.current||!nodes.current[key])return;e.preventDefault();const r=root.current.getBoundingClientRect(),n=nodes.current[key]!.getBoundingClientRect(),[dx,dy]=delta[e.key];move(key,n.left-r.left+dx,n.top-r.top+dy);},
  });
  const props=(key:HomeKey)=>{const value=draft[key],size=sizes[key];const style:CSSProperties=value?{position:'absolute',margin:0,gridArea:'auto',alignSelf:'start',justifySelf:'start',[value.anchorX==='right'?'right':'left']:`clamp(0px,${value.x*100}%,max(0px,calc(100% - ${size?.width||0}px)))`,[value.anchorY==='bottom'?'bottom':'top']:`clamp(0px,${value.y*100}%,max(0px,calc(100% - ${size?.height||0}px)))`,zIndex:editing&&selected===key?5:value.z||1}:{};return {ref:refs[key],style,'data-home-positioned':!!value};};
- return {root,draft,props,handle,selected,select,reset:()=>{setDraft({});setSelected(null);}};
+ return {root,originX,draft,props,handle,selected,select,reset:()=>{setDraft({});setSelected(null);}};
 }

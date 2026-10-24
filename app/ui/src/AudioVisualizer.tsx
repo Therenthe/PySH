@@ -64,8 +64,8 @@ export function AudioVisualizer({style, canVisualize, language, reducedMotion = 
   const unavailable = language === 'ro' ? 'Semnal audio indisponibil' : 'Audio signal unavailable';
   const inactive = language === 'ro' ? 'Redarea este oprită' : 'Playback inactive';
   const silence = language === 'ro' ? 'Liniște în semnal' : 'Signal is silent';
-  if (!signal.available || !canVisualize) return <div className="audio-visualizer signal-empty" data-signal-status={canVisualize ? signal.status : 'inactive'}>{canVisualize ? unavailable : inactive}</div>;
-  if (quiet) return <div className="audio-visualizer signal-level" aria-label={label}>{signal.silent ? silence : `${language === 'ro' ? 'Nivel' : 'Level'} ${Math.round((signal.rms ?? 0) * 100)}%`}</div>;
+  if (!signal.available || !canVisualize) return <div className="audio-visualizer signal-empty" data-signal-status={canVisualize ? signal.status : 'inactive'}><span>{canVisualize ? unavailable : inactive}</span></div>;
+  if (quiet) return <div className="audio-visualizer signal-level" aria-label={label}><span>{signal.silent ? silence : `${language === 'ro' ? 'Nivel' : 'Level'} ${Math.round((signal.rms ?? 0) * 100)}%`}</span></div>;
   const wave = signal.waveform.map((value, index) => `${index ? 'L' : 'M'}${(index * 320 / 63).toFixed(1)},${(40 - value * 36).toFixed(1)}`).join(' ');
   // These are views of PCM amplitude, not frequency bins. No decorative motion:
   // every contour, spoke and ring is driven by the measured output signal.

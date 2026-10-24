@@ -1,0 +1,91 @@
+{
+  "blender": "5.2.2 LTS",
+  "samples": 64,
+  "preview": false,
+  "layouts": {
+    "bluetooth": {
+      "crop_px": {
+        "x": 290,
+        "y": 45,
+        "width": 114,
+        "height": 105
+      },
+      "crop_percent": {
+        "left": 18.125,
+        "top": 7.894736842105263,
+        "width": 7.125,
+        "height": 18.421052631578945
+      },
+      "asset_prefix": "city-beacon-bluetooth"
+    },
+    "radio": {
+      "crop_px": {
+        "x": 908,
+        "y": 9,
+        "width": 119,
+        "height": 151
+      },
+      "crop_percent": {
+        "left": 56.75,
+        "top": 1.5789473684210527,
+        "width": 7.4375,
+        "height": 26.49122807017544
+      },
+      "asset_prefix": "city-beacon-radio"
+    }
+  },
+  "parts": 55,
+  "vertices": 3200,
+  "triangles": 4612,
+  "assets": [
+    {
+      "name": "city-beacon-bluetooth-night-v1.png",
+      "bytes": 6731,
+      "sha256": "bcfdf756b98ccafc3a6329e3079eacd4fdc837a74c18ccdf982b27bf3f0083d3",
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-beacon-bluetooth-day-v1.png",
+      "bytes": 6704,
+      "sha256": "702b72ab99689a639b8341955d3633095017a5bd49ebb3a4d64f99a03930b7b4",
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-beacon-bluetooth-emission-v1.png",
+      "bytes": 7302,
+      "sha256": "0806cdb8ce9b1a20d5669888f7696dc5270da75f771aa14cb6a4c50da9b9c9ed",
+      "rgba_decoded_bytes": 47880
+    },
+    {
+      "name": "city-beacon-radio-night-v1.png",
+      "bytes": 10473,
+      "sha256": "1eaf6bf303539c557a38bae20059402aaa76872bbc5f5f637b7a562273ad447f",
+      "rgba_decoded_bytes": 71876
+    },
+    {
+      "name": "city-beacon-radio-day-v1.png",
+      "bytes": 9159,
+      "sha256": "3ed7177f31f3d0211c583cae69a16de66820ffb979e4a5679cd80723af70f463",
+      "rgba_decoded_bytes": 71876
+    },
+    {
+      "name": "city-beacon-radio-emission-v1.png",
+      "bytes": 4639,
+      "sha256": "a6d0e5dec9eba73f9106e98655a7be3146cb362b349ad4739a356896cce71eca",
+      "rgba_decoded_bytes": 71876
+    }
+  ],
+  "encoded_bytes": 45008,
+  "rgba_decoded_bytes": 359268,
+  "audit": {
+    "pass": true,
+    "scope": "closed hardware/sign/rod parts individually",
+    "errors": 0,
+    "warnings": 0
+  },
+  "city_source_sha256": "de1780281dc2ca21a9492015dfedf46be8e14794641e12e32364af1771fe1a79",
+  "builder_sha256": "c1fb833aeea619f6664386945a79017fde6454dd841137428bc70224075c5249",
+  "limits": "Offline orthographic hardware and emission sprites. Runtime state/lifecycle/pulse and native readability/performance remain integration acceptance.",
+  "canonical_builder_sha256": "c1fb833aeea619f6664386945a79017fde6454dd841137428bc70224075c5249",
+  "builder_hash_note": "builder_sha256 records authoring checkout bytes; canonical_builder_sha256 records Git LF bytes."
+}

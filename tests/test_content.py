@@ -65,7 +65,7 @@ def test_explicit_weather_refresh_bypasses_recent_cache_and_recovers(tmp_path, m
     import time
     content = Content(tmp_path)
     location = {"name": "Bucharest", "latitude": 44.4, "longitude": 26.1}
-    cached = {"location": location, "current": {"temperature_c": 18}, "daily": [],
+    cached = {"location": location, "current": {"temperature_c": 18, "visibility_m": None, "cloud_cover_pct": None}, "daily": [],
               "updated_at": "2026-10-03T10:00:00Z"}
     cache_file = tmp_path / "weather-cache.json"
     cache_file.write_text(json.dumps({"44.4000,26.1000": {"cached_epoch": time.time(), "value": cached}}), encoding="utf-8")

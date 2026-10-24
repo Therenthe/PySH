@@ -16,11 +16,11 @@ for(const theme of ['ink','night'])test(`immediate decoder failure keeps exact l
   }
   await route.fulfill({json});
  });
- await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'invalid.mp3',exact:false}).tap();
+ await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'invalid.mp3',exact:false}).and(page.locator('.media-item')).tap();
  const notice=page.locator('.local-audio-recovery');await expect(notice).toContainText(ro?'Acest fișier nu a putut fi redat.':'This file could not be played.');await expect(page.locator('.error-strip')).toHaveCount(0);
  await notice.getByRole('button',{name:ro?'Reia redarea':'Replay',exact:true}).tap();await expect.poll(()=>attempts.length).toBe(2);expect(attempts[1]).toEqual(attempts[0]);await expect(notice).toBeVisible();await expect(page.locator('.error-strip')).toHaveCount(0);
  await page.screenshot({path:info.outputPath('immediate-decoder-error.png')});
  await notice.getByRole('button').tap();await expect(page.locator('.error-strip')).toContainText(ro?'Fișierul sau dosarul media nu este disponibil.':'This media file or folder is unavailable.');await expect(notice).toHaveCount(0);
  await page.locator('.error-strip').getByRole('button',{name:ro?'Încearcă din nou':'Try again',exact:true}).tap();await expect.poll(()=>attempts.length).toBe(4);expect(attempts[3]).toEqual(attempts[0]);await expect(notice).toBeVisible();await expect(page.locator('.error-strip')).toHaveCount(0);
- await page.getByRole('button',{name:'Healthy.wav',exact:false}).tap();await expect(notice).toHaveCount(0);await expect(page.locator('.error-strip')).toHaveCount(0);expect(state.player.state).toBe('playing');
+ await page.getByRole('button',{name:'Healthy.wav',exact:false}).and(page.locator('.media-item')).tap();await expect(notice).toHaveCount(0);await expect(page.locator('.error-strip')).toHaveCount(0);expect(state.player.state).toBe('playing');
 });

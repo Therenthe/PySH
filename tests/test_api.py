@@ -31,11 +31,33 @@ def client(tmp_path):
     return TestClient(app, base_url="http://127.0.0.1:8765")
 
 
+def test_external_context_contains_only_public_ui_enums_and_keeps_origin_boundary(client):
+    response = client.get('/api/external/context')
+    assert response.status_code == 200
+    assert set(response.json()) == {'language', 'theme'}
+    assert response.json()['theme'] in ('ink', 'night')
+    assert client.get('/api/external/context', headers={'Origin': 'https://www.youtube.com'}).status_code == 403
+
+
 def test_session_and_preference_roundtrip(client):
     token = client.get('/api/session').json()['token']
     response = client.patch('/api/preferences', headers={'X-Hub-Token':token}, json={'language':'en'})
     assert response.status_code == 200
     assert client.get('/api/state').json()['preferences']['language'] == 'en'
+
+
+@pytest.mark.parametrize('target', ['home', 'radio', 'media'])
+def test_external_navigation_is_fixed_destination_with_owner_protection(client, target):
+    assert client.post('/api/external/navigation', json={'target': target}).status_code == 403
+    headers={'X-Hub-Token': app.state.hub.token}
+    assert client.post('/api/external/navigation', headers=headers, json={'target': target}).json() == {'accepted': True}
+    first=client.get('/api/state').json()['externalNavigation']
+    assert first['target'] == target and first['id']
+    assert client.post('/api/external/navigation', headers=headers, json={'target': target}).status_code == 200
+    assert client.get('/api/state').json()['externalNavigation']['id'] != first['id']
+    for payload in [{'target': 'https://evil.example'}, {'target': '/bin/sh'}, {'target':target,'command':'bad'}]:
+        assert client.post('/api/external/navigation',headers=headers,json=payload).status_code == 422
+    assert client.post('/api/external/navigation',headers={**headers,'Origin':'https://www.youtube.com'},json={'target':target}).status_code == 403
 
 
 def test_radio_artwork_survives_recovery_but_not_station_change(client):
@@ -100,9 +122,11 @@ def test_external_launch_reports_preparation_instead_of_opened(client, monkeypat
     app.state.hub.store.update({'language':'en','theme':'night'})
     handler=AsyncMock(return_value={'opened':False,'preparing':True,'jobId':'fixture','service':'netflix'})
     app.state.hub.external=SimpleNamespace(start=handler)
+    app.state.hub.player.pause_for_external=AsyncMock(return_value={'state':'paused'})
     response=client.post('/api/external',headers={'X-Hub-Token':app.state.hub.token},json={'service':'netflix'})
     assert response.status_code == 202 and response.json()['opened'] is False
     handler.assert_awaited_once_with('netflix','/usr/bin/chromium','en','night')
+    app.state.hub.player.pause_for_external.assert_awaited_once_with()
 
 
 @pytest.mark.parametrize('path', ['/service-prepare','/service-prepare.js','/service-prepare.css'])

@@ -30,7 +30,9 @@ def allowed(name):
             and (name.startswith(('services/backend/', 'app/browser-extension/', 'dist/'))
                  or name in {'requirements.lock', 'scripts/run-hub.py', 'scripts/install-session.sh',
                              'scripts/activate-release.sh', 'scripts/rollback.sh',
-                             'scripts/probe-application.py', 'scripts/service-keyboard-host.py'}))
+                             'scripts/probe-application.py', 'scripts/service-keyboard-host.py',
+                             'services/remote/__init__.py', 'services/remote/__main__.py',
+                             'services/remote/gateway.py', 'services/remote/pysh-remote.service'}))
 
 def read_json(path):
     require(path.is_file() and not path.is_symlink() and path.stat().st_size <= 4_000_000, 'invalid_metadata')

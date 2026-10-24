@@ -1,0 +1,32 @@
+{
+  "blender": "5.2.2 LTS",
+  "seed": 231026,
+  "city_objects": 12,
+  "city_vertices": 10667,
+  "city_polygons": 7583,
+  "transparent": true,
+  "resolution": [
+    1600,
+    570
+  ],
+  "radio_anchor": [
+    60.49,
+    18.001
+  ],
+  "bluetooth_anchor": [
+    21.678,
+    20.945
+  ],
+  "assets": [
+    "flood-ripple-v1.png",
+    "gothic-city-day-v1.png",
+    "gothic-city-night-v1.png",
+    "ice-v1.png",
+    "metro-v1.png",
+    "raindrop-v1.png",
+    "snowflake-v1.png",
+    "tornado-0-v1.png",
+    "tornado-1-v1.png",
+    "tornado-2-v1.png"
+  ]
+}

@@ -1,0 +1,1028 @@
+[
+  {
+    "name": "BT_mount_foot",
+    "profile": "render",
+    "eps": 8.2e-05,
+    "tol": 0.00165,
+    "gap": 0.008249,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_mount_foot": {
+        "tris": 108,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_mount_post",
+    "profile": "render",
+    "eps": 5.9e-05,
+    "tol": 0.001174,
+    "gap": 0.00587,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_mount_post": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_mount_post.001",
+    "profile": "render",
+    "eps": 5.9e-05,
+    "tol": 0.001174,
+    "gap": 0.00587,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_mount_post.001": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_mast_leg",
+    "profile": "render",
+    "eps": 0.000221,
+    "tol": 0.004418,
+    "gap": 0.02209,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_mast_leg": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_mast_leg.001",
+    "profile": "render",
+    "eps": 0.000221,
+    "tol": 0.004418,
+    "gap": 0.02209,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_mast_leg.001": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_mast_leg.002",
+    "profile": "render",
+    "eps": 0.000221,
+    "tol": 0.004418,
+    "gap": 0.02209,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_mast_leg.002": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_mast_leg.003",
+    "profile": "render",
+    "eps": 0.000221,
+    "tol": 0.004418,
+    "gap": 0.02209,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_mast_leg.003": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_A",
+    "profile": "render",
+    "eps": 6.3e-05,
+    "tol": 0.001264,
+    "gap": 0.006318,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_A": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_B",
+    "profile": "render",
+    "eps": 6.3e-05,
+    "tol": 0.001264,
+    "gap": 0.006318,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_B": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_A.001",
+    "profile": "render",
+    "eps": 6.3e-05,
+    "tol": 0.001264,
+    "gap": 0.006318,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_A.001": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_B.001",
+    "profile": "render",
+    "eps": 6.3e-05,
+    "tol": 0.001264,
+    "gap": 0.006318,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_B.001": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_crossmember",
+    "profile": "render",
+    "eps": 4.4e-05,
+    "tol": 0.000887,
+    "gap": 0.004436,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_crossmember": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_A.002",
+    "profile": "render",
+    "eps": 5.9e-05,
+    "tol": 0.001181,
+    "gap": 0.005904,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_A.002": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_B.002",
+    "profile": "render",
+    "eps": 5.9e-05,
+    "tol": 0.001181,
+    "gap": 0.005904,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_B.002": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_A.003",
+    "profile": "render",
+    "eps": 5.9e-05,
+    "tol": 0.001181,
+    "gap": 0.005904,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_A.003": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_B.003",
+    "profile": "render",
+    "eps": 5.9e-05,
+    "tol": 0.001181,
+    "gap": 0.005904,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_B.003": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_crossmember.001",
+    "profile": "render",
+    "eps": 3.8e-05,
+    "tol": 0.000763,
+    "gap": 0.003817,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_crossmember.001": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_A.004",
+    "profile": "render",
+    "eps": 5.5e-05,
+    "tol": 0.001104,
+    "gap": 0.005522,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_A.004": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_B.004",
+    "profile": "render",
+    "eps": 5.5e-05,
+    "tol": 0.001104,
+    "gap": 0.005522,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_B.004": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_A.005",
+    "profile": "render",
+    "eps": 5.5e-05,
+    "tol": 0.001104,
+    "gap": 0.005522,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_A.005": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_B.005",
+    "profile": "render",
+    "eps": 5.5e-05,
+    "tol": 0.001104,
+    "gap": 0.005522,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_B.005": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_crossmember.002",
+    "profile": "render",
+    "eps": 3.2e-05,
+    "tol": 0.00064,
+    "gap": 0.003201,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_crossmember.002": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_A.006",
+    "profile": "render",
+    "eps": 5.2e-05,
+    "tol": 0.001036,
+    "gap": 0.005178,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_A.006": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_B.006",
+    "profile": "render",
+    "eps": 5.2e-05,
+    "tol": 0.001036,
+    "gap": 0.005178,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_B.006": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_A.007",
+    "profile": "render",
+    "eps": 5.2e-05,
+    "tol": 0.001036,
+    "gap": 0.005178,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_A.007": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_B.007",
+    "profile": "render",
+    "eps": 5.2e-05,
+    "tol": 0.001036,
+    "gap": 0.005178,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_B.007": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_crossmember.003",
+    "profile": "render",
+    "eps": 2.6e-05,
+    "tol": 0.000518,
+    "gap": 0.002588,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_crossmember.003": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_A.008",
+    "profile": "render",
+    "eps": 4.9e-05,
+    "tol": 0.000976,
+    "gap": 0.004881,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_A.008": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_B.008",
+    "profile": "render",
+    "eps": 4.9e-05,
+    "tol": 0.000976,
+    "gap": 0.004881,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_B.008": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_A.009",
+    "profile": "render",
+    "eps": 4.9e-05,
+    "tol": 0.000976,
+    "gap": 0.004881,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_A.009": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_X_brace_B.009",
+    "profile": "render",
+    "eps": 4.9e-05,
+    "tol": 0.000976,
+    "gap": 0.004881,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_X_brace_B.009": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_crossmember.004",
+    "profile": "render",
+    "eps": 2e-05,
+    "tol": 0.000397,
+    "gap": 0.001983,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_crossmember.004": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_dipole_crossarm",
+    "profile": "render",
+    "eps": 7.8e-05,
+    "tol": 0.001568,
+    "gap": 0.00784,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_dipole_crossarm": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_dipole_element",
+    "profile": "render",
+    "eps": 3.3e-05,
+    "tol": 0.000653,
+    "gap": 0.003265,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_dipole_element": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_dipole_element.001",
+    "profile": "render",
+    "eps": 3.3e-05,
+    "tol": 0.000653,
+    "gap": 0.003265,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_dipole_element.001": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_dipole_crossarm.001",
+    "profile": "render",
+    "eps": 6.2e-05,
+    "tol": 0.00123,
+    "gap": 0.006151,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_dipole_crossarm.001": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_dipole_element.002",
+    "profile": "render",
+    "eps": 3.3e-05,
+    "tol": 0.000653,
+    "gap": 0.003265,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_dipole_element.002": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_dipole_element.003",
+    "profile": "render",
+    "eps": 3.3e-05,
+    "tol": 0.000653,
+    "gap": 0.003265,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_dipole_element.003": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_tip_beacon_housing",
+    "profile": "render",
+    "eps": 2.4e-05,
+    "tol": 0.000474,
+    "gap": 0.002369,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_tip_beacon_housing": {
+        "tris": 108,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_tip_lit_beacon",
+    "profile": "render",
+    "eps": 1.5e-05,
+    "tol": 0.000291,
+    "gap": 0.001454,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_tip_lit_beacon": {
+        "tris": 108,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_open_rune_back_bevel",
+    "profile": "render",
+    "eps": 0.000133,
+    "tol": 0.002669,
+    "gap": 0.013343,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_open_rune_back_bevel": {
+        "tris": 92,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_open_rune_neon_core",
+    "profile": "render",
+    "eps": 0.00013,
+    "tol": 0.002607,
+    "gap": 0.013036,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_open_rune_neon_core": {
+        "tris": 92,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_open_wave_1_-1",
+    "profile": "render",
+    "eps": 4.8e-05,
+    "tol": 0.000961,
+    "gap": 0.004806,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_open_wave_1_-1": {
+        "tris": 396,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_open_wave_1_1",
+    "profile": "render",
+    "eps": 4.8e-05,
+    "tol": 0.000961,
+    "gap": 0.004806,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_open_wave_1_1": {
+        "tris": 396,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_open_wave_2_-1",
+    "profile": "render",
+    "eps": 6.4e-05,
+    "tol": 0.001275,
+    "gap": 0.006375,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_open_wave_2_-1": {
+        "tris": 396,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_open_wave_2_1",
+    "profile": "render",
+    "eps": 6.4e-05,
+    "tol": 0.001275,
+    "gap": 0.006375,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_open_wave_2_1": {
+        "tris": 396,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_open_wave_3_-1",
+    "profile": "render",
+    "eps": 7.9e-05,
+    "tol": 0.00159,
+    "gap": 0.00795,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_open_wave_3_-1": {
+        "tris": 396,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_open_wave_3_1",
+    "profile": "render",
+    "eps": 7.9e-05,
+    "tol": 0.00159,
+    "gap": 0.00795,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_open_wave_3_1": {
+        "tris": 396,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_wave_1_-1",
+    "profile": "render",
+    "eps": 3e-05,
+    "tol": 0.000599,
+    "gap": 0.002994,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_wave_1_-1": {
+        "tris": 396,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_wave_2_-1",
+    "profile": "render",
+    "eps": 4.7e-05,
+    "tol": 0.000934,
+    "gap": 0.004671,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_wave_2_-1": {
+        "tris": 396,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_wave_3_-1",
+    "profile": "render",
+    "eps": 6.4e-05,
+    "tol": 0.001273,
+    "gap": 0.006366,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_wave_3_-1": {
+        "tris": 396,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_wave_1_1",
+    "profile": "render",
+    "eps": 3e-05,
+    "tol": 0.000599,
+    "gap": 0.002994,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_wave_1_1": {
+        "tris": 396,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_wave_2_1",
+    "profile": "render",
+    "eps": 4.7e-05,
+    "tol": 0.000934,
+    "gap": 0.004671,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_wave_2_1": {
+        "tris": 396,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "Radio_wave_3_1",
+    "profile": "render",
+    "eps": 6.4e-05,
+    "tol": 0.001273,
+    "gap": 0.006366,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "Radio_wave_3_1": {
+        "tris": 396,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  }
+]

@@ -11,6 +11,6 @@ for(const theme of ['ink','night']){
    if(end==='blur')await page.evaluate(()=>window.dispatchEvent(new Event('blur')));
    await cdp.send('Input.dispatchTouchEvent',{type:end==='cancel'?'touchCancel':'touchEnd',touchPoints:[]});await expect(button).not.toHaveAttribute('data-pressed','true');
   }
-  await page.locator('.main-nav button').nth(1).tap();await expect(page.locator('.radio-station-name')).toHaveText('Radio remembered');await expect(page.locator('.radio-side .eyebrow')).toHaveText(ro?'Ultimul post':'Last station');await expect(page.locator('.radio-track-name')).toHaveCount(0);
+  await page.locator('.main-nav button').nth(1).tap();await expect(page.locator('.radio-station-name')).toHaveText('Radio remembered');await expect(page.locator('.radio-side .radio-remembered')).toHaveText(ro?'Ultimul post':'Last station');await expect(page.locator('.radio-track-name')).toHaveCount(0);
  });
 }

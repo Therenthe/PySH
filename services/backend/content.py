@@ -105,12 +105,15 @@ class Content:
         try:
             cached = await asyncio.to_thread(_read_json, cache_path, {})
             cached_entry = cached.get(key) if isinstance(cached, dict) else None
-            if not force and cached_entry and time.time() - float(cached_entry.get("cached_epoch", 0)) < 300:
+            # Refresh legacy entries once; explicit null means the provider had no measurement.
+            cached_current = (cached_entry.get("value", {}).get("current") if cached_entry else None)
+            has_scene_measurements = isinstance(cached_current, dict) and {"visibility_m", "cloud_cover_pct"} <= cached_current.keys()
+            if not force and cached_entry and has_scene_measurements and time.time() - float(cached_entry.get("cached_epoch", 0)) < 300:
                 return {**cached_entry["value"], "stale": False, "error": None}
             params = {
                 "latitude": latitude,
                 "longitude": longitude,
-                "current": "temperature_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,relative_humidity_2m,pressure_msl,wind_direction_10m",
+                "current": "temperature_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,relative_humidity_2m,pressure_msl,wind_direction_10m,visibility,cloud_cover",
                 "hourly": "uv_index",
                 "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset",
                 "forecast_days": 5,
@@ -190,6 +193,8 @@ class Content:
                 "humidity_pct": _optional_measurement(current.get("relative_humidity_2m"), minimum=0, maximum=100),
                 "pressure_hpa": _optional_measurement(current.get("pressure_msl"), minimum=0, exclusive_minimum=True),
                 "wind_direction_deg": _optional_measurement(current.get("wind_direction_10m"), minimum=0, maximum=360),
+                "visibility_m": _optional_measurement(current.get("visibility"), minimum=0),
+                "cloud_cover_pct": _optional_measurement(current.get("cloud_cover"), minimum=0, maximum=100),
                 "uv_index": uv_index,
                 "uv_index_time": uv_time,
             },

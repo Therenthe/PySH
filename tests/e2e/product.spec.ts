@@ -1,3 +1,4 @@
+import {openSettingsSection,openQuickControls} from './settings-navigation';
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import { textLegibility } from './legibility';
 
@@ -135,7 +136,7 @@ for(const theme of ['ink','night'] as const) {
     await page.route('**/api/play',async route=>{playStarted=true;await gate;f.state.player={state:'playing',kind:'radio',url:'https://example.com/test.mp3',title:'Test station'};await route.fulfill({json:f.state.player});});
     await page.route('**/api/player',async route=>{expect(route.request().postDataJSON()).toEqual({action:'stop'});stopStarted=true;f.state.player={state:'idle',url:'',title:''};await route.fulfill({json:f.state.player});});
     await page.goto('/');await page.locator('.main-nav button').nth(1).tap();await page.locator('.station-row').first().getByRole('button').first().tap();await expect.poll(()=>playStarted).toBe(true);
-    await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).tap();await page.waitForTimeout(300);expect(stopStarted).toBe(false);await expect(page.locator('.video-overlay')).toHaveCount(0);
+    await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).and(page.locator('.media-item')).tap();await page.waitForTimeout(300);expect(stopStarted).toBe(false);await expect(page.locator('.video-overlay')).toHaveCount(0);
     release();await expect(page.locator('.video-overlay')).toBeVisible();expect(stopStarted).toBe(true);expect(f.state.player.state).toBe('idle');expect(f.unexpected).toEqual([]);
   });
   test(`local video waits for successful stop of other playback ${theme}`,async({page},info)=>{
@@ -147,11 +148,11 @@ for(const theme of ['ink','night'] as const) {
       const originalState=kind==='stale-idle'?'idle':'playing';
       f.state.player={state:originalState,kind:kind==='stale-idle'?'radio':kind,url:kind==='stale-idle'?'':kind==='radio'?'https://example.com/radio':'/test/audio.mp3',title:'Existing playback'};
       await page.route('**/api/player',route=>route.fulfill({status:503,json:{error:'player_timeout'}}));
-      await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).tap();
+      await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).and(page.locator('.media-item')).tap();
       await expect(page.locator('.error-strip')).toBeVisible();await expect(page.locator('.video-overlay')).toHaveCount(0);expect(f.state.player.state).toBe(originalState);
       let release!:()=>void,requested=false;const gate=new Promise<void>(resolve=>release=resolve);
       await page.route('**/api/player',async route=>{expect(route.request().postDataJSON()).toEqual({action:'stop'});requested=true;await gate;Object.assign(f.state.player,{state:'idle',url:'',title:''});await route.fulfill({json:{ok:true}});});
-      await page.getByRole('button',{name:'Test video.mp4',exact:false}).tap();await expect.poll(()=>requested).toBe(true);await expect(page.locator('.video-overlay')).toHaveCount(0);
+      await page.getByRole('button',{name:'Test video.mp4',exact:false}).and(page.locator('.media-item')).tap();await expect.poll(()=>requested).toBe(true);await expect(page.locator('.video-overlay')).toHaveCount(0);
       release();await expect(page.locator('.video-overlay')).toBeVisible();expect(f.state.player.state).toBe('idle');await page.locator('.video-back').tap();
     }
     expect(f.unexpected).toEqual([]);
@@ -166,7 +167,7 @@ for(const theme of ['ink','night'] as const) {
   test(`city search explains empty results and ignores late old results ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);let release!:()=>void,oldDone=false;const gate=new Promise<void>(resolve=>release=resolve);
     await page.route('**/api/geocode?**',async route=>{const q=new URL(route.request().url()).searchParams.get('q');if(q==='a'){await gate;await route.fulfill({json:{results:[{name:'Old search city',latitude:1,longitude:2}]}});oldDone=true;}else await route.fulfill({json:{results:[]}});});
-    await page.goto('/');await page.locator('.main-nav button').nth(3).tap();await page.locator('.settings-tabs button').nth(1).tap();
+    await page.goto('/');await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'weather');
     const search=async(letter:string)=>{await page.locator('.settings-panel .setting-value').tap();for(let i=0;i<'București'.length;i++)await page.getByRole('button',{name:ro?'Șterge caracterul':'Delete character',exact:true}).tap();await page.locator('.keys').getByRole('button',{name:letter,exact:true}).tap();await page.locator('.final-row').getByRole('button',{name:ro?'Aplică':'Apply',exact:true}).tap();};
     await search('a');await expect(page.locator('.settings-panel [role=status]')).toHaveText(ro?'Se încarcă…':'Loading…');await search('b');await expect(page.locator('.settings-panel [role=status]')).toHaveText(ro?'Nu s-au găsit orașe':'No matching cities');
     release();await expect.poll(()=>oldDone).toBe(true);await expect(page.locator('.compact-geo')).toHaveCount(0);await expect(page.locator('.settings-panel [role=status]')).toHaveText(ro?'Nu s-au găsit orașe':'No matching cities');expect(f.state.preferences.location.name).toBe('București');expect(f.unexpected).toEqual([]);
@@ -238,7 +239,18 @@ for(const theme of ['ink','night'] as const) {
     await page.locator('.video-audio button').tap();expect(f.actions.filter(a=>a.path==='/api/audio').at(-1)?.body).toEqual({mute:true});await expect(page.locator('.video-audio button')).toHaveText(ro?'Activează sunetul':'Unmute');
     const volume=page.getByRole('slider',{name:ro?'Volum':'Volume',exact:true}),vr=await volume.boundingBox();await volume.tap({position:{x:vr!.width*.65,y:vr!.height*.5}});await expect.poll(()=>f.actions.filter(a=>a.path==='/api/audio').at(-1)?.body.volume).toBeGreaterThan(50);
     await capture(page,info,'local-video-controls',defects);
-    const controlContrast=await page.evaluate(()=>{const lum=(s:string)=>{const c=(s.match(/[\d.]+/g)||[]).slice(0,3).map(Number).map(x=>x/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return c.reduce((a,x,i)=>a+x*[.2126,.7152,.0722][i],0);};return [...document.querySelectorAll('.video-controls button,.video-header button')].map(el=>{const s=getComputedStyle(el),a=lum(s.borderTopColor),b=lum(s.backgroundColor);return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);});});expect(controlContrast.every(ratio=>ratio>=3)).toBe(true);await page.locator('.video-back').tap();await expect(page.locator('.media-page')).toBeVisible();await expect(page.locator('.video-overlay')).toHaveCount(0);expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
+    const controlContrast=await page.evaluate(()=>{
+      type RGB=[number,number,number,number];
+      const color=(value:string):RGB=>{const c=(value.match(/[\d.]+/g)||[]).map(Number);return[c[0]||0,c[1]||0,c[2]||0,c.length>3?c[3]:1];};
+      const over=(a:RGB,b:RGB):RGB=>[a[0]*a[3]+b[0]*(1-a[3]),a[1]*a[3]+b[1]*(1-a[3]),a[2]*a[3]+b[2]*(1-a[3]),1];
+      const surface=(el:Element|null):RGB=>{if(!el)return[255,255,255,1];const c=color(getComputedStyle(el).backgroundColor);return c[3]>=1?c:over(c,surface(el.parentElement));};
+      const lum=(c:RGB)=>c.slice(0,3).map(x=>x/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4).reduce((a,x,i)=>a+x*[.2126,.7152,.0722][i],0);
+      const ratio=(a:RGB,b:RGB)=>(Math.max(lum(a),lum(b))+.05)/(Math.min(lum(a),lum(b))+.05);
+      return [...document.querySelectorAll('.video-controls button,.video-header button')].map(el=>{const s=getComputedStyle(el),surround=surface(el.parentElement),fill=surface(el),border=over(color(s.borderTopColor),surround);return{label:el.textContent,boundary:Math.max(ratio(fill,surround),parseFloat(s.borderTopWidth)>0?ratio(border,surround):1),text:ratio(over(color(s.color),fill),fill)};});
+    });
+    await info.attach('video-control-contrast',{body:JSON.stringify(controlContrast,null,2),contentType:'application/json'});
+    expect(controlContrast.every(value=>value.boundary>=3),JSON.stringify(controlContrast)).toBe(true);
+    expect(controlContrast.every(value=>value.text>=4.5),JSON.stringify(controlContrast)).toBe(true);await page.locator('.video-back').tap();await expect(page.locator('.media-page')).toBeVisible();await expect(page.locator('.video-overlay')).toHaveCount(0);expect(defects).toEqual([]);expect(f.unexpected).toEqual([]);
   });
   test(`invalid local video keeps retry and return visible ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
@@ -275,11 +287,11 @@ for(const theme of ['ink','night'] as const) {
     f.state.appliance=true;f.state.preferences.screensaverMinutes=1;const prefs=JSON.stringify(f.state.preferences);await page.clock.install();
     await page.goto('/');await expect(page.locator('.home-layout')).toBeVisible();
     await page.locator('.main-nav button').nth(3).tap();
-    await page.locator('.settings-tabs button').nth(7).tap();
+    await openSettingsSection(page,'diagnostics');await page.locator('.settings-system-actions>button').tap();
     await expect(page.getByRole('dialog')).toContainText(ro?'Deschizi modul de service?':'Open service mode?');
     await capture(page,info,'service-confirmation',defects);
     await page.locator('.dialog-actions button').first().tap();expect(f.actions.some(a=>a.path==='/api/exit')).toBeFalsy();
-    await page.locator('.settings-tabs button').nth(7).tap();await page.locator('.dialog-actions button').last().tap();
+    await openSettingsSection(page,'diagnostics');await page.locator('.settings-system-actions>button').tap();await page.locator('.dialog-actions button').last().tap();
     await expect(page.locator('.service-screen')).toBeVisible();await expect(page.locator('.main-nav')).toHaveCount(0);
     await capture(page,info,'service-mode',defects);
     f.backendDown=true;await expect(page.locator('.error-strip')).toBeVisible({timeout:6000});await capture(page,info,'service-backend-error',defects);
@@ -300,11 +312,11 @@ for(const theme of ['ink','night'] as const) {
     await page.locator('.favorite-button').tap();await expect(page.locator('.favorite-button')).toHaveAttribute('aria-pressed','true');
     await page.locator('.favorite-button').tap();await expect(page.locator('.favorite-button')).toHaveAttribute('aria-pressed','false');
     await page.locator('.main-nav button').nth(3).tap();
-    await page.locator('.settings-tabs button').first().tap();
+    await openSettingsSection(page,'general');
     const before=f.actions.filter(a=>a.path==='/api/preferences').length;
     await page.locator('.setting-value').tap();await page.locator('.keyboard-card header button').tap();
     expect(f.actions.filter(a=>a.path==='/api/preferences')).toHaveLength(before);
-    await page.locator('.settings-tabs button').nth(5).tap();await page.locator('.settings-panel button.switch[aria-label=Radio]').tap();
+    await openSettingsSection(page,'home');await page.locator('.settings-panel button.switch[aria-label=Radio]').tap();
     await page.locator('.main-nav button').first().tap();await expect(page.locator('.shortcut')).toHaveCount(1);await expect(page.locator('.shortcut')).toContainText('Media');
     await page.reload();await expect(page.locator('.shortcut')).toHaveCount(1);
     expect(f.unexpected).toEqual([]);
@@ -328,13 +340,13 @@ for(const theme of ['ink','night'] as const) {
     f.media='empty';await nav(0);await nav(2);await expect(page.locator('.media-item')).toHaveCount(0);await capture(page,info,'media-empty',defects);
     f.media='error';await nav(0);await nav(2);await expect(page.locator('.error-strip')).toBeVisible();await capture(page,info,'media-error',defects);
     await nav(3);
-    for(let i=0;i<7;i++){await page.locator('.settings-tabs button').nth(i).tap();await capture(page,info,`settings-${['appearance','weather','network','bluetooth','audio','home','diagnostics'][i]}`,defects);}
-    await page.locator('.settings-tabs button').nth(7).tap();await capture(page,info,'exit-dialog',defects);await page.locator('.dialog-actions button').first().tap();expect(f.actions.some(a=>a.path==='/api/exit')).toBeFalsy();
+    for(const section of ['home','visualizer','ambient','appearance','rest','power','weather','network','bluetooth','audio','general','diagnostics','androidControl']){await openSettingsSection(page,section);await capture(page,info,`settings-${section}`,defects);}
+    await openSettingsSection(page,'diagnostics');await page.locator('.settings-system-actions>button').tap();await capture(page,info,'exit-dialog',defects);await page.locator('.dialog-actions button').first().tap();expect(f.actions.some(a=>a.path==='/api/exit')).toBeFalsy();
     await nav(0);
-    await page.getByRole('button',{name:ro?'Deschide setările':'Open settings',exact:true}).first().tap();await capture(page,info,'quick-settings',defects);
+    await openQuickControls(page);await capture(page,info,'quick-settings',defects);
     for(const [index,name] of [[0,'network'],[1,'bluetooth'],[2,'audio']] as const) {
       await page.locator('.quick-modal>button').nth(index).tap();await capture(page,info,`${name}-dialog`,defects);await closeModal(page,ro);
-      if(index<2)await page.locator('.topbar-right .icon-button').tap();
+      if(index<2)await openQuickControls(page);
     }
     await nav(1);await page.locator('.radio-toolbar .search-field').tap();await expect(page.locator('.keyboard-card')).toBeVisible();await capture(page,info,'keyboard',defects);
     await page.locator('.diacritics-row button').first().tap();await expect(page.locator('.keyboard-value')).toContainText('ă');await page.locator('.keyboard-card header button').tap();await expect(page.locator('.keyboard-card')).toHaveCount(0);
@@ -377,7 +389,7 @@ for(const theme of ['ink','night'] as const){
   }
   await wizard.getByRole('button',{name:ro?'Finalizează':'Finish setup',exact:false}).tap();await expect(page.locator('.home-layout')).toBeVisible();
   await page.locator('.main-nav button').nth(3).tap();
-  const rerun=ro?'Reia configurarea':'Run setup again',cancel=ro?'Anulează':'Cancel',leave=ro?'Ieși din configurare':'Leave setup';
+  await openSettingsSection(page,'diagnostics');const rerun=ro?'Reia configurarea':'Run setup again',cancel=ro?'Anulează':'Cancel',leave=ro?'Ieși din configurare':'Leave setup';
   await page.getByRole('button',{name:rerun,exact:true}).tap();await page.locator('.dialog-actions').getByRole('button',{name:cancel,exact:true}).tap();await expect(wizard).toHaveCount(0);
   await page.getByRole('button',{name:rerun,exact:true}).tap();await page.locator('.dialog-actions').getByRole('button',{name:rerun,exact:true}).tap();await expect(wizard).toBeVisible();
   await next();await next();await wizard.locator('.search-field button').tap();await expect(page.locator('.keyboard-card')).toBeVisible();
@@ -398,7 +410,7 @@ for(const theme of ['ink','night'] as const){
   });
   await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Video folder',items:[{name:'Test video.mp4',path:'/test/video.mp4',kind:'video'}]}}));
   await page.route('**/api/media/file?**',route=>route.fulfill({contentType:'video/mp4',body:''}));
-  await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).tap();
+  await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).and(page.locator('.media-item')).tap();
   const v=page.locator('video'),play=page.locator('.video-play');await v.dispatchEvent('canplay');await expect.poll(()=>page.evaluate(()=>(window as any).__videoCalls.play)).toBe(1);
   f.state.audio.ready=false;await expect(play).toBeDisabled();await expect(page.locator('.video-state')).toHaveText(ro?'Audio deconectat. Video în pauză.':'Audio disconnected. Video paused.');
   await page.screenshot({path:info.outputPath('video-output-lost.png')});expect(await page.evaluate(()=>(window as any).__videoCalls.paused)).toBe(true);await v.dispatchEvent('canplay');expect(await page.evaluate(()=>(window as any).__videoCalls.play)).toBe(1);
@@ -408,7 +420,7 @@ for(const theme of ['ink','night'] as const){
  test(`partial media library retains files and retry recovers ${theme}`,async({page},info)=>{
   const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);let partial=true;
   await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Library',partial,warnings:partial?[{path:'/missing',error:'media_unavailable'}]:[],items:[{name:'Available.mp3',path:'/test/available.mp3',kind:'audio'}]}}));
-  await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await expect(page.getByRole('button',{name:'Available.mp3',exact:false})).toBeVisible();await expect(page.locator('.media-partial')).toContainText(ro?'Unele directoare media sunt indisponibile':'Some media folders are unavailable');
-  partial=false;await page.locator('.media-partial button').tap();await expect(page.locator('.media-partial')).toHaveCount(0);await expect(page.getByRole('button',{name:'Available.mp3',exact:false})).toBeVisible();expect(f.unexpected).toEqual([]);
+  await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await expect(page.getByRole('button',{name:'Available.mp3',exact:false}).and(page.locator('.media-item'))).toBeVisible();await expect(page.locator('.media-partial')).toContainText(ro?'Unele directoare media sunt indisponibile':'Some media folders are unavailable');
+  partial=false;await page.locator('.media-partial button').tap();await expect(page.locator('.media-partial')).toHaveCount(0);await expect(page.getByRole('button',{name:'Available.mp3',exact:false}).and(page.locator('.media-item'))).toBeVisible();expect(f.unexpected).toEqual([]);
  });
 }

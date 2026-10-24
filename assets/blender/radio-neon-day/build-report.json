@@ -1,0 +1,154 @@
+{
+  "schema": 1,
+  "blender": "5.2.2 LTS",
+  "source_night_sha256": "726e52ae3e519060a345c73108449bd35e055b4ce66a1c9511130e6c5ddf1144",
+  "city_day_v3_sha256": "d42377bd174267aa4752e87ccdddd654e5105d3313d5f4f830541e2e986a0d63",
+  "city_resolution": [
+    1600,
+    570
+  ],
+  "crop_px": {
+    "x": 909,
+    "y": 136,
+    "width": 118,
+    "height": 281
+  },
+  "crop_percent": {
+    "left": 56.8125,
+    "top": 23.859649122807017,
+    "width": 7.375,
+    "height": 49.29824561403509
+  },
+  "zones": 8,
+  "tubes": 45,
+  "mesh_vertices": 4784,
+  "triangles": 7948,
+  "palette_linear": [
+    [
+      0.6,
+      0.9,
+      0.82
+    ],
+    [
+      0.43,
+      0.82,
+      0.96
+    ],
+    [
+      0.5,
+      0.7,
+      0.98
+    ],
+    [
+      0.78,
+      0.69,
+      0.93
+    ],
+    [
+      0.92,
+      0.72,
+      0.8
+    ],
+    [
+      0.47,
+      0.86,
+      0.91
+    ],
+    [
+      0.69,
+      0.93,
+      0.75
+    ],
+    [
+      0.98,
+      0.79,
+      0.4
+    ]
+  ],
+  "emission_strength": 1.4,
+  "day_runtime_gain": 1,
+  "halo_sigma_px": 0.7,
+  "halo_alpha_max": 0.12,
+  "assets": [
+    {
+      "name": "radio-neon-day-zone-01.png",
+      "bytes": 2574,
+      "sha256": "b4f276d4910574af848481b8b55103fcfec20272111604b1257e5d251b28c9c8",
+      "width": 118,
+      "height": 281
+    },
+    {
+      "name": "radio-neon-day-zone-02.png",
+      "bytes": 2434,
+      "sha256": "364e4d7ef2d8c331b74284c8fe3436f351c479037e2ed021cedd7fe925920732",
+      "width": 118,
+      "height": 281
+    },
+    {
+      "name": "radio-neon-day-zone-03.png",
+      "bytes": 2138,
+      "sha256": "e6195a3ecdba55355c8a9f6f89a9d5a5caacaab71ab5fe75820b56fbe8020096",
+      "width": 118,
+      "height": 281
+    },
+    {
+      "name": "radio-neon-day-zone-04.png",
+      "bytes": 2442,
+      "sha256": "e0586cd35f2866f67e002ab3ba74ba7bf0b18426e7776e88db9bfe945ada5e4f",
+      "width": 118,
+      "height": 281
+    },
+    {
+      "name": "radio-neon-day-zone-05.png",
+      "bytes": 1924,
+      "sha256": "76280f9747728516068d764d9db29773a588b741f532105e2a3c2a392ba2ffa7",
+      "width": 118,
+      "height": 281
+    },
+    {
+      "name": "radio-neon-day-zone-06.png",
+      "bytes": 2413,
+      "sha256": "433c57cd01290124d0f7faf960e7f29c4faddb623f6ce48b4eb4b8724179b529",
+      "width": 118,
+      "height": 281
+    },
+    {
+      "name": "radio-neon-day-zone-07.png",
+      "bytes": 1780,
+      "sha256": "9a21897a13561b642bb32184aa776a0026490f9cb256bfcfd7316691339d01db",
+      "width": 118,
+      "height": 281
+    },
+    {
+      "name": "radio-neon-day-zone-08.png",
+      "bytes": 2539,
+      "sha256": "8a2865ac6db4ad48adc87452955d410ee860cb208f50e445d911cef35f873384",
+      "width": 118,
+      "height": 281
+    }
+  ],
+  "encoded_bytes": 18244,
+  "rgba_decoded_bytes": 1061056,
+  "geometry_unchanged": true,
+  "night_protected_hashes": {
+    "assets\\blender\\radio-neon\\radio-neon-wrap.blend": "726e52ae3e519060a345c73108449bd35e055b4ce66a1c9511130e6c5ddf1144",
+    "app\\ui\\public\\ambient\\radio-neon-zone-01.png": "0f2a5c921988a67f41cfdfd68bbb6edc4efcdd98690edf81336647bb909840d8",
+    "app\\ui\\public\\ambient\\radio-neon-zone-02.png": "962915e628dc261edc00d3b163ba21546796b10bcd166481a581038512b507f9",
+    "app\\ui\\public\\ambient\\radio-neon-zone-03.png": "27786beccbe52e8fae37b092632cde6e392b8ad00e263d558359d9b2986c975a",
+    "app\\ui\\public\\ambient\\radio-neon-zone-04.png": "60b08b862bcb00af668be123d86913f33dbb60db66715db22dc9300dd07a2fa8",
+    "app\\ui\\public\\ambient\\radio-neon-zone-05.png": "9c05fa4340b71ebc2c35f4533cb68442e0e68845e41ed3bc51b45e99213beda5",
+    "app\\ui\\public\\ambient\\radio-neon-zone-06.png": "00d0046cd7a9d639fcc9e15d6f62dab8594f1ca5b5fff03ccfc5cb1e1d0cd239",
+    "app\\ui\\public\\ambient\\radio-neon-zone-07.png": "9740d399097ee3763db89a3a514673dca9b383d1ef045b0647d5bd9869287d31",
+    "app\\ui\\public\\ambient\\radio-neon-zone-08.png": "699ade3513ccbe821a912b7dd07fafaaf03e4e0b0fcebda7f1160434dd48739c"
+  },
+  "audit": {
+    "pass": true,
+    "parts": 45,
+    "errors": 0,
+    "warnings": 0
+  },
+  "signal_contract": "Eight adjacent pairs of 16 measured temporal PCM amplitudes; no frequency-band claim, no synthetic runtime loop.",
+  "limits": "Review fog is a documented illustrative veil, not a live weather screenshot. Actual runtime visibility/signal must be verified separately.",
+  "builder_sha256": "4ab65c0d0a2ebd891c21f90c6c2387d0703b445d1cb8c43959bcece844210deb",
+  "helper_sha256": "4d7bd3a1acf013d6e6184b469caeedf61ed6fb0e10edb8d41dfe2653d76593ff"
+}

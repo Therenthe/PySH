@@ -1,0 +1,27 @@
+.city-entry{position:fixed;inset:0;z-index:35;isolation:isolate;overflow:hidden;pointer-events:auto}
+.city-entry>video{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;opacity:0;pointer-events:none}
+.city-entry[data-phase=playing]>video,.city-entry[data-phase=leaving]>video{opacity:1;transition:opacity 180ms ease}
+.city-entry[data-dark-surface=true][data-actual-night=false]>video{filter:brightness(.4)}
+.radio-entry-fog{position:absolute;inset:0;z-index:1;background:linear-gradient(transparent 45%,rgb(168 182 186 / .28));opacity:0;pointer-events:none}
+.city-entry[data-phase=playing] .radio-entry-fog{opacity:calc(var(--entry-haze) * .65)}
+.city-entry>.scene-precipitation{position:absolute;inset:-10% -5% -20%;overflow:hidden;z-index:2;pointer-events:none}
+.city-entry[data-phase=loading]>.scene-precipitation,.city-entry[data-phase=leaving]>.scene-precipitation{opacity:0}
+.radio-entry-actions{position:absolute;top:10px;left:12px;right:12px;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--ink)}
+.radio-entry-actions>span{font-size:14px;font-weight:650;padding:7px 12px;border-radius:20px;background:var(--surface)}
+.radio-entry-actions>button{min-height:48px;min-width:84px;padding:0 16px;border:1px solid var(--line-dark);border-radius:24px;background:var(--paper);color:var(--ink);font-size:14px}
+.app[data-city-entry=loading]>.main-area>.topbar{opacity:0;pointer-events:none;transition:opacity 120ms ease}
+.city-entry[data-phase=leaving]{background:var(--bg)}
+.city-entry[data-phase=leaving]>video,.city-entry[data-phase=leaving]>.radio-entry-actions{opacity:0;transition:opacity 160ms ease;pointer-events:none}
+.app[data-city-entry=playing]>.main-area,.app[data-city-entry=playing]>.rail,.app[data-city-entry=leaving]>.main-area,.app[data-city-entry=leaving]>.rail{opacity:0;pointer-events:none;transition:opacity 180ms ease}
+.app[data-theme][data-city-entry=playing]>.ambient-sky>.city-diorama,.app[data-theme][data-city-entry=leaving]>.ambient-sky>.city-diorama{opacity:0;transition:opacity 180ms ease}
+.app .home-v2.ambient-home .city-building-entry{position:absolute;left:calc(var(--building-left) * 1vw - var(--home-origin-x,0px));bottom:22px;width:calc(var(--building-width) * 1vw);min-width:48px;height:var(--building-height);min-height:48px;margin:0;padding:0;border:0;border-radius:8px;background:transparent;box-shadow:none;z-index:0;cursor:pointer}
+.app .home-v2.ambient-home .city-building-entry[data-destination=media]{left:max(0px,calc(var(--building-left) * 1vw - var(--home-origin-x,0px)))}
+.app .home-v2.ambient-home .city-building-entry[data-destination=audio]{left:max(calc(6.1538vw + 1px),calc(var(--building-left) * 1vw - var(--home-origin-x,0px)))}
+.city-building-entry:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.app .home-v2.ambient-home .city-radio-control{pointer-events:none}
+@media(prefers-reduced-motion:reduce){.city-entry,.city-entry>video{transition:none}.city-entry>.scene-precipitation{display:none}}
+
+.city-entry[data-direction=exit][data-phase=loading]{background:#070c10}
+.city-entry[data-direction=exit][data-phase=leaving]{background:transparent}
+.city-entry[data-direction=exit][data-phase=leaving]>video{opacity:1;transition:none}
+.app[data-city-entry-direction=exit][data-city-entry=loading]>.main-area,.app[data-city-entry-direction=exit][data-city-entry=loading]>.rail{opacity:0;pointer-events:none}

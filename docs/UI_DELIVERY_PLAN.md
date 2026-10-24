@@ -1,6 +1,57 @@
 # Plan urmărit de livrare UI/UX — 2026-10-04
 
-Acest inventar păstrează cerințele din conversație, inclusiv cele vechi. Nu acordă note sau acceptare din descrieri. GitHub este sursa canonică; implementările nepublicate sunt lucru local. Candidatul instalat actual: 5c76b8aff50d/source012ca8d; schimbare exclusivă a stelelor, funcțiile c1e2 păstrate. Documentele pot avansa separat de sursa runtime-ului. Toate30criteriile complete rămân OPEN în acceptance.json; dovada HW-01 de pe670c este istorică. O probă veche nu certifică un candidat nou.
+## Reorganizare UX — instalată 24 octombrie
+
+Runtime `dd9a018bf755`, sursă `38b07da`: șase categorii orientate către sarcini,
+13 secțiuni, comenzi rapide distincte, revenire la pagina de origine și legături
+între configurările asociate. Radio fără boxă și resetarea filtrelor au recuperare
+directă; tastatura șterge textul într-o atingere. Volumul nu mai provoacă navigare
+accidentală, iar recuperarea audio rămâne integral vizibilă, inclusiv la erori lungi.
+
+Audituri independente repetate și iterații R1–R7 păstrate. Regresia afectată: 446/470
+PASS inițial; toate cele 24 probe cu locatoare vechi au retest PASS în lotul R4 de84.
+Ultimul lot Quick: 16/16 PASS; B final 52/52 verificări. 650 Python / 82 extension
+PASS. Instalare: 107 hashuri / 29 preferințe; backup PC verificat și e1a82fcc1327
+păstrat. Tur nativ PASS: 84 capturi, patru contexte, 13 secțiuni, revenire și volum;
+preferințe/radio restaurate, diagnostic închis. Toate cele30 criterii complete OPEN.
+[Dovezi și limite](evidence/ux-reorganization-2026-10-24.md).
+
+
+## Audit UI integral și rafinare — instalat 24 octombrie
+
+Runtime `e1a82fcc1327`, sursă `0c912de`: sertar extern rafinat, suprafețe și
+iconografie coerente, AUD-01/03–09 remediate și AUD-02 păstrat. Audit independent
+336 stări finale, EN/RO × teme; 650 Python / 82 extension PASS. Regresie 1328 cazuri,
+cu toate eșecurile inițiale ale probelor rezolvate prin retest pe aceeași producție.
+107 fișiere și 29 preferințe verificate; backup PC și precedentul 1371 păstrate,
+radio reluat. Tur nativ final: 64 capturi / patru contexte și trei reveniri YouTube PASS;
+preferințe/radio restaurate, Chromium normal și diagnostic închis. [Dovadă și limite](evidence/ui-polish-2026-10-23.md).
+
+Starea de mai sus înlocuiește cozile AUD inițiale din istoricul de mai jos;
+celelalte cerințe istorice rămân urmărite. Acceptarea completă rămâne OPEN.
+
+## Oraș și animații — instalate pe `1371bbff602e`
+
+Sursă `6ad7ad5`, 106 hashuri / 29 de preferințe verificate, radio reluat și backup PC
+verificat. Oraș/metrou Blender v2 și mișcare reținută; AUD-02 remediat prin fundal
+local sub text. 326 de probe browser finale PASS, audit independent și capturi panou
+inspectate. [Dovada și limitele](evidence/city-polish-2026-10-23.md).
+Celelalte 7 defecte și recomandarea APG rămân OPEN, împreună cu acceptarea completă.
+
+## Audit nou —2026-10-23
+
+Trei auditori cu skilluri GitHub fixate au aplicat rutina din
+[AUDITOR_SKILLS.md](AUDITOR_SKILLS.md) pe sursa8cfffd0. Rezultatul inițial: 8 defecte și o recomandare APG; AUD-02 este ulterior remediat pe `1371bbff602e`,
+celelalte rămân OPEN.
+Coada [AUD-01–09](evidence/auditor-skills-2026-10-23.md) păstrează severitatea,
+sursa, responsabilul root și proba obligatorie de retest. Priorități:
+focus modal/tastatură și contrast Home, apoi focus Media/Acasă, stare selecții,
+navigare în eroare, scroll Setări, identificare fișiere și săgeți TouchChoice.
+Restanțele istorice de mai jos rămân în inventar; acest audit nu le închide.
+
+Acest inventar păstrează cerințele din conversație, inclusiv cele vechi. Nu acordă note sau acceptare din descrieri. GitHub este sursa canonică; implementările nepublicate sunt lucru local. Candidatul instalat actual: `1371bbff602e`, sursă `6ad7ad5`; cinci aeronave Blender distincte și orientate corect, cu funcțiile anterioare păstrate. [Dovezi ale iterației aeronavelor](evidence/ambient-aircraft-2026-10-23.md). Stările și buildurile din rânduri sunt dovezi istorice; probele noi sunt în PLAN_2026_10_23.md. Documentele pot avansa separat de sursa runtime-ului. Toate30criteriile complete rămân OPEN în acceptance.json; dovada HW-01 de pe670c este istorică. O probă veche nu certifică un candidat nou.
+
+[Corecția atmosferei meteo](evidence/weather-atmosphere-2026-10-23.md) păstrează inventarul anterior: vizibilitate și nebulozitate independente, precipitații diurne mai lizibile, fără schimbarea etichetei furnizorului.
 
 Ordine:1vizualizator și aranjare stabilă →2meteori →3repaus Acasă →4defectele auditorilor și tur complet →5acceptare nativă și imagine finală. Cerințele noi se adaugă; nu înlocuiesc restanțele.
 
@@ -73,3 +124,24 @@ Actualizare 2026-10-04: UI-40 anulat explicit; continuă UI-39 și toate restan�
 Dovada finală pentru UI-34/35/41/42/43: [media-confetti-2026-10-04](evidence/media-confetti-2026-10-04.md). Verificate 51 hashuri, nouă preferințe față de backup și radio reluat. Toate cele 14 preferințe schimbate de audit restaurate; diagnosticul privat oprit. Turul a folosit acțiuni injectate în Chromium, nu certifică gestul fizic ori toate criteriile de produs. Restanțele anterioare rămân în inventar; UI-40 rămâne anulat.
 
 Restaurare limitată cerută de utilizator: stelele SVG și gradientul original din4bb708b, fără textura fotografică. Instalat5c76/source012;34probe afectate PASS, captură nativă inspectată,51hashuri/nouă preferințe/radio verificate. Nicio altă cerință nouă implementată în acest pas. Vezi [dovada](evidence/original-stars-2026-10-04.md).
+## Iterația cer/rețea —2026-10-23
+
+Reperul utilizatorului „Varianta Back” este păstrat separat. Lotul nou păstrează cerințele inventariate: cer Blender cu stele rare, Lună în faza reală pentru dată/oră, nori/avioane/Soare/meteori, indicatori distincți Wi-Fi/Ethernet și recuperarea radioului când ruta se schimbă. Auditul vizual local nu certifică atingerea sau performanța pe Pi. Starea fiecărei probe și responsabilii sunt în [planul activ](PLAN_2026_10_23.md); restanțele anterioare nu sunt anulate.
+
+
+Verificarea lotului300f/source86b0:1112browser/603Python PASS,32platform skips;81hashuri/29preferințe verificate după update; cer/YouTube/rețea auditate nativ și Ethernet↔Wi-Fi cu radio continuu confirmat fizic. Rândurile UI anterioare rămân cerințe, iar acceptarea lor completă se face în matricea de produs.
+
+Corecția ulterioară cerută de utilizator: un singur simbol pentru ruta activă în bară, Ethernet redesenat și clădire Wi-Fi Blender cu asociere statică/activitate după rută. Instalat0b/sourcee533,619Python/104browser afectate PASS și nativ84hashuri/29preferințe/un singur simbol/rută kernel/clădire verificate. Rutarea și cerințele anterioare sunt păstrate.
+
+## Grounded city and approved destinations —24 October2026
+
+Installed bounded runtime `ca9ff15300c7`, source `aa2f5e0`: [tracked plan](plans/city-destinations-2026-10-24.md) and [evidence](evidence/city-destinations-2026-10-24.md). Includes viewport-centered clock, official-alert transport repair/modal idle guard, grounded rails/city edges and five canonical cinematic destinations. Native five-destination/return/decoder/transport checks pass; genuine official alerts available. Full regression1512/1520 PASS has eight classified failures and separate bounded retests. Complete product acceptance remains OPEN. Further visual improvements remain proposals only.
+
+## Solar windows, wet pavement and returns —24October2026
+
+Installed bounded runtime `aec5fbd53684`, production source `90426ab9`.
+Rain-only Blender reflections, gradual real solar-window banks and five outward
+journeys are verified. Native10 unheld clips/25 transport checks and independent
+visual/usability/keyboard evidence are recorded in
+[evidence](evidence/city-atmosphere-2026-10-24.md). The57px handoff and prompt
+focus defects were reproduced and repaired; complete product acceptance stays OPEN.

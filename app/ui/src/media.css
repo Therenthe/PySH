@@ -62,3 +62,10 @@
 .app .media-redesign .service-arrow{display:none}
 .app .with-player .media-redesign .service-panel{padding:14px}
 .app .with-player .media-redesign .service-panel>.muted{margin-bottom:14px}
+
+/* Full names are disclosed in place, without starting media or interrupting browsing. */
+.app .media-redesign .media-entry{flex-wrap:wrap;column-gap:6px;row-gap:0}
+.app .media-redesign .media-name-toggle{width:48px;height:48px;flex:0 0 48px;display:grid;place-items:center;border:0;border-radius:10px;color:var(--muted);background:transparent;padding:0}
+.app .media-redesign .media-name-toggle[aria-expanded=true]{background:var(--soft);color:var(--accent-strong)}
+.app .media-redesign .media-full-name{flex:0 0 100%;padding:2px 12px 14px;font-size:16px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
+.app .media-redesign .library-path:focus-visible{outline:2px solid var(--accent-strong);outline-offset:2px;border-radius:4px}

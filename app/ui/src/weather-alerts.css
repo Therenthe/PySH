@@ -1,0 +1,10 @@
+.app .weather-top .weather-alert-notice{position:relative;width:48px;height:48px;flex:0 0 48px;border-radius:50%;color:var(--ambient-secondary);border-color:var(--ambient-edge);background:transparent}
+.weather-alert-notice svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.app .weather-top .weather-alert-notice.has-alerts{color:var(--ambient-text);background:color-mix(in srgb,#cb9637 18%,transparent);border-color:var(--ambient-text)}
+.weather-alert-notice>span{position:absolute;right:4px;top:2px;font-size:12px;font-weight:700}
+.weather-alert-backdrop{position:fixed;inset:0;z-index:55;background:#06101a88;display:grid;place-items:center;padding:16px}
+.weather-alert-dialog{width:min(590px,100%);max-height:100%;overflow:auto;background:var(--paper,var(--bg));color:var(--ink);border:1px solid var(--line-dark);border-radius:20px;padding:16px 20px;box-shadow:0 18px 48px #0004}
+.weather-alert-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:20px;position:sticky;top:-16px;background:var(--paper,var(--bg));padding:0 0 8px;z-index:1}
+.weather-alert-dialog h2{font-size:21px;margin:0}.weather-alert-dialog header button{width:48px;height:48px;min-width:48px;min-height:48px;border:1px solid var(--line-dark);border-radius:12px;background:var(--soft);color:var(--ink);font-size:28px}
+.weather-alert-dialog article{border-top:1px solid var(--line-dark);padding:14px 0}.weather-alert-dialog h3{font-size:18px;line-height:1.4;margin:6px 0 10px}.weather-alert-dialog p{font-size:16px;line-height:1.5;white-space:pre-line;overflow-wrap:anywhere}
+.weather-alert-severity{font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}.weather-alert-dialog footer{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;line-height:1.5;color:var(--muted);margin-top:12px}.weather-alert-dialog footer>span{overflow-wrap:anywhere}.weather-alert-dialog footer strong{font-weight:600}.weather-alert-dialog .weather-alert-unknown{margin:8px 0 12px}

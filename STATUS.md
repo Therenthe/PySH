@@ -1,5 +1,26 @@
 # PySH status
 
+## Screen, standby and Android refinement — 2026-10-13
+
+Prepared runtime33c3cb8361ac, Android0.1.2/code3 and companion presence/artwork.
+12 new touchscreen cases and445 Python cases PASS/32 Windows skips; Android
+build,10 policy / artwork tests and lint PASS. Complete browser run974 PASS; all\n
+eight initial failures passed affected reruns. Native installation/verification
+is in progress. [Scoped evidence](docs/evidence/standby-remote-2026-10-13.md).
+
+
+## Android LAN remote — 2026-10-13
+
+Native Android Studio project added in `android/`, with EN/RO, phone light/dark
+themes and supported PySH controls. Independent authenticated HTTPS LAN gateway
+`afcc33f88ac8` installed alongside the unchanged hub runtime `5c76b8aff50d`.
+Live pairing/state/theme restoration/audio/media/diagnostics/revocation PASS;
+401 backend tests /32 Windows skips, Android compilation/policy tests/lint PASS.
+Android0.1.1 installed on the owner's Samsung Note10/Android12. Actual pairing,
+LAN/state/audio, pause/resume, theme restoration, native palettes and persisted
+association smoke checks pass; complete hardware flows remain OPEN. See [remote evidence](docs/evidence/android-remote-2026-10-13.md)
+and [Android setup](android/README.md). This does not change full product acceptance.
+
 Updated: 2026-10-04. GitHub is canonical: [Therenthe/PySH](https://github.com/Therenthe/PySH), branch `feat/pysh-os-image`, [draft PR #3](https://github.com/Therenthe/PySH/pull/3). The product is incomplete; no 10/10 or final release acceptance is assigned.
 
 ## Current identities
