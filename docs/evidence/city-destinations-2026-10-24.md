@@ -105,3 +105,17 @@ cap. R3 updates those three callers and adds explicit asset decoding before
 scene assertions. Warning failure copy is generalized to unverifiable data,
 covering transport, parsing and unsupported coverage without claiming no hazard.
 The final complete regression is rerun on that exact export.
+
+R3's broader run retained1097 passes before the20-failure cap. Fourteen failures
+used floating-placement expectations with radio Wave's fixed facade, four still
+expected the superseded radio movie URL, and two exposed keyboard focus missing
+when collapsing the facade's playback card. A stronger four-context regression
+reproduced the latter before repair. R4 directs that collapse to the real Radio
+building command; floating styles keep their prior visualizer focus behavior.
+
+The placement fixtures now explicitly use Bars, with a non-building precondition;
+all drag, anchor, edge, overlap and persistence assertions remain byte-identical.
+An independent12-case retest passed before the full rerun. The valid Wave tests
+for Arrange's temporary placeholder and local audio remain unchanged. Legacy
+movie expectations now address the actual city-entry-radio asset. Runtime layout
+preferences are neither rewritten nor reset by these test-only changes.
