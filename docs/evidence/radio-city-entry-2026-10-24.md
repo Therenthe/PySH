@@ -93,3 +93,65 @@ one-shot focus attempt ran. Later enablement never retried it. R4 retains the
 pending intent through that save/audio busy interval, verifies successful focus,
 cancels on departure and bounds readiness retries. Exact R4 browser and native
 results follow after verification; R3's native delivery gate was not accepted.
+
+## Final R4 browser and installation gate
+
+Runtime `eaa8c82585e4`, production source
+`79830a4d9a5ec830b6298089118cae01a6740af2`, local source
+`9551127352c98aefde7b99ae7d62bdab16a3e101`.
+214/214 complete scoped regression PASS, no skips/flaky results. Independent
+72-capture review covers8 EN/RO/theme/weather contexts; zero page errors,
+overflow or unintended API writes and seven source hashes unchanged. The R3
+144/16-context review remains separately attributed. Delayed navigation autosave
+is covered by28 independent accessibility groups/48 captures: disabled Search
+waits for enablement, then receives focus; Enter/Escape and leaving-page
+cancellation pass. The code/runtime in that audit is identical to final R4;
+the later source commit corrects only the test's PATCH expectation.
+
+The first R4 regression used a static server where six tests require Vite module
+imports. Its new request assertion also expected POST rather than PATCH. Those
+harness faults and two asset-readiness failures were retained, then the exact
+final frozen source was run cleanly on Vite. No failed run is counted as PASS.
+
+685 public source blobs were verified with five existing operational-document
+exclusions retained. Canonical LF sources were packaged,165 file hashes checked,
+and a fresh PC backup downloaded and verified before activation. Original29
+preferences, Ethernet and gateway were preserved; the radio resumed. Previous
+runtime `b115fcdaa2c7` remains available for recovery. Documentation HEAD is
+separate from the installed production source above.
+
+Native R4 confirms the occasional Blender BT turn and first-touch ambient wake.
+It also confirms enabled Search gains focus after autosave. A serial Node/CDP
+opacity assertion arrived after the short movie had already ended; its failure
+is retained. Native inspection is therefore separated from natural decoder
+measurement, with diagnostic paused frames explicitly labelled. Further results
+are recorded below when the independent native gate completes.
+
+## Native R4 completion and restoration
+
+On unchanged installed `eaa8c82585e4`/`79830a4`, the supplemental native gate
+passes: paused-frame composition clears Home UI and the original city while
+preserving the live sky; Cancel prevents late navigation; Skip reaches Radio;
+natural completion focuses enabled Search after autosave; reduced motion opens
+Radio without creating a movie. Original player identity/state, volume, mute and
+audio readiness remained unchanged through all five navigation/control checks.
+The unheld, screenshot-free decoder pass reports60 frames,3 dropped,0 corrupted,
+duration2.5s and measured2627ms. This is separate from paused diagnostic captures.
+
+The earlier exact-build probe already confirmed the real BT atlas turn and
+consumed first ambient touch. An early paused-frame assertion sampled the normal
+180ms fade before it settled; the final visual check waits for settled opacity.
+A diagnostic tunnel-start timeout was also retained and its bounded allowance
+extended before the successful run. These harness attempts are not product PASS.
+
+Native conditions were actual daytime weather and original Ink preferences;
+nighttime was not fabricated on the device. Synthetic CDP touch and API state
+checks do not establish new physical-finger/acoustic or whole-product acceptance.
+Original29 preferences and radio were restored; owned diagnostic browsers,
+listeners and PC test servers closed. The existing read-only viewer remains only
+on PC127.0.0.1:18765. A fresh guarded whole-Wayland capture after restoration was
+visually inspected. Raw scripts, frames, profiles and backups remain private.
+
+Cinema→Media, Bluetooth→Sound and speakers, Wi-Fi→Internet and phone and central
+tower→Settings are proposals only. No other building interactions were added.
+All30 complete product criteria remain OPEN.

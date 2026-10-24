@@ -23,11 +23,11 @@ layouts, media/accounts, network and private PC-loopback viewer.
   source geometry, camera path, motion and asset budgets.
 - [x] Integrate bounded, cancelable entry lifecycle and permanent48px building
   target, preserving first-touch ambient wake and separate playback controls.
-- [ ] Verify reduced motion, hidden/offscreen behavior, missing/failed media,
+- [x] Verify reduced motion, hidden/offscreen behavior, missing/failed media,
   repeated taps, cancel/skip, EN/RO and both themes on exact frozen source.
-- [ ] Publish source to GitHub, verify tree/package and PC backup, install a
+- [x] Publish source to GitHub, verify tree/package and PC backup, install a
   pinned candidate, then inspect native alpha, motion, navigation and decoding.
-- [ ] Restore original preferences/playback, close owned diagnostics, record
+- [x] Restore original preferences/playback, close owned diagnostics, record
   evidence and provide other-building suggestions without implementing them.
 
 ## Shot and interaction contract
@@ -61,3 +61,19 @@ builders, editable Blender masters, small review frames and redacted reports.
 
 This is bounded feature delivery; all complete product criteria remain OPEN.
 No global quality score or physical acceptance is inferred from screenshots.
+
+Delivered: runtime `eaa8c82585e4`, production source
+`79830a4d9a5ec830b6298089118cae01a6740af2`.214/214 browser,28 additional
+accessibility groups,72 bounded final visual captures and native controls/
+decoder proof PASS. Original preferences/audio restored; diagnostics closed.
+
+## Proposals awaiting agreement
+
+| Building | Existing destination | Suggested entrance |
+| --- | --- | --- |
+| Art Deco cinema | Media | Marquee, vestibule, cinema doors |
+| Bluetooth building | Sound and speakers | Short approach to an illuminated audio hall |
+| Wi-Fi building | Internet and phone | Network control room, following the wave motif |
+| Central tower | Settings | Calm entrance into a control hall |
+
+These destinations have no new building handlers. Only Radio was implemented.

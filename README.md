@@ -2,11 +2,13 @@
 
 Hub tactil EN/RO pentru Raspberry Pi 4 (4 GB), LCD DSI 7″, 800 × 480: ceas, vreme, radio, media locală și conectivitate.
 
-Ultimul lot instalat: `b115fcdaa2c7`, sursă `024ee82` — atingerea clădirii Radio
+Ultimul lot instalat: `eaa8c82585e4`, sursă `79830a4` — atingerea clădirii Radio
 pornește o intrare cinematică Blender cu mașini, metrou, pietoni și uși animate,
 apoi deschide Radio. BT se rotește ocazional în3D; Wi-Fi arată numai unde.
-210/210 verificări browser,144 capturi independente,40 probe de accesibilitate
-și10 grupe de utilizabilitate PASS.
+214/214 verificări browser,72 capturi în8 contexte și28 probe suplimentare de
+accesibilitate PASS. Dovezile anterioare R3 sunt păstrate separat.
+Pe Pi sunt confirmate rotația BT, trezirea, intrarea/anularea/omiterea și focusul;
+redarea și preferințele sunt păstrate. Proba naturală:60 cadre,3 pierdute,0 corupte.
 [Dovezi și limite](docs/evidence/radio-city-entry-2026-10-24.md) ·
 [Conceptul vizual Home pentru specialist](docs/HOME_VISUAL_CONCEPT.md).
 
