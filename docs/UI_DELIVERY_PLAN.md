@@ -1,5 +1,18 @@
 # Plan urmărit de livrare UI/UX — 2026-10-04
 
+## Lotul aprobat N0/5/1/2/3/4/7 — livrat25octombrie
+
+Runtime `f0b140892a9e`, sursă `eb899025`; punctul6 exclus. Neonul Radio este
+restaurat, etichetele Blender selectate după cinci experimente reale de20minute,
+comenzile comune/Radio/aranjarea Acasă și Media cu progres real sunt livrate.
+P4 are64probe native distincte PASS,219hashuri/29preferințe/backupPC verificate;
+istoricul/audio/radioul/preferințele restaurate, fișierele sintetice eliminate și
+diagnosticul închis. Auditorii independenți nu au identificat blocaje P4 rămase
+în sursa/capturile analizate. Acceptarea integrală a produsului rămâne OPEN.
+[Planul detaliat](plans/ui-ux-2026-10-24.md) ·
+[Experimente etichete](plans/label-autoresearch-2026-10-24.md) ·
+[Dovezi Media](evidence/ui-ux-media-2026-10-25.md).
+
 ## Reorganizare UX — instalată 24 octombrie
 
 Runtime `dd9a018bf755`, sursă `38b07da`: șase categorii orientate către sarcini,

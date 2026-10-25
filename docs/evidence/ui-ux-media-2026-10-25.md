@@ -1,8 +1,9 @@
 # P4 — real local metadata, artwork and Continue watching
 
-Scoped source candidate; installed P3 remains `7db87b09ea29` until the pinned
-publication/deployment/native records below are complete. Full product acceptance
-remains OPEN. Proposal6 and saved Home presets remain excluded.
+Installed runtime `f0b140892a9e`, public source `eb899025`; previous
+`7db87b09ea29` retained. Scoped publication/deployment/native evidence is below.
+Full product acceptance remains OPEN. Proposal6 and saved Home presets remain
+excluded.
 
 ## User-facing change
 
@@ -101,3 +102,51 @@ retest passes84/84 (40terminal-audio plus44Media/library/recovery cases), includ
 all EN/RO×theme close-drag cases. Earlier failure is retained. 52shared command/Radio checks PASS after that correction. TypeScript/build and
 repository structure PASS; immutable package/source verification follows before
 native UI use.
+
+## Installed package and native UI
+
+Installed runtime `f0b140892a9e`, public code
+`eb899025dfe8c7b320d3ed8536e97215b417de5f`, tree
+`085a2955af45e60046ff0cf585f69abdc109eb76`; immutable local source
+`8185b1392b118993cadb89db3a565343d02af8c2`. Archive SHA-256
+`6a8470330b0d50dd903afdba068e0005628f788ced6a00a25dd8ffaefbad27d9`.
+All219runtime hashes/29preferences verified; previous `7db87b09ea29` retained.
+Separate PC backup contents verified, SHA-256
+`5717effeb5150cdf3c8bd58ddc7d4727a41e7cf67137b1872e795dc6d075ebc9`.
+Activation resumed original radio and preserved Ethernet/gateway.
+
+The final native existing-profile audit passes64distinct named checks,6actual
+workflows, current English/Night at800×480. Real decoded JPEG is320×180; the
+controlled video duration is59.914257s. Natural playback reached12seconds and the
+actual Pause button froze the playhead. Final saved position and Resume's first
+play event both equal12.273024s. Explicit Continue Start over creates a new SID
+at0; natural subsequent progress creates a new history entry. Remove from history
+leaves the file intact. A fresh file open starts0; Cancel preserves the disposable
+copy and a single confirmed guarded Delete removes only that copy. Original
+synthetic clip stays until operator cleanup. Four owned sessions are distinguished;
+no currentTime, metadata or artwork result is injected. Targets are48px in view,
+media has no horizontal overflow and the page has no unexpected writes/errors.
+
+The first native harness used PC APIRequestContext.fetch against a Pi-loopback
+address; it failed before session creation. Native route continuation plus response
+observation corrects that instrumentation error. An intervening61-check run passed.
+The extra Start over run then missed Continue after its short clip reached14.61
+of15.91seconds before screenshot/close, near the completion boundary. This is
+retained as a timing-sensitive test result, not promoted to a product failure.
+The final genuine60second fixture plus actual Pause before capture removes that
+boundary ambiguity; final numeric observations are retained privately.
+
+The operator stops the service before restoring exact original watch.json bytes
+or absence, removes only its two hash-checked synthetic files, starts the normal
+runtime and restores original preferences/audio/radio. Final cleanup verifies all
+of these, closed diagnostic ports and no owned external windows. Fresh normal
+Wayland and native Continue/start-over/confirmation captures were inspected.
+
+Separate usability and visual reviewers inspected source and native/browser
+captures. No definite remaining P4 blocker was found after recovery and closing-
+volume fixes. Cropped/static images cannot independently prove whole-screen hit
+areas, actual button behavior or audibility; those observations remain distinct.
+Native evidence uses injected input, one current language/theme and controlled
+media. Physical touch, all formats/DRM, native EN/RO matrix, phone validation and
+full product stability remain OPEN. The approved scoped UI batch is delivered;
+none of the30whole-product criteria is silently closed by these results.

@@ -1,19 +1,23 @@
 # PySH status
 
-Installed runtime7db87b09ea29/code870e63b9. Original Radio neon, subtle Blender
-Explore names, common commands, Radio library and Home arrangement assistance
-are installed and natively verified. Five real20minute label experiments complete.
+Installed runtimef0b140892a9e/codeeb899025. The approved N0/P5/P1/P2/P3/P4/scopedP7
+UI batch is delivered: Radio neon, subtle floating Blender Explore names, common
+commands, Radio library, Home arrangement assistance and real local Media details
+with Continue watching/recovery. Five real20minute label experiments complete.
 
-P4 source candidate adds actual optional local metadata/artwork, bounded Continue
-watching, browser-owned progress and explicit leave-without-saving recovery.
-755Python/44platform skips,108JavaScript PASS. Existing media/audio227/228 found
-a closing-volume gesture race;84focused retests and52command/Radio pass after fix.
-30Linux component and53isolated API checks PASS, actual synthetic metadata/JPEG,
-descriptors closed and live state unchanged. Pinned native UI delivery remains OPEN.
+P4:64distinct native current-language/theme checks PASS with actual JPEG, natural
+video progress, exact Resume, Continue Start over, history removal and guarded
+copy deletion.219runtime hashes/29preferences/PCbackup verified. Original watch
+bytes, radio/audio/preferences restored, synthetic fixtures removed and diagnostic
+ports closed.755Python/44platform skips,108JavaScript,84focused Media/audio and
+52command/Radio PASS;30Linux component and53isolated API checks PASS. Earlier
+failures/corrections and limits are retained in the evidence.
 
 - [Media evidence](docs/evidence/ui-ux-media-2026-10-25.md)
 - [Home evidence](docs/evidence/ui-ux-home-2026-10-25.md)
+- [Label experiments](docs/plans/label-autoresearch-2026-10-24.md)
 - [Approved plan](docs/plans/ui-ux-2026-10-24.md)
 
-Full product acceptance remains OPEN. Proposal6 excluded; no21:30 automation,
-public stream, new dependency or account access. Raw state and backups are private.
+Full product acceptance remains OPEN: physical/native matrix, DRM/media compatibility,
+phone and stability criteria require their own evidence. Proposal6 excluded; no21:30
+automation/public stream. Raw state/accounts/backups remain private.

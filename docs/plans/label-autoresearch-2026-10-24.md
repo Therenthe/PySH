@@ -90,3 +90,10 @@ Delivery verified:8778974040f4 installed from publiceea57079;211file hashes,
 and five real entries/canonical routes PASS. Normal session/preferences/radio
 restored and debug closed. The finite five-round request is complete; the wider
 approved UI plan remains active, with P1 next and proposal6 excluded.
+
+Follow-through25October: the remaining approved1/2/3/4/scoped7 milestones are now
+delivered in runtimef0b140892a9e/publiceb899025. The selected floating-name champion
+is preserved. [Current delivery plan](ui-ux-2026-10-24.md) and
+[Media evidence](../evidence/ui-ux-media-2026-10-25.md) record the later milestones;
+the finite five-experiment result above is unchanged. Full product acceptance
+remains separate and OPEN; proposal6 stays excluded.
