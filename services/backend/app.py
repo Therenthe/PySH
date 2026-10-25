@@ -22,11 +22,13 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from .preferences import PreferenceStore, Station
 from .device import Device, DeviceError
 from .content import Content, ContentError
+from .local_media import LocalMedia, media_await, media_thread, release_unused_response
+from .watch_history import WatchError
 from .weather_alerts import WeatherAlerts
 from .player import Player, PlayerError
 from .external import ExternalBrowser, ExternalError
@@ -51,6 +53,32 @@ class StrictBody(BaseModel):
 class MediaDelete(StrictBody):
     path: str = Field(min_length=1, max_length=4096, pattern=r'^[^\x00]+$', strict=True)
     token: str = Field(pattern=r'^[0-9a-f]{64}$', strict=True)
+
+
+class MediaReference(StrictBody):
+    path: str = Field(min_length=1, max_length=4096, pattern=r'^[^\x00]+$', strict=True)
+    media_identity: str = Field(pattern=r'^m1_[0-9a-f]{64}$', strict=True)
+
+
+class VideoStart(MediaReference):
+    resume: bool = Field(default=False, strict=True)
+
+
+class VideoObservation(StrictBody):
+    sequence: int = Field(ge=0, le=9007199254740991, strict=True)
+    heartbeat: bool = Field(default=False, strict=True)
+    position_s: float | None = Field(default=None, ge=0, le=864000, strict=True, allow_inf_nan=False)
+    duration_s: float | None = Field(default=None, gt=0, le=864000, strict=True, allow_inf_nan=False)
+    ended: bool = Field(default=False, strict=True)
+
+    @model_validator(mode='after')
+    def observation_shape(self):
+        if self.heartbeat:
+            if self.position_s is not None or self.duration_s is not None or self.ended:
+                raise ValueError('invalid_progress')
+        elif self.position_s is None or self.duration_s is None:
+            raise ValueError('invalid_progress')
+        return self
 
 
 class Power(StrictBody):
@@ -181,6 +209,7 @@ class Hub:
         self.queue = []
         self.queue_index = -1
         self.media_lock = asyncio.Lock()
+        self.local_media = LocalMedia(directory, self.content, self.media_lock)
         self.media_identity = None
         self.started = datetime.now(timezone.utc).isoformat()
         self._playback_snapshot = {}
@@ -263,6 +292,8 @@ class Hub:
     async def monitor(self):
         while True:
             await self.refresh_device()
+            async with self.media_lock:
+                await media_thread(self.local_media.watch.expire)
             await asyncio.sleep(2)
 
     async def refresh_weather(self, *, force=False):
@@ -327,6 +358,7 @@ class Hub:
         for task in tasks:
             task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
+        await self.local_media.close()
         for operation in (self.player.close, self.device.close):
             with contextlib.suppress(Exception):
                 await operation()
@@ -389,6 +421,7 @@ async def invalid_request(request, error):
 
 @app.exception_handler(DeviceError)
 @app.exception_handler(ContentError)
+@app.exception_handler(WatchError)
 @app.exception_handler(PlayerError)
 @app.exception_handler(ExternalError)
 async def integration_error(request, error):
@@ -631,13 +664,18 @@ async def favorite(request: Request, body: Favorite):
 
 @app.get("/api/media")
 async def media(request: Request, path: str = ""):
-    return await request.app.state.hub.content.media_list(path)
+    hub = request.app.state.hub
+    listing = await hub.content.media_list(path)
+    async with hub.media_lock:
+        return hub.local_media.enrich(listing)
 
 
+@app.head("/api/media/file")
 @app.get("/api/media/file")
-async def media_file(request: Request, path: str):
-    canonical = request.app.state.hub.content.resolve_media(path)
-    return FileResponse(canonical)
+async def media_file(request: Request, path: str | None = None, media_identity: str | None = None, session_id: str | None = None):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        return await media_thread(hub.local_media.stream, path, media_identity, session_id, on_cancel=release_unused_response)
 
 
 def serialized_media(function):
@@ -648,24 +686,94 @@ def serialized_media(function):
     return guarded
 
 
+@app.post('/api/media/inspect')
+async def inspect_media(request: Request, body: MediaReference):
+    return await request.app.state.hub.local_media.inspect(body.path, body.media_identity)
+
+
+@app.get('/api/media/artwork')
+async def local_artwork(request: Request, path: str, media_identity: str):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        pixels = await media_thread(hub.local_media.artwork, path, media_identity)
+    return Response(pixels, media_type='image/jpeg')
+
+
+@app.get('/api/media/continue')
+async def continue_media(request: Request):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        return await media_thread(hub.local_media.continuing)
+
+
+@app.delete('/api/media/continue')
+async def clear_continue(request: Request, body: MediaReference):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        return await media_thread(hub.local_media.clear, body.path, body.media_identity)
+
+
+@app.post('/api/media/video-session')
+async def start_video(request: Request, body: VideoStart):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        if hub.power.standby:
+            raise ContentError('standby_active')
+        if hub.service_mode:
+            raise ContentError('service_mode')
+        playback = await hub.player.status()
+        if playback.get('state') not in {'idle', 'ended', 'error'}:
+            raise ContentError('media_in_use')
+        return await media_thread(hub.local_media.start, body.path, body.media_identity, body.resume, on_cancel=hub.local_media.cancel_started)
+
+
+@app.patch('/api/media/video-session/{session_id}')
+async def update_video(request: Request, session_id: str, body: VideoObservation):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        if body.heartbeat:
+            await media_thread(hub.local_media.watch.heartbeat, session_id, body.sequence)
+        else:
+            await media_thread(hub.local_media.watch.update, session_id, body.sequence,
+                                    body.position_s, body.duration_s, ended=body.ended)
+    return {'updated': True}
+
+
+@app.delete('/api/media/video-session/{session_id}')
+async def close_video(request: Request, session_id: str, body: VideoObservation | None = None):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        if body is None:
+            return {'closed': await media_thread(hub.local_media.watch.close, session_id)}
+        if body.heartbeat:
+            raise ContentError('invalid_progress')
+        await media_thread(hub.local_media.watch.update, session_id, body.sequence,
+                                body.position_s, body.duration_s, ended=body.ended, final=True)
+        return {'closed': True}
+
+
 @app.delete('/api/media')
 @serialized_media
 async def delete_media(request: Request, body: MediaDelete):
-    hub = request.app.state.hub
-    playback = await hub.player.status()
-    active = playback.get('kind') in {'audio', 'video', 'local'} and playback.get('state') in {'playing', 'paused', 'buffering', 'connecting'}
-    source = playback.get('url', '')
-    if active and isinstance(source, str):
-        parsed = urlsplit(source)
-        local = unquote(parsed.path) if parsed.scheme == 'file' else source if not parsed.scheme else ''
-        if local and Path(local).resolve() == Path(body.path).resolve():
-            raise ContentError('media_in_use')
-    deleted = await hub.content.delete_media(body.path, body.token, hub.media_identity if active else None)
-    previous_index = hub.queue_index
-    before_index = sum(i <= previous_index and item.get('path') == deleted for i, item in enumerate(hub.queue))
-    hub.queue = [item for item in hub.queue if item.get('path') != deleted]
-    hub.queue_index = min(previous_index - before_index, len(hub.queue) - 1) if previous_index >= 0 else -1
-    return {'deleted': True}
+    async def complete_delete():
+        hub = request.app.state.hub
+        playback = await hub.player.status()
+        active = playback.get('kind') in {'audio', 'video', 'local'} and playback.get('state') in {'playing', 'paused', 'buffering', 'connecting'}
+        source = playback.get('url', '')
+        if active and isinstance(source, str):
+            parsed = urlsplit(source)
+            local = unquote(parsed.path) if parsed.scheme == 'file' else source if not parsed.scheme else ''
+            if local and Path(local).resolve() == Path(body.path).resolve():
+                raise ContentError('media_in_use')
+        browser_observed = await media_thread(hub.local_media.before_delete, body.path)
+        deleted = await hub.content.delete_media(body.path, body.token, hub.media_identity if active else None)
+        await media_thread(hub.local_media.after_delete, deleted, browser_observed)
+        previous_index = hub.queue_index
+        before_index = sum(i <= previous_index and item.get('path') == deleted for i, item in enumerate(hub.queue))
+        hub.queue = [item for item in hub.queue if item.get('path') != deleted]
+        hub.queue_index = min(previous_index - before_index, len(hub.queue) - 1) if previous_index >= 0 else -1
+        return {'deleted': True}
+    return await media_await(complete_delete())
 
 
 @app.post("/api/play")

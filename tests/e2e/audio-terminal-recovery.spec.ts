@@ -1,5 +1,6 @@
 import {openSettingsSection} from './settings-navigation';
 import {expect,test,type Page,type Locator} from '@playwright/test';
+const videoIdentity='m1_'+'a'.repeat(64),videoSessionId='S'.repeat(32);
 
 // Control/lifecycle fixtures only: this file does not certify media decoding or sound.
 async function fixture(page:Page,ro:boolean,theme:string,mode:'reject'|'accepted'|'success'='reject',long=false){
@@ -11,11 +12,28 @@ async function fixture(page:Page,ro:boolean,theme:string,mode:'reject'|'accepted
   Object.defineProperty(HTMLMediaElement.prototype,'paused',{get:()=>true});
   HTMLMediaElement.prototype.play=function(){return Promise.resolve();};HTMLMediaElement.prototype.pause=function(){};
  });
- await page.route('**/api/**',async route=>{
+ const sessions:any[]=[],commandOrder:string[]=[];
+ await page.route('**/api/**',async route=>{const fixtureRequest=route.request(),fixtureUrl=new URL(fixtureRequest.url());
+  if(fixtureUrl.pathname==='/api/media/continue'){expect(fixtureRequest.method()).toBe('GET');return route.fulfill({json:{items:[]}});}
+  if(fixtureUrl.pathname==='/api/media/inspect'){expect(fixtureRequest.method()).toBe('POST');return route.fulfill({json:{state:'unavailable'}});}
+  if(fixtureUrl.pathname==='/api/media/video-session'){
+   expect(fixtureRequest.method()).toBe('POST');const body=fixtureRequest.postDataJSON();
+   expect(body).toEqual({path:'/approved/control-fixture.webm',media_identity:videoIdentity,resume:false});
+   sessions.push({method:'POST',body});commandOrder.push(fixtureUrl.pathname);
+   return route.fulfill({json:{session_id:videoSessionId,media_identity:videoIdentity,resume_position_s:0,stream_url:`/api/media/file?session_id=${videoSessionId}`}});
+  }
+  if(fixtureUrl.pathname.startsWith('/api/media/video-session/')){
+   expect(fixtureUrl.pathname).toBe(`/api/media/video-session/${videoSessionId}`);
+   const method=fixtureRequest.method(),body=fixtureRequest.postData()?fixtureRequest.postDataJSON():null;
+   expect(['PATCH','DELETE']).toContain(method);if(body){expect(Number.isSafeInteger(body.sequence)&&body.sequence>0).toBe(true);if(!body.heartbeat){expect(Number.isFinite(body.position_s)&&body.position_s>=0).toBe(true);expect(Number.isFinite(body.duration_s)&&body.duration_s>0).toBe(true);expect(typeof body.ended).toBe('boolean');}}
+   sessions.push({method,body});commandOrder.push(fixtureUrl.pathname);
+   return route.fulfill({json:{updated:true,closed:method==='DELETE'}});
+  }
+
   const req=route.request(),path=new URL(req.url()).pathname;let json:any={ok:true};
-  if(path==='/api/media/file')return; // Keep decoder input pending; only application controls are under test.
+  if(path==='/api/media/file'){expect(fixtureUrl.search).toBe(`?session_id=${videoSessionId}`);return;} // Keep decoder input pending; only application controls are under test.
   if(path==='/api/session')json={token:'fixture'};else if(path==='/api/state'){if(failRead){failRead=false;await route.fulfill({status:503,json:{error:'backend_unavailable'}});return;}json=state;}
-  else if(path==='/api/media')json={path:'',items:[{name:'control-fixture.webm',path:'/approved/control-fixture.webm',kind:'video'}]};
+  else if(path==='/api/media')json={path:'',items:[{name:'control-fixture.webm',path:'/approved/control-fixture.webm',kind:'video',media_identity:videoIdentity}]};
   else if(path==='/api/audio'&&req.method()==='POST'){
    const body=req.postDataJSON();writes.push(body);if(writes.length===1){await gate;if(mode==='reject'){await route.fulfill({status:503,json:{error:'audio_unavailable'}});return;}}
    if('output'in body)state.audio.outputs.forEach((o:any)=>o.active=o.id===body.output);if('volume'in body)state.audio.volume=body.volume;if('mute'in body)state.audio.mute=body.mute;if(mode==='accepted'&&writes.length===1)failRead=true;

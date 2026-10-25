@@ -8,6 +8,14 @@ Serviciile externe folosesc un profil Chromium separat de kiosk. Pagina loopback
 
 Telecomanda Android cerută pe 2026-10-13 folosește un gateway opțional separat în `services/remote`, HTTPS pe IP-ul privat explicit al Pi-ului și portul 8766. Pairing-ul este autorizat prin cod local și pin SHA-256 al certificatului; telefoanele au tokenuri persistente revocabile. Gateway-ul transmite numai comenzile API permise către loopback și gestionează intern tokenul local; nu schimbă binding-ul sau validarea backendului. Nu există relay internet. [ADR-0010](adr/0010-android-lan-remote.md) și [procedura/contractul](ANDROID_REMOTE.md) separă această implementare de verificarea încă deschisă pe telefon/Pi.
 
+Redarea video locală folosește elementul Chromium și o sesiune backend cu descriptor
+read-only al fișierului aprobat; progresul provine din acel element, separat de
+playerul mpv pentru radio/audio. `local_media`, `watch_history` și răspunsul de
+streaming folosesc lockul Media existent. Istoricul privat este persistent,
+metadatele/miniaturile au cache RAM limitat și extractor mpv separat. Lipsa lor
+nu împiedică navigarea/redarea. [Dovezile P4](evidence/ui-ux-media-2026-10-25.md)
+separă candidatul sursă de instalarea și verificarea efectivă.
+
 ## Implementarea desktop importată (istorică)
 
 Chromium kiosk → assets React în `dist/` → API FastAPI pe `127.0.0.1:8765` → BlueZ/NetworkManager prin D-Bus, PipeWire/WirePlumber și mpv. UI se construiește pe PC. Python rulează ca utilizator al sesiunii grafice; API-ul nu este expus în LAN.

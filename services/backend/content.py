@@ -393,7 +393,8 @@ class Content:
                 deletable = (sys.platform == 'linux' and not entry.is_symlink() and not is_dir
                              and stat_module.S_ISREG(stat.st_mode) and stat.st_uid == os.geteuid() and stat.st_nlink == 1)
                 items.append({"name": entry.name, "path": str(canonical), "kind": kind, "is_dir": is_dir, "size": stat.st_size, "modified": stat.st_mtime,
-                              "deletable": deletable, "delete_token": self._delete_token(canonical, stat) if deletable else None})
+                              "deletable": deletable, "delete_token": self._delete_token(canonical, stat) if deletable else None,
+                              "media_identity": self.media_identity(canonical, stat) if stat_module.S_ISREG(stat.st_mode) else None})
         items.sort(key=lambda item: (not item["is_dir"], item["name"].casefold()))
         if scan_roots and len(warnings) == len(scan_roots):
             raise ContentError("media_unavailable", "The media folders cannot be read. Try again.")
@@ -409,6 +410,12 @@ class Content:
         if not target.is_file():
             raise ContentError("media_not_file", "Choose a media file.")
         return target
+
+    @staticmethod
+    def media_identity(path: Path, info: os.stat_result) -> str:
+        # Opaque stat identity, never expose ns timestamps as JSON numbers.
+        fields = [str(path), info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns]
+        return 'm1_' + hashlib.sha256(json.dumps(fields, separators=(',', ':')).encode()).hexdigest()
 
     @staticmethod
     def _delete_token(path: Path, info: os.stat_result) -> str:

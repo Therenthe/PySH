@@ -3,11 +3,14 @@ import type {MediaListing} from '../../app/ui/src/Media';
 
 async function mediaFixture(page:Page,language:'en'|'ro',theme:'ink'|'night'){
  const folder='/library/Albums',song='/library/Școală în oraș.mp3';
- const rootItems=[{name:'Albums',path:folder,is_dir:true},{name:'Școală în oraș.mp3',path:song,kind:'audio',size:1500000,deletable:true,delete_token:'fixture-song-token'},{name:'Film.webm',path:'/library/Film.webm',kind:'video',size:43000000,deletable:true,delete_token:'fixture-film-token'},{name:'Read only.wav',path:'/library/Read only.wav',kind:'audio',deletable:false}];
+ const rootItems=[{name:'Albums',path:folder,is_dir:true},{name:'Școală în oraș.mp3',path:song,kind:'audio',size:1500000,deletable:true,delete_token:'fixture-song-token'},{name:'Film.webm',path:'/library/Film.webm',kind:'video',media_identity:'m1_'+'a'.repeat(64),size:43000000,deletable:true,delete_token:'fixture-film-token'},{name:'Read only.wav',path:'/library/Read only.wav',kind:'audio',deletable:false}];
  const listing:MediaListing&{items:typeof rootItems}={path:'/library',parent:null,items:rootItems};
  const state:any={preferences:{language,theme,setupComplete:true,screensaverMinutes:0,nightEnabled:false,navigationCollapsed:false,navigationAutoHide:false},network:{},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{state:'idle'},weather:{}};
  const requested:string[]=[],mutations:any[]=[],control={failDelete:false,failNextListing:false,partialNextListing:false,malformedNextListing:false,loseDelete:'none' as 'none'|'absent'|'replacement'|'retained'};let gate:Promise<void>|undefined,release=()=>{};
- await page.route('**/api/**',async route=>{
+ await page.route('**/api/**',async route=>{const fixtureRequest=route.request(),fixtureUrl=new URL(fixtureRequest.url());
+  if(fixtureUrl.pathname==='/api/media/continue'){expect(fixtureRequest.method()).toBe('GET');return route.fulfill({json:{items:[]}});}
+  if(fixtureUrl.pathname==='/api/media/inspect'){expect(fixtureRequest.method()).toBe('POST');return route.fulfill({json:{state:'unavailable'}});}
+
   const req=route.request(),u=new URL(req.url());let json:any={ok:true};
   if(u.pathname==='/api/session')json={token:'fixture'};
   else if(u.pathname==='/api/state')json=state;
@@ -35,7 +38,10 @@ async function mediaFixture(page:Page,language:'en'|'ro',theme:'ink'|'night'){
 for(const theme of ['ink','night'] as const){
  test(`Media ${theme} initial loading is not mistaken for an empty approved folder`,async({page},info)=>{
   const ro=info.project.name.endsWith('ro'),state={preferences:{language:ro?'ro':'en',theme,setupComplete:true,screensaverMinutes:0,nightEnabled:false},network:{},bluetooth:{devices:[],prompts:[]},audio:{ready:true},player:{state:'idle'},weather:{}};let release!:()=>void,requested=false;const gate=new Promise<void>(resolve=>release=resolve);
-  await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname;if(path==='/api/media'){requested=true;await gate;return route.fulfill({json:{path:'/home/pysh/Music',parent:null,items:[]}});}await route.fulfill({json:path==='/api/session'?{token:'fixture'}:path==='/api/state'?state:{ok:true}});});
+  await page.route('**/api/**',async route=>{const fixtureRequest=route.request(),fixtureUrl=new URL(fixtureRequest.url());
+  if(fixtureUrl.pathname==='/api/media/continue'){expect(fixtureRequest.method()).toBe('GET');return route.fulfill({json:{items:[]}});}
+  if(fixtureUrl.pathname==='/api/media/inspect'){expect(fixtureRequest.method()).toBe('POST');return route.fulfill({json:{state:'unavailable'}});}
+  const path=new URL(route.request().url()).pathname;if(path==='/api/media'){requested=true;await gate;return route.fulfill({json:{path:'/home/pysh/Music',parent:null,items:[]}});}await route.fulfill({json:path==='/api/session'?{token:'fixture'}:path==='/api/state'?state:{ok:true}});});
   await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await expect.poll(()=>requested).toBe(true);await expect(page.locator('.media-library')).toHaveAttribute('aria-busy','true');await expect(page.locator('.media-items .empty-state')).toHaveCount(0);await expect(page.locator('.media-pending')).toContainText(ro?'Se încarcă':'Loading');release();await expect(page.locator('.media-items .empty-state')).toContainText(ro?'Acest dosar este gol':'This folder is empty');await expect(page.locator('.library-path b')).toHaveText('Music');await expect(page.getByRole('button',{name:ro?'Dosarul anterior':'Up one level',exact:true})).toHaveCount(0);const library=page.locator('.crumb-actions').getByRole('button',{name:ro?'Bibliotecă media':'Media library',exact:true});await expect(library).toBeVisible();await library.tap();
  });
 

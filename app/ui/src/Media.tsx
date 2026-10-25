@@ -1,8 +1,10 @@
 import {useRef,useState,type ReactNode} from 'react';
 import {formatMediaSize} from './formatMediaSize';
 import './media.css';
+import {ContinueWatching,MediaArtwork,mediaSubtitle,useMediaInspection} from './MediaLibraryDetails';
+import {mediaIdentity,type LocalMediaMetadata,type MediaRequest} from './localMediaApi';
 
-export type MediaItem={path:string;name:string;kind?:string;type?:string;is_dir?:boolean;mime?:string;size?:unknown;deletable?:boolean;delete_token?:string;[key:string]:unknown};
+export type MediaItem={path:string;name:string;kind?:string;type?:string;is_dir?:boolean;mime?:string;size?:unknown;deletable?:boolean;delete_token?:string;media_identity?:string;metadata?:LocalMediaMetadata;artwork_available?:boolean;[key:string]:unknown};
 export type MediaListing={path?:string;parent?:string|null;items?:MediaItem[];error?:string;partial?:boolean};
 export type MediaProps={
  language:'en'|'ro';media:MediaListing;loading?:boolean;busy?:boolean;
@@ -10,9 +12,9 @@ export type MediaProps={
  localAudioError?:boolean;localAudioFilename?:string;localAudioErrorMessage?:string;audioReady:boolean;
  currentPath?:string;playerState?:string;deleteDisabledPaths?:string[];
  t:(key:string)=>string;icon:(name:string,size?:number)=>ReactNode;statusText:(error:string)=>string;
- onBrowse:(path?:string)=>void|Promise<unknown>;onSelect:(item:MediaItem,isVideo:boolean)=>void;
+ onBrowse:(path?:string)=>void|Promise<unknown>;onSelect:(item:MediaItem,isVideo:boolean,resume?:boolean)=>void;
  onService:(id:string)=>void;onReplayCurrent:()=>void;onDelete?:(item:MediaItem)=>void;
- onSearch?:(initial:string)=>Promise<string|null>;
+ onSearch?:(initial:string)=>Promise<string|null>;request?:MediaRequest;historyRevision?:number;
 };
 export const isMediaDirectory=(item:MediaItem)=>Boolean(item.is_dir||item.type==='directory'||item.kind==='directory');
 const isVideo=(item:MediaItem)=>item.kind==='video'||item.mime?.startsWith('video/')||/\.(mp4|m4v|mkv|webm|mov)$/i.test(item.name);
@@ -20,14 +22,15 @@ const searchKey=(value:string)=>value.normalize('NFKD').replace(/[\u0300-\u036f]
 const basename=(path:string)=>path.split(/[\\/]/).filter(Boolean).at(-1)||'';
 
 /** Browsing and search stay local to the listing; all device mutations belong to App. */
-export function Media({language,media,loading=false,busy=false,localMediaPending=false,externalMediaPending=false,deletionPending=false,localAudioError=false,localAudioFilename='',localAudioErrorMessage='',audioReady,currentPath,playerState,deleteDisabledPaths=[],t,icon,statusText,onBrowse,onSelect,onService,onReplayCurrent,onDelete,onSearch}:MediaProps){
- const ro=language==='ro',[section,setSection]=useState<'files'|'services'>('files'),[query,setQuery]=useState(''),[searchPending,setSearchPending]=useState(false),[browsing,setBrowsing]=useState(false),[disclosed,setDisclosed]=useState<string|null>(null),browseSerial=useRef(0),folderHeading=useRef<HTMLDivElement>(null);
+export function Media({language,media,loading=false,busy=false,localMediaPending=false,externalMediaPending=false,deletionPending=false,localAudioError=false,localAudioFilename='',localAudioErrorMessage='',audioReady,currentPath,playerState,deleteDisabledPaths=[],t,icon,statusText,onBrowse,onSelect,onService,onReplayCurrent,onDelete,onSearch,request,historyRevision=0}:MediaProps){
+ const ro=language==='ro',[section,setSection]=useState<'files'|'services'>('files'),[query,setQuery]=useState(''),[searchPending,setSearchPending]=useState(false),[browsing,setBrowsing]=useState(false),[disclosed,setDisclosed]=useState<string|null>(null),browseSerial=useRef(0),folderHeading=useRef<HTMLDivElement>(null),scroll=useRef<HTMLDivElement>(null);
  const pending=busy||localMediaPending||externalMediaPending||deletionPending;
  const items=media.items||[],matches=items.filter(item=>searchKey(item.name).includes(searchKey(query))),hasParent=Boolean(media.parent&&media.parent!==media.path);
  const inFolder=Boolean(media.path),folderName=inFolder?basename(media.path||''):t('root');
  const browse=async(path?:string)=>{const serial=++browseSerial.current;setBrowsing(true);setQuery('');setDisclosed(null);try{const result=await onBrowse(path);if(result!==false&&serial===browseSerial.current)requestAnimationFrame(()=>folderHeading.current?.focus());}finally{if(serial===browseSerial.current)setBrowsing(false);}};
  const search=async()=>{if(!onSearch||pending||searchPending)return;setSearchPending(true);try{const result=await onSearch(query);if(result!==null)setQuery(result.trim());}finally{setSearchPending(false);}};
  const deleteLabel=ro?'Șterge fișierul':'Delete file';
+ const inspected=useMediaInspection(scroll,JSON.stringify([section,media.path,matches.map(item=>[item.path,item.media_identity])]),request);
  return <div className="media-page media-redesign">
   <header className="media-heading"><h1 tabIndex={-1}>{t('media')}</h1><div className="media-sections" role="group" aria-label={ro?'Sursă media':'Media source'}>
    <button className={section==='files'?'selected':''} aria-pressed={section==='files'} onClick={()=>setSection('files')}>{icon('folder',20)}<span>{t('onDevice')}</span></button>
@@ -45,18 +48,20 @@ export function Media({language,media,loading=false,busy=false,localMediaPending
     {onSearch&&<button className={`media-search-toggle ${query?'active':''}`} disabled={pending||searchPending} onClick={()=>void search()} aria-label={ro?'Caută în acest dosar':'Search this folder'}>{icon('search',21)}</button>}
    </div>
    {query&&<div className="media-query"><button className="media-query-edit" disabled={pending} onClick={()=>void search()}>{icon('search',17)}<span>{query}</span></button><button className="media-query-clear" aria-label={ro?'Șterge căutarea':'Clear search'} onClick={()=>setQuery('')}>{icon('close',20)}</button></div>}
-   <div className="media-items">
+   <div className="media-items" ref={scroll}>
+    {request&&<ContinueWatching request={request} revision={historyRevision} ro={ro} pending={pending} onSelect={(item,resume)=>onSelect({...item,kind:'video'},true,resume)}/>}
     {localAudioError&&<section className="local-audio-recovery" role="alert"><div><b>{localAudioFilename}</b><p>{localAudioErrorMessage}</p><small>{ro?'Reîncearcă redarea sau alege alt fișier.':'Replay or choose another file.'}</small></div><button className="outline" disabled={!audioReady||pending} onClick={onReplayCurrent}>{ro?'Reia redarea':'Replay'}</button></section>}
     {(localMediaPending||loading||browsing)&&<p className="media-pending" role="status">{localMediaPending?(ro?'Se deschide fișierul…':'Opening media…'):t('loading')}</p>}
     {media.partial&&<div className="media-partial" role="status"><span>{t('mediaPartial')}</span><button className="outline" disabled={pending} onClick={()=>void browse()}>{t('retry')}</button></div>}
     {media.error?<div className="empty-state" role="status">{icon('folder',32)}<b>{statusText(media.error)}</b><button className="outline" disabled={pending} onClick={()=>void browse()}>{t('retry')}</button></div>:matches.length?matches.map(item=>{
+     const details=item.media_identity?inspected[item.media_identity]:undefined,metadata=details?.metadata||item.metadata;
      const directory=isMediaDirectory(item),video=Boolean(isVideo(item)),selected=Boolean(!directory&&currentPath===item.path&&playerState&&playerState!=='idle');
      const canDelete=!directory&&item.deletable===true&&typeof item.delete_token==='string'&&item.delete_token.length>0;
      const active=deleteDisabledPaths.includes(item.path)||Boolean(selected&&['playing','paused','buffering','connecting'].includes(playerState||''));
-     return <div data-media-path={item.path} className={`media-entry ${selected?'selected':''}`} key={item.path}>
+     return <div data-media-path={item.path} data-media-identity={!directory&&!item.metadata&&!item.artwork_available&&mediaIdentity(item.media_identity)?item.media_identity:undefined} className={`media-entry ${selected?'selected':''}`} key={item.path}>
       <button className="media-item" disabled={pending||loading||browsing} onClick={()=>directory?void browse(item.path):onSelect(item,video)}>
-       <span className={`file-icon ${directory?'folder':video?'video':'audio'}`}>{icon(directory?'folder':video?'media':'speaker',26)}</span>
-       <span className="media-file-copy"><b>{item.name}</b><small>{directory?t('folders'):formatMediaSize(item.size,language)}</small></span>
+       <span className={`file-icon ${directory?'folder':video?'video':'audio'}`}>{!directory&&mediaIdentity(item.media_identity)?<MediaArtwork item={{path:item.path,media_identity:item.media_identity}} available={details?.artwork_available??item.artwork_available} fallback={icon(video?'media':'speaker',26)}/>:icon(directory?'folder':video?'media':'speaker',26)}</span>
+       <span className="media-file-copy"><b>{item.name}</b><small>{directory?t('folders'):mediaSubtitle(metadata,formatMediaSize(item.size,language))}</small></span>
        <span className="media-file-action" aria-hidden="true">{icon(directory?'next':'play',20)}</span>
       </button>
       <button className="media-name-toggle" aria-label={`${ro?'Arată numele complet':'Show full name'}: ${item.name}`} aria-expanded={disclosed===item.path} aria-controls={`media-name-${items.indexOf(item)}`} onClick={()=>setDisclosed(old=>old===item.path?null:item.path)}><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v.1"/></svg></button>

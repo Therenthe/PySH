@@ -19,9 +19,16 @@ node node_modules/vite/bin/vite.js build --configLoader native
 python scripts/check_repository.py
 python scripts/package-release.py
 node --test tests/extension-keyboard.test.mjs tests/extension-return.test.mjs tests/extension-return-content.test.mjs
+node --test tests/local-media-session.test.mjs
 ```
 
 În medii unde ensurepip este restricționat se poate folosi `uv venv --python 3.12 .venv`, apoi `uv pip sync --python .venv/Scripts/python.exe requirements-dev.lock` pe Windows. Nu înlocui Python-ul sistemului pe Pi.
+
+Media: testele de sesiune folosesc observațiile reale ale elementului video și
+verifică ordinea salvării/închiderii, anularea și ieșirea explicită fără salvare.
+Testele Linux pentru descriptori/procfs se omit explicit pe Windows. Fixture-urile
+de browser nu dovedesc extragerea metadatelor sau redarea pe Raspberry; acestea
+necesită separat un clip sintetic, sursa exactă și restaurarea stării dispozitivului.
 
 Dezvoltare în două terminale, cu venv activ în primul:
 
