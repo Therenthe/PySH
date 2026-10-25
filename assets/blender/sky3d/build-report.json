@@ -1,0 +1,128 @@
+{
+  "blender": "5.2.2 LTS",
+  "seed": 231127,
+  "phase": {
+    "frames": 128,
+    "tile": [
+      144,
+      144
+    ],
+    "atlas": [
+      2304,
+      1152
+    ],
+    "max_illumination_rounding_error": 0.01227184630308513
+  },
+  "clouds": {
+    "size": [
+      768,
+      256
+    ],
+    "volumes": 11,
+    "density": "world-space procedural noise with smooth radial edge falloff",
+    "frames": 2,
+    "engine": "Cycles96samplesdenoised"
+  },
+  "airliner": {
+    "size": [
+      256,
+      128
+    ],
+    "wings_sweep_toward_tail": true,
+    "nose_axis": "+X",
+    "kind": "airliner",
+    "rasterAnchors": {
+      "nose": [
+        203.481,
+        71.987
+      ],
+      "tail": [
+        53.003,
+        59.757
+      ],
+      "upperWingTip": [
+        95.585,
+        8.947
+      ],
+      "lowerWingTip": [
+        75.741,
+        112.171
+      ],
+      "upperWingRoot": [
+        130.177,
+        59.065
+      ],
+      "lowerWingRoot": [
+        128.242,
+        69.132
+      ]
+    },
+    "upperLight": "starboard-green",
+    "lowerLight": "port-red"
+  },
+  "glider": {
+    "size": [
+      256,
+      128
+    ],
+    "wings_sweep_toward_tail": true,
+    "nose_axis": "+X",
+    "kind": "glider",
+    "rasterAnchors": {
+      "nose": [
+        190.901,
+        70.656
+      ],
+      "tail": [
+        65.502,
+        60.464
+      ],
+      "upperWingTip": [
+        103.419,
+        5.472
+      ],
+      "lowerWingTip": [
+        82.019,
+        116.792
+      ],
+      "upperWingRoot": [
+        129.814,
+        59.887
+      ],
+      "lowerWingRoot": [
+        128.202,
+        68.277
+      ]
+    },
+    "upperLight": "starboard-green",
+    "lowerLight": "port-red"
+  },
+  "stars": {
+    "size": [
+      96,
+      96
+    ],
+    "frames": 4,
+    "tile": [
+      48,
+      48
+    ]
+  },
+  "sun": {
+    "size": [
+      192,
+      192
+    ],
+    "limb_darkening": true,
+    "corona": "quiet deterministic Blender offline alpha composite",
+    "surface": "procedural fine granulation"
+  },
+  "meteor": {
+    "size": [
+      256,
+      32
+    ],
+    "head_direction": "+X",
+    "head_relative_x": 0.9468085106382979
+  }
+}

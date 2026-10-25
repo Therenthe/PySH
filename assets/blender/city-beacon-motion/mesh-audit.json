@@ -1,0 +1,173 @@
+[
+  {
+    "name": "BT_mount_foot.001",
+    "profile": "render",
+    "eps": 8.2e-05,
+    "tol": 0.00165,
+    "gap": 0.008249,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_mount_foot.001": {
+        "tris": 108,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_mount_post.002",
+    "profile": "render",
+    "eps": 5.9e-05,
+    "tol": 0.001174,
+    "gap": 0.00587,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_mount_post.002": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_mount_post.003",
+    "profile": "render",
+    "eps": 5.9e-05,
+    "tol": 0.001174,
+    "gap": 0.00587,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_mount_post.003": {
+        "tris": 28,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_open_rune_back_bevel.001",
+    "profile": "render",
+    "eps": 0.000133,
+    "tol": 0.002669,
+    "gap": 0.013343,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_open_rune_back_bevel.001": {
+        "tris": 92,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_open_rune_neon_core.001",
+    "profile": "render",
+    "eps": 0.00013,
+    "tol": 0.002607,
+    "gap": 0.013036,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_open_rune_neon_core.001": {
+        "tris": 92,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "BT_motion_rear_neon_core",
+    "profile": "render",
+    "eps": 0.00013,
+    "tol": 0.002607,
+    "gap": 0.013036,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "BT_motion_rear_neon_core": {
+        "tris": 92,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "WiFi_no_router_wave_1",
+    "profile": "render",
+    "eps": 4.2e-05,
+    "tol": 0.000835,
+    "gap": 0.004176,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "WiFi_no_router_wave_1": {
+        "tris": 260,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "WiFi_no_router_wave_2",
+    "profile": "render",
+    "eps": 7.4e-05,
+    "tol": 0.001489,
+    "gap": 0.007444,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "WiFi_no_router_wave_2": {
+        "tris": 260,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  },
+  {
+    "name": "WiFi_no_router_wave_3",
+    "profile": "render",
+    "eps": 0.000107,
+    "tol": 0.002147,
+    "gap": 0.010734,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "per_object": {
+      "WiFi_no_router_wave_3": {
+        "tris": 260,
+        "parts": 1,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "skipped": []
+  }
+]

@@ -71,6 +71,7 @@ def test_windows_host_reports_hardware_unavailable_without_fake_success(monkeypa
         await device.initialize()
         assert (await device.network_status()) == {
             "available": False, "state": "unavailable", "connection": None,
+            "active_type": None, "active_interface": None,
             "devices": [], "saved": [], "error": "unavailable",
         }
         assert (await device.bluetooth_status())["available"] is False

@@ -1,61 +1,23 @@
 # PySH status
 
-Updated: 2026-10-04. GitHub is canonical: [Therenthe/PySH](https://github.com/Therenthe/PySH), branch `feat/pysh-os-image`, [draft PR #3](https://github.com/Therenthe/PySH/pull/3). The product is incomplete; no 10/10 or final release acceptance is assigned.
+Installed runtimef0b140892a9e/codeeb899025. The approved N0/P5/P1/P2/P3/P4/scopedP7
+UI batch is delivered: Radio neon, subtle floating Blender Explore names, common
+commands, Radio library, Home arrangement assistance and real local Media details
+with Continue watching/recovery. Five real20minute label experiments complete.
 
-## Current identities
+P4:64distinct native current-language/theme checks PASS with actual JPEG, natural
+video progress, exact Resume, Continue Start over, history removal and guarded
+copy deletion.219runtime hashes/29preferences/PCbackup verified. Original watch
+bytes, radio/audio/preferences restored, synthetic fixtures removed and diagnostic
+ports closed.755Python/44platform skips,108JavaScript,84focused Media/audio and
+52command/Radio PASS;30Linux component and53isolated API checks PASS. Earlier
+failures/corrections and limits are retained in the evidence.
 
-| Item | Verified state |
-|---|---|
-| Installed SD application | Runtime `5c76b8aff50d`, source `012ca8da0f465ddffb15c2e6b7889448afc48097`; previous `c1e2e6049fec` retained |
-| Published application source | Installed application source `012ca8da0f465ddffb15c2e6b7889448afc48097` verified in GitHub; subsequent documentation-only commits do not change this runtime |
-| Superseded packages | `aa288e1a375f` and `358b4892b275`, never installed |
-| Current update | Only the original sparse stars and blue night gradient restored, per owner reference. Installed5c76/source012; all51 runtime files, nine saved preference comparisons and continuing radio verified; native800×480 capture inspected. Previous c1e2 functionality retained. |
-| Device | Raspberry Pi 4 / 4 GB, Debian 13 ARM64, DSI 800×480, 180° display rotation; existing SD boot. USB and independently verified PC backups remain recovery assets. |
-| Product acceptance | 30 complete product criteria OPEN for the new candidate. Prior HW-01 configuration PASS on670c is retained as historical evidence pending current viewport refresh. |
+- [Media evidence](docs/evidence/ui-ux-media-2026-10-25.md)
+- [Home evidence](docs/evidence/ui-ux-home-2026-10-25.md)
+- [Label experiments](docs/plans/label-autoresearch-2026-10-24.md)
+- [Approved plan](docs/plans/ui-ux-2026-10-24.md)
 
-The installed application update is distinct from the OS image. There is no newly verified final successor image containing the ongoing correction. See [hardware evidence](docs/evidence/hardware-configuration-2026-10-04.md), [SD boot](docs/evidence/sd-boot-2026-10-03.md), [operations](docs/OPERATIONS.md) and [SSH flasher](docs/SSH_FLASHER.md).
-
-## Latest evidence and its scope
-
-- Installed5c76/source012: original 170 SVG stars/opacity/night gradient restored; photographic star layer removed from rendering.34 affected browser cases, TypeScript/build/repository checks PASS; actual800×480 panel screenshot inspected,51 files and nine preferences verified, radio resumed. Only three built UI files differ from c1e2. [Scoped restoration evidence](docs/evidence/original-stars-2026-10-04.md).
-
-- Previous c1e2/source4de: **970 complete browser cases passed**, 176 affected cases after the queued-selection correction, 349 backend cases /32 Windows platform skips, 12 isolated Linux deletion cases /zero skips and 92 extension/astronomy cases. Native Media tour passed in four language/theme contexts; four audit-owned files were deleted, no pre-existing user files. Thirteen native captures plus the final restored Home capture were collected; key captures inspected. Fourteen audit-owned preferences restored, nine backup comparison keys match, radio/audio ready and diagnostic ports closed. [Final scoped evidence](docs/evidence/media-confetti-2026-10-04.md). Physical touch, external streaming and full product acceptance remain OPEN.
-
-- Natural celestial scene prepared locally: Sun/Moon position follows UTC time and selected coordinates, east on the right and west on the left. Below-horizon bodies are hidden; owner now requests Moon only at night and Sun only by day. Ambient preference Retry repeats the failed write. Superheroes, Bat signal, Batplane and related settings/animations were cancelled by the owner and removed before publication or device installation. 100 affected browser cases passed initially, plus all four corrected settings cases; 9e51 installed,51 hashes/nine preferences/radio verified and native800×480 screenshot inspected; day/night-only policy and raised arc subsequently installed in536e. See [celestial evidence](docs/evidence/celestial-scene-2026-10-04.md).
-
-- Weather provider links removed from Home/forecast; Settings credit is noninteractive. Aircraft wings and wingtip lights corrected. 92 affected browser cases passed across separate runs; exact edge placement and initial Arrange retained. Canonical tree TypeScript/Vite build and28 repeated browser cases PASS. Installed52c verified49 hashes, nine preferences and continuing radio. [Weather/aircraft evidence](docs/evidence/weather-aircraft-2026-10-04.md).
-
-- Urgent external Return correction:74 local contract cases PASS; window-close acknowledgement, keyboard-port cleanup failure, pending/timeout and EN/RO Retry are covered. Installed52c/source73cc: new worker registration replaces stale code retained by the existing Chromium profile. Actual existing-profile Wayland app Return PASS: trusted sender, new code loaded, exact app window closed with no callback error. Profile/preferences retained; all external service/physical-finger acceptance remains OPEN. [Return evidence](docs/evidence/external-return-2026-10-04.md).
-
-- Previous installed 670c (historical): all 48 runtime hashes, activation identity, saved preferences, continuing radio and closed diagnostic endpoints were checked. Native local audio/video format and recovery probes passed within their stated scope; physical touch/audibility and complete media acceptance remain OPEN. [Media evidence](docs/evidence/media-missing-target-2026-10-04.md).
-- Previous installed 670c (historical): five app service relaunches reached Home in 4.894–4.982 s; complete idle PSS at Home +120 s was 598.896 MiB across 15 processes, including diagnostic overhead. The 480 injected-touch navigation samples had zero failures; feedback style/frame proxy maximum 21.7 ms and worst navigation p95 146.8 ms. These do not establish physical display latency, all action types or graphical-session startup. [Performance evidence](docs/evidence/native-performance-2026-10-04.md).
-- Earlier local audio correction: complete **594-case browser regression passed before the follow-on changes**; TypeScript/build/repository checks passed, with 347 Python cases /22 platform skips and 27 keyboard cases. Prepared aa288 belongs to that checkpoint. [Audio evidence](docs/evidence/audio-output-recovery-2026-10-04.md).
-- Audio follow-on: **634 full browser cases passed before the final scoped Setup footer CSS adjustment**; 154 affected cases and 40 new cases passed at that checkpoint. Final footer adjustment reproduced four failures before repair; all eight new Setup cases passed afterward. **192 affected browser cases passed on the final source**, including Setup, product tour and both audio suites. TypeScript/build passed; Python 347 passed /22 platform skips and 27 keyboard cases retain their stated scope. [Audio evidence](docs/evidence/audio-output-recovery-2026-10-04.md).
-- Setup long-label recovery now keeps the full primary navigation footer visible; all eight new cases verify complete 48px hit targets, touch scrolling and revisit. Video/service stress captures fit. This is browser fixture evidence, not native audio or touch acceptance.
-- UI-34 local Bluetooth prompt recovery passed144 cases before the subsequent favorites and spacing changes. UI-35 local favorite identity/recovery passed16 scoped cases; its supplemental ownership cases remain pending. UI-36/37 rendered solar and language/theme settings passed20 local cases. UI-34/35 were subsequently published in71f3c88 with900 browser checks; these corrections are now included in installed c1e2. Native pairing/favorites acceptance remains OPEN.
-- Image provenance collector: eleven focused tests passed; a fresh Linux-generated image and actual read-only filesystem integration remain unverified. Experimental artifacts are NOT FLASH-READY. [Provenance evidence](docs/evidence/image-provenance-2026-10-04.md).
-
-Every earlier UI request remains in [UI_DELIVERY_PLAN.md](docs/UI_DELIVERY_PLAN.md). Compact Arrange, exact edge anchors, overlap, personalization, ambient scene, station identity, both languages/themes and all older requirements must survive the new correction. The historical log is preserved in [the full status snapshot](docs/history/status-2026-10-04.md); its older “Current runtime” headings are historical, not competing current identities.
-
-## Next work and release gates
-
-1. Complete the native audio command/control tour and current-candidate viewport acceptance. Verified deployment preserved all nine preferences and resumed radio. Complete native UI-34 Bluetooth prompt recovery and UI-35 favorites identity/recovery acceptance; their implementations are installed in c1e2; UI-36 solar theme and UI-37 actual language/theme switching remain OPEN.
-2. Complete the current-candidate physical UI tour and remaining audio/Bluetooth/network/media recovery probes. Finish genuine Netflix movie/audio/resolution and YouTube checks, and resolve the approved music-service/account proof; the owner has Netflix, and Spotify Premium has not been supplied.
-3. Complete per-action feedback/navigation performance, five actual graphical-session starts, required cold-boot/offline checks, media-load/system usability and eight-hour interactive stability on the accepted candidate.
-4. Resolve runner/build-host admission, build and inspect the final image, retain software/license/source provenance and redistribution evidence, then prove clean installation, backup/restore, cold boot/offline behavior and all delivery requirements. Historical green CI/images do not accept the final candidate.
-
-Use [acceptance.json](docs/acceptance.json) and [Definition of Done](docs/DEFINITION_OF_DONE.md) as the requirement-by-requirement release gate. Tests, source publication, successful deployment and product acceptance are separate states. Continue all open work; do not mark the project complete from a targeted test result.
-
-## Historical integration checkpoints (superseded by installed c1e2)
-
-Previous536e/sourcef5cf: day-only Sun/night-only Moon and raised arc verified in native15:06 ambient capture.51 hashes/nine preferences retained, radio resumed and debug listeners closed. Previous policy124 browser cases and final arc38 cases/18 astronomy cases PASS. UI-34/35 are being integrated as a separate candidate; no acceptance is transferred automatically.
-
-UI-34/35 final integration:888 complete browser cases passed on canonical snapshot, then12 cross-reader/failed-remove screenshot cases passed without runtime changes. Exact Bluetooth prompt/PIN generation, cancellation, accepted-write/status-read recovery and favorites identity/GET ownership are covered in EN/RO×palettes. Native installation still pending at this source checkpoint. Heart confetti, Media deletion and Media layout requests are now tracked as UI-41/42/43.
-
-UI-41/42/43 integration: Home ambient heart confetti with a five-second limit; Media separates local files and official services, with optional touch search and confirmed file deletion. Backend349 PASS/32 platform skips; isolated Linux deletion12 PASS/zero skips, exclusively temporary fixtures. Final browser/native/published-candidate evidence is pending. No actual user media was deleted.
-
-Final affected browser suite:122 passed on the integrated source, including22 confetti/Home cases,48 Media redesign/deletion cases, first-intent selection, folder recovery and service geometry with radio. Early service clipping and toast interception were reproduced then corrected. Complete browser regression and native deployment remain pending.
-
-Candidate c1e2e6049fec:970 final complete browser checks PASS on a frozen Git tree,176 affected after the queue correction,349 backend/32 Windows platform skips and12 Linux temporary deletion cases PASS,92 extension/astronomy PASS. Canonical TypeScript/build/repository/package PASS. Publish and install the combined UI-34/35/41/42/43 candidate next; installed identity remains536e until activation is verified.
-
-Historical activation: c1e2/source4de was installed and verified; superseded only by the star restoration described above. The pending statements above describe earlier checkpoints only. Backup was independently read and hash-verified on PC before activation; previous536e remains available. No final OS image or complete product acceptance is implied.
+Full product acceptance remains OPEN: physical/native matrix, DRM/media compatibility,
+phone and stability criteria require their own evidence. Proposal6 excluded; no21:30
+automation/public stream. Raw state/accounts/backups remain private.

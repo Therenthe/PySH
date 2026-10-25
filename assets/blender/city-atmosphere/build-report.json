@@ -1,0 +1,315 @@
+{
+  "schema": 1,
+  "blender": "5.2.2 LTS",
+  "source_master_sha256": "0e59b60f25e0b19ecd2fc38f30e6f2adcc74d457826e38081b9453678ec6656e",
+  "builder_sha256": "6e40186c6c607639200a3e26fe85c0e06f6dfc0cef578e3a1d43f511b45be870",
+  "runtime_city_size": [
+    800,
+    208
+  ],
+  "static_resolution": [
+    1600,
+    570
+  ],
+  "fps": 24,
+  "frames": 60,
+  "duration_seconds": 2.5,
+  "audio": false,
+  "assets": [],
+  "pass_gate": true,
+  "clips": [
+    {
+      "name": "city-exit-media-day-v1.webm",
+      "bytes": 620633,
+      "sha256": "9c1ff378cb3f8f50f8776773c11bf232b7e706882f572e675d339758b3e7054a",
+      "frames_decoded": 60,
+      "first_frame_opaque": true,
+      "ending_sky_transparent": true,
+      "ending_ground_opaque": true,
+      "leading_95pct_black_frames": 0,
+      "leading_seconds": 0.0
+    },
+    {
+      "name": "city-exit-media-night-v1.webm",
+      "bytes": 558330,
+      "sha256": "12c2c4427b61979d0e93e9094acbf7469ddee78f1e222ef86c93e9bdab36e245",
+      "frames_decoded": 60,
+      "first_frame_opaque": true,
+      "ending_sky_transparent": true,
+      "ending_ground_opaque": true,
+      "leading_95pct_black_frames": 0,
+      "leading_seconds": 0.0
+    },
+    {
+      "name": "city-exit-audio-day-v1.webm",
+      "bytes": 621934,
+      "sha256": "fcd1720a62dc04d7e2782fbcc2615d6c413d96866b1909fc5736213be9f11c23",
+      "frames_decoded": 60,
+      "first_frame_opaque": true,
+      "ending_sky_transparent": true,
+      "ending_ground_opaque": true,
+      "leading_95pct_black_frames": 0,
+      "leading_seconds": 0.0
+    },
+    {
+      "name": "city-exit-audio-night-v1.webm",
+      "bytes": 565831,
+      "sha256": "d37df095b00642df0654824e24888bfa53d36ba63f251f99afdc8dce4812918d",
+      "frames_decoded": 60,
+      "first_frame_opaque": true,
+      "ending_sky_transparent": true,
+      "ending_ground_opaque": true,
+      "leading_95pct_black_frames": 0,
+      "leading_seconds": 0.0
+    },
+    {
+      "name": "city-exit-settings-day-v1.webm",
+      "bytes": 621366,
+      "sha256": "826c65262d07233fb15747fc15e14f54e68537a6b18dce725a6b00dee7d87c6c",
+      "frames_decoded": 60,
+      "first_frame_opaque": true,
+      "ending_sky_transparent": true,
+      "ending_ground_opaque": true,
+      "leading_95pct_black_frames": 0,
+      "leading_seconds": 0.0
+    },
+    {
+      "name": "city-exit-settings-night-v1.webm",
+      "bytes": 562065,
+      "sha256": "d3b7b1740a489c87c74c1a9c7c3ba91d4a45c922260125aa51dcffb5aea07244",
+      "frames_decoded": 60,
+      "first_frame_opaque": true,
+      "ending_sky_transparent": true,
+      "ending_ground_opaque": true,
+      "leading_95pct_black_frames": 0,
+      "leading_seconds": 0.0
+    },
+    {
+      "name": "city-exit-radio-day-v1.webm",
+      "bytes": 627506,
+      "sha256": "d07e0072ef50068d0fffc937d3f7277b6b8c2608efe1a60b79ab53b60b31be8f",
+      "frames_decoded": 60,
+      "first_frame_opaque": true,
+      "ending_sky_transparent": true,
+      "ending_ground_opaque": true,
+      "leading_95pct_black_frames": 0,
+      "leading_seconds": 0.0
+    },
+    {
+      "name": "city-exit-radio-night-v1.webm",
+      "bytes": 568274,
+      "sha256": "59bfde4190da59a31118e7bfae28d307ba19844e8748bf26540dc0d1e7851f43",
+      "frames_decoded": 60,
+      "first_frame_opaque": true,
+      "ending_sky_transparent": true,
+      "ending_ground_opaque": true,
+      "leading_95pct_black_frames": 0,
+      "leading_seconds": 0.0
+    },
+    {
+      "name": "city-exit-network-day-v1.webm",
+      "bytes": 630985,
+      "sha256": "46fe66601fae18e22da7bd8190b442ea668e123cfcb311c0378c5602084b6be3",
+      "frames_decoded": 60,
+      "first_frame_opaque": true,
+      "ending_sky_transparent": true,
+      "ending_ground_opaque": true,
+      "leading_95pct_black_frames": 0,
+      "leading_seconds": 0.0
+    },
+    {
+      "name": "city-exit-network-night-v1.webm",
+      "bytes": 572706,
+      "sha256": "371bf834890bf43b9c8b5dbf5cba0fd2c8db697ac9f8e5282f62d62c165913d8",
+      "frames_decoded": 60,
+      "first_frame_opaque": true,
+      "ending_sky_transparent": true,
+      "ending_ground_opaque": true,
+      "leading_95pct_black_frames": 5,
+      "leading_seconds": 0.208
+    }
+  ],
+  "encoded_clip_bytes": 5949630,
+  "static_assets": [
+    {
+      "name": "gothic-city-day-unlit-v1.png",
+      "bytes": 705930,
+      "sha256": "1f48c9ea21e138161ed5970d5bb99b8b986fbde774d1558689a14e7b44f8f0c7",
+      "ground_opaque": true
+    },
+    {
+      "name": "city-road-wet-day-v1.png",
+      "bytes": 55135,
+      "sha256": "71a0b437ec5bb0975c7b818323d44e9b743cb78abb72c26eba3f5ad5570ae772",
+      "actual_ground_mask_only": true
+    },
+    {
+      "name": "gothic-city-night-unlit-v1.png",
+      "bytes": 607563,
+      "sha256": "d2a71327c5cb90ab0f16580e3070102643e066efc6de794ffd822351519e9034",
+      "ground_opaque": true
+    },
+    {
+      "name": "city-road-wet-night-v1.png",
+      "bytes": 61286,
+      "sha256": "b02069909a1e8e7c32986e46ecdff74ac256324cded59fec8c830dd8f1a43717",
+      "actual_ground_mask_only": true
+    },
+    {
+      "name": "city-window-bank-0-v1.png",
+      "bytes": 166936,
+      "sha256": "95248609aee63b10ccd59c01a78a3e4d0e6478ac491ebc201c42ccc885326886",
+      "existing_pane_geometry": true
+    },
+    {
+      "name": "city-window-bank-1-v1.png",
+      "bytes": 174168,
+      "sha256": "4b2c0ddb12a3d7e6c2fc3984483524fa9cbb4785cc9f0a547a52e28a62616562",
+      "existing_pane_geometry": true
+    },
+    {
+      "name": "city-window-bank-2-v1.png",
+      "bytes": 164420,
+      "sha256": "417c724986721df311573800773280e8254df201b3478cd5425a2cb31cff6c6c",
+      "existing_pane_geometry": true
+    }
+  ],
+  "camera_checks": [
+    {
+      "destination": "media",
+      "positions_checked": 60,
+      "max_camera_error": 0.0,
+      "camera_returns_to_matched_home_projection": true
+    },
+    {
+      "destination": "audio",
+      "positions_checked": 60,
+      "max_camera_error": 0.0,
+      "camera_returns_to_matched_home_projection": true
+    },
+    {
+      "destination": "settings",
+      "positions_checked": 60,
+      "max_camera_error": 0.0,
+      "camera_returns_to_matched_home_projection": true
+    },
+    {
+      "destination": "radio",
+      "positions_checked": 60,
+      "max_camera_error": 0.0,
+      "camera_returns_to_matched_home_projection": true
+    },
+    {
+      "destination": "network",
+      "positions_checked": 60,
+      "max_camera_error": 0.0,
+      "camera_returns_to_matched_home_projection": true
+    }
+  ],
+  "home_handoff_geometry": [
+    {
+      "destination": "media",
+      "frame": 59,
+      "points_checked": 17819,
+      "max_error_px": 0.6796137780734153,
+      "mean_error_px": 0.11195908861620364
+    },
+    {
+      "destination": "media",
+      "frame": 60,
+      "points_checked": 17819,
+      "max_error_px": 0.5687797604100113,
+      "mean_error_px": 0.06869372764100469
+    },
+    {
+      "destination": "audio",
+      "frame": 59,
+      "points_checked": 17819,
+      "max_error_px": 0.6796137780734153,
+      "mean_error_px": 0.11195908828965072
+    },
+    {
+      "destination": "audio",
+      "frame": 60,
+      "points_checked": 17819,
+      "max_error_px": 0.5687797604100113,
+      "mean_error_px": 0.06869372764100469
+    },
+    {
+      "destination": "settings",
+      "frame": 59,
+      "points_checked": 17819,
+      "max_error_px": 0.6796137780734153,
+      "mean_error_px": 0.11195908804148073
+    },
+    {
+      "destination": "settings",
+      "frame": 60,
+      "points_checked": 17819,
+      "max_error_px": 0.5687797604100113,
+      "mean_error_px": 0.06869372764100469
+    },
+    {
+      "destination": "radio",
+      "frame": 59,
+      "points_checked": 17819,
+      "max_error_px": 0.6796137780734153,
+      "mean_error_px": 0.11195908247050877
+    },
+    {
+      "destination": "radio",
+      "frame": 60,
+      "points_checked": 17819,
+      "max_error_px": 0.5687797604100113,
+      "mean_error_px": 0.06869372764100469
+    },
+    {
+      "destination": "network",
+      "frame": 59,
+      "points_checked": 17819,
+      "max_error_px": 0.6796137780734153,
+      "mean_error_px": 0.11195908247050877
+    },
+    {
+      "destination": "network",
+      "frame": 60,
+      "points_checked": 17819,
+      "max_error_px": 0.5687797604100113,
+      "mean_error_px": 0.06869372764100469
+    }
+  ],
+  "actor_checks": [
+    {
+      "object": "District_Car_0",
+      "forward_world_x_delta": 12.0,
+      "matches_original_time_direction": true
+    },
+    {
+      "object": "District_Car_1",
+      "forward_world_x_delta": -9.0,
+      "matches_original_time_direction": true
+    },
+    {
+      "object": "District_Metro",
+      "forward_world_x_delta": 4.0,
+      "matches_original_time_direction": true
+    },
+    {
+      "object": "District_Walker_0",
+      "forward_world_x_delta": 1.0,
+      "matches_original_time_direction": true
+    }
+  ],
+  "window_bank_overlap_pixels": 35,
+  "new_render_parts": 4,
+  "gated_logical_components": 154,
+  "intentional_disconnected_window_panes": 153,
+  "mesh_gate": {
+    "pass": true,
+    "errors": 0,
+    "warnings": 0
+  },
+  "editable_master_sha256": "e7749d5a368e164166949429edfbb5f07d5e5a35162344385c36eab463c57f94",
+  "window_pane_components": 153,
+  "limits": "Offline source/geometry/codec gates. Runtime weather/solar logic, native composition, touch and decoder performance are separate acceptance."
+}

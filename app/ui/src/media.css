@@ -62,3 +62,30 @@
 .app .media-redesign .service-arrow{display:none}
 .app .with-player .media-redesign .service-panel{padding:14px}
 .app .with-player .media-redesign .service-panel>.muted{margin-bottom:14px}
+
+/* Full names are disclosed in place, without starting media or interrupting browsing. */
+.app .media-redesign .media-entry{flex-wrap:wrap;column-gap:6px;row-gap:0}
+.app .media-redesign .media-name-toggle{width:48px;height:48px;flex:0 0 48px;display:grid;place-items:center;border:0;border-radius:10px;color:var(--muted);background:transparent;padding:0}
+.app .media-redesign .media-name-toggle[aria-expanded=true]{background:var(--soft);color:var(--accent-strong)}
+.app .media-redesign .media-full-name{flex:0 0 100%;padding:2px 12px 14px;font-size:16px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
+.app .media-redesign .library-path:focus-visible{outline:2px solid var(--accent-strong);outline-offset:2px;border-radius:4px}
+
+/* Real cached artwork and history share the library's existing scroll surface. */
+.app .media-redesign .media-artwork{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.app .media-redesign .media-file-copy small{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.app .media-redesign .media-continue{padding:4px 8px 12px;border-bottom:1px solid var(--line-dark);margin-bottom:4px}
+.app .media-redesign .media-continue>header{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px}
+.app .media-redesign .media-continue h2{font-size:16px;margin:0}
+.app .media-redesign .media-continue button{min-height:48px;font-size:14px;padding:0 10px;white-space:normal}
+.app .media-redesign .media-continue-item{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-bottom:1px solid var(--line)}
+.app .media-redesign .media-continue-copy{display:flex;align-items:baseline;gap:12px;min-width:0}
+.app .media-redesign .media-continue-copy b{font-size:16px;overflow-wrap:anywhere;flex:1;min-width:0}
+.app .media-redesign .media-continue-copy small{font-size:14px;color:var(--muted);white-space:nowrap}
+.app .media-redesign .media-continue-actions{display:flex;gap:8px;flex-wrap:wrap}
+.app .media-redesign .media-continue-error,.app .video-progress-error{display:flex;align-items:center;gap:10px;font-size:14px}
+.app .media-redesign .media-continue-error span,.app .video-progress-error span{flex:1}
+
+.app .video-progress-error{align-items:flex-start;flex-wrap:wrap}
+.app .video-progress-error>span{flex:1 1 240px}
+.app .video-progress-recovery-actions{display:flex;gap:8px;flex-wrap:wrap}
+.app .video-progress-recovery-actions button{min-height:48px;max-width:230px;white-space:normal}

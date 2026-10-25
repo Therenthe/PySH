@@ -1,7 +1,10 @@
+// Floating visualizer coverage remains on other styles or local media;
+// radio Wave facade behavior is exercised separately in radio-neon.spec.ts.
+import {openSettingsSection} from './settings-navigation';
 import {test,expect} from '@playwright/test';
 for(const theme of ['ink','night'])test(`personalized Home ${theme}: idle header, sizes, visibility, persisted drag and recovery`,async({page},info)=>{
  const ro=info.project.name.endsWith('ro');let failSave=false;
- const state:any={preferences:{language:ro?'ro':'en',theme,setupComplete:true,nightEnabled:false,navigationCollapsed:true,screensaverMinutes:0,visualizerStyle:'wave',visualizerSize:'compact',homeCards:['weather','forecast','playback'],homePositions:{},timezone:'Europe/Bucharest',shortcuts:['radio','media']},network:{state:'connected'},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{state:'playing',kind:'radio',station_name:'Radio One',url:'https://example.org/stream'},weather:{current:{temperature_c:13,weather_code:2,is_day:0,feels_like_c:11},daily:Array.from({length:5},(_,i)=>({date:`2026-10-0${i+3}`,weather_code:0,max_c:22,min_c:11})),stale:false}};
+ const state:any={preferences:{language:ro?'ro':'en',theme,setupComplete:true,nightEnabled:false,navigationCollapsed:true,screensaverMinutes:0,visualizerStyle:'bars',visualizerSize:'compact',homeCards:['weather','forecast','playback'],homePositions:{},timezone:'Europe/Bucharest',shortcuts:['radio','media']},network:{state:'connected'},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{state:'playing',kind:'radio',station_name:'Radio One',url:'https://example.org/stream'},weather:{current:{temperature_c:13,weather_code:2,is_day:0,feels_like_c:11},daily:Array.from({length:5},(_,i)=>({date:`2026-10-0${i+3}`,weather_code:0,max_c:22,min_c:11})),stale:false}};
  await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname;let json:any={ok:true};if(path==='/api/session')json={token:'fixture'};else if(path==='/api/state')json=state;else if(path==='/api/preferences'){if(failSave)return route.fulfill({status:500,json:{error:'save_failed'}});Object.assign(state.preferences,route.request().postDataJSON());json=state.preferences;}else if(path==='/api/audio/visualization')json={available:true,status:'ready',waveform:Array.from({length:64},(_,i)=>Math.sin(i)*.3),bars:Array(16).fill(.3),peak:.3,rms:.2,silent:false};await route.fulfill({json});});
  await page.clock.install();await page.goto('/');await expect(page.locator('.ambient-home')).toBeVisible();
  await page.clock.runFor(400);await expect.poll(()=>page.evaluate(()=>{const w=document.querySelector('.ambient-weather')!.getBoundingClientRect(),f=document.querySelector('.ambient-forecast')!.getBoundingClientRect();return Math.max(f.y-w.bottom,f.x-w.right);})).toBeGreaterThanOrEqual(16);
@@ -10,11 +13,11 @@ for(const theme of ['ink','night'])test(`personalized Home ${theme}: idle header
  await page.screenshot({path:info.outputPath(`personalized-active-${theme}.png`)});
  const settings=async()=>{await page.locator('.navigation-toggle').tap();await page.clock.runFor(300);await page.locator('.main-nav button').nth(3).tap();};
  const homeTab=()=>page.locator('.settings-tabs button').filter({hasText:ro?'Acasă':'Home'});
- await settings();
+ await settings();await openSettingsSection(page,'visualizer');
  for(const [label,size] of [[ro?'Mare':'Large','large'],[ro?'Echilibrat':'Balanced','balanced'],['Compact','compact']]){
   const trigger=page.getByRole('button',{name:ro?'Dimensiune vizualizator':'Visualizer size',exact:true});await trigger.scrollIntoViewIfNeeded();await trigger.tap();await page.getByRole('dialog').getByRole('radio',{name:label,exact:true}).tap();expect(state.preferences.visualizerSize).toBe(size);
   await page.locator('.main-nav button').nth(0).tap();await page.clock.runFor(16000);expect((await page.locator('.ambient-visualizer').boundingBox())!.height).toBe({compact:64,balanced:88,large:112}[size]);
-  await page.locator('.main-nav button').nth(3).tap();
+  await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'visualizer');
  }
  await homeTab().tap();
  for(const button of await page.locator('.settings-panel .switch').all()){const label=await button.getAttribute('aria-label');if(label?.startsWith(ro?'Afișează':'Show'))await button.tap();}
@@ -30,7 +33,7 @@ for(const theme of ['ink','night'])test(`personalized Home ${theme}: idle header
   await page.getByRole('button',{name:ro?'Gata':'Done',exact:true}).tap();expect(state.preferences.homePositions[key]).toBeDefined();const saved={...state.preferences.homePositions[key]};await page.reload();await expect(page.locator(`[data-home-positioned=true]`)).toBeVisible();expect(state.preferences.homePositions[key]).toEqual(saved);
  }
  await page.locator('.main-nav button').nth(3).tap();await homeTab().tap();await page.getByRole('button',{name:ro?'Aranjează Acasă':'Arrange Home',exact:true}).tap();
- await page.getByRole('button',{name:ro?'Resetează':'Reset',exact:true}).tap();failSave=true;await page.getByRole('button',{name:ro?'Gata':'Done',exact:true}).tap();await expect(page.locator('.home-layout-toolbar [role=alert]')).toBeVisible();await expect(page.locator('[data-layout-editing=true]')).toBeVisible();
+ await page.getByRole('button',{name:ro?'Opțiuni':'Options',exact:true}).tap();await page.getByRole('button',{name:ro?'Resetează':'Reset',exact:true}).tap();failSave=true;await page.getByRole('button',{name:ro?'Gata':'Done',exact:true}).tap();await expect(page.locator('.home-layout-toolbar [role=alert]')).toBeVisible();await expect(page.locator('[data-layout-editing=true]')).toBeVisible();
  await page.getByRole('button',{name:ro?'Anulează':'Cancel',exact:true}).tap();expect(state.preferences.homePositions.visualizer).toBeDefined();
  await page.screenshot({path:info.outputPath(`personalized-layout-${theme}.png`)});
 });
@@ -52,7 +55,7 @@ test('artwork lookup cannot update the saved station after playback changed',asy
 });
 
 for(const theme of ['ink','night'])test(`nocturnal signal stays readable over the sky in ${theme}`,async({page},info)=>{
- const ro=info.project.name.endsWith('ro');const state:any={preferences:{language:ro?'ro':'en',theme,setupComplete:true,nightEnabled:false,screensaverMinutes:0,visualizerStyle:'wave',navigationCollapsed:true},network:{},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{kind:'radio',state:'playing',station_name:'Radio',url:'https://example.org/radio'},weather:{stale:false,current:{weather_code:0,is_day:0,temperature_c:12},daily:[]}};
+ const ro=info.project.name.endsWith('ro');const state:any={preferences:{language:ro?'ro':'en',theme,setupComplete:true,nightEnabled:false,screensaverMinutes:0,visualizerStyle:'wave',navigationCollapsed:true},network:{},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{kind:'audio',state:'playing',station_name:'Radio',url:'https://example.org/radio'},weather:{stale:false,current:{weather_code:0,is_day:0,temperature_c:12},daily:[]}};
  await page.route('**/api/**',route=>{const path=new URL(route.request().url()).pathname;return route.fulfill({json:path==='/api/session'?{token:'fixture'}:path==='/api/state'?state:path==='/api/audio/visualization'?{available:true,status:'ready',waveform:Array(64).fill(.3),bars:Array(16).fill(.3),rms:.3,peak:.3,silent:false}:{ok:true}});});
  await page.goto('/');await expect(page.locator('.ambient-visualizer svg')).toBeVisible();if(theme==='ink')await expect(page.locator('.ambient-visualizer svg path')).toHaveCSS('stroke','rgb(215, 235, 231)');
  await page.locator('.ambient-visualizer').tap();await expect(page.locator('.signal-station')).toHaveCSS('color',theme==='ink'?'rgb(244, 247, 251)':'rgb(241, 243, 238)');await page.screenshot({path:info.outputPath(`night-signal-contrast-${theme}.png`)});

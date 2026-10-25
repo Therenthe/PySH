@@ -26,7 +26,7 @@ def frame(body):
     return struct.pack("<I", len(payload)) + payload
 
 
-@pytest.mark.parametrize("action", ["status", "show", "hide"])
+@pytest.mark.parametrize("action", ["status", "show", "hide", "home", "radio", "media"])
 def test_allowed_actions(host, action):
     assert host.read_message(io.BytesIO(frame({"action": action}))) == {"action": action}
     assert host.read_message(io.BytesIO()) is None
@@ -126,6 +126,7 @@ def test_broken_output_still_cleanup(host):
 
 
 def test_status_exposes_only_validated_language(host, monkeypatch, tmp_path):
+    monkeypatch.setattr(host.urllib.request, "build_opener", Mock(side_effect=OSError))
     monkeypatch.setenv("PI_HUB_DATA", str(tmp_path))
     monkeypatch.setattr(host.Keyboard, "available", lambda self: True)
     path = tmp_path / "preferences.json"
@@ -134,6 +135,23 @@ def test_status_exposes_only_validated_language(host, monkeypatch, tmp_path):
     for contents in ['{"language":"unknown"}', '[]', 'bad-json']:
         path.write_text(contents)
         assert host.preferred_language() == "ro"
+
+
+def test_status_theme_is_filtered_and_only_requests_fixed_loopback_context(host, monkeypatch):
+    response = Mock()
+    response.__enter__ = Mock(return_value=response)
+    response.__exit__ = Mock(return_value=False)
+    response.read.return_value = b'{"language":"en","theme":"night","password":"never_return"}'
+    opener = Mock()
+    opener.open.return_value = response
+    factory = Mock(return_value=opener)
+    monkeypatch.setattr(host.urllib.request, "build_opener", factory)
+    assert host.presentation() == {"language": "en", "theme": "night"}
+    request = opener.open.call_args.args[0]
+    assert request.full_url == "http://127.0.0.1:8765/api/external/context"
+    assert request.get_header("Origin") == "http://127.0.0.1:8765"
+    assert opener.open.call_args.kwargs == {"timeout": 2}
+    response.read.assert_called_once_with(1025)
 
 
 def test_origin_uses_manifest_key_not_service_site(host, tmp_path, monkeypatch):
@@ -172,3 +190,29 @@ def test_disconnect_reaps_real_child(host, monkeypatch, tmp_path):
     assert child.poll() is not None
     with pytest.raises(ProcessLookupError):
         os.kill(child.pid, 0)
+
+
+@pytest.mark.parametrize('target',['home','radio','media'])
+def test_destination_bridge_uses_only_fixed_loopback_owner_api(host, monkeypatch, target):
+    from unittest.mock import MagicMock
+    opener=Mock()
+    session=MagicMock();session.__enter__.return_value.read.return_value=b'{"token":"private-fixture-token"}'
+    accepted=MagicMock();accepted.__enter__.return_value.read.return_value=b'{"accepted":true}'
+    opener.open.side_effect=[session,accepted]
+    factory=Mock(return_value=opener)
+    monkeypatch.setattr(host.urllib.request,'build_opener',factory)
+    assert host.Keyboard().handle(target)=={'ok':True}
+    calls=opener.open.call_args_list
+    assert calls[0].args[0].full_url=='http://127.0.0.1:8765/api/session'
+    request=calls[1].args[0]
+    assert request.full_url=='http://127.0.0.1:8765/api/external/navigation'
+    assert json.loads(request.data)=={'target':target}
+    assert request.get_header('X-hub-token')=='private-fixture-token'
+    assert request.get_header('Origin')=='http://127.0.0.1:8765'
+    assert calls[0].kwargs['timeout']==calls[1].kwargs['timeout']==2
+
+
+def test_destination_failure_is_sanitized_and_does_not_claim_return(host, monkeypatch):
+    opener=Mock();opener.open.side_effect=OSError('private transport detail')
+    monkeypatch.setattr(host.urllib.request,'build_opener',Mock(return_value=opener))
+    assert host.Keyboard().handle('radio')=={'ok':False,'error':'return_unavailable'}

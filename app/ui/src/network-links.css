@@ -1,0 +1,7 @@
+.network-links{display:grid;gap:8px;margin:12px 0}
+.network-link{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 12px;background:var(--surface);border-radius:12px;min-width:0}
+.network-link>div{display:grid;gap:3px;min-width:0;flex:1}
+.network-link b{font-size:16px}
+.network-link small{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.network-link-ip{font-size:14px;color:var(--muted);flex-shrink:0;font-variant-numeric:tabular-nums}
+@media(max-width:600px){.network-link{flex-wrap:wrap}.network-link-ip{margin-left:22px}}

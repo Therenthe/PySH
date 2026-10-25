@@ -42,6 +42,7 @@ class Player:
         self._last_play_command = 0.0
         self._last_position: float | None = None
         self._ended = False
+        self._radio_return_pending = False
 
     async def start(self) -> None:
         if self._process and self._process.returncode is None and self._writer:
@@ -139,14 +140,32 @@ class Player:
         if not url.strip():
             raise PlayerError("invalid_media_url", "Choose a media source first.")
         self._kind = "audio" if kind == "local" else kind if kind in {"radio", "audio", "video"} else "radio"
+        self._radio_return_pending = False
         self._url, self._title, self._error = url, title, None
         self._connecting = True
         self._ended = False
         self._last_position = None
         self._last_play_command = time.monotonic()
         await self._command(["set_property", "pause", False])
-        await self._command(["loadfile", url, "replace"])
+        load = ["loadfile", url, "replace"]
+        if self._kind == "radio" and parsed.scheme in {"http", "https"}:
+            # Per-file transport recovery keeps pause/stop authoritative and
+            # cannot turn a finished local track into an endless broadcast.
+            load.extend([-1, {
+                "network-timeout": "10",
+                "stream-lavf-o": "reconnect=1,reconnect_streamed=1,reconnect_at_eof=1,"
+                    "reconnect_on_network_error=1,reconnect_delay_max=5,"
+                    "reconnect_max_retries=4,reconnect_delay_total_max=15",
+            }])
+        await self._command(load)
         return await self.status()
+
+    async def pause_for_external(self) -> dict[str, Any]:
+        snapshot = await self.command("pause")
+        # A live broadcast paused behind a browser must rejoin the current
+        # broadcast on the owner's next Play, not an expired buffered socket.
+        self._radio_return_pending = self._kind == "radio" and bool(self._url)
+        return snapshot
 
     async def command(self, action: str, value: Any = None) -> dict[str, Any]:
         command_map: dict[str, list[Any]] = {
@@ -180,7 +199,16 @@ class Player:
             if command is None:
                 raise PlayerError("invalid_command", "That playback control is unavailable.")
         await self.start()
+        if action in {"play", "resume", "toggle"} and self._kind == "radio" and self._url:
+            # Live streams can expire while paused behind an external service.
+            # Unpausing an ended mpv item is a successful IPC command with no
+            # sound. An explicit Play restarts only that retained station;
+            # healthy paused streams keep their existing connection.
+            snapshot = await self.status()
+            if self._radio_return_pending or snapshot["state"] in {"error", "ended", "idle"}:
+                return await self.play(self._url, self._title, self._kind)
         if action == "stop":
+            self._radio_return_pending = False
             self._connecting = False
             self._ended = False
             self._url = ""

@@ -61,6 +61,25 @@ Pentru o tranzacție întreruptă după prepare/comutare, `sudo python3 /home/py
 
 Aceste verificări dovedesc integritatea și recuperarea procesului, nu acceptarea hardware. După update și rollback verifică SSH, LAN, panoul/touch, audio, preferințe și redarea efectivă pe același candidat; notează build/commit și rezultate. Proba repetată pe appliance-ul real și restaurarea backupului rămân necesare pentru DEL-01.
 
+## Date Media locale
+
+Progresul video este păstrat separat de release, în directorul privat de date
+`local-media/watch.json`. Include-l în backupul privat al datelor aplicației;
+conține căi locale și nu se publică în Git. Maximum40înregistrări sunt persistate,
+iar „Continuă vizionarea” arată maximum12fișiere validate și disponibile.
+Un volum deconectat ascunde temporar intrările; citirea nu șterge istoricul.
+„Elimină din istoric” nu șterge fișierul. Ștergerea fișierului păstrează confirmarea
+și verificarea identității, fiind refuzată cât timp este redat.
+
+Metadatele și miniaturile reale sunt un cache RAM limitat, regenerat la nevoie
+prin procesul mpv separat și limitat; lipsa lor păstrează numele și pictograma
+tipului de fișier. Nu sunt necesare ffmpeg/ffprobe, conturi sau un scanner nou.
+La ieșire se salvează observația video și se închide sesiunea. În caz de eroare,
+utilizatorul poate reîncerca sau alege explicit revenirea fără salvare. Dacă hubul
+nu confirmă închiderea, ieșirea locală cere o alegere distinctă; curățarea remote
+rămâne neconfirmată până la expirarea/înlocuirea sesiunii. Expirarea logică este
+120s, cu eliberare fizică la următoarea accesare/curățare periodică.
+
 ## Inventar și pregătire (desktop importat)
 
 Auditul live din 2026-10-02 este consemnat în [pi-source-checkout-2026-10-02.md](evidence/pi-source-checkout-2026-10-02.md). Copia sursă este ~/PySH; runtime-ul și release-urile istorice sunt separate în ~/pi-smart-hub.

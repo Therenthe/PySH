@@ -1,0 +1,103 @@
+{
+  "schema": 1,
+  "city_resolution": [
+    1600,
+    570
+  ],
+  "crop_px": {
+    "x": 909,
+    "y": 136,
+    "width": 118,
+    "height": 281
+  },
+  "crop_percent": {
+    "left": 56.8125,
+    "top": 23.859649122807017,
+    "width": 7.375,
+    "height": 49.29824561403509
+  },
+  "assets": [
+    {
+      "name": "radio-neon-zone-01.png",
+      "bytes": 4280,
+      "sha256": "0f2a5c921988a67f41cfdfd68bbb6edc4efcdd98690edf81336647bb909840d8",
+      "rgba_decoded_bytes": 132632
+    },
+    {
+      "name": "radio-neon-zone-02.png",
+      "bytes": 4128,
+      "sha256": "962915e628dc261edc00d3b163ba21546796b10bcd166481a581038512b507f9",
+      "rgba_decoded_bytes": 132632
+    },
+    {
+      "name": "radio-neon-zone-03.png",
+      "bytes": 3702,
+      "sha256": "27786beccbe52e8fae37b092632cde6e392b8ad00e263d558359d9b2986c975a",
+      "rgba_decoded_bytes": 132632
+    },
+    {
+      "name": "radio-neon-zone-04.png",
+      "bytes": 4434,
+      "sha256": "60b08b862bcb00af668be123d86913f33dbb60db66715db22dc9300dd07a2fa8",
+      "rgba_decoded_bytes": 132632
+    },
+    {
+      "name": "radio-neon-zone-05.png",
+      "bytes": 3595,
+      "sha256": "9c05fa4340b71ebc2c35f4533cb68442e0e68845e41ed3bc51b45e99213beda5",
+      "rgba_decoded_bytes": 132632
+    },
+    {
+      "name": "radio-neon-zone-06.png",
+      "bytes": 4379,
+      "sha256": "00d0046cd7a9d639fcc9e15d6f62dab8594f1ca5b5fff03ccfc5cb1e1d0cd239",
+      "rgba_decoded_bytes": 132632
+    },
+    {
+      "name": "radio-neon-zone-07.png",
+      "bytes": 3389,
+      "sha256": "9740d399097ee3763db89a3a514673dca9b383d1ef045b0647d5bd9869287d31",
+      "rgba_decoded_bytes": 132632
+    },
+    {
+      "name": "radio-neon-zone-08.png",
+      "bytes": 4190,
+      "sha256": "699ade3513ccbe821a912b7dd07fafaaf03e4e0b0fcebda7f1160434dd48739c",
+      "rgba_decoded_bytes": 132632
+    }
+  ],
+  "signal": "Each zone is one adjacent pair of the 16 real temporal audio bins; not a frequency spectrum or automatic loop.",
+  "source_city_sha256": "de1780281dc2ca21a9492015dfedf46be8e14794641e12e32364af1771fe1a79",
+  "radio_building": {
+    "index": 10,
+    "world_center": [
+      3,
+      0.64
+    ],
+    "height": 5.3,
+    "width": 1.7,
+    "facade_y": 0.04
+  },
+  "night_gain": 1,
+  "day_gain": 0.2,
+  "transparent": true,
+  "blender": "5.2.2 LTS",
+  "zones": 8,
+  "tubes": 45,
+  "mesh_vertices": 4784,
+  "triangles": 7948,
+  "materials": 8,
+  "source_intent_practical_lights": 8,
+  "encoded_bytes": 32097,
+  "rgba_decoded_bytes": 1061056,
+  "audit": {
+    "profile": "render",
+    "scope": "each separately mounted closed tube, not city architecture",
+    "parts": 45,
+    "pass": true,
+    "errors": 0,
+    "warnings": 0
+  },
+  "limits": "Offline raster overlay; no realtime Blender/WebGL. Runtime/native signal and performance acceptance separate. Local halo approximates reflected practical spill, not a dynamic relight of the existing city.",
+  "builder_sha256": "4d7bd3a1acf013d6e6184b469caeedf61ed6fb0e10edb8d41dfe2653d76593ff"
+}

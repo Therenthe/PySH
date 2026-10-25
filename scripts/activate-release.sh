@@ -9,7 +9,7 @@ test "$(realpath -- "$release")" = "$release"
 test -f "$release/dist/index.html"
 test -f "$release/services/backend/app.py"
 test -x "$runtime_root/.venv/bin/python"
-"$runtime_root/.venv/bin/python" -m compileall -q "$release/services/backend"
+"$runtime_root/.venv/bin/python" -m compileall -q "$release/services"
 if test -L "$runtime_root/current"; then
   previous="$(readlink -f "$runtime_root/current")"
   case "$previous" in "$runtime_root/releases/"*) ;; *) echo 'Unexpected current target'; exit 1;; esac

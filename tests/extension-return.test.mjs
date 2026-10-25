@@ -14,7 +14,7 @@ for(const url of ['https://open-meteo.com/','https://open-meteo.com/en/docs','ht
  const h=harness();assert.equal(h.send(url),true);await tick();assert.deepEqual(h.removed,[7]);assert.deepEqual(h.responses,[{ok:true}]);assert.equal(h.timers.size,0);
 });
 for(const mode of ['error','throw','timeout'])test('return recovers from '+mode,async()=>{
- const h=harness(mode);assert.equal(h.send('https://open-meteo.com/'),true);if(mode==='timeout')[...h.timers.values()][0]();await tick();assert.deepEqual(h.removed,[7]);assert.deepEqual(h.responses,[{ok:false,error:'return_unavailable'}]);assert.equal(h.timers.size,0);
+ const h=harness(mode);assert.equal(h.send('https://open-meteo.com/'),true);await tick();if(mode==='timeout'){assert.equal(h.timers.size,1);[...h.timers.values()][0]();await tick();}assert.deepEqual(h.removed,[7]);assert.deepEqual(h.responses,[{ok:false,error:'return_unavailable'}]);assert.equal(h.timers.size,0);
 });
 test('untrusted sender cannot close browser windows',async()=>{
  for(const [url,extra]of [['https://open-meteo.com.evil.example/',{}],['http://open-meteo.com/',{}],['https://open-meteo.com/',{frameId:1}],['https://open-meteo.com/',{id:'foreign'}]]){

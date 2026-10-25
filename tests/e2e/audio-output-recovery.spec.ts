@@ -1,3 +1,4 @@
+import {openSettingsSection} from './settings-navigation';
 import {expect,test,type Locator,type Page} from '@playwright/test';
 
 // Real UI with controlled adapter replies; these tests do not establish speaker audibility.
@@ -94,7 +95,7 @@ for(const theme of ['ink','night']){
 
  test(`Audio ${theme}: Settings held volume drag survives clock and state polling without remount`,async({page},info)=>{
   const ro=info.project.name.endsWith('ro');await page.clock.install();const f=await audioFixture(page,ro,theme);
-  await f.dialog.locator('header').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();await page.locator('.main-nav button').nth(3).tap();await page.locator('.settings-tabs button').filter({hasText:ro?'Audio':'Audio'}).tap();
+  await f.dialog.locator('header').getByRole('button',{name:ro?'Închide':'Close',exact:true}).tap();await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'audio');
   const slider=page.locator('.settings-panel').getByRole('slider',{name:ro?'Volum':'Volume',exact:true}),node=(await slider.elementHandle())!,b=(await slider.boundingBox())!;
   await page.mouse.move(b.x+b.width*.3,b.y+b.height/2);await page.mouse.down();await page.mouse.move(b.x+b.width*.8,b.y+b.height/2,{steps:10});await expect(slider).toHaveValue('80');expect(await node.evaluate(el=>(el as HTMLInputElement).hasPointerCapture(1))).toBe(true);
   // Cross both the one-second clock tick and the 2.5-second state refresh while held.

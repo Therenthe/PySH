@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Pi Smart Hub \u2014 Return",
-  "version": "1.2.2",
-  "description": "Touch controls for returning to PySH and opening the system keyboard. No account data is collected.",
+  "version": "1.4.0",
+  "description": "Private PySH device controls, keyboard and acknowledged return. No account data is collected.",
   "background": {
-    "service_worker": "background-return-v2.js"
+    "service_worker": "background-commands-v4.js"
   },
   "content_scripts": [
     {
@@ -15,6 +15,7 @@
         "https://accounts.google.com/*"
       ],
       "js": [
+        "command-controls.js",
         "return.js"
       ],
       "css": [
@@ -30,7 +31,9 @@
       "js": [
         "documentation.js"
       ],
-      "css": ["immersive.css"],
+      "css": [
+        "immersive.css"
+      ],
       "run_at": "document_start"
     }
   ],

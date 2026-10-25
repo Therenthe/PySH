@@ -105,12 +105,15 @@ class Content:
         try:
             cached = await asyncio.to_thread(_read_json, cache_path, {})
             cached_entry = cached.get(key) if isinstance(cached, dict) else None
-            if not force and cached_entry and time.time() - float(cached_entry.get("cached_epoch", 0)) < 300:
+            # Refresh legacy entries once; explicit null means the provider had no measurement.
+            cached_current = (cached_entry.get("value", {}).get("current") if cached_entry else None)
+            has_scene_measurements = isinstance(cached_current, dict) and {"visibility_m", "cloud_cover_pct"} <= cached_current.keys()
+            if not force and cached_entry and has_scene_measurements and time.time() - float(cached_entry.get("cached_epoch", 0)) < 300:
                 return {**cached_entry["value"], "stale": False, "error": None}
             params = {
                 "latitude": latitude,
                 "longitude": longitude,
-                "current": "temperature_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,relative_humidity_2m,pressure_msl,wind_direction_10m",
+                "current": "temperature_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,relative_humidity_2m,pressure_msl,wind_direction_10m,visibility,cloud_cover",
                 "hourly": "uv_index",
                 "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset",
                 "forecast_days": 5,
@@ -190,6 +193,8 @@ class Content:
                 "humidity_pct": _optional_measurement(current.get("relative_humidity_2m"), minimum=0, maximum=100),
                 "pressure_hpa": _optional_measurement(current.get("pressure_msl"), minimum=0, exclusive_minimum=True),
                 "wind_direction_deg": _optional_measurement(current.get("wind_direction_10m"), minimum=0, maximum=360),
+                "visibility_m": _optional_measurement(current.get("visibility"), minimum=0),
+                "cloud_cover_pct": _optional_measurement(current.get("cloud_cover"), minimum=0, maximum=100),
                 "uv_index": uv_index,
                 "uv_index_time": uv_time,
             },
@@ -388,7 +393,8 @@ class Content:
                 deletable = (sys.platform == 'linux' and not entry.is_symlink() and not is_dir
                              and stat_module.S_ISREG(stat.st_mode) and stat.st_uid == os.geteuid() and stat.st_nlink == 1)
                 items.append({"name": entry.name, "path": str(canonical), "kind": kind, "is_dir": is_dir, "size": stat.st_size, "modified": stat.st_mtime,
-                              "deletable": deletable, "delete_token": self._delete_token(canonical, stat) if deletable else None})
+                              "deletable": deletable, "delete_token": self._delete_token(canonical, stat) if deletable else None,
+                              "media_identity": self.media_identity(canonical, stat) if stat_module.S_ISREG(stat.st_mode) else None})
         items.sort(key=lambda item: (not item["is_dir"], item["name"].casefold()))
         if scan_roots and len(warnings) == len(scan_roots):
             raise ContentError("media_unavailable", "The media folders cannot be read. Try again.")
@@ -404,6 +410,12 @@ class Content:
         if not target.is_file():
             raise ContentError("media_not_file", "Choose a media file.")
         return target
+
+    @staticmethod
+    def media_identity(path: Path, info: os.stat_result) -> str:
+        # Opaque stat identity, never expose ns timestamps as JSON numbers.
+        fields = [str(path), info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns]
+        return 'm1_' + hashlib.sha256(json.dumps(fields, separators=(',', ':')).encode()).hexdigest()
 
     @staticmethod
     def _delete_token(path: Path, info: os.stat_result) -> str:

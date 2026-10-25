@@ -2,6 +2,7 @@
 import asyncio
 from functools import wraps
 import contextlib
+from .external_controls import controls_snapshot
 from datetime import datetime, timezone
 import hmac
 import hashlib
@@ -19,16 +20,23 @@ from zoneinfo import ZoneInfo
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from .preferences import PreferenceStore, Station
 from .device import Device, DeviceError
 from .content import Content, ContentError
+from .local_media import LocalMedia, media_await, media_thread, release_unused_response
+from .watch_history import WatchError
+from .weather_alerts import WeatherAlerts
 from .player import Player, PlayerError
 from .external import ExternalBrowser, ExternalError
 from .visualizer import OutputVisualizer
+from .power import PowerController, RemotePresence
+from .artwork import Artwork
+from .remote_control import AndroidControl, RemoteError
+from .presentation import presentation_context
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = Path(os.environ.get("PI_HUB_DATA", str(Path.home() / ".local/share/pi-smart-hub")))
@@ -47,8 +55,56 @@ class MediaDelete(StrictBody):
     token: str = Field(pattern=r'^[0-9a-f]{64}$', strict=True)
 
 
+class MediaReference(StrictBody):
+    path: str = Field(min_length=1, max_length=4096, pattern=r'^[^\x00]+$', strict=True)
+    media_identity: str = Field(pattern=r'^m1_[0-9a-f]{64}$', strict=True)
+
+
+class VideoStart(MediaReference):
+    resume: bool = Field(default=False, strict=True)
+
+
+class VideoObservation(StrictBody):
+    sequence: int = Field(ge=0, le=9007199254740991, strict=True)
+    heartbeat: bool = Field(default=False, strict=True)
+    position_s: float | None = Field(default=None, ge=0, le=864000, strict=True, allow_inf_nan=False)
+    duration_s: float | None = Field(default=None, gt=0, le=864000, strict=True, allow_inf_nan=False)
+    ended: bool = Field(default=False, strict=True)
+
+    @model_validator(mode='after')
+    def observation_shape(self):
+        if self.heartbeat:
+            if self.position_s is not None or self.duration_s is not None or self.ended:
+                raise ValueError('invalid_progress')
+        elif self.position_s is None or self.duration_s is None:
+            raise ValueError('invalid_progress')
+        return self
+
+
 class Power(StrictBody):
     enabled: bool
+
+
+class Standby(StrictBody):
+    standby: bool = Field(strict=True)
+
+
+class SleepTimer(StrictBody):
+    minutes: int = Field(ge=0, le=720, strict=True)
+
+
+class Presence(StrictBody):
+    deviceId: str = Field(pattern=r'^[0-9a-f-]{36}$')
+    active: bool = Field(strict=True)
+
+
+class AndroidControlEnable(StrictBody):
+    enabled: bool = Field(strict=True)
+
+
+class AndroidPairingReply(StrictBody):
+    requestId: str = Field(pattern=r'^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$', strict=True)
+    accept: bool = Field(strict=True)
 
 
 class BTAction(StrictBody):
@@ -105,6 +161,10 @@ class External(StrictBody):
     service: Literal["youtube", "netflix", "spotify"]
 
 
+class ExternalNavigation(StrictBody):
+    target: Literal["home", "radio", "media"]
+
+
 class PreparationJob(StrictBody):
     job: str = Field(min_length=1, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
 
@@ -132,10 +192,14 @@ class Hub:
         self.player = Player()
         self.token = secrets.token_urlsafe(32)
         self.weather = None
+        self.alerts = None
+        self.alert_provider = WeatherAlerts(directory / "cache")
+        self._alerts_generation = 0
         self.tasks = []
         self.external = ExternalBrowser(directory, ROOT / "app" / "browser-extension")
         self.appliance = os.environ.get("PI_HUB_APPLIANCE") == "1"
         self.service_mode = False
+        self.external_navigation = None
         self.snapshots = {"network": {"available": False, "state": "initializing"}, "bluetooth": {"available": False, "devices": [], "prompts": []}, "audio": {"available": False, "outputs": []}}
         self.last_output = None
         self.audio_selected = False
@@ -145,12 +209,18 @@ class Hub:
         self.queue = []
         self.queue_index = -1
         self.media_lock = asyncio.Lock()
+        self.local_media = LocalMedia(directory, self.content, self.media_lock)
         self.media_identity = None
         self.started = datetime.now(timezone.utc).isoformat()
         self._playback_snapshot = {}
         self._playback_sampled = 0
         self._visualizer_suspended = 0
         self.visualizer = OutputVisualizer(self.visualizer_context)
+        self.power = PowerController(self)
+        self.remote_presence = RemotePresence()
+        self.android_control = AndroidControl(directory)
+        self.artwork = Artwork()
+        self.radio_artwork_stations = {}
 
     def cache_playback(self, playback):
         self._playback_snapshot = dict(playback) if isinstance(playback, dict) else {}
@@ -222,6 +292,8 @@ class Hub:
     async def monitor(self):
         while True:
             await self.refresh_device()
+            async with self.media_lock:
+                await media_thread(self.local_media.watch.expire)
             await asyncio.sleep(2)
 
     async def refresh_weather(self, *, force=False):
@@ -244,7 +316,22 @@ class Hub:
     async def weather_loop(self):
         while True:
             await self.refresh_weather()
+            await self.refresh_alerts()
             await asyncio.sleep(60 if self.weather and self.weather.get('error') else 300)
+
+    async def refresh_alerts(self):
+        self._alerts_generation += 1
+        generation = self._alerts_generation
+        location = self.store.value.location
+        identity = location.model_dump() if location else None
+        try:
+            result = await self.alert_provider.snapshot(identity)
+        except Exception:
+            result = {"state": "unavailable", "updated_at": None, "alerts": [], "coverage": "Romania", "error": "weather_alerts_unavailable"}
+        current = self.store.value.location
+        if generation == self._alerts_generation and identity == (current.model_dump() if current else None):
+            self.alerts = result
+        return self.alerts
 
     def background(self, coroutine):
         task = asyncio.create_task(coroutine)
@@ -254,6 +341,7 @@ class Hub:
 
     async def start(self):
         self.background(self.initialize_runtime())
+        self.background(self.power.run())
 
     async def initialize_runtime(self):
         for operation in (self.device.initialize, self.player.start):
@@ -270,6 +358,7 @@ class Hub:
         for task in tasks:
             task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
+        await self.local_media.close()
         for operation in (self.player.close, self.device.close):
             with contextlib.suppress(Exception):
                 await operation()
@@ -332,12 +421,18 @@ async def invalid_request(request, error):
 
 @app.exception_handler(DeviceError)
 @app.exception_handler(ContentError)
+@app.exception_handler(WatchError)
 @app.exception_handler(PlayerError)
 @app.exception_handler(ExternalError)
 async def integration_error(request, error):
     code = getattr(error, "code", "operation_failed")
     log.info("Integration result=%s", code)
     return JSONResponse({"error": code}, status_code=409)
+
+
+@app.exception_handler(RemoteError)
+async def android_control_error(request, error):
+    return JSONResponse({'error': error.code}, status_code=error.status)
 
 
 @app.exception_handler(Exception)
@@ -357,18 +452,71 @@ async def state(request: Request):
     playback = hub.cache_playback(await hub.player.status())
     local = playback.get("kind") == "audio" and bool(playback.get("url"))
     playback.update(canPrevious=local and hub.queue_index > 0, canNext=local and 0 <= hub.queue_index < len(hub.queue) - 1)
-    return {"version": VERSION, "preferences": hub.store.export(), **hub.snapshots, "player": playback, "weather": hub.weather, "recovered": hub.store.recovered, "appliance": hub.appliance, "serviceMode": hub.service_mode}
+    last = hub.store.value.lastStation
+    if playback.get('kind') == 'radio' and last and playback.get('url') == last.url:
+        playback['station_uuid'] = last.uuid
+    return {"version": VERSION, "preferences": hub.store.export(), **hub.snapshots, "player": playback, "weather": {**hub.weather, "alerts": hub.alerts} if hub.weather else None, "recovered": hub.store.recovered, "appliance": hub.appliance, "serviceMode": hub.service_mode, "externalNavigation": hub.external_navigation, "power": await hub.power.snapshot(), "remote": hub.remote_presence.snapshot(), 'androidControl': await asyncio.to_thread(hub.android_control.snapshot)}
+
+
+@app.patch('/api/android-control')
+async def android_control_enable(request: Request, body: AndroidControlEnable):
+    hub = request.app.state.hub
+    result = await asyncio.to_thread(hub.android_control.enable, body.enabled)
+    if not body.enabled:
+        for device in result['devices']:
+            hub.remote_presence.update(device['deviceId'], False)
+    return result
+
+
+@app.post('/api/android-control/pairing')
+async def android_control_pairing(request: Request, body: AndroidPairingReply):
+    return await asyncio.to_thread(request.app.state.hub.android_control.approve, body.requestId, body.accept)
+
+
+@app.delete('/api/android-control/devices/{device_id}')
+async def android_control_revoke(request: Request, device_id: str):
+    if len(device_id) != 36:
+        raise RemoteError('invalid_request')
+    hub = request.app.state.hub
+    result = await asyncio.to_thread(hub.android_control.revoke, device_id)
+    hub.remote_presence.update(device_id, False)
+    return result
+
+
+@app.get('/api/power')
+async def power_state(request: Request):
+    return await request.app.state.hub.power.snapshot()
+
+
+@app.post('/api/power')
+async def power_set(request: Request, body: Standby):
+    return await request.app.state.hub.power.change(body.standby)
+
+
+@app.post('/api/power/timer')
+async def power_timer(request: Request, body: SleepTimer):
+    controller = request.app.state.hub.power
+    await controller.timer(body.minutes)
+    return await controller.snapshot()
+
+
+@app.post('/api/remote/presence')
+async def remote_presence(request: Request, body: Presence):
+    request.app.state.hub.remote_presence.update(body.deviceId, body.active)
+    return request.app.state.hub.remote_presence.snapshot()
 
 
 @app.patch("/api/preferences")
 async def preferences(request: Request, patch: dict):
     hub = request.app.state.hub
-    result = hub.store.update(patch)
+    result = await hub.power.update_preferences(patch)
     if patch.get("visualizerStyle") == "off":
         await hub.visualizer.close()
     if "location" in patch:
         hub.weather = None
+        hub.alerts = None
         hub.background(hub.refresh_weather())
+        hub.background(hub.refresh_alerts())
     return result
 
 
@@ -457,7 +605,52 @@ async def weather_refresh(request: Request):
 
 @app.get("/api/radio")
 async def radio(request: Request, q: str = "", country: str = "", language: str = ""):
-    return await request.app.state.hub.content.radio_search(q[:160], country[:100], language[:100])
+    hub = request.app.state.hub
+    result = await hub.content.radio_search(q[:160], country[:100], language[:100])
+    for station in result.get('stations', []):
+        if station.get('uuid'):
+            hub.radio_artwork_stations[station['uuid']] = station.get('favicon', '')
+    while len(hub.radio_artwork_stations) > 500:
+        hub.radio_artwork_stations.pop(next(iter(hub.radio_artwork_stations)))
+    return result
+
+
+@app.get('/api/radio/artwork')
+async def radio_artwork(request: Request, station: str = 'current'):
+    hub = request.app.state.hub
+    if len(station) > 100 or any(char in station for char in '/\\:'):
+        return JSONResponse({'error': 'artwork_unavailable'}, status_code=404)
+    if station == 'current':
+        playback = await hub.player.status()
+        last = hub.store.value.lastStation
+        candidate = last if last and playback.get('kind') == 'radio' and playback.get('url') == last.url else None
+        url = candidate.favicon if candidate else ''
+        if not url and playback.get('kind') == 'radio':
+            # The Pi player can display a favorite's logo even when lastStation
+            # came from an older transport command without favicon metadata.
+            match = next((item for item in hub.store.value.favorites if playback.get('url') in {item.url, item.url_resolved}), None)
+            candidate = match or candidate
+            url = candidate.favicon if candidate else ''
+    else:
+        candidate = next((item for item in hub.store.value.favorites if item.uuid == station), None)
+        if candidate is None and hub.store.value.lastStation and hub.store.value.lastStation.uuid == station:
+            candidate = hub.store.value.lastStation
+        url = candidate.favicon if candidate else hub.radio_artwork_stations.get(station, '')
+    try:
+        if url:
+            try:
+                raw, mime = await hub.artwork.get(url)
+            except ContentError:
+                if not candidate or not candidate.homepage:
+                    raise
+                raw, mime = await hub.artwork.homepage(candidate.homepage)
+        elif candidate and candidate.homepage:
+            raw, mime = await hub.artwork.homepage(candidate.homepage)
+        else:
+            raise ContentError('artwork_unavailable')
+    except ContentError:
+        return JSONResponse({'error': 'artwork_unavailable'}, status_code=404)
+    return Response(raw, media_type=mime, headers={'Cache-Control': 'no-store'})
 
 
 @app.post("/api/favorites")
@@ -471,13 +664,18 @@ async def favorite(request: Request, body: Favorite):
 
 @app.get("/api/media")
 async def media(request: Request, path: str = ""):
-    return await request.app.state.hub.content.media_list(path)
+    hub = request.app.state.hub
+    listing = await hub.content.media_list(path)
+    async with hub.media_lock:
+        return hub.local_media.enrich(listing)
 
 
+@app.head("/api/media/file")
 @app.get("/api/media/file")
-async def media_file(request: Request, path: str):
-    canonical = request.app.state.hub.content.resolve_media(path)
-    return FileResponse(canonical)
+async def media_file(request: Request, path: str | None = None, media_identity: str | None = None, session_id: str | None = None):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        return await media_thread(hub.local_media.stream, path, media_identity, session_id, on_cancel=release_unused_response)
 
 
 def serialized_media(function):
@@ -488,30 +686,102 @@ def serialized_media(function):
     return guarded
 
 
+@app.post('/api/media/inspect')
+async def inspect_media(request: Request, body: MediaReference):
+    return await request.app.state.hub.local_media.inspect(body.path, body.media_identity)
+
+
+@app.get('/api/media/artwork')
+async def local_artwork(request: Request, path: str, media_identity: str):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        pixels = await media_thread(hub.local_media.artwork, path, media_identity)
+    return Response(pixels, media_type='image/jpeg')
+
+
+@app.get('/api/media/continue')
+async def continue_media(request: Request):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        return await media_thread(hub.local_media.continuing)
+
+
+@app.delete('/api/media/continue')
+async def clear_continue(request: Request, body: MediaReference):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        return await media_thread(hub.local_media.clear, body.path, body.media_identity)
+
+
+@app.post('/api/media/video-session')
+async def start_video(request: Request, body: VideoStart):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        if hub.power.standby:
+            raise ContentError('standby_active')
+        if hub.service_mode:
+            raise ContentError('service_mode')
+        playback = await hub.player.status()
+        if playback.get('state') not in {'idle', 'ended', 'error'}:
+            raise ContentError('media_in_use')
+        return await media_thread(hub.local_media.start, body.path, body.media_identity, body.resume, on_cancel=hub.local_media.cancel_started)
+
+
+@app.patch('/api/media/video-session/{session_id}')
+async def update_video(request: Request, session_id: str, body: VideoObservation):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        if body.heartbeat:
+            await media_thread(hub.local_media.watch.heartbeat, session_id, body.sequence)
+        else:
+            await media_thread(hub.local_media.watch.update, session_id, body.sequence,
+                                    body.position_s, body.duration_s, ended=body.ended)
+    return {'updated': True}
+
+
+@app.delete('/api/media/video-session/{session_id}')
+async def close_video(request: Request, session_id: str, body: VideoObservation | None = None):
+    hub = request.app.state.hub
+    async with hub.media_lock:
+        if body is None:
+            return {'closed': await media_thread(hub.local_media.watch.close, session_id)}
+        if body.heartbeat:
+            raise ContentError('invalid_progress')
+        await media_thread(hub.local_media.watch.update, session_id, body.sequence,
+                                body.position_s, body.duration_s, ended=body.ended, final=True)
+        return {'closed': True}
+
+
 @app.delete('/api/media')
 @serialized_media
 async def delete_media(request: Request, body: MediaDelete):
-    hub = request.app.state.hub
-    playback = await hub.player.status()
-    active = playback.get('kind') in {'audio', 'video', 'local'} and playback.get('state') in {'playing', 'paused', 'buffering', 'connecting'}
-    source = playback.get('url', '')
-    if active and isinstance(source, str):
-        parsed = urlsplit(source)
-        local = unquote(parsed.path) if parsed.scheme == 'file' else source if not parsed.scheme else ''
-        if local and Path(local).resolve() == Path(body.path).resolve():
-            raise ContentError('media_in_use')
-    deleted = await hub.content.delete_media(body.path, body.token, hub.media_identity if active else None)
-    previous_index = hub.queue_index
-    before_index = sum(i <= previous_index and item.get('path') == deleted for i, item in enumerate(hub.queue))
-    hub.queue = [item for item in hub.queue if item.get('path') != deleted]
-    hub.queue_index = min(previous_index - before_index, len(hub.queue) - 1) if previous_index >= 0 else -1
-    return {'deleted': True}
+    async def complete_delete():
+        hub = request.app.state.hub
+        playback = await hub.player.status()
+        active = playback.get('kind') in {'audio', 'video', 'local'} and playback.get('state') in {'playing', 'paused', 'buffering', 'connecting'}
+        source = playback.get('url', '')
+        if active and isinstance(source, str):
+            parsed = urlsplit(source)
+            local = unquote(parsed.path) if parsed.scheme == 'file' else source if not parsed.scheme else ''
+            if local and Path(local).resolve() == Path(body.path).resolve():
+                raise ContentError('media_in_use')
+        browser_observed = await media_thread(hub.local_media.before_delete, body.path)
+        deleted = await hub.content.delete_media(body.path, body.token, hub.media_identity if active else None)
+        await media_thread(hub.local_media.after_delete, deleted, browser_observed)
+        previous_index = hub.queue_index
+        before_index = sum(i <= previous_index and item.get('path') == deleted for i, item in enumerate(hub.queue))
+        hub.queue = [item for item in hub.queue if item.get('path') != deleted]
+        hub.queue_index = min(previous_index - before_index, len(hub.queue) - 1) if previous_index >= 0 else -1
+        return {'deleted': True}
+    return await media_await(complete_delete())
 
 
 @app.post("/api/play")
 @serialized_media
 async def play(request: Request, body: Play):
     hub = request.app.state.hub
+    if hub.power.standby:
+        return JSONResponse({'error': 'standby_active'}, status_code=409)
     await hub.refresh_device()
     if not hub.audio_selected:
         return JSONResponse({"error": "no_audio_output"}, status_code=409)
@@ -547,6 +817,8 @@ async def play(request: Request, body: Play):
 @serialized_media
 async def player(request: Request, body: Transport):
     hub = request.app.state.hub
+    if hub.power.standby and body.action not in {'pause', 'stop'}:
+        return JSONResponse({'error': 'standby_active'}, status_code=409)
     hub.cache_playback({})
     await hub.visualizer.close()
     if body.action in {"resume", "toggle"} and not hub.audio_selected:
@@ -586,20 +858,46 @@ async def documentation(request: Request, body: Documentation):
     return await hub.external.start(body.provider, executable, prefs.language, prefs.theme)
 
 
+@app.post("/api/external/navigation")
+async def external_navigation(request: Request, body: ExternalNavigation):
+    # Protected by the same loopback Origin + per-process token as owner actions.
+    # A destination is data, never a URL, shell command or filesystem path.
+    hub = request.app.state.hub
+    hub.external_navigation = {"id": secrets.token_urlsafe(16), "target": body.target}
+    return {"accepted": True}
+
+
+@app.get("/api/external/context")
+async def external_context(request: Request):
+    hub = request.app.state.hub
+    return presentation_context(hub.store.value, hub.weather)
+
+
+@app.get("/api/external/controls")
+async def external_controls(request: Request):
+    hub = request.app.state.hub
+    changing = bool(hub._visualizer_suspended or hub.power.lock.locked())
+    power = await hub.power.snapshot()
+    return controls_snapshot(hub.snapshots["audio"], power,
+        presentation_context(hub.store.value, hub.weather),
+        changing or hub._visualizer_suspended or hub.power.lock.locked())
+
+
 @app.post("/api/external")
+@serialized_media
 async def external(request: Request, body: External):
     hub = request.app.state.hub
+    if hub.power.standby:
+        return JSONResponse({'error': 'standby_active'}, status_code=409)
     executable = shutil.which("chromium")
     if sys.platform != "linux" or not executable:
         return JSONResponse({"error": "browser_unavailable"}, status_code=409)
     hub.cache_playback({})
     await hub.visualizer.close()
     with contextlib.suppress(Exception):
-        hub.cache_playback(await hub.player.command("pause"))
+        hub.cache_playback(await hub.player.pause_for_external())
     prefs = hub.store.value
-    local = datetime.now(ZoneInfo(prefs.timezone)).strftime("%H:%M")
-    scheduled_night = prefs.nightEnabled and (prefs.nightStart <= local < prefs.nightEnd if prefs.nightStart <= prefs.nightEnd else local >= prefs.nightStart or local < prefs.nightEnd)
-    theme = "night" if prefs.theme == "night" or scheduled_night else "ink"
+    theme = presentation_context(prefs, hub.weather)["theme"]
     result = await hub.external.start(body.service, executable, prefs.language, theme)
     return JSONResponse(result, status_code=202 if result.get("preparing") else 200)
 

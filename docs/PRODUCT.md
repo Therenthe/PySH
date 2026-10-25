@@ -41,6 +41,13 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 
 ### Configurare și setări
 
+- Setările sunt organizate după sarcină în șase categorii: Acasă, Ecran și repaus,
+  Sunet și boxe, Internet și telefon, Limbă și locație, Sistem. Fiecare opțiune
+  are o destinație canonică; comenzile rapide și legăturile contextuale deschid
+  aceeași operație. Roata deschide setările complete; volumul are acces rapid
+  separat, iar Înapoi revine la pagina întreruptă. Inventarul și probele sunt în
+  [planul reorganizării](UX_REORGANIZATION_2026_10_24.md).
+
 - Prima pornire: întâmpinare, selecția limbii, verificarea rețelei și ghid Wi-Fi/Ethernet cu progres, confirmarea rezultatului și cale de revenire. Configurarea trebuie să poată fi reluată ulterior.
 - Setări rapide și pagină dedicată pentru limbă, rețea, audio, teme, mod de noapte, screensaver, sursa/vizualizarea vremii și comportament la pornire.
 - Vremea se actualizează automat, cu reluare după indisponibilitate; utilizatorul nu face refresh manual. Căutarea locației include București și sectoarele1–6, fără a confunda orașul cu Bucureștii Noi. Filtrele radio acceptă diferențe de majuscule/minuscule și aliasurile localizate suportate.

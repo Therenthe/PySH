@@ -1,4 +1,6 @@
+import {openSettingsSection} from './settings-navigation';
 import {expect,test,type Page,type Locator} from '@playwright/test';
+const videoIdentity='m1_'+'a'.repeat(64),videoSessionId='S'.repeat(32);
 
 // Control/lifecycle fixtures only: this file does not certify media decoding or sound.
 async function fixture(page:Page,ro:boolean,theme:string,mode:'reject'|'accepted'|'success'='reject',long=false){
@@ -10,11 +12,28 @@ async function fixture(page:Page,ro:boolean,theme:string,mode:'reject'|'accepted
   Object.defineProperty(HTMLMediaElement.prototype,'paused',{get:()=>true});
   HTMLMediaElement.prototype.play=function(){return Promise.resolve();};HTMLMediaElement.prototype.pause=function(){};
  });
- await page.route('**/api/**',async route=>{
+ const sessions:any[]=[],commandOrder:string[]=[];
+ await page.route('**/api/**',async route=>{const fixtureRequest=route.request(),fixtureUrl=new URL(fixtureRequest.url());
+  if(fixtureUrl.pathname==='/api/media/continue'){expect(fixtureRequest.method()).toBe('GET');return route.fulfill({json:{items:[]}});}
+  if(fixtureUrl.pathname==='/api/media/inspect'){expect(fixtureRequest.method()).toBe('POST');return route.fulfill({json:{state:'unavailable'}});}
+  if(fixtureUrl.pathname==='/api/media/video-session'){
+   expect(fixtureRequest.method()).toBe('POST');const body=fixtureRequest.postDataJSON();
+   expect(body).toEqual({path:'/approved/control-fixture.webm',media_identity:videoIdentity,resume:false});
+   sessions.push({method:'POST',body});commandOrder.push(fixtureUrl.pathname);
+   return route.fulfill({json:{session_id:videoSessionId,media_identity:videoIdentity,resume_position_s:0,stream_url:`/api/media/file?session_id=${videoSessionId}`}});
+  }
+  if(fixtureUrl.pathname.startsWith('/api/media/video-session/')){
+   expect(fixtureUrl.pathname).toBe(`/api/media/video-session/${videoSessionId}`);
+   const method=fixtureRequest.method(),body=fixtureRequest.postData()?fixtureRequest.postDataJSON():null;
+   expect(['PATCH','DELETE']).toContain(method);if(body){expect(Number.isSafeInteger(body.sequence)&&body.sequence>0).toBe(true);if(!body.heartbeat){expect(Number.isFinite(body.position_s)&&body.position_s>=0).toBe(true);expect(Number.isFinite(body.duration_s)&&body.duration_s>0).toBe(true);expect(typeof body.ended).toBe('boolean');}}
+   sessions.push({method,body});commandOrder.push(fixtureUrl.pathname);
+   return route.fulfill({json:{updated:true,closed:method==='DELETE'}});
+  }
+
   const req=route.request(),path=new URL(req.url()).pathname;let json:any={ok:true};
-  if(path==='/api/media/file')return; // Keep decoder input pending; only application controls are under test.
+  if(path==='/api/media/file'){expect(fixtureUrl.search).toBe(`?session_id=${videoSessionId}`);return;} // Keep decoder input pending; only application controls are under test.
   if(path==='/api/session')json={token:'fixture'};else if(path==='/api/state'){if(failRead){failRead=false;await route.fulfill({status:503,json:{error:'backend_unavailable'}});return;}json=state;}
-  else if(path==='/api/media')json={path:'',items:[{name:'control-fixture.webm',path:'/approved/control-fixture.webm',kind:'video'}]};
+  else if(path==='/api/media')json={path:'',items:[{name:'control-fixture.webm',path:'/approved/control-fixture.webm',kind:'video',media_identity:videoIdentity}]};
   else if(path==='/api/audio'&&req.method()==='POST'){
    const body=req.postDataJSON();writes.push(body);if(writes.length===1){await gate;if(mode==='reject'){await route.fulfill({status:503,json:{error:'audio_unavailable'}});return;}}
    if('output'in body)state.audio.outputs.forEach((o:any)=>o.active=o.id===body.output);if('volume'in body)state.audio.volume=body.volume;if('mute'in body)state.audio.mute=body.mute;if(mode==='accepted'&&writes.length===1)failRead=true;
@@ -67,9 +86,9 @@ for(const theme of ['ink','night']){
   finally{await diagnostic();}
  });
  for(const terminal of ['setup','service'] as const)for(const mode of ['reject','accepted'] as const)test(`Terminal audio ${theme}: ${terminal} late ${mode} failure retains exact recovery ownership`,async({page},info)=>{
-  const ro=info.project.name.endsWith('ro');await page.clock.install();const f=await fixture(page,ro,theme,mode,true);await pendingOutput(page,ro);await page.locator('.main-nav button').nth(3).tap();
+  const ro=info.project.name.endsWith('ro');await page.clock.install();const f=await fixture(page,ro,theme,mode,true);await pendingOutput(page,ro);await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'diagnostics');
   if(terminal==='setup'){const rerun=ro?'Reia configurarea':'Run setup again';await page.getByRole('button',{name:rerun,exact:true}).tap();await page.locator('.dialog-actions').getByRole('button',{name:rerun,exact:true}).tap();await expect(page.locator('.setup-card')).toBeVisible();}
-  else{await page.locator('.settings-tabs button').last().tap();await page.locator('.dialog-actions button').last().tap();await expect(page.locator('.service-screen')).toBeVisible();}
+  else{await page.locator('.settings-system-actions>button').tap();await page.locator('.dialog-actions button').last().tap();await expect(page.locator('.service-screen')).toBeVisible();}
   const area=page.locator(terminal==='setup'?'.setup-audio-recovery':'.service-audio-recovery');await expect(area.getByRole('status')).toBeVisible();f.release();const alert=area.getByRole('alert');await expect(alert).toBeVisible();await expect(alert).toContainText(f.label+' second');
   const retry=alert.getByRole('button',{name:ro?'Încearcă din nou':'Try again',exact:true}),close=alert.getByRole('button',{name:ro?'Închide':'Close',exact:true});await hit(retry);await hit(close);await expect(alert.getByRole('button',{name:'Audio',exact:true})).toHaveCount(0);
   const node=(await area.elementHandle())!;await area.evaluate(el=>el.scrollTop=el.scrollHeight);const position=await area.evaluate(el=>el.scrollTop);await page.clock.runFor(2700);expect(await node.evaluate(el=>el.isConnected)).toBe(true);expect(await area.evaluate(el=>el.scrollTop)).toBe(position);await page.screenshot({path:info.outputPath(`${terminal}-${mode}-audio-recovery.png`)});

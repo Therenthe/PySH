@@ -22,7 +22,7 @@ test('aircraft and lunar dust geometries are bounded and variable',async({page},
   return {low,high,dustLow,dustHigh};
  });
  expect(result.low.fromX).toBeLessThan(0);expect(result.low.toX).toBeGreaterThan(100);expect(result.high.fromX).toBeGreaterThan(100);expect(result.high.toX).toBeLessThan(0);
- for(const flight of [result.low,result.high]){expect(flight.fromY).toBeGreaterThanOrEqual(12);expect(flight.toY).toBeGreaterThanOrEqual(8);expect(flight.toY).toBeLessThanOrEqual(54);expect(Math.cos(flight.heading*Math.PI/180)*(flight.toX-flight.fromX)).toBeGreaterThan(0);expect(flight.duration).toBeGreaterThanOrEqual(24000);expect(flight.duration).toBeLessThanOrEqual(42000);}
+ for(const flight of [result.low,result.high]){expect(flight.fromY).toBeGreaterThanOrEqual(12);expect(flight.toY).toBeGreaterThanOrEqual(10);expect(flight.toY).toBeLessThanOrEqual(52);expect(Math.cos(flight.heading*Math.PI/180)*flight.facing*(flight.toX-flight.fromX)).toBeGreaterThan(0);expect(Math.abs(flight.heading)).toBeLessThan(5);expect(flight.duration).toBeGreaterThanOrEqual(22000);expect(flight.duration).toBeLessThanOrEqual(65000);}
  expect(result.low.duration).not.toBe(result.high.duration);expect(result.low.scale).not.toBe(result.high.scale);
  for(const dust of [result.dustLow,result.dustHigh]){expect(Math.hypot(dust.x-45,dust.y-45)+dust.radius*1.7).toBeLessThan(44);expect(dust.duration).toBeLessThanOrEqual(2700);}
 });
@@ -32,12 +32,12 @@ for(const night of [false,true])test(`decorative events ${night?'night':'day'}: 
  await page.addInitScript(()=>{crypto.getRandomValues=((array:Uint32Array)=>{array.fill(0);return array;}) as typeof crypto.getRandomValues;});
  await page.clock.install();await mountEvents(page,night,info.project.name.endsWith('ro')?'ro':'en');
  await page.clock.runFor(18020);await expect(page.locator('[data-ambient-event=aircraft]')).toHaveCount(1);
- await page.locator('.ambient-flight').evaluate(el=>{el.getAnimations().forEach(animation=>{animation.currentTime=12000;animation.pause();});});
+ await page.locator('.ambient-flight').evaluate(el=>{el.getAnimations().forEach(animation=>{animation.currentTime=parseFloat(getComputedStyle(el).getPropertyValue('--flight-duration'))/2;animation.pause();});});
  await page.screenshot({path:info.outputPath(`ambient-aircraft-${night?'night':'day'}.png`)});
  const rect=(await page.locator('.ambient-flight').boundingBox())!;expect(rect.x).toBeGreaterThan(300);expect(rect.x).toBeLessThan(500);
  await page.clock.runFor(47000);await expect(page.locator('[data-ambient-event=lunar-dust]')).toHaveCount(night?1:0);
  if(night){await page.locator('.ambient-lunar-event').evaluate(el=>el.getAnimations({subtree:true}).forEach(animation=>{animation.currentTime=500;animation.pause();}));await page.screenshot({path:info.outputPath('ambient-lunar-dust.png')});}
- for(let i=0;i<20;i++){await page.clock.runFor(10000);expect(await page.locator('[data-ambient-event]').count()).toBeLessThanOrEqual(2);}
+ for(let i=0;i<20;i++){await page.clock.runFor(10000);expect(await page.locator('[data-ambient-event]').count()).toBeLessThanOrEqual(2);expect(await page.locator('[data-ambient-event=aircraft]').count()).toBeLessThanOrEqual(1);}
  await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});document.dispatchEvent(new Event('visibilitychange'));});await expect(page.locator('[data-ambient-event]')).toHaveCount(0);await page.clock.runFor(300000);await expect(page.locator('[data-ambient-event]')).toHaveCount(0);
  await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});document.dispatchEvent(new Event('visibilitychange'));});await page.clock.runFor(18020);await expect(page.locator('[data-ambient-event=aircraft]')).toHaveCount(1);
  await page.emulateMedia({reducedMotion:'reduce'});await expect(page.locator('[data-ambient-event]')).toHaveCount(0);await page.clock.runFor(300000);await expect(page.locator('[data-ambient-event]')).toHaveCount(0);

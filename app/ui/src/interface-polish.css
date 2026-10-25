@@ -1,0 +1,100 @@
+/* Shared appliance surfaces; Home's saved composition and ambient scene stay independent. */
+.app{--surface-raised:var(--surface);--control-radius:12px;--surface-radius:16px}
+.app ::selection{background:var(--accent-strong);color:var(--bg)}
+.app input{caret-color:var(--accent-strong)}
+.app :is(button,input,select):focus-visible{outline:3px solid var(--accent-strong);outline-offset:-3px}
+.app :is(.primary,.outline,.danger-button,.download-link){border-radius:var(--control-radius)}
+.app .topbar-title .eyebrow{font-family:'DM Sans',sans-serif;font-weight:650;letter-spacing:0;text-transform:none}
+.app .main-nav button{gap:6px;border-radius:12px}
+.app .main-nav button svg{width:23px;height:23px;stroke-width:1.7}
+.app .main-nav::before{width:2px;left:-6px}
+.app .settings-page .page-intro h1{font:700 25px/1.15 Manrope,sans-serif;letter-spacing:-.025em;margin:0}
+.app .settings-tabs{gap:4px}
+.app .settings-tabs button{border-radius:12px;padding-inline:12px;gap:10px}
+.app .settings-tabs button.active{color:var(--accent-strong);font-weight:650}
+.app .settings-quick-control{flex:none;max-width:180px}
+.app .main-area>.error-strip .recovery-navigation{position:static;flex:0 0 48px;width:48px;height:48px;padding:0;border:0;color:inherit;background:transparent}
+.app .error-strip>.error-dot{flex:0 0 19px;width:19px;height:19px}
+.app .settings-panel{border:0;border-radius:var(--surface-radius);padding:12px 16px;background:var(--paper)}
+.app .panel-heading{padding-bottom:12px;margin-bottom:4px;gap:12px}
+.app .panel-heading h2{font-size:20px;line-height:1.2;letter-spacing:-.02em}
+.app .panel-heading small{font-size:14px;line-height:1.35;text-align:right}
+.app .setting-row{padding-block:8px;column-gap:12px;row-gap:8px}
+.app .setting-row>span{line-height:1.35}
+.app :is(.theme-chip,.accent-choice){border-radius:10px;background:var(--surface)}
+.app :is(.theme-chip,.accent-choice).selected{background:var(--soft)}
+.app .segmented{border-radius:12px;background:var(--surface);padding:3px;gap:3px}
+.app .segmented button{border-radius:9px}
+.app .setting-help{line-height:1.5;margin-block:8px 16px}
+.app :is(.network-summary,.device-row,.output-row){gap:12px}
+.app :is(.device-row,.output-row){padding-block:12px}
+.app :is(.modal-card,.keyboard-card){border:0;border-radius:var(--surface-radius);box-shadow:0 18px 48px rgb(0 0 0 / .28)}
+.app .modal-card>header{padding-inline:20px;height:64px;min-height:64px;background:var(--surface)}
+.app .modal-card h2{font-size:21px;line-height:1.25;letter-spacing:-.02em}
+.app .modal-card>header .icon-button{background:transparent;border:0;border-radius:12px}
+.app .keyboard-card{background:var(--paper)}
+.app .keyboard-card header{font-weight:650;font-size:18px}
+.app .keyboard-value{border-radius:10px;background:var(--bg);padding-inline:14px}
+.app .keys{gap:4px}
+.app .key-row button{border-radius:9px;background:var(--surface);box-shadow:0 2px 2px rgb(0 0 0 / .08)}
+.app .key-row .key-special{background:var(--soft);color:var(--accent-strong)}
+.app .key-row.final-row button:last-child{background:var(--accent-strong);color:var(--bg)}
+.app .touch-choice-dialog{border-radius:var(--surface-radius);background:var(--paper)}
+.app .touch-choice-options button{border-radius:12px}
+.app .touch-choice-options button[aria-checked=true]{background:var(--soft);border-color:var(--accent-strong)}
+.app .radio-redesign .station-list{border:0;box-shadow:none}
+.app .radio-redesign .station-row{background:var(--surface);border-radius:12px}
+.app .radio-redesign .station-row.selected{background:var(--soft);border-color:var(--accent)}
+.app .radio-redesign .favorite-button{display:grid;place-items:center;color:var(--muted)}
+.app .radio-redesign .favorite-button.favorited{color:var(--accent-strong)}
+.app .radio-redesign .favorite-button.favorited svg{fill:currentColor}
+.app .radio-redesign .list-head{font-weight:650}
+.app .radio-redesign .list-head small{font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
+.app .radio-redesign .radio-side{border:0;background:var(--paper);border-radius:var(--surface-radius);padding:16px 12px 10px}
+.app .radio-redesign .radio-artwork-large{margin:0 0 6px;border:0;background:var(--soft)}
+.app .radio-redesign .radio-station-name{font-weight:700;letter-spacing:-.02em;margin:0;font-size:20px;line-height:1.3}
+.app .radio-redesign .radio-track-name{line-height:1.4}
+.app .radio-redesign .state-text{line-height:1.4;color:var(--muted)}
+.app .radio-redesign .radio-remembered{font-size:14px;line-height:1.4;color:var(--muted)}
+.app .radio-redesign .player-controls{gap:8px}
+.app .radio-redesign .radio-volume{border-top:1px solid var(--line);padding-top:3px}
+.app .radio-redesign .radio-visualizer{min-height:48px}
+.app .media-redesign .media-library{box-shadow:none}
+.app .media-redesign .media-entry{border-radius:12px}
+.app .media-redesign .service-panel{background:var(--paper)}
+.app .media-redesign .service-row{border:1px solid var(--line-dark);background:var(--surface);border-radius:var(--surface-radius);box-shadow:none}
+.app .media-redesign .service-row:focus-visible{outline-offset:-3px}
+.app .media-redesign .service-row b{font-size:20px;letter-spacing:-.02em}
+.app .media-redesign .service-row small{line-height:1.4}
+.app .empty-state{line-height:1.5}
+.app .empty-state>svg{color:var(--accent-strong)}
+.app .empty-state b{font-size:18px;line-height:1.35}
+.app .setup-card{border:0;border-radius:var(--surface-radius);box-shadow:none}
+.app .setup-card h1{letter-spacing:-.025em}
+.app .setup-actions{border-top:1px solid var(--line);margin-top:auto;padding-top:12px}
+.app .setup-status{border:0;border-radius:12px}
+.app .video-header{background:var(--surface)}
+.app .video-title{font-weight:650}
+.app .video-play{background:var(--accent-strong);color:var(--bg);border-color:var(--accent-strong)}
+.app .video-controls{background:var(--paper)}
+@media(prefers-reduced-motion:no-preference){
+ .app :is(.settings-tabs button,.touch-choice-options button,.media-sections button){transition:background-color 150ms ease,color 150ms ease}
+}
+.app.reduce-motion :is(.settings-tabs button,.touch-choice-options button,.media-sections button){transition:none}
+
+/* Shared interaction timings; scenery and measured audio retain their own timing. */
+.app{--motion-press:100ms;--motion-control:140ms;--motion-panel:220ms;--motion-ease:cubic-bezier(.2,.8,.2,1)}
+@media(prefers-reduced-motion:no-preference){
+ .app button{transition:background-color var(--motion-control) ease,border-color var(--motion-control) ease,box-shadow var(--motion-control) ease}
+ .app .main-nav::before{transition:transform var(--motion-panel) var(--motion-ease)}
+ .app .navigation-toggle{transition:left var(--motion-panel) var(--motion-ease),background-color var(--motion-control) ease}
+ .app .topbar{transition:background-color var(--motion-panel) ease,border-color var(--motion-panel) ease,color var(--motion-panel) ease}
+ .app .media-redesign :is(.media-item,.service-row){transition:background-color var(--motion-control) ease,transform var(--motion-press) ease}
+}
+.app button[data-pressed=true]:not(:disabled),.app .ambient-home [role=button][data-pressed=true]:not([aria-disabled=true]){box-shadow:inset 0 0 0 2px var(--accent-strong)}
+.app button[data-pressed=true]:not(:disabled){transition:none}
+.app .ambient-home[data-layout-editing=true] *{transition:none}
+@media(prefers-reduced-motion:reduce){
+ .app :is(button,.ambient-home [role=button],.rail,.navigation-toggle,.topbar,.main-nav::before,.ambient-weather,.ambient-forecast,.ambient-dock,.ambient-visualizer,.media-redesign .media-item,.media-redesign .service-row){transition:none;animation:none}
+ .app .media-redesign :is(.media-item,.service-row):active{transform:none}
+}

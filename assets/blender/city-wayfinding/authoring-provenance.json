@@ -1,0 +1,17 @@
+{
+  "sources": {
+    "scripts/blender/build_city_wayfinding.py": {
+      "rendered_bytes_sha256": "ccf7c85cef96746bfe60f31a9d8587a6597133939fccfa66128b4da077466790",
+      "repository_lf_sha256": "e659c8a0f7d23bb0cc47408374ddf88341f66bdf18b2790f322f885ad696191e",
+      "normalization": "CRLF to LF only; Python parser newline semantics unchanged"
+    },
+    "assets/blender/city-wayfinding/design.py": {
+      "rendered_bytes_sha256": "7ac394276a0bb6a6a0b496ab45626f30823a765a07183d1c72e416831178455b",
+      "repository_lf_sha256": "2b7c661d4347cf9fb7323b83931a9cf9e9f6b9f90d6831f019f67747de199956",
+      "normalization": "CRLF to LF only; Python parser newline semantics unchanged"
+    }
+  },
+  "note": "Original render byte hashes remain unchanged in contract.json; canonical repository source hashes are explicit here.",
+  "rendered_asset_contract_sha256": "fbbb231c5b10082e542ecc92ac77a6f9f406db16a26d9fcc184b3272a4a6b491",
+  "repository_lf_contract_sha256": "bb175e43de21f90a21c77b903f35a9f62cdb0ef379ddce60eadf276569aa6907"
+}

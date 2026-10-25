@@ -1,0 +1,11 @@
+/* Blender crop909,136,118,281 in the original1600×570 camera. */
+.city-radio-neon{position:absolute;left:56.8125%;top:23.859649%;width:7.375%;height:49.298246%;z-index:3;pointer-events:none}
+.city-radio-neon img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;transition:opacity 90ms linear;pointer-events:none}
+.city-radio-neon[data-animate=false] img{transition:none}
+/* Sky spans the app, including the rail. Convert its viewport x into Home's
+   local coordinates using Home's measured origin, so the touch target stays
+   on the facade as the rail moves or card padding changes. */
+.app .home-v2.ambient-home .ambient-visualizer.city-radio-control{position:absolute;grid-area:auto;left:calc(56.8125vw - var(--home-origin-x,0px));bottom:55.831579px;top:auto;right:auto;width:7.375vw;min-width:48px;height:102.540351px;min-height:48px;margin:0;padding:0;border:0;border-radius:8px;background:transparent;box-shadow:none;transform:none;cursor:pointer;z-index:0}
+.city-radio-control:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.city-neon-placeholder{display:block;width:100%;height:100%;pointer-events:none}
+@media(prefers-reduced-motion:reduce){.city-radio-neon img{transition:none}}

@@ -1,0 +1,48 @@
+.app .settings-intro{align-items:center;min-height:48px;margin-bottom:8px}
+.app .settings-intro-title{display:flex;align-items:center;gap:8px;min-width:0}
+.app .settings-back{flex:none}
+.app .settings-layout{grid-template-columns:172px minmax(0,1fr);gap:12px}
+.app .settings-tabs{gap:3px}
+.app .settings-tabs button{height:48px;min-height:48px;line-height:1.2;padding:0 9px;font-size:14px}
+.app .settings-tabs button svg{flex:none;width:20px;height:20px}
+.app .settings-tabs button span{white-space:normal}
+.app .settings-workspace{display:flex;flex-direction:column;min-width:0;min-height:0;gap:8px}
+.app .settings-subtabs{display:flex;gap:4px;flex:none;background:var(--surface);border-radius:12px;padding:3px}
+.app .settings-subtabs button{flex:1;min-width:48px;min-height:48px;border:0;border-radius:9px;background:transparent;color:var(--muted);font-size:14px;line-height:1.2;padding:4px 7px}
+.app .settings-subtabs button.active{background:var(--paper);color:var(--ink);font-weight:650;box-shadow:0 2px 4px rgb(0 0 0 / .08)}
+.app .settings-panel{flex:1}
+.app .settings-panel .settings-section-heading{margin:20px 0 4px;font-size:18px;line-height:1.3}
+.app .settings-panel .settings-section-heading:first-child{margin-top:0}
+.app .settings-context-link{display:flex;align-items:center;justify-content:space-between;text-align:left;width:100%;min-height:48px;gap:10px;margin:10px 0;padding:10px 12px;border:1px solid var(--line-dark);border-radius:12px;background:var(--surface);color:var(--ink);font-size:14px}
+.app .settings-save-note{margin:0 0 8px;color:var(--muted);font-size:14px}
+.app .quick-settings-footer{border-top:1px solid var(--line);margin-top:8px;padding-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+.app .quick-settings-footer>button{flex:1}
+.app .quick-playback{display:flex;align-items:center;gap:12px;margin:0 0 12px}
+.app .quick-playback>b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app .settings-system-actions{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.app .radio-output-action{min-height:48px;width:100%;font-size:14px;margin-top:6px}
+@media(prefers-reduced-motion:no-preference){.app .settings-subtabs button{transition:background-color 150ms ease,color 150ms ease}}
+.app.reduce-motion .settings-subtabs button{transition:none}
+
+.app .radio-output-recovery{width:100%;flex:none;display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.app .radio-redesign .radio-clear-filters{flex:0 0 48px;padding:0;min-width:48px}
+.app .keyboard-value{display:flex;align-items:center;gap:8px;min-height:48px;padding-right:0}
+.app .keyboard-value-text{flex:1;min-width:0;white-space:nowrap;overflow:auto}
+.app .keyboard-clear{flex:0 0 48px;min-width:48px;height:48px;margin:0;border:0;background:transparent;color:var(--ink)}
+
+/* Pending feedback must not move a control between pointer-up and its click. */
+.app .modal-scrim:has(.quick-controls-dialog){align-items:flex-start;padding-top:16px}
+.app .quick-controls-dialog{max-height:calc(100% - 32px)}
+.app .quick-controls-dialog .quick-modal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.app .quick-controls-dialog .quick-modal>.volume-line{grid-column:1/-1;order:-1;margin:0 0 8px}
+.app .quick-controls-dialog .quick-modal>button{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;min-width:0;gap:6px;min-height:88px;padding:10px;border:1px solid var(--line-dark);border-radius:12px;background:var(--surface)}
+.app .quick-controls-dialog .quick-modal>button>span{min-width:0;max-width:100%;display:flex;flex-direction:column;gap:3px}
+.app .quick-controls-dialog .quick-modal>button small{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+.app .quick-controls-dialog .quick-modal>button>svg:last-child{display:none}
+.app .quick-controls-dialog .quick-playback{margin-bottom:8px}
+
+.app .quick-controls-dialog .quick-modal>button{min-height:80px}
+.app .quick-controls-dialog .quick-settings-footer{padding-top:4px}
+.app .quick-controls-dialog .network-feedback{display:grid;grid-template-columns:minmax(0,1fr) 48px 48px;align-items:start;gap:8px;margin:0;padding:8px 0}
+.app .quick-controls-dialog .network-feedback>p{font-size:14px;line-height:18px;margin:0;max-height:54px;overflow:auto;touch-action:pan-y}
+.app .quick-controls-dialog .network-feedback>.icon-button{width:48px;height:48px;min-width:48px;padding:0}

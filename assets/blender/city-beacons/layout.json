@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "resolution": [
+    1600,
+    570
+  ],
+  "props": {
+    "bluetooth": {
+      "crop_px": {
+        "x": 290,
+        "y": 45,
+        "width": 114,
+        "height": 105
+      },
+      "crop_percent": {
+        "left": 18.125,
+        "top": 7.894736842105263,
+        "width": 7.125,
+        "height": 18.421052631578945
+      },
+      "asset_prefix": "city-beacon-bluetooth"
+    },
+    "radio": {
+      "crop_px": {
+        "x": 908,
+        "y": 9,
+        "width": 119,
+        "height": 151
+      },
+      "crop_percent": {
+        "left": 56.75,
+        "top": 1.5789473684210527,
+        "width": 7.4375,
+        "height": 26.49122807017544
+      },
+      "asset_prefix": "city-beacon-radio"
+    }
+  }
+}

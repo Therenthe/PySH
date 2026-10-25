@@ -74,6 +74,52 @@ def test_loopback_alone_is_not_a_network_connection(monkeypatch):
     assert result["state"] == "disconnected"
     assert result["connection"] is None
     assert result["saved"] == []
+    assert result["active_type"] is None and result["active_interface"] is None
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize("primary,wired_default,wifi_default,expected", [
+    ("wired", True, True, "ethernet"),
+    ("wifi", True, False, "wifi"),
+    ("none", False, True, "wifi"),
+    ("none", "ipv6", False, "ethernet"),
+    ("none", True, True, None),
+    ("none", False, False, None),
+    ("loop", False, True, "wifi"),
+    ("vpn", True, False, None),
+])
+def test_active_link_follows_primary_or_unique_default_without_guessing(monkeypatch, reverse, primary, wired_default, wifi_default, expected):
+    device = Device()
+    device._linux, device._bus = True, object()
+    active = {
+        "/active/wired": {"Id": "Wired profile", "Type": "802-3-ethernet", "State": 2,
+                          "Default": wired_default is True, "Default6": wired_default == "ipv6", "Devices": ["/device/wired"]},
+        "/active/wifi": {"Id": "Wireless profile", "Type": "802-11-wireless", "State": 2,
+                         "Default": wifi_default, "Devices": ["/device/wifi"]},
+        "/active/loop": {"Id": "Loopback", "Type": "loopback", "State": 2},
+        "/active/vpn": {"Id": "VPN", "Type": "vpn", "State": 2},
+    }
+    async def get_state(): return 70
+    async def get_primary_connection(): return "/" if primary == "none" else "/active/" + primary
+    async def get_active_connections(): return list(active)[::(-1 if reverse else 1)]
+    async def call_get_devices(): return ["/device/wired", "/device/wifi"]
+    async def call_list_connections(): return []
+    async def get_active_access_point(): return "/"
+    async def proxy(service, path, interface):
+        return SimpleNamespace(get_state=get_state, get_primary_connection=get_primary_connection,
+                               get_active_connections=get_active_connections, call_get_devices=call_get_devices,
+                               call_list_connections=call_list_connections, get_active_access_point=get_active_access_point)
+    async def props(service, path, interface):
+        if path == "/device/wired": return {"DeviceType": 1, "Interface": "end0", "State": 100}
+        if path == "/device/wifi": return {"DeviceType": 2, "Interface": "wlan0", "State": 100}
+        return active[path]
+    monkeypatch.setattr(device, "_proxy", proxy)
+    monkeypatch.setattr(device, "_props", props)
+    result = asyncio.run(device.network_status())
+    assert result["error"] is None
+    assert result["active_type"] == expected
+    assert result["active_interface"] == {"ethernet": "end0", "wifi": "wlan0", None: None}[expected]
+    assert len(result["devices"]) == 2 and all(d["state"] == "connected" for d in result["devices"])
 
 
 @pytest.mark.parametrize("secured", [False, True])

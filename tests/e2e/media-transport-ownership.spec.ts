@@ -6,7 +6,10 @@ const initialState=(ro:boolean,theme:string)=>({preferences:{language:ro?'ro':'e
 
 for(const theme of ['ink','night'])test(`abandoned pending Next cannot revive Media error ${theme}`,async({page},info)=>{
  const ro=info.project.name.endsWith('ro'),state=initialState(ro,theme),pending=gate(),commands:any[]=[];
- await page.route('**/api/**',async route=>{
+ await page.route('**/api/**',async route=>{const fixtureRequest=route.request(),fixtureUrl=new URL(fixtureRequest.url());
+  if(fixtureUrl.pathname==='/api/media/continue'){expect(fixtureRequest.method()).toBe('GET');return route.fulfill({json:{items:[]}});}
+  if(fixtureUrl.pathname==='/api/media/inspect'){expect(fixtureRequest.method()).toBe('POST');return route.fulfill({json:{state:'unavailable'}});}
+
   const endpoint=new URL(route.request().url()).pathname;
   if(endpoint==='/api/session')return route.fulfill({json:{token:'fixture'}});
   if(endpoint==='/api/state')return route.fulfill({json:state});
@@ -32,7 +35,10 @@ for(const theme of ['ink','night'])test(`abandoned pending Next cannot revive Me
 
 for(const theme of ['ink','night'])test(`pending selection yields recovery ownership to Next ${theme}`,async({page},info)=>{
  const ro=info.project.name.endsWith('ro'),state=initialState(ro,theme),selection=gate(),transport=gate(),plays:any[]=[],commands:any[]=[];
- await page.route('**/api/**',async route=>{
+ await page.route('**/api/**',async route=>{const fixtureRequest=route.request(),fixtureUrl=new URL(fixtureRequest.url());
+  if(fixtureUrl.pathname==='/api/media/continue'){expect(fixtureRequest.method()).toBe('GET');return route.fulfill({json:{items:[]}});}
+  if(fixtureUrl.pathname==='/api/media/inspect'){expect(fixtureRequest.method()).toBe('POST');return route.fulfill({json:{state:'unavailable'}});}
+
   const endpoint=new URL(route.request().url()).pathname;
   if(endpoint==='/api/session')return route.fulfill({json:{token:'fixture'}});
   if(endpoint==='/api/state')return route.fulfill({json:state});

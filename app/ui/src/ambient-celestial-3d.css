@@ -1,0 +1,32 @@
+.ambient-sky .blender-moon{display:block;background-image:url('/ambient/sky3d/moon-phases-blender-v1.png');background-size:1600% 800%;background-repeat:no-repeat;filter:drop-shadow(0 0 7px #b5d0e71c)}
+.ambient-sky .blender-sun{background:url('/ambient/sky3d/sun-blender-v1.png') center/100% 100% no-repeat;box-shadow:none}
+.blender-meteor{position:absolute;left:0;top:0;display:block;width:var(--meteor-length);height:calc(6px + var(--meteor-thickness,1px) * 2);transform:translate(-94.68%,-50%);background:url('/ambient/sky3d/meteor-blender-v1.png') center/100% 100% no-repeat;pointer-events:none}
+.ambient-sky .stars-blender3d{opacity:calc(.8 * var(--sky-transmission,1));overflow:hidden;pointer-events:none}
+.stars-blender3d .blender-star-glint{animation:blender-star-breathe 13s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+.stars-blender3d .blender-star-glint:nth-of-type(74n){animation-delay:-7s}
+@keyframes blender-star-breathe{0%,45%{opacity:.45}78%{opacity:.95}100%{opacity:.7}}
+.ambient-sky .blender-clouds{inset:0 0 auto;width:100%;height:76%;background:none;opacity:1;animation:none;pointer-events:none;overflow:hidden;z-index:2}
+.blender-clouds .cloud-mass{position:absolute;height:auto;object-fit:contain;pointer-events:none;animation:blender-cloud-travel 72s ease-in-out infinite alternate}
+.blender-clouds .cloud-primary{width:76%;left:30%;top:3%;opacity:.85}
+.blender-clouds .cloud-secondary{width:67%;left:-20%;top:28%;opacity:.72;animation-duration:95s;animation-delay:-35s;transform:scaleX(-1)}
+.blender-clouds .cloud-low{width:90%;left:40%;top:43%;opacity:.82;animation-duration:113s;animation-delay:-60s}
+.blender-clouds.cloud-cover-sparse .cloud-primary{width:48%;left:52%;top:12%;opacity:.74}
+.blender-clouds.cloud-cover-overcast .cloud-primary{width:111%;left:-8%;top:-9%;opacity:.98}
+.blender-clouds.cloud-cover-overcast .cloud-secondary{width:105%;left:-30%;top:19%;opacity:.92}
+@keyframes blender-cloud-travel{from{translate:-8px 0}to{translate:15px -3px}}
+.blender-aircraft{position:relative;display:block;width:96px;height:48px;transform-origin:center;pointer-events:none}
+.ambient-flight>.blender-aircraft{width:100%;height:100%}
+.blender-aircraft-body{position:relative;display:block;width:100%;height:100%}
+.blender-aircraft-body>img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.blender-aircraft-body>.aircraft-rotor-frame{position:absolute;inset:0;animation:blender-rotor-frame .18s steps(1,end) infinite}
+.aircraft-rotor-frame.rotor-frame-1{animation-delay:-.12s}
+.aircraft-rotor-frame.rotor-frame-2{animation-delay:-.06s}
+.aircraft-hover{animation:blender-helicopter-hover 3.7s ease-in-out infinite alternate}
+@keyframes blender-rotor-frame{0%,33.32%{opacity:1}33.33%,100%{opacity:0}}
+@keyframes blender-helicopter-hover{from{translate:0 -1px}to{translate:0 1px}}
+.blender-aircraft-light{position:absolute;width:2px;height:2px;transform:translate(-50%,-50%);border-radius:50%;opacity:0;animation:blender-navigation-light 3.2s steps(1,end) infinite}
+.blender-aircraft-light.port,.blender-aircraft-light.beacon{background:#dc7c71;box-shadow:0 0 2px #d2776340}
+.blender-aircraft-light.starboard{background:#9ac8ac;animation-delay:1.6s;box-shadow:0 0 2px #8dbd9e40}
+.blender-aircraft-light.beacon.police{background:#97c9ef;box-shadow:0 0 2px #6ea7e040}
+@keyframes blender-navigation-light{0%,6%{opacity:.85}7%,100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.stars-blender3d .blender-star-glint,.blender-clouds .cloud-mass,.blender-aircraft-light,.aircraft-hover,.blender-aircraft-body>.aircraft-rotor-frame{animation:none}.blender-aircraft-light{opacity:.55}.blender-aircraft-body>.aircraft-rotor-frame:not(.rotor-frame-0){display:none}}

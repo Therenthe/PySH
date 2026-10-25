@@ -44,7 +44,11 @@
 .app button[data-pressed=true]:not(:disabled){box-shadow:inset 0 0 0 2px var(--accent-strong);transition:none}
 .app .rail{transition:width 220ms ease,flex-basis 220ms ease,padding 220ms ease;overflow:hidden}
 .app .rail.rail-retracted{width:0;flex-basis:0;padding-left:0;padding-right:0;border-width:0;pointer-events:none}
-.app .topbar{grid-template-columns:190px minmax(0,1fr) auto}
+.app .topbar{grid-template-columns:minmax(0,1fr) auto}
+.app .topbar-time{position:fixed;left:50vw;top:6px;transform:translateX(-50%);width:max-content;max-width:220px;pointer-events:none}
+.app .topbar>.topbar-title{grid-column:1}
+.app .topbar>.topbar-right{grid-column:2;justify-self:end;width:max-content;justify-content:flex-end}
+.app .topbar:has(.remote-presence) .top-network .network-status-link>span:not(.network-status-progress){display:none}
 .app .topbar .topbar-title{display:flex;flex-direction:row;align-items:center;gap:8px;white-space:nowrap}
 .app .navigation-toggle{display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;border:1px solid var(--line-dark);border-radius:12px;background:transparent;color:var(--ink)}
 @media(prefers-reduced-motion:reduce){.app .rail{transition:none}}

@@ -45,6 +45,9 @@ function background() {
 }
 
 test('manifest has stable public-key ID and only native messaging and documentation navigation permissions', () => {
+  assert.equal(manifest.version,'1.4.0');
+  assert.equal(manifest.background.service_worker,'background-commands-v4.js');
+  assert.match(source(manifest.background.service_worker),/importScripts\('background.js'\)/);
   assert.match(extensionId, /^[a-p]{32}$/);
   assert.deepEqual(manifest.permissions, ['nativeMessaging','webNavigation']);
   assert.deepEqual(manifest.content_scripts[0].matches, [
@@ -100,7 +103,9 @@ test('documentation status and Return accept exact provider and owned recovery p
     await tick(); assert.equal(h.ports.length, 1);
     h.ports[0].onMessage.emit({ ok: true, language: 'ro' }); await tick();
     assert.deepEqual(status.replies, [{ ok: true, language: 'ro' }]);
-    h.request({ action: 'return' }, from);
+    const returned = h.request({ action: 'return' }, from);
+    await tick();
+    assert.deepEqual(returned.replies, [{ok:true}]);
     assert.deepEqual(h.removed, [7]);
     assert.equal(h.ports[0].closed, true);
   }
@@ -280,15 +285,17 @@ for (const language of ['en', 'ro']) test(`content controls localize ${language}
   const h = content(language), buttons = h.nodes.filter(e => e.tag === 'button');
   const keyboard = buttons.find(e => e.textContent === (language === 'ro' ? 'Tastatură' : 'Keyboard'));
   assert.ok(keyboard); assert.equal(keyboard.title, keyboard.textContent);
-  assert.match(keyboard.style.cssText, /min-height:52px/);
+  assert.match(source('return.js'), /min-height:48px/);
   keyboard.events.get('click')(); assert.deepEqual(h.sent.at(-1), { action: 'show' });
   h.chrome.runtime.callback({ ok: false });
   const message = h.nodes.find(e => e.role === 'status'); assert.equal(message.style.display, 'block');
   assert.equal(message.textContent, language === 'ro' ? 'Tastatura nu este disponibilă. Reîncearcă.' : 'Keyboard unavailable. Try again.');
   keyboard.events.get('click')(); h.chrome.runtime.callback({ ok: true });
   assert.equal(message.style.display, 'none');
-  buttons.find(e => e.textContent === '← Pi Smart Hub').events.get('click')();
-  assert.deepEqual(h.sent.at(-1), { action: 'return' });
+  const beforeReturn=h.sent.filter(message=>message.action.startsWith('return-')).length;
+  buttons.find(e => e.textContent === (language === 'ro' ? 'Acasă' : 'Home')).events.get('click')();
+  // Opening the drawer also refreshes its context; exactly one destination still dispatches.
+  assert.deepEqual(h.sent.filter(message=>message.action.startsWith('return-')).slice(beforeReturn),[{ action: 'return-home' }]);
 });
 
 test('content controls retract during fullscreen and remain revealable without account reads', () => {
@@ -303,24 +310,15 @@ test('content controls retract during fullscreen and remain revealable without a
   assert.equal(reveal.style.display, 'none');
 });
 
-for (const language of ['en', 'ro']) test(`immersive ${language} controls fade and remain accessible through edge target`, () => {
-  const h = content(language), reveal = h.nodes.find(e => e['aria-label'] ===
-    (language === 'ro' ? 'Afișează comenzile PySH' : 'Show PySH controls'));
-  const controls = reveal.parentElement.children.find(e => e.tag === 'div');
-  const hint = h.nodes.find(e => e.tag === 'span' && !e.role);
-  assert.equal(controls.style.display, 'flex');
-  assert.match(hint.textContent, language === 'ro' ? /Atinge colțul/ : /Tap the top-right corner/);
-  assert.match(reveal.style.cssText, /width:48px;height:48px/);
-  assert.match(reveal.style.cssText, /opacity:0/);
-  h.runTimers(3999); assert.equal(controls.style.display, 'flex');
-  h.runTimers(4000); assert.equal(controls.style.display, 'none');
-  assert.equal(hint.style.display, 'none'); assert.equal(reveal.style.display, 'block');
-  reveal.events.get('click')(); assert.equal(controls.style.display, 'flex');
-  assert.equal(hint.style.display, 'none'); // Intro hint is not repeated over a film.
-  let prevented = false;
-  reveal.events.get('pointerdown')({ preventDefault: () => { prevented = true; } });
-  assert.equal(prevented, true);
-  h.runTimers(4000); assert.equal(controls.style.display, 'none');
+for (const language of ['en','ro']) test(`drawer ${language} starts collapsed and opens only from central handle`,()=>{
+ const h=content(language),reveal=h.nodes.find(e=>e.className==='handle'),controls=h.nodes.find(e=>e.className==='drawer');
+ assert.equal(controls.style.display,'none');assert.equal(reveal['aria-expanded'],'false');
+ assert.match(source('return.js'),/left:50%/);assert.match(source('return.js'),/width:112px;height:10px/);
+ reveal.events.get('click')();assert.equal(controls.style.display,'block');assert.equal(reveal['aria-expanded'],'true');
+ h.runTimers(7999);assert.equal(controls.style.display,'block');h.runTimers(8000);assert.equal(controls.style.display,'none');
+ reveal.events.get('pointerdown')({pointerId:1,clientY:2,preventDefault(){}});
+ reveal.events.get('pointermove')({pointerId:1,clientY:40});assert.equal(controls.style.display,'block');
+ h.nodes.find(e=>e.className==='close').events.get('click')();assert.equal(controls.style.display,'none');
 });
 
 for (const language of ['en', 'ro']) test(`explicit keyboard toggle ${language} shows then hides`, () => {
@@ -405,13 +403,13 @@ test('replaced fullscreen edge exits only HTML fullscreen and reparents visible 
     preventDefault:()=>prevented++, stopImmediatePropagation:()=>stopped++});
   click(400, 240); click(751, 20); click(780, 49); click(780, -1);
   assert.equal(exits, 0); assert.equal(prevented, 0); assert.equal(stopped, 0);
-  click(780, 20); assert.equal(exits, 1); assert.equal(prevented, 1); assert.equal(stopped, 1);
+  click(400, 5); assert.equal(exits, 1); assert.equal(prevented, 1); assert.equal(stopped, 1);
   h.document.fullscreenElement = null; h.listeners.get('fullscreenchange')(); await tick();
   assert.equal(host.parentElement, h.document.documentElement);
   assert.equal(video.contains(host), false);
-  const controls = host.shadow.children.find(e => e.tag === 'div');
-  assert.equal(controls.style.display, 'flex');
-  h.runTimers(4000); assert.equal(controls.style.display, 'none');
+  const controls = host.shadow.children.find(e => e.className === 'drawer');
+  assert.equal(controls.style.display, 'block');
+  h.runTimers(8000); assert.equal(controls.style.display, 'none');
 });
 
 test('container fullscreen uses its overlay without exiting or swallowing page events', () => {
@@ -424,4 +422,31 @@ test('container fullscreen uses its overlay without exiting or swallowing page e
     stopImmediatePropagation(){throw new Error('Swallowed container event');}});
   h.document.fullscreenElement = null; h.listeners.get('fullscreenchange')();
   assert.equal(host.parentElement, h.document.documentElement);
+});
+
+for(const target of ['home','radio','media'])test(`destination ${target} waits for native acknowledgement before owned-window close`,async()=>{
+ const h=background(),request=h.request({action:'return-'+target});await tick();
+ assert.equal(h.ports.length,1);assert.deepEqual(h.ports[0].sent,[{action:target}]);assert.deepEqual(h.removed,[]);
+ h.ports[0].onMessage.emit({ok:true});await tick();assert.deepEqual(h.removed,[7]);assert.deepEqual(request.replies,[{ok:true}]);assert.equal(h.ports[0].closed,true);
+});
+test('failed destination preserves external window and retry uses fresh acknowledgement',async()=>{
+ const h=background(),first=h.request({action:'return-radio'});await tick();h.ports[0].onMessage.emit({ok:false});await tick();
+ assert.deepEqual(h.removed,[]);assert.deepEqual(first.replies,[{ok:false,error:'return_unavailable'}]);
+ const second=h.request({action:'return-radio'});await tick();h.ports[0].onMessage.emit({ok:true});await tick();assert.deepEqual(h.removed,[7]);assert.deepEqual(second.replies,[{ok:true}]);
+});
+test('navigation messages cannot choose arbitrary destination or payload',async()=>{
+ const h=background();for(const action of ['return-http://evil','return-settings','return-/bin/sh'])assert.equal(h.request({action}).keepAlive,undefined);
+ assert.equal(h.request({action:'return-radio',target:'http://evil'}).keepAlive,undefined);assert.equal(h.ports.length,0);assert.deepEqual(h.removed,[]);
+});
+
+test('return destination serializes with an in-flight keyboard status and cancels queued Show',async()=>{
+ const h=background(),status=h.request({action:'status'});await tick();
+ const returning=h.request({action:'return-home'}),show=h.request({action:'show'});await tick();
+ assert.deepEqual(h.ports[0].sent,[{action:'status'}]);
+ h.ports[0].onMessage.emit({ok:true,language:'en'});await tick();
+ assert.deepEqual(status.replies,[{ok:true,language:'en'}]);assert.deepEqual(h.ports[0].sent,[{action:'status'},{action:'home'}]);
+ h.ports[0].onMessage.emit({ok:true});await tick();
+ assert.deepEqual(returning.replies,[{ok:true}]);assert.deepEqual(h.removed,[7]);
+ assert.deepEqual(show.replies,[{ok:false,error:'keyboard_unavailable'}]);
+ assert.equal(h.ports[0].sent.some(message=>message.action==='show'),false);
 });

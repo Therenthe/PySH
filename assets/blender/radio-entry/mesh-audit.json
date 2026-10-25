@@ -1,0 +1,2231 @@
+{
+  "parts": 117,
+  "pass": true,
+  "errors": 0,
+  "warnings": 0,
+  "gates": [
+    {
+      "name": "Entry_Street_Ground",
+      "profile": "render",
+      "eps": 0.002972,
+      "tol": 0.059439,
+      "gap": 0.297197,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Street_Ground": {
+          "tris": 12,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Granite_Landing",
+      "profile": "render",
+      "eps": 0.000191,
+      "tol": 0.003812,
+      "gap": 0.019061,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Granite_Landing": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Step_One",
+      "profile": "render",
+      "eps": 0.000177,
+      "tol": 0.003549,
+      "gap": 0.017744,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Step_One": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Vestibule_Dark_Back",
+      "profile": "render",
+      "eps": 0.000205,
+      "tol": 0.00411,
+      "gap": 0.020549,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Vestibule_Dark_Back": {
+          "tris": 12,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Left_Stone_Pier",
+      "profile": "render",
+      "eps": 0.000198,
+      "tol": 0.003969,
+      "gap": 0.019847,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Left_Stone_Pier": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Left_Brass_Flute",
+      "profile": "render",
+      "eps": 0.000162,
+      "tol": 0.003241,
+      "gap": 0.016203,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Left_Brass_Flute": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Left_Brass_Flute.001",
+      "profile": "render",
+      "eps": 0.000162,
+      "tol": 0.003241,
+      "gap": 0.016203,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Left_Brass_Flute.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Left_Sconce_Back",
+      "profile": "render",
+      "eps": 4.5e-05,
+      "tol": 0.000892,
+      "gap": 0.004461,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Left_Sconce_Back": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Left_Sconce_Glass",
+      "profile": "render",
+      "eps": 3.2e-05,
+      "tol": 0.00064,
+      "gap": 0.003199,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Left_Sconce_Glass": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Left_Sconce_Rib",
+      "profile": "render",
+      "eps": 9e-06,
+      "tol": 0.000185,
+      "gap": 0.000923,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Left_Sconce_Rib": {
+          "tris": 12,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Left_Sconce_Rib.001",
+      "profile": "render",
+      "eps": 9e-06,
+      "tol": 0.000185,
+      "gap": 0.000923,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Left_Sconce_Rib.001": {
+          "tris": 12,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Left_Sconce_Rib.002",
+      "profile": "render",
+      "eps": 9e-06,
+      "tol": 0.000185,
+      "gap": 0.000923,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Left_Sconce_Rib.002": {
+          "tris": 12,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Right_Stone_Pier",
+      "profile": "render",
+      "eps": 0.000198,
+      "tol": 0.003969,
+      "gap": 0.019847,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Right_Stone_Pier": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Right_Brass_Flute",
+      "profile": "render",
+      "eps": 0.000162,
+      "tol": 0.003241,
+      "gap": 0.016203,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Right_Brass_Flute": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Right_Brass_Flute.001",
+      "profile": "render",
+      "eps": 0.000162,
+      "tol": 0.003241,
+      "gap": 0.016203,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Right_Brass_Flute.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Right_Sconce_Back",
+      "profile": "render",
+      "eps": 4.5e-05,
+      "tol": 0.000892,
+      "gap": 0.004461,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Right_Sconce_Back": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Right_Sconce_Glass",
+      "profile": "render",
+      "eps": 3.2e-05,
+      "tol": 0.00064,
+      "gap": 0.003199,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Right_Sconce_Glass": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Right_Sconce_Rib",
+      "profile": "render",
+      "eps": 9e-06,
+      "tol": 0.000185,
+      "gap": 0.000923,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Right_Sconce_Rib": {
+          "tris": 12,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Right_Sconce_Rib.001",
+      "profile": "render",
+      "eps": 9e-06,
+      "tol": 0.000185,
+      "gap": 0.000923,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Right_Sconce_Rib.001": {
+          "tris": 12,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Right_Sconce_Rib.002",
+      "profile": "render",
+      "eps": 9e-06,
+      "tol": 0.000185,
+      "gap": 0.000923,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Right_Sconce_Rib.002": {
+          "tris": 12,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Lintel",
+      "profile": "render",
+      "eps": 0.000166,
+      "tol": 0.00333,
+      "gap": 0.016648,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Lintel": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Tiered_Canopy_0",
+      "profile": "render",
+      "eps": 0.00018,
+      "tol": 0.003607,
+      "gap": 0.018036,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Tiered_Canopy_0": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Tiered_Canopy_1",
+      "profile": "render",
+      "eps": 0.000172,
+      "tol": 0.003436,
+      "gap": 0.017182,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Tiered_Canopy_1": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Tiered_Canopy_2",
+      "profile": "render",
+      "eps": 0.000164,
+      "tol": 0.00327,
+      "gap": 0.016351,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Tiered_Canopy_2": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Transom_Frame",
+      "profile": "render",
+      "eps": 0.000107,
+      "tol": 0.002142,
+      "gap": 0.01071,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Transom_Frame": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Transom_Glass",
+      "profile": "render",
+      "eps": 9.8e-05,
+      "tol": 0.001954,
+      "gap": 0.00977,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Transom_Glass": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Transom_Mullion",
+      "profile": "render",
+      "eps": 1.7e-05,
+      "tol": 0.000343,
+      "gap": 0.001714,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Transom_Mullion": {
+          "tris": 12,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Transom_Mullion.001",
+      "profile": "render",
+      "eps": 1.7e-05,
+      "tol": 0.000343,
+      "gap": 0.001714,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Transom_Mullion.001": {
+          "tris": 12,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Transom_Mullion.002",
+      "profile": "render",
+      "eps": 1.7e-05,
+      "tol": 0.000343,
+      "gap": 0.001714,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Transom_Mullion.002": {
+          "tris": 12,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Transom_Mullion.003",
+      "profile": "render",
+      "eps": 1.7e-05,
+      "tol": 0.000343,
+      "gap": 0.001714,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Transom_Mullion.003": {
+          "tris": 12,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Transom_Mullion.004",
+      "profile": "render",
+      "eps": 1.7e-05,
+      "tol": 0.000343,
+      "gap": 0.001714,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Transom_Mullion.004": {
+          "tris": 12,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_L_Glass",
+      "profile": "render",
+      "eps": 0.000158,
+      "tol": 0.00317,
+      "gap": 0.015848,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_L_Glass": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_L_Stile",
+      "profile": "render",
+      "eps": 0.000156,
+      "tol": 0.003122,
+      "gap": 0.015611,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_L_Stile": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_L_Stile.001",
+      "profile": "render",
+      "eps": 0.000156,
+      "tol": 0.003122,
+      "gap": 0.015611,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_L_Stile.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_L_Rail",
+      "profile": "render",
+      "eps": 4.9e-05,
+      "tol": 0.000987,
+      "gap": 0.004933,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_L_Rail": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_L_Rail.001",
+      "profile": "render",
+      "eps": 4.9e-05,
+      "tol": 0.000987,
+      "gap": 0.004933,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_L_Rail.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_L_Rail.002",
+      "profile": "render",
+      "eps": 4.9e-05,
+      "tol": 0.000987,
+      "gap": 0.004933,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_L_Rail.002": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_L_Rail.003",
+      "profile": "render",
+      "eps": 4.9e-05,
+      "tol": 0.000987,
+      "gap": 0.004933,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_L_Rail.003": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_L_Handle",
+      "profile": "render",
+      "eps": 2.5e-05,
+      "tol": 0.000502,
+      "gap": 0.002512,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_L_Handle": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_R_Glass",
+      "profile": "render",
+      "eps": 0.000158,
+      "tol": 0.00317,
+      "gap": 0.015848,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_R_Glass": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_R_Stile",
+      "profile": "render",
+      "eps": 0.000156,
+      "tol": 0.003122,
+      "gap": 0.015611,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_R_Stile": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_R_Stile.001",
+      "profile": "render",
+      "eps": 0.000156,
+      "tol": 0.003122,
+      "gap": 0.015611,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_R_Stile.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_R_Rail",
+      "profile": "render",
+      "eps": 4.9e-05,
+      "tol": 0.000987,
+      "gap": 0.004933,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_R_Rail": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_R_Rail.001",
+      "profile": "render",
+      "eps": 4.9e-05,
+      "tol": 0.000987,
+      "gap": 0.004933,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_R_Rail.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_R_Rail.002",
+      "profile": "render",
+      "eps": 4.9e-05,
+      "tol": 0.000987,
+      "gap": 0.004933,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_R_Rail.002": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_R_Rail.003",
+      "profile": "render",
+      "eps": 4.9e-05,
+      "tol": 0.000987,
+      "gap": 0.004933,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_R_Rail.003": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Entry_Door_R_Handle",
+      "profile": "render",
+      "eps": 2.5e-05,
+      "tol": 0.000502,
+      "gap": 0.002512,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Entry_Door_R_Handle": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car0_Body",
+      "profile": "render",
+      "eps": 9e-05,
+      "tol": 0.001793,
+      "gap": 0.008967,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car0_Body": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car0_Cabin",
+      "profile": "render",
+      "eps": 5.3e-05,
+      "tol": 0.001066,
+      "gap": 0.00533,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car0_Cabin": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car0_Window",
+      "profile": "render",
+      "eps": 3e-05,
+      "tol": 0.000596,
+      "gap": 0.002979,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car0_Window": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car0_Wheel",
+      "profile": "render",
+      "eps": 3e-05,
+      "tol": 0.000594,
+      "gap": 0.002968,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car0_Wheel": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car0_Wheel.001",
+      "profile": "render",
+      "eps": 3e-05,
+      "tol": 0.000594,
+      "gap": 0.002968,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car0_Wheel.001": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car0_Wheel.002",
+      "profile": "render",
+      "eps": 3e-05,
+      "tol": 0.000594,
+      "gap": 0.002968,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car0_Wheel.002": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car0_Wheel.003",
+      "profile": "render",
+      "eps": 3e-05,
+      "tol": 0.000594,
+      "gap": 0.002968,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car0_Wheel.003": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car0_Bumper",
+      "profile": "render",
+      "eps": 3.4e-05,
+      "tol": 0.000689,
+      "gap": 0.003447,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car0_Bumper": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car0_Bumper.001",
+      "profile": "render",
+      "eps": 3.4e-05,
+      "tol": 0.000689,
+      "gap": 0.003447,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car0_Bumper.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car0_Headlight",
+      "profile": "render",
+      "eps": 8e-06,
+      "tol": 0.000157,
+      "gap": 0.000784,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car0_Headlight": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car0_Headlight.001",
+      "profile": "render",
+      "eps": 8e-06,
+      "tol": 0.000157,
+      "gap": 0.000784,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car0_Headlight.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car1_Body",
+      "profile": "render",
+      "eps": 9e-05,
+      "tol": 0.001793,
+      "gap": 0.008967,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car1_Body": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car1_Cabin",
+      "profile": "render",
+      "eps": 5.3e-05,
+      "tol": 0.001066,
+      "gap": 0.00533,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car1_Cabin": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car1_Window",
+      "profile": "render",
+      "eps": 3e-05,
+      "tol": 0.000596,
+      "gap": 0.002979,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car1_Window": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car1_Wheel",
+      "profile": "render",
+      "eps": 3e-05,
+      "tol": 0.000594,
+      "gap": 0.002968,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car1_Wheel": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car1_Wheel.001",
+      "profile": "render",
+      "eps": 3e-05,
+      "tol": 0.000594,
+      "gap": 0.002968,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car1_Wheel.001": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car1_Wheel.002",
+      "profile": "render",
+      "eps": 3e-05,
+      "tol": 0.000594,
+      "gap": 0.002968,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car1_Wheel.002": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car1_Wheel.003",
+      "profile": "render",
+      "eps": 3e-05,
+      "tol": 0.000594,
+      "gap": 0.002968,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car1_Wheel.003": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car1_Bumper",
+      "profile": "render",
+      "eps": 3.4e-05,
+      "tol": 0.000689,
+      "gap": 0.003447,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car1_Bumper": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car1_Bumper.001",
+      "profile": "render",
+      "eps": 3.4e-05,
+      "tol": 0.000689,
+      "gap": 0.003447,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car1_Bumper.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car1_Headlight",
+      "profile": "render",
+      "eps": 8e-06,
+      "tol": 0.000157,
+      "gap": 0.000784,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car1_Headlight": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Car1_Headlight.001",
+      "profile": "render",
+      "eps": 8e-06,
+      "tol": 0.000157,
+      "gap": 0.000784,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Car1_Headlight.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_0_Body",
+      "profile": "render",
+      "eps": 8.3e-05,
+      "tol": 0.001652,
+      "gap": 0.008261,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_0_Body": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_0_Roof",
+      "profile": "render",
+      "eps": 7.3e-05,
+      "tol": 0.001453,
+      "gap": 0.007267,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_0_Roof": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_0_Window",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_0_Window": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_0_Window.001",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_0_Window.001": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_0_Window.002",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_0_Window.002": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_0_Window.003",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_0_Window.003": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_0_Bogie",
+      "profile": "render",
+      "eps": 3.1e-05,
+      "tol": 0.000611,
+      "gap": 0.003056,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_0_Bogie": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_0_Bogie.001",
+      "profile": "render",
+      "eps": 3.1e-05,
+      "tol": 0.000611,
+      "gap": 0.003056,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_0_Bogie.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_1_Body",
+      "profile": "render",
+      "eps": 8.3e-05,
+      "tol": 0.001652,
+      "gap": 0.008261,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_1_Body": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_1_Roof",
+      "profile": "render",
+      "eps": 7.3e-05,
+      "tol": 0.001453,
+      "gap": 0.007267,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_1_Roof": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_1_Window",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_1_Window": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_1_Window.001",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_1_Window.001": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_1_Window.002",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_1_Window.002": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_1_Window.003",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_1_Window.003": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_1_Bogie",
+      "profile": "render",
+      "eps": 3.1e-05,
+      "tol": 0.000611,
+      "gap": 0.003056,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_1_Bogie": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_1_Bogie.001",
+      "profile": "render",
+      "eps": 3.1e-05,
+      "tol": 0.000611,
+      "gap": 0.003056,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_1_Bogie.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_2_Body",
+      "profile": "render",
+      "eps": 8.3e-05,
+      "tol": 0.001652,
+      "gap": 0.008261,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_2_Body": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_2_Roof",
+      "profile": "render",
+      "eps": 7.3e-05,
+      "tol": 0.001453,
+      "gap": 0.007267,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_2_Roof": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_2_Window",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_2_Window": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_2_Window.001",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_2_Window.001": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_2_Window.002",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_2_Window.002": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_2_Window.003",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_2_Window.003": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_2_Bogie",
+      "profile": "render",
+      "eps": 3.1e-05,
+      "tol": 0.000611,
+      "gap": 0.003056,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_2_Bogie": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_2_Bogie.001",
+      "profile": "render",
+      "eps": 3.1e-05,
+      "tol": 0.000611,
+      "gap": 0.003056,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_2_Bogie.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_3_Body",
+      "profile": "render",
+      "eps": 8.3e-05,
+      "tol": 0.001652,
+      "gap": 0.008261,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_3_Body": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_3_Roof",
+      "profile": "render",
+      "eps": 7.3e-05,
+      "tol": 0.001453,
+      "gap": 0.007267,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_3_Roof": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_3_Window",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_3_Window": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_3_Window.001",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_3_Window.001": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_3_Window.002",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_3_Window.002": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_3_Window.003",
+      "profile": "render",
+      "eps": 1.4e-05,
+      "tol": 0.000286,
+      "gap": 0.001428,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_3_Window.003": {
+          "tris": 156,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_3_Bogie",
+      "profile": "render",
+      "eps": 3.1e-05,
+      "tol": 0.000611,
+      "gap": 0.003056,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_3_Bogie": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Metro_3_Bogie.001",
+      "profile": "render",
+      "eps": 3.1e-05,
+      "tol": 0.000611,
+      "gap": 0.003056,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Metro_3_Bogie.001": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker0_Coat",
+      "profile": "render",
+      "eps": 4e-05,
+      "tol": 0.000805,
+      "gap": 0.004025,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker0_Coat": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker0_Head",
+      "profile": "render",
+      "eps": 2e-05,
+      "tol": 0.000396,
+      "gap": 0.001982,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker0_Head": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker0_L_Leg",
+      "profile": "render",
+      "eps": 2.4e-05,
+      "tol": 0.000487,
+      "gap": 0.002433,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker0_L_Leg": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker0_L_Shoe",
+      "profile": "render",
+      "eps": 1.1e-05,
+      "tol": 0.000222,
+      "gap": 0.001111,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker0_L_Shoe": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker0_L_Arm",
+      "profile": "render",
+      "eps": 2.4e-05,
+      "tol": 0.000481,
+      "gap": 0.002406,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker0_L_Arm": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker0_R_Leg",
+      "profile": "render",
+      "eps": 2.4e-05,
+      "tol": 0.000487,
+      "gap": 0.002433,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker0_R_Leg": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker0_R_Shoe",
+      "profile": "render",
+      "eps": 1.1e-05,
+      "tol": 0.000222,
+      "gap": 0.001111,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker0_R_Shoe": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker0_R_Arm",
+      "profile": "render",
+      "eps": 2.4e-05,
+      "tol": 0.000481,
+      "gap": 0.002406,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker0_R_Arm": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker1_Coat",
+      "profile": "render",
+      "eps": 4e-05,
+      "tol": 0.000805,
+      "gap": 0.004025,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker1_Coat": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker1_Head",
+      "profile": "render",
+      "eps": 2e-05,
+      "tol": 0.000396,
+      "gap": 0.001982,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker1_Head": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker1_L_Leg",
+      "profile": "render",
+      "eps": 2.7e-05,
+      "tol": 0.000542,
+      "gap": 0.002711,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker1_L_Leg": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker1_L_Shoe",
+      "profile": "render",
+      "eps": 1.2e-05,
+      "tol": 0.000242,
+      "gap": 0.00121,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker1_L_Shoe": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker1_L_Arm",
+      "profile": "render",
+      "eps": 2.6e-05,
+      "tol": 0.000517,
+      "gap": 0.002585,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker1_L_Arm": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker1_R_Leg",
+      "profile": "render",
+      "eps": 2.7e-05,
+      "tol": 0.000542,
+      "gap": 0.002711,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker1_R_Leg": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker1_R_Shoe",
+      "profile": "render",
+      "eps": 1.2e-05,
+      "tol": 0.000242,
+      "gap": 0.00121,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker1_R_Shoe": {
+          "tris": 188,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    },
+    {
+      "name": "Walker1_R_Arm",
+      "profile": "render",
+      "eps": 2.6e-05,
+      "tol": 0.000517,
+      "gap": 0.002585,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "per_object": {
+        "Walker1_R_Arm": {
+          "tris": 224,
+          "parts": 1,
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "skipped": []
+    }
+  ]
+}
