@@ -49,6 +49,36 @@ for(const scene of [
  const motion=await page.locator('.cloud-mass,.blender-star-glint,.blender-aircraft-light').evaluateAll(nodes=>nodes.map(node=>getComputedStyle(node).animationName));expect(motion.every(value=>value==='none')).toBeTruthy();
 });
 
+for(const night of [false,true])for(const [condition,count] of [['mainly-clear',1],['partly-cloudy',2],['overcast',3]] as const)test(`Blender cloud banks drift steadily and wrap offscreen ${night?'night':'day'} ${condition}`,async({page},info)=>{
+ await stage(page,{time:night?'2026-10-04T23:00:00Z':'2026-07-14T10:00:00Z',night,condition});
+ await expect(page.locator('.cloud-mass')).toHaveCount(count);
+ const samples=await page.locator('.cloud-mass').evaluateAll(async elements=>{
+  const result=[];
+  for(const el of elements){
+   const animation=el.getAnimations()[0],initialTime=animation.currentTime,timing=animation.effect!.getTiming(),duration=Number(timing.duration),origin=Number(timing.delay)+duration;
+   animation.pause();const positions=[];
+   for(const fraction of [0,.25,.25+8000/duration,.5,.75,.999999]){animation.currentTime=origin+duration*fraction;await new Promise(requestAnimationFrame);const rect=el.getBoundingClientRect();positions.push({left:rect.left,right:rect.right});}
+   result.push({positions,duration,easing:timing.easing,direction:timing.direction});
+   animation.currentTime=initialTime;
+  }
+  return result;
+ });
+ for(const {positions:p,easing,direction} of samples){
+  expect(easing).toBe('linear');expect(direction).toBe('normal');expect(p[0].right).toBeLessThanOrEqual(.1);expect(p.at(-1)!.left).toBeGreaterThan(799);
+  for(let i=1;i<p.length;i++)expect(p[i].left).toBeGreaterThan(p[i-1].left);
+  expect(p[2].left-p[1].left).toBeGreaterThan(10);expect(p[2].left-p[1].left).toBeLessThan(30);
+ }
+ await page.screenshot({path:info.outputPath(`cloud-drift-${night?'night':'day'}-${condition}.png`)});
+ if(condition==='overcast')for(const seconds of [120,300]){
+  await page.locator('.cloud-mass').evaluateAll((elements,delta)=>{for(const el of elements){const animation=el.getAnimations()[0];animation.currentTime=Number(animation.currentTime)+delta*1000;}},seconds===120?120:180);
+  expect(await page.locator('.cloud-mass').evaluateAll(elements=>elements.some(el=>{const r=el.getBoundingClientRect();return r.right>40&&r.left<760;}))).toBe(true);
+  await page.screenshot({path:info.outputPath(`cloud-drift-${night?'night':'day'}-overcast-${seconds}s.png`)});
+ }
+ await page.emulateMedia({reducedMotion:'reduce'});
+ const still=()=>page.locator('.cloud-mass').evaluateAll(elements=>elements.map(el=>({left:el.getBoundingClientRect().left,animation:getComputedStyle(el).animationName})));
+ const before=await still();expect(before.every(x=>x.animation==='none')).toBe(true);await page.waitForTimeout(150);expect(await still()).toEqual(before);
+});
+
 test('Blender Moon atlas preserves waxing/waning orientation and continuous illumination metadata',async({page})=>{
  await stage(page,{time:'2026-10-04T23:00:00Z',night:true,condition:'clear'});
  const mapping=await page.evaluate(()=>{
