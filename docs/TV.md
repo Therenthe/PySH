@@ -17,8 +17,11 @@ favorite. Un favorit care lipsește din liste este marcat explicit.
 
 Controalele video se retrag după câteva secunde; o atingere le readuce. **Înapoi
 la TV** oprește vizionarea și confirmă închiderea sesiunii. Înregistrările
-independente continuă. HLS este suportat, inclusiv AES-128 standard; DRM,
-SAMPLE-AES, DASH și fluxurile MPEG-TS directe nu sunt decodate de acest player.
+independente continuă. HLS este suportat, inclusiv AES-128 standard. Fluxurile
+MPEG-TS directe necriptate sunt transformate local în HLS, fără recodare sau
+schimbarea rezoluției; pornirea poate dura câteva secunde. Decodarea depinde
+în continuare de codecurile Chromium instalate. DRM, SAMPLE-AES și DASH nu
+sunt decodate de acest player.
 La indisponibilitatea canalului, folosește Reîncearcă sau Înapoi.
 
 ## Ghid TV și surse
