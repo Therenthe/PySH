@@ -1,5 +1,8 @@
 # PySH status
 
+Official DigiSport1 candidate: TV entry opens exact official URL through existing protected browser/preparation and trusted Return.941Python/46platform skips/11subtests,110JS,44TVUI+8search retests,TS/Vite/repository PASS. Preliminary existing-profile Pi page decodes1280x720 via Widevine,frames532to601; privacy preferences panel remained visible. New source installation,entry/Return and unobstructed playback pending. No token/license extraction or M3U/DRM recording claim. See docs/plans/digi-official-2026-11-05.md.
+
+
 ## PRO TV HD installed — 5 November2026
 
 Runtime3ef6f627868a, code10ae036022ea21e13268032088878d7fb88abfec; previous5131fbbab94a retained. Bounded stdin-only MPEG-TS to HLS remux, no recoding or new dependencies.227 hashes/29preferences/separate PC backup verified; network/gateway unchanged and original radio restored.

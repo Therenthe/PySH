@@ -90,18 +90,19 @@ def test_direct_youtube_and_browser_ownership(tmp_path, launches):
     asyncio.run(scenario())
 
 
-def test_ready_requires_actual_probe_not_component(tmp_path, launches):
+@pytest.mark.parametrize('service,url', [('netflix','https://www.netflix.com'), ('digisport','https://www.digisport.ro/live/digisport-1')])
+def test_ready_requires_actual_probe_not_component(tmp_path, launches, service, url):
     async def scenario():
         browser = manager(tmp_path)
         component(browser)
-        result = await browser.start("netflix", "chromium", "ro", "night")
+        result = await browser.start(service, "chromium", "ro", "night")
         assert result["preparing"] and not result["opened"]
         status = await browser.status(result["jobId"])
         assert status["state"] == "checking" and "url" not in status
         assert status["language"] == "ro" and status["theme"] == "night"
         assert "service-prepare?job=" in launches[0][0][0][-1]
         status = await browser.report(result["jobId"], status["attempt"], True)
-        assert status["state"] == "ready" and status["url"] == "https://www.netflix.com"
+        assert status["state"] == "ready" and status["url"] == url
         assert len(launches[0]) == 1
         await browser.close()
     asyncio.run(scenario())

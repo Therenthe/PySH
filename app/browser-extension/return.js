@@ -53,7 +53,7 @@
   label(close,'','m6 6 12 12M18 6 6 18');
   let ro = false, keyboardShown = false, retractTimer, blurTimer, revealAfterFullscreen = false;
   let service='';
-  try{const hostname=new URL(location.href).hostname;service=hostname==='accounts.google.com'?'Google':[['youtube.com','YouTube'],['netflix.com','Netflix'],['spotify.com','Spotify']].find(([domain])=>hostname===domain||hostname.endsWith('.'+domain))?.[1]||'';}catch{}
+  try{const hostname=new URL(location.href).hostname;service=hostname==='accounts.google.com'?'Google':[['www.digisport.ro','Digi Sport 1'],['youtube.com','YouTube'],['netflix.com','Netflix'],['spotify.com','Spotify']].find(([domain])=>hostname===domain||hostname.endsWith('.'+domain))?.[1]||'';}catch{}
   let contextRequest=0, deviceControls;
   let previousFocus;
   const isolated=new Map();

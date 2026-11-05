@@ -16,8 +16,8 @@ from urllib.parse import urlencode
 
 
 DOCUMENT_URLS = {"open-meteo": "https://open-meteo.com/", "cc-by": "https://creativecommons.org/licenses/by/4.0/"}
-PROTECTED_SERVICES = {"netflix", "spotify"}
-URLS = {"youtube": "https://www.youtube.com", "netflix": "https://www.netflix.com", "spotify": "https://open.spotify.com"}
+PROTECTED_SERVICES = {"netflix", "spotify", "digisport"}
+URLS = {"youtube": "https://www.youtube.com", "netflix": "https://www.netflix.com", "spotify": "https://open.spotify.com", "digisport": "https://www.digisport.ro/live/digisport-1"}
 
 
 def _group_snapshot(pgid):

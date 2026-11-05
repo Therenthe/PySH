@@ -15,6 +15,12 @@ ignoră majusculele și diacriticele. Selectarea unui rând arată ghidul; **Pri
 live** pornește imaginea pe întregul ecran. Steaua adaugă/elimină canalul din
 favorite. Un favorit care lipsește din liste este marcat explicit.
 
+**Digi Sport 1 · Player oficial** din lista TV deschide pagina Digi în browserul
+protejat al PySH. Accesul este verificat de Digi, inclusiv rețeaua folosită;
+eventualul dialog de confidențialitate aparține site-ului. Trage din partea de
+sus pentru comenzile PySH și revenire. Acesta este playerul oficial cu Widevine,
+nu un flux M3U: comenzile de înregistrare IPTV nu se aplică acestei intrări.
+
 Controalele video se retrag după câteva secunde; o atingere le readuce. **Înapoi
 la TV** oprește vizionarea și confirmă închiderea sesiunii. Înregistrările
 independente continuă. HLS este suportat, inclusiv AES-128 standard. Fluxurile

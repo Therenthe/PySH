@@ -33,7 +33,7 @@ export function Media({language,timezone='Europe/Bucharest',onPrepareTV,media,lo
  const search=async()=>{if(!onSearch||pending||searchPending)return;setSearchPending(true);try{const result=await onSearch(query);if(result!==null)setQuery(result.trim());}finally{setSearchPending(false);}};
  const deleteLabel=ro?'Șterge fișierul':'Delete file';
  const inspected=useMediaInspection(scroll,JSON.stringify([section,media.path,matches.map(item=>[item.path,item.media_identity])]),request);
- if(tv&&request&&onSearch&&onPrepareTV)return <IPTV language={language} timezone={timezone} request={request} icon={icon} onBack={()=>setTV(false)} onSearch={(title,value)=>onSearch(value,title)} onPrepare={onPrepareTV} onRecording={item=>onSelect(item,true,false)}/>;
+ if(tv&&request&&onSearch&&onPrepareTV)return <IPTV language={language} timezone={timezone} request={request} icon={icon} onBack={()=>setTV(false)} onSearch={(title,value)=>onSearch(value,title)} onPrepare={onPrepareTV} onRecording={item=>onSelect(item,true,false)} onOfficial={()=>onService('digisport')} officialPending={externalMediaPending}/>;
  return <div className="media-page media-redesign">
   <header className="media-heading"><h1 tabIndex={-1}>{t('media')}</h1><div className="media-sections" role="group" aria-label={ro?'Sursă media':'Media source'}>
    <button className={section==='files'?'selected':''} aria-pressed={section==='files'} onClick={()=>setSection('files')}>{icon('folder',20)}<span>{t('onDevice')}</span></button>
