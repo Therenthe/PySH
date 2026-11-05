@@ -1,7 +1,7 @@
 # 0014 — MPEG-TS direct în playerul TV existent
 
-Stare: implementare candidat, 5 noiembrie 2026; instalarea și acceptarea nativă
-sunt urmărite separat în planul `iptv-direct-ts-2026-11-05.md`.
+Stare: acceptată pentru cererea din 5 noiembrie 2026; instalarea și limitele
+acceptării native sunt în `docs/evidence/iptv-direct-ts-2026-11-05.md`.
 
 ## Context
 

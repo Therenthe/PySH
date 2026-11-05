@@ -9,9 +9,11 @@ PRO TV HD; nu schimbă canalul cu un flux News etichetat greșit. Include căuta
   păstrând rezoluția și API-ul/playerul existent.
 - [x] Destinații publice fixate pe DNS/redirect, date și procese limitate,
   închidere/expirare/schimbare canal fără procese sau fișiere abandonate.
-- [ ] Probe sintetice, regresii HLS, recorder independent și audit separat.
-- [ ] Sursă GitHub, backup separat PC, instalare și PRO TV HD decodat în UI
-  reală 800×480; confirmare Înapoi/Retry și curățare.
+- [x] Probe sintetice, regresii HLS și audit separat; 10 verificări ale
+  recorderului pe PRO TV cu Hub complet oprit PASS.
+- [x] Sursă GitHub, backup separat PC, instalare și PRO TV HD decodat în UI
+  reală 800×480; Pauză/Redă/Înapoi, înregistrare MKV, redare și ștergere.
+  Retry după întreruperea reală a sursei nu este certificat de această probă.
 - [ ] Surse Prima Sport1/Digi Sport1: identificare exactă, probă video reală,
   favorite salvate; indisponibilitatea/autentificarea se raportează explicit.
 
@@ -37,3 +39,6 @@ concurență internă sunt verzi, dar această sursă nu are încă acceptare de
 vizionare și înregistrare simultană. Probe sportive: Digi candidat HLS răspunde
 cu manifest, însă video-ul expiră la probă; alte URL-uri Digi/Prima nu oferă
 un flux verificabil. Niciun favorit sportiv nou nu este declarat funcțional.
+
+Instalat `3ef6f627868a`, cod `10ae036022ea21e13268032088878d7fb88abfec`;
+27 verificări Chromium reale PASS. [Dovezi și limite](../evidence/iptv-direct-ts-2026-11-05.md).
