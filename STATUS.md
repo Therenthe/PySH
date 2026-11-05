@@ -1,6 +1,21 @@
 # PySH status
 
-Cloud drift candidate, 5 November: existing Blender clouds now travel steadily with layer pacing and wrap only outside the screen. Weather gating and reduced-motion positions preserved.96 sky/atmosphere and12 focused retests PASS;903Python/46platform skip/11subtests,108JS,TS/repository PASS. Installation/native observation pending. See docs/plans/cloud-drift-2026-11-05.md.
+## Cloud drift installed — 5 November 2026
+
+Existing Blender cloud banks now drift steadily with different layer speeds and
+wrap only outside the screen. Weather gating and reduced-motion static positions
+are preserved. No textures, dependencies or JavaScript animation loops added.
+
+Installed runtime `5131fbbab94a`, code `a71660cae35fe6b057f7de1cbd0df5570d556dd4`;
+previous `558fa66b7e13` retained.96 sky/atmosphere tests and12 focused retests
+PASS;903Python/46platform skip/11subtests,108JavaScript,TS/Vite/repository PASS.
+Independent ten-capture review: scoped ship.226hashes/29preferences and a separate
+PC backup verified; network/gateway preserved and radio resumed.
+
+Real Wayland screenshots8.446s apart show about21px/17px cloud movement, versus
+4px/1px in the prior8.430s pair. Current weather stayed code2/cover48 and fresh.
+These are raster estimates, not upper-atmosphere wind data or frame-pacing proof.
+Full product acceptance remains OPEN. See [plan and evidence](docs/plans/cloud-drift-2026-11-05.md).
 
 
 ## IPTV installed and verified — 5 November 2026
