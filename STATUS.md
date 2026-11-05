@@ -1,18 +1,16 @@
 # PySH status
 
-R03 candidate: clarify the integrated TV entry and theme badge; align stale regression fixtures. R06 48/48 and R07 96/96 PASS. Installed R02 remains documented below until R03 activation is verified.
-
-
 ## IPTV installed and verified — 5 November 2026
 
 Media → Services → TV now provides the four requested M3U lists, eight requested
 favorites, XMLTV with dated official PRO TV/Antena 1 supplements, and independent
-MKV recording. Installed runtime `1a9b625f7452`, code
-`c8369a3ae47b1f2df364d7892cd453b4e5ebaea8`; previous `a300cbeda2ba` retained.
+MKV recording. Installed runtime `558fa66b7e13`, code
+`dbaf22a9cf72adfccbab4a929efd37245050007c`; previous `1a9b625f7452` retained.
 
-903 Python PASS/46 platform skips, 108 JavaScript PASS, 36 R05 TV UI cases and
-44 affected Media/TV retests PASS. Isolated Linux: 15 multi-rendition FFmpeg
-checks PASS. Installed existing-profile Chromium: 22 checks PASS, current-first
+R02 Linux Python 3.12/3.13: 949 tests and 11 subtests PASS; backend hashes are
+unchanged in R03. 108 JavaScript PASS; latest UI retests: 48 Radio/Home/badge,
+96 product/Media and 76 TV/Services cases PASS. Isolated Linux: 15 multi-rendition FFmpeg
+checks PASS. Installed existing-profile Chromium: 24 checks PASS, current-first
 guide, actual HLS and saved 1920×1080 MKV playback/delete confirmation. Independent
 service: 10 checks PASS with the entire Hub stopped, growing file, unchanged
 recorder PID, automatic end and exactly one H.264 video/AAC audio pair.
@@ -23,7 +21,8 @@ test files/jobs removed, diagnostic ports closed. Independent scoped visual
 review: ship. Native EN/Night and synthetic pointer are distinguished from the
 EN/RO/theme fixture matrix and physical acceptance. Public streams can change;
 not every listed channel or codec has been certified. Full product acceptance
-remains OPEN.
+remains OPEN. Complete CI is still pending; the earlier 1742/1814 run and all
+72 legacy-fixture failures/corrections are documented, not hidden or called green.
 
 [User guide](docs/TV.md) · [Plan](docs/plans/iptv-2026-11-05.md) ·
 [Evidence and limits](docs/evidence/iptv-2026-11-05.md)
