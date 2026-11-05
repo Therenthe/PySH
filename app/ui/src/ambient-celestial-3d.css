@@ -6,14 +6,15 @@
 .stars-blender3d .blender-star-glint:nth-of-type(74n){animation-delay:-7s}
 @keyframes blender-star-breathe{0%,45%{opacity:.45}78%{opacity:.95}100%{opacity:.7}}
 .ambient-sky .blender-clouds{inset:0 0 auto;width:100%;height:76%;background:none;opacity:1;animation:none;pointer-events:none;overflow:hidden;z-index:2}
-.blender-clouds .cloud-mass{position:absolute;height:auto;object-fit:contain;pointer-events:none;animation:blender-cloud-travel 72s ease-in-out infinite alternate}
-.blender-clouds .cloud-primary{width:76%;left:30%;top:3%;opacity:.85}
-.blender-clouds .cloud-secondary{width:67%;left:-20%;top:28%;opacity:.72;animation-duration:95s;animation-delay:-35s;transform:scaleX(-1)}
-.blender-clouds .cloud-low{width:90%;left:40%;top:43%;opacity:.82;animation-duration:113s;animation-delay:-60s}
-.blender-clouds.cloud-cover-sparse .cloud-primary{width:48%;left:52%;top:12%;opacity:.74}
-.blender-clouds.cloud-cover-overcast .cloud-primary{width:111%;left:-8%;top:-9%;opacity:.98}
-.blender-clouds.cloud-cover-overcast .cloud-secondary{width:105%;left:-30%;top:19%;opacity:.92}
-@keyframes blender-cloud-travel{from{translate:-8px 0}to{translate:15px -3px}}
+/* Each bank wraps only while fully outside the screen; depth changes its pace. */
+.blender-clouds .cloud-mass{position:absolute;left:0;height:auto;object-fit:contain;pointer-events:none;animation:blender-cloud-travel 540s linear infinite;animation-delay:-330s}
+.blender-clouds .cloud-primary{width:76%;--cloud-rest-left:30%;top:3%;opacity:.85}
+.blender-clouds .cloud-secondary{width:67%;--cloud-rest-left:-20%;top:28%;opacity:.72;animation-duration:680s;animation-delay:-190s;transform:scaleX(-1)}
+.blender-clouds .cloud-low{width:90%;--cloud-rest-left:40%;top:43%;opacity:.82;animation-duration:760s;animation-delay:-520s}
+.blender-clouds.cloud-cover-sparse .cloud-primary{width:48%;--cloud-rest-left:52%;top:12%;opacity:.74}
+.blender-clouds.cloud-cover-overcast .cloud-primary{width:111%;--cloud-rest-left:-8%;top:-9%;opacity:.98}
+.blender-clouds.cloud-cover-overcast .cloud-secondary{width:105%;--cloud-rest-left:-30%;top:19%;opacity:.92}
+@keyframes blender-cloud-travel{from{translate:-100% 0}to{translate:100vw 0}}
 .blender-aircraft{position:relative;display:block;width:96px;height:48px;transform-origin:center;pointer-events:none}
 .ambient-flight>.blender-aircraft{width:100%;height:100%}
 .blender-aircraft-body{position:relative;display:block;width:100%;height:100%}
@@ -29,4 +30,4 @@
 .blender-aircraft-light.starboard{background:#9ac8ac;animation-delay:1.6s;box-shadow:0 0 2px #8dbd9e40}
 .blender-aircraft-light.beacon.police{background:#97c9ef;box-shadow:0 0 2px #6ea7e040}
 @keyframes blender-navigation-light{0%,6%{opacity:.85}7%,100%{opacity:0}}
-@media(prefers-reduced-motion:reduce){.stars-blender3d .blender-star-glint,.blender-clouds .cloud-mass,.blender-aircraft-light,.aircraft-hover,.blender-aircraft-body>.aircraft-rotor-frame{animation:none}.blender-aircraft-light{opacity:.55}.blender-aircraft-body>.aircraft-rotor-frame:not(.rotor-frame-0){display:none}}
+@media(prefers-reduced-motion:reduce){.stars-blender3d .blender-star-glint,.blender-clouds .cloud-mass,.blender-aircraft-light,.aircraft-hover,.blender-aircraft-body>.aircraft-rotor-frame{animation:none}.blender-clouds .cloud-mass{left:var(--cloud-rest-left);translate:none}.blender-aircraft-light{opacity:.55}.blender-aircraft-body>.aircraft-rotor-frame:not(.rotor-frame-0){display:none}}

@@ -1,5 +1,8 @@
 # PySH status
 
+Cloud drift candidate, 5 November: existing Blender clouds now travel steadily with layer pacing and wrap only outside the screen. Weather gating and reduced-motion positions preserved.96 sky/atmosphere and12 focused retests PASS;903Python/46platform skip/11subtests,108JS,TS/repository PASS. Installation/native observation pending. See docs/plans/cloud-drift-2026-11-05.md.
+
+
 ## IPTV installed and verified — 5 November 2026
 
 Media → Services → TV now provides the four requested M3U lists, eight requested
