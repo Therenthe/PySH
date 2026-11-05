@@ -32,6 +32,10 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 
 ### Media și audio
 
+- TV în Media → Servicii: liste M3U, favorite, ghid XMLTV în fusul local și
+  înregistrări MKV independente de interfață. Contractul detaliat, sursele,
+  utilizarea și limitele sunt în [TV](TV.md); arhitectura în ADR-0013.
+
 - Radio: listă de posturi configurabilă, redare/opriere, metadate când fluxul le oferă, stări de încărcare și erori inteligibile.
 - Player local: navigare în directoarele media aprobate, liste și controale play/pauză, anterior/următor, căutare dacă formatul o permite, progres și volum. Formatele acceptate se publică după validare pe Pi.
 - YouTube și Netflix: acces din hub prin integrare permisă și funcțională pe dispozitiv. Dacă nu există o cale suportată care să redea conținutul în condițiile serviciului, produsul trebuie să explice limita și să ofere deschiderea în browserul/sistemul compatibil disponibil; butonul nu poate pretinde că redarea integrată funcționează.

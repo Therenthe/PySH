@@ -20,6 +20,7 @@ mmdebstrap:
     - chromium
     - wvkbd
     - mpv
+    - ffmpeg
     - labwc
     - greetd
     - foot

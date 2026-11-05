@@ -18,3 +18,4 @@ Deciziile anterioare de navigare/media sunt păstrate în [DECISIONS](../DECISIO
 
 - [0011 — Recoverable software standby and companion presence](0011-software-standby.md)
 - [0012 — Android discovery and local approval](0012-android-discovery-approval.md)
+- [0013 — IPTV and independent local recording](0013-iptv-independent-recording.md)

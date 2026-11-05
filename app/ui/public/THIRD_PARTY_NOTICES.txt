@@ -97,3 +97,33 @@ Names adapted to Romanian UI labels; coordinates retained as representative loca
 Ambient illustration assets (night-starfield-v1.png, city-facades-v1.png): generated for PySH using the built-in imagegen tool, 2026-10-04. Exact prompts and output hashes: docs/AMBIENT_GRAPHICS.md. Star/city artwork is decorative, not live or astronomical data.
 
 Sun/Moon orbital calculations: original implementation of published mathematical equations by Paul Schlyter, https://stjarnhimlen.se/comp/ppcomp.html . Standard refraction: NOAA, https://gml.noaa.gov/grad/solcalc/calcdetails.html . Independent numerical references: US Naval Observatory celestial navigation API, https://aa.usno.navy.mil/data/api .
+
+HLS.js 1.7.4 — https://github.com/video-dev/hls.js
+Copyright (c) 2017 Dailymotion (http://www.dailymotion.com)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+src/remux/mp4-generator.js and src/demux/exp-golomb.ts implementation in this project
+are derived from the HLS library for video.js (https://github.com/videojs/videojs-contrib-hls)
+
+That work is also covered by the Apache 2 License, following copyright:
+Copyright (c) 2013-2015 Brightcove
+
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.

@@ -1,0 +1,19 @@
+[Unit]
+Description=PySH independent IPTV recording service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/pysh/current
+ExecStart=/opt/pysh/venv/bin/python -m services.backend.iptv_recorder --daemon
+Environment=PYTHONUNBUFFERED=1
+Restart=on-failure
+RestartSec=3
+KillMode=control-group
+TimeoutStopSec=20
+UMask=0077
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target

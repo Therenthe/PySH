@@ -98,6 +98,8 @@ class PowerController:
             if expected_generation is not None and expected_generation != self.generation:
                 return await self.snapshot()
             if standby:
+                if getattr(self.hub, 'iptv_stream', None):
+                    self.hub.iptv_stream.close_current()
                 playback = await self.hub.player.status()
                 if playback.get('state') not in {'idle', 'ended', 'error', 'paused'}:
                     self.hub.cache_playback(await self.hub.player.command('pause'))

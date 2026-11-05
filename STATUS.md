@@ -1,5 +1,14 @@
 # PySH status
 
+IPTV candidate, 5 November 2026: Media Services TV, four M3U sources, requested
+favorites, XMLTV with dated official PRO TV/Antena supplements, and independent
+MKV recording.903Python/46platform skip,108JavaScript;36IPTVUI, scoped Media
+regressions and44finalretests pass. Scoped visual review: ship.14isolated native
+FFmpeg checks pass after the seekable-output AAC fix. Installation and actual
+browser/channel playback remain OPEN. See docs/TV.md and
+docs/plans/iptv-2026-11-05.md. Full product acceptance remains OPEN.
+
+
 Installed runtimef0b140892a9e/codeeb899025. The approved N0/P5/P1/P2/P3/P4/scopedP7
 UI batch is delivered: Radio neon, subtle floating Blender Explore names, common
 commands, Radio library, Home arrangement assistance and real local Media details

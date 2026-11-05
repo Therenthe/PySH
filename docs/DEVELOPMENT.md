@@ -22,6 +22,13 @@ node --test tests/extension-keyboard.test.mjs tests/extension-return.test.mjs te
 node --test tests/local-media-session.test.mjs
 ```
 
+IPTV: `tests/test_iptv_catalog.py`, `test_iptv_stream.py`, `test_iptv_recorder.py`
+și `test_iptv_api.py` verifică parserele, frontierele HTTP, sesiunile și
+programările. `tests/e2e/iptv.spec.ts` acoperă fluxurile tactile în cele patru
+contexte EN/RO × Ink/Noapte. Fixture-urile nu certifică un flux extern sau un
+fișier MKV real; proba Linux trebuie să ruleze FFmpeg/ffprobe efectiv, cu
+fișiere sintetice proprii și fără a modifica datele personale.
+
 În medii unde ensurepip este restricționat se poate folosi `uv venv --python 3.12 .venv`, apoi `uv pip sync --python .venv/Scripts/python.exe requirements-dev.lock` pe Windows. Nu înlocui Python-ul sistemului pe Pi.
 
 Media: testele de sesiune folosesc observațiile reale ale elementului video și
