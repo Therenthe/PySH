@@ -72,6 +72,7 @@ class IPTVStream:
         self._async_slots = asyncio.Semaphore(4)
         self._async_waiters = 0
         self._fetch_slots = threading.BoundedSemaphore(4)
+        self._transport = None
 
     def start(self, channel_id: str, url: str) -> dict:
         from .iptv_catalog import public_url
@@ -82,6 +83,9 @@ class IPTVStream:
         except Exception as exc:
             raise IPTVStreamError('iptv_unsafe_url') from exc
         with self._lock:
+            if self._transport is not None:
+                self._transport.close()
+                self._transport = None
             self._sid = secrets.token_urlsafe(24)
             self._channel_id = channel_id
             self._resources.clear()
@@ -97,6 +101,9 @@ class IPTVStream:
         with self._lock:
             if not isinstance(session_id, str) or self._sid != session_id:
                 return False
+            if self._transport is not None:
+                self._transport.close()
+                self._transport = None
             self._sid = None
             self._channel_id = None
             self._root = None
@@ -119,6 +126,7 @@ class IPTVStream:
         with self._lock:
             self._owner(session_id)
             self._touched = self._clock()
+            if self._transport is not None:self._transport.touch()
 
     def close_current(self) -> None:
         with self._lock:
@@ -137,7 +145,10 @@ class IPTVStream:
         from .iptv_catalog import public_url
         try:
             # Every actual fetch additionally resolves and pins public DNS.
-            url = public_url(url)
+            if kind == 'transport':
+                from .iptv_transport import SEGMENT
+                if not SEGMENT.fullmatch(url):raise ValueError('invalid_local_segment')
+            else:url = public_url(url)
         except Exception as exc:
             raise IPTVStreamError('iptv_unsafe_url') from exc
         if len(url) > 8192 or any(c in url for c in '{}'):
@@ -158,6 +169,33 @@ class IPTVStream:
         self._resources[rid] = _Resource(url, kind)
         self._urls[key] = rid
         return rid
+
+    def _transport_manifest(self, session_id, transport):
+        raw = transport.manifest()
+        result = []
+        with self._lock:
+            self._owner(session_id)
+            if self._transport is not transport:raise IPTVStreamError('iptv_session_expired')
+            for line in raw.decode('utf8').splitlines():
+                if line and not line.startswith('#'):
+                    line = self._path(session_id, self._register(line, 'transport'))
+                result.append(line)
+        return ProxyResource(('\n'.join(result)+'\n').encode(), media_type='application/vnd.apple.mpegurl', headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'})
+
+    def _make_transport(self, session_id, *args):
+        from .iptv_transport import DirectTransport
+        with self._lock:
+            self._owner(session_id)
+            if self._transport is not None:
+                # A racing first manifest fetch must close its redundant socket.
+                try:args[0].close()
+                finally:
+                    try:args[1].close()
+                    finally:
+                        if len(args)>4 and args[4] is not None:args[4].close()
+                return self._transport
+            self._transport = DirectTransport(*args, idle_timeout=self._idle_timeout)
+            return self._transport
 
     def _rewrite(self, session_id: str, data: bytes, base_url: str) -> bytes:
         if len(data) > MANIFEST_LIMIT:
@@ -234,6 +272,7 @@ class IPTVStream:
                 raise IPTVStreamError('iptv_resource_expired')
             self._touched = self._clock()
             resource = self._resources[resource_id]
+            root_url = self._resources[self._root].url
             self._resources.move_to_end(resource_id)
         if range_header is not None and (not isinstance(range_header, str) or len(range_header) > 80):
             raise IPTVStreamError('iptv_invalid_range')
@@ -244,11 +283,22 @@ class IPTVStream:
         if range_header is not None and resource.kind != 'manifest':
             request_options['headers'] = {'Range': range_header}
         try:
-            if self._fetcher is None:
+            with self._lock:
+                transport = self._transport
+            if transport is not None and resource_id == self._root:
+                return self._transport_manifest(session_id, transport)
+            if resource.kind == 'transport':
+                if transport is None:raise IPTVStreamError('iptv_session_expired')
+                fetched = (transport.read(resource.url), root_url, 'video/mp2t', {})
+            elif self._fetcher is None:
                 from .iptv_catalog import fetch_public_resource
+                if resource_id == self._root:
+                    request_options['transport_factory'] = lambda *args:self._make_transport(session_id,*args)
                 fetched = fetch_public_resource(resource.url, **request_options)
             else:
                 fetched = self._fetcher(resource.url, **request_options)
+            from .iptv_transport import DirectTransport
+            if isinstance(fetched, DirectTransport):return self._transport_manifest(session_id,fetched)
             data, final_url, mime, upstream_headers = fetched
             if not isinstance(data, bytes) or len(data) > limit:
                 raise IPTVStreamError('iptv_resource_too_large')
@@ -258,6 +308,8 @@ class IPTVStream:
             raise
         except Exception as exc:
             code = getattr(exc, 'code', '')
+            if code in {'iptv_session_expired','iptv_stream_busy','iptv_resource_too_large','recording_disk_full','recording_ffmpeg_unavailable','iptv_unsupported_stream'}:
+                raise IPTVStreamError(code) from exc
             raise IPTVStreamError('iptv_unsafe_url' if code in {'unsafe_url', 'iptv_unsafe_url'} else 'iptv_stream_unavailable') from exc
         with self._lock:
             self._owner(session_id)

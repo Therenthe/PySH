@@ -99,7 +99,7 @@ def verify_public_url(url):
     return public_url(url)
 
 
-def fetch_public_resource(url, max_bytes=MAX_DOWNLOAD, timeout=15, headers=None):
+def fetch_public_resource(url, max_bytes=MAX_DOWNLOAD, timeout=15, headers=None, transport_factory=None):
     """Return bytes, final URL, MIME type and lower-case response headers.
 
     The original hostname remains the TLS SNI/certificate identity while the
@@ -122,9 +122,11 @@ def fetch_public_resource(url, max_bytes=MAX_DOWNLOAD, timeout=15, headers=None)
             connection = (HTTPSConnection if parsed.scheme == 'https' else HTTPConnection)(
                 parsed.hostname, port, timeout=min(8, remaining))
             connection._create_connection = lambda target, timeout, source_address=None: socket.create_connection((address, port), timeout, source_address)
+            handed_off = False
             try:
                 path = (parsed.path or '/') + ('?' + parsed.query if parsed.query else '')
                 connection.request('GET', path, headers=safe_headers)
+                source_socket = getattr(connection, 'sock', None)
                 response = connection.getresponse()
                 result_headers = {key.lower(): value for key, value in response.getheaders()}
                 if response.status in {301, 302, 303, 307, 308}:
@@ -136,7 +138,7 @@ def fetch_public_resource(url, max_bytes=MAX_DOWNLOAD, timeout=15, headers=None)
                 if response.status not in {200, 206}:
                     raise IPTVError('iptv_source_unavailable')
                 length = result_headers.get('content-length')
-                if length and (not length.isdecimal() or int(length) > max_bytes):
+                if length and (not length.isdecimal() or int(length) > max_bytes and transport_factory is None):
                     raise IPTVError('iptv_source_too_large')
                 raw = bytearray()
                 while len(raw) <= max_bytes:
@@ -149,11 +151,22 @@ def fetch_public_resource(url, max_bytes=MAX_DOWNLOAD, timeout=15, headers=None)
                     if not block:
                         break
                     raw.extend(block)
+                    if transport_factory is not None and len(raw) >= 564:
+                        from .iptv_transport import is_transport
+                        if is_transport(raw):
+                            transport = transport_factory(response, connection, bytes(raw), url, source_socket)
+                            handed_off = True
+                            return transport
+                        transport_factory = None
+                        if length and (not length.isdecimal() or int(length) > max_bytes):
+                            raise IPTVError('iptv_source_too_large')
                 if len(raw) > max_bytes:
+                    raise IPTVError('iptv_source_too_large')
+                if length and int(length) > max_bytes:
                     raise IPTVError('iptv_source_too_large')
                 return bytes(raw), url, result_headers.get('content-type', '').split(';')[0].lower(), result_headers
             finally:
-                connection.close()
+                if not handed_off:connection.close()
     except IPTVError:
         raise
     except (OSError, ValueError, HTTPException) as error:
