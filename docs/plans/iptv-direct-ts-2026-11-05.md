@@ -3,7 +3,8 @@
 Cererea utilizatorului extinde playerul existent la fluxul MPEG-TS direct al
 PRO TV HD; nu schimbă canalul cu un flux News etichetat greșit. Include căutarea
 și adăugarea la favorite a Prima Sport1 și Digi Sport1 dacă sursele se verifică,
-în HD real (minimum 720p), cu identitatea exactă a canalului românesc.
+cu identitatea exactă a canalului românesc. Actualizare a cerinței: utilizatorul
+acceptă și SD; HD rămâne preferat, nu o condiție de adăugare.
 
 - [x] Intrare TS publică verificată, normalizare locală în HLS fără recodare,
   păstrând rezoluția și API-ul/playerul existent.
@@ -42,3 +43,10 @@ un flux verificabil. Niciun favorit sportiv nou nu este declarat funcțional.
 
 Instalat `3ef6f627868a`, cod `10ae036022ea21e13268032088878d7fb88abfec`;
 27 verificări Chromium reale PASS. [Dovezi și limite](../evidence/iptv-direct-ts-2026-11-05.md).
+
+Reluare după acceptarea SD: cinci candidați HTTP/HLS verificați fără prag de
+rezoluție. Patru nu au furnizat flux accesibil. Candidatul Digi dintr-o revizie
+istorică iptv-org oferă H.264 1920×1080 decodabil, dar cadrul extras pe Pi este
+un ecran „pay for a subscription”, fără audio sau transmisie Digi. Clasificat
+ca acces condiționat/placeholder, nu canal funcțional; nu a fost importat sau
+adăugat la favorite. Nu s-au schimbat radioul, sursele ori preferințele.

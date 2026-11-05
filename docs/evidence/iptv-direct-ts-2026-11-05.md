@@ -73,3 +73,16 @@ chei sau ocoliri DRM. Disponibilitatea unui URL poate varia ulterior.
 
 Acceptarea globală a produsului, matricea nativă completă și stabilitatea
 îndelungată rămân OPEN.
+
+## Reluare cu SD acceptat
+
+Utilizatorul a relaxat ulterior condiția HD: sunt acceptate și surse SD.
+Cinci candidați publici au fost probați fără prag minim. Patru au fost
+indisponibili; al cincilea (Digi, din revizia istorică iptv-org
+`c8752428f559257d11e17a8b9390a6178b17d937`) a furnizat segmente TS și s-a
+decodat pe Pi în H.264 1920×1080. Inspecția cadrului PNG arată însă exclusiv
+cererea furnizorului de a plăti un abonament, nu programul Digi Sport 1.
+ffprobe a găsit numai video, fără audio. Este un placeholder de acces
+condiționat, nu un succes de redare a canalului. Nu a fost adăugat la favorite.
+Proba nativă a folosit un relay izolat, închis la final, fără modificări în Hub,
+configurație sau radio. Raportul și cadrul rămân private în proba sports-sd.
