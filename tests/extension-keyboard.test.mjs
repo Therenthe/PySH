@@ -45,14 +45,14 @@ function background() {
 }
 
 test('manifest has stable public-key ID and only native messaging and documentation navigation permissions', () => {
-  assert.equal(manifest.version,'1.4.0');
-  assert.equal(manifest.background.service_worker,'background-commands-v4.js');
+  assert.equal(manifest.version,'1.4.1');
+  assert.equal(manifest.background.service_worker,'background-digi-v5.js');
   assert.match(source(manifest.background.service_worker),/importScripts\('background.js'\)/);
   assert.match(extensionId, /^[a-p]{32}$/);
   assert.deepEqual(manifest.permissions, ['nativeMessaging','webNavigation']);
   assert.deepEqual(manifest.content_scripts[0].matches, [
     'https://*.youtube.com/*', 'https://*.netflix.com/*', 'https://*.spotify.com/*',
-    'https://accounts.google.com/*']);
+    'https://accounts.google.com/*', 'https://www.digisport.ro/live/digisport-1*']);
   assert.deepEqual(manifest.content_scripts[0].css, ['immersive.css']);
   const host = JSON.parse(readFileSync(new URL('../os/image/assets/org.pysh.keyboard.json', import.meta.url), 'utf8'));
   assert.equal(host.name, 'org.pysh.keyboard');

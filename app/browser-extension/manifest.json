@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Pi Smart Hub \u2014 Return",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Private PySH device controls, keyboard and acknowledged return. No account data is collected.",
   "background": {
-    "service_worker": "background-commands-v4.js"
+    "service_worker": "background-digi-v5.js"
   },
   "content_scripts": [
     {
@@ -12,7 +12,8 @@
         "https://*.youtube.com/*",
         "https://*.netflix.com/*",
         "https://*.spotify.com/*",
-        "https://accounts.google.com/*"
+        "https://accounts.google.com/*",
+        "https://www.digisport.ro/live/digisport-1*"
       ],
       "js": [
         "command-controls.js",

@@ -1,5 +1,19 @@
 import {test,expect,type Page,type TestInfo} from '@playwright/test';
 
+for(const ro of [false,true])for(const theme of ['ink','night'])test(`official Digi player handoff ${ro?'ro':'en'} ${theme}`,async({page},info)=>{
+ const f=await fixture(page,ro,theme);let finish!:()=>void;const held=new Promise<void>(r=>finish=r),opened:any[]=[];
+ await page.route('**/api/external',async route=>{opened.push(route.request().postDataJSON());await held;await route.fulfill({json:{opened:true,service:'digisport'}});});
+ const entry=page.getByRole('button',{name:ro?'Digi Sport 1 · Player oficial':'Digi Sport 1 · Official player',exact:true});
+ await expect(entry).toBeVisible();await expect(entry).toContainText(ro?'Rețea Digi':'Digi network');
+ await page.getByRole('button',{name:ro?'Caută canale':'Search channels',exact:true}).tap();await keyboardType(page,'digi',ro);
+ await expect(page.locator('.iptv-channel')).toHaveCount(0);await expect(entry).toBeVisible();await expect(page.getByText(ro?'Niciun canal. Caută în Toate sau verifică Surse.':'No channels. Try All or check Sources.',{exact:true})).toHaveCount(0);
+ const box=await entry.boundingBox();expect(box!.width).toBeGreaterThanOrEqual(48);expect(box!.height).toBeGreaterThanOrEqual(48);expect(box!.y+box!.height).toBeLessThanOrEqual(480);
+ await snap(page,info,'digi-official-entry');await entry.tap();await expect(entry).toBeDisabled();await expect(entry).toContainText(ro?'Se deschide playerul oficial':'Opening official player');
+ await entry.evaluate((e:HTMLButtonElement)=>e.click());expect(opened).toEqual([{service:'digisport'}]);
+ expect(f.calls.filter(c=>c.path==='/api/iptv/view'||c.path==='/api/iptv/recordings')).toEqual([]);
+ await snap(page,info,'digi-official-pending');finish();await expect(entry).toBeEnabled();
+});
+
 // These are API/UI contract fixtures. They do not certify a broadcaster stream,
 // codec, hardware playback, or the independent Linux recording service.
 const NOW=Date.parse('2026-11-05T16:00:00Z');

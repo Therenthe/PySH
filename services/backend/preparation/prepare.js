@@ -79,7 +79,7 @@
       if (stopped) return;
       language = state.language === 'ro' ? 'ro' : 'en';
       theme = state.theme === 'night' ? 'night' : 'ink';
-      node('service').textContent = {netflix:'Netflix',spotify:'Spotify',youtube:'YouTube'}[state.service] || '';
+      node('service').textContent = {netflix:'Netflix',spotify:'Spotify',youtube:'YouTube',digisport:'Digi Sport 1'}[state.service] || '';
       render(state.state, state.error);
       // A restarted browser has a new attempt. This old page cannot report for it.
       if (state.attempt !== attempt) return;
@@ -89,7 +89,7 @@
         if (!stopped) await api('/api/external/report', {job,attempt,ready});
       }
       if (!stopped && state.state === 'ready') {
-        const allowed = {netflix:'https://www.netflix.com',spotify:'https://open.spotify.com'};
+        const allowed = {netflix:'https://www.netflix.com',spotify:'https://open.spotify.com',digisport:'https://www.digisport.ro/live/digisport-1'};
         if (allowed[state.service] !== state.url) throw Error('stale_preparation');
         stopped = true;
         location.replace(state.url);

@@ -1,5 +1,14 @@
 # PySH status
 
+## Official Digi Sport1 installed —5November2026
+
+TV now opens exact official DigiSport1 URL via protected owned browser and trusted Return. Runtimef6385c202893/code d0a3fe7dcb48b744a4badcc1a3bf71cf56763293,previous3ef6f627868a retained.228hashes/29preferences/separate PCbackup verified; network/gateway preserved.
+
+941Python/46platform skips/11subtests,110JS,44TVfixtures+8search retests,TS/Vite/repository PASS.14native existing-profile checks PASS:1280x720/80frames,Widevine,unobstructedplayer,officialfullscreen,newMV3worker,topedgegesturemenu and acknowledgedHomeReturn. Independent scoped audit PASS. Final services active,zero owned converters/tempdirectories,debugports closed; prefs/volume/mute/history restored. User explicitly continued without disconnected speaker; no acoustic acceptance or radio-resumption claim without audio. No M3U/DRM recording claim. Full product acceptance remains OPEN.
+
+See docs/evidence/digi-official-2026-11-05.md and docs/plans/digi-official-2026-11-05.md.
+
+
 ## PRO TV HD installed — 5 November2026
 
 Runtime3ef6f627868a, code10ae036022ea21e13268032088878d7fb88abfec; previous5131fbbab94a retained. Bounded stdin-only MPEG-TS to HLS remux, no recoding or new dependencies.227 hashes/29preferences/separate PC backup verified; network/gateway unchanged and original radio restored.

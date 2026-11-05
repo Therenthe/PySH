@@ -162,7 +162,7 @@ class Documentation(StrictBody):
 
 
 class External(StrictBody):
-    service: Literal["youtube", "netflix", "spotify"]
+    service: Literal["youtube", "netflix", "spotify", "digisport"]
 
 
 class ExternalNavigation(StrictBody):
