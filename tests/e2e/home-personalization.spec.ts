@@ -1,11 +1,15 @@
 // Floating visualizer coverage remains on other styles or local media;
 // radio Wave facade behavior is exercised separately in radio-neon.spec.ts.
 import {openSettingsSection} from './settings-navigation';
-import {test,expect} from '@playwright/test';
-for(const theme of ['ink','night'])test(`personalized Home ${theme}: idle header, sizes, visibility, persisted drag and recovery`,async({page},info)=>{
- const ro=info.project.name.endsWith('ro');let failSave=false;
+import {test,expect,type Page} from '@playwright/test';
+async function personalizationFixture(page:Page,ro:boolean,theme:string){
+ const control={failSave:false,failedLayoutWrites:0};
  const state:any={preferences:{language:ro?'ro':'en',theme,setupComplete:true,nightEnabled:false,navigationCollapsed:true,screensaverMinutes:0,visualizerStyle:'bars',visualizerSize:'compact',homeCards:['weather','forecast','playback'],homePositions:{},timezone:'Europe/Bucharest',shortcuts:['radio','media']},network:{state:'connected'},bluetooth:{devices:[],prompts:[]},audio:{ready:true,volume:30,mute:false},player:{state:'playing',kind:'radio',station_name:'Radio One',url:'https://example.org/stream'},weather:{current:{temperature_c:13,weather_code:2,is_day:0,feels_like_c:11},daily:Array.from({length:5},(_,i)=>({date:`2026-10-0${i+3}`,weather_code:0,max_c:22,min_c:11})),stale:false}};
- await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname;let json:any={ok:true};if(path==='/api/session')json={token:'fixture'};else if(path==='/api/state')json=state;else if(path==='/api/preferences'){if(failSave)return route.fulfill({status:500,json:{error:'save_failed'}});Object.assign(state.preferences,route.request().postDataJSON());json=state.preferences;}else if(path==='/api/audio/visualization')json={available:true,status:'ready',waveform:Array.from({length:64},(_,i)=>Math.sin(i)*.3),bars:Array(16).fill(.3),peak:.3,rms:.2,silent:false};await route.fulfill({json});});
+ await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname;let json:any={ok:true};if(path==='/api/session')json={token:'fixture'};else if(path==='/api/state')json=state;else if(path==='/api/preferences'){const patch=route.request().postDataJSON();if(control.failSave&&'homePositions' in patch){control.failedLayoutWrites++;return route.fulfill({status:500,json:{error:'save_failed'}});}Object.assign(state.preferences,patch);json=state.preferences;}else if(path==='/api/audio/visualization')json={available:true,status:'ready',waveform:Array.from({length:64},(_,i)=>Math.sin(i)*.3),bars:Array(16).fill(.3),peak:.3,rms:.2,silent:false};await route.fulfill({json});});
+ return {state,control};
+}
+for(const theme of ['ink','night'])test(`personalized Home ${theme}: idle header, sizes, visibility and persisted drag`,async({page},info)=>{
+ const ro=info.project.name.endsWith('ro'),{state}=await personalizationFixture(page,ro,theme);
  await page.clock.install();await page.goto('/');await expect(page.locator('.ambient-home')).toBeVisible();
  await page.clock.runFor(400);await expect.poll(()=>page.evaluate(()=>{const w=document.querySelector('.ambient-weather')!.getBoundingClientRect(),f=document.querySelector('.ambient-forecast')!.getBoundingClientRect();return Math.max(f.y-w.bottom,f.x-w.right);})).toBeGreaterThanOrEqual(16);
  await page.clock.runFor(10500);await expect(page.locator('.topbar')).toHaveClass(/topbar-idle/);await expect.poll(()=>page.locator('.topbar').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
@@ -32,10 +36,20 @@ for(const theme of ['ink','night'])test(`personalized Home ${theme}: idle header
   await page.clock.runFor(6000);await expect(handle).toBeVisible();await expect(page.locator('.pysh-screensaver')).toHaveCount(0);
   await page.getByRole('button',{name:ro?'Gata':'Done',exact:true}).tap();expect(state.preferences.homePositions[key]).toBeDefined();const saved={...state.preferences.homePositions[key]};await page.reload();await expect(page.locator(`[data-home-positioned=true]`)).toBeVisible();expect(state.preferences.homePositions[key]).toEqual(saved);
  }
- await page.locator('.main-nav button').nth(3).tap();await homeTab().tap();await page.getByRole('button',{name:ro?'Aranjează Acasă':'Arrange Home',exact:true}).tap();
- await page.getByRole('button',{name:ro?'Opțiuni':'Options',exact:true}).tap();await page.getByRole('button',{name:ro?'Resetează':'Reset',exact:true}).tap();failSave=true;await page.getByRole('button',{name:ro?'Gata':'Done',exact:true}).tap();await expect(page.locator('.home-layout-toolbar [role=alert]')).toBeVisible();await expect(page.locator('[data-layout-editing=true]')).toBeVisible();
- await page.getByRole('button',{name:ro?'Anulează':'Cancel',exact:true}).tap();expect(state.preferences.homePositions.visualizer).toBeDefined();
  await page.screenshot({path:info.outputPath(`personalized-layout-${theme}.png`)});
+});
+
+for(const theme of ['ink','night'])test(`personalized Home ${theme}: failed reset save retains editing and Cancel restores saved layout`,async({page},info)=>{
+ const ro=info.project.name.endsWith('ro'),{state,control}=await personalizationFixture(page,ro,theme);
+ state.preferences.navigationCollapsed=false;state.preferences.homePositions={visualizer:{x:.1,y:.1,anchorX:'left',anchorY:'top'}};
+ const saved=JSON.stringify(state.preferences.homePositions);
+ await page.goto('/');await page.locator('.main-nav button').nth(3).tap();await openSettingsSection(page,'home');
+ await page.getByRole('button',{name:ro?'Aranjează Acasă':'Arrange Home',exact:true}).tap();await expect(page.locator('.ambient-visualizer')).toHaveAttribute('data-home-positioned','true');
+ await page.getByRole('button',{name:ro?'Opțiuni':'Options',exact:true}).tap();await page.getByRole('button',{name:ro?'Resetează':'Reset',exact:true}).tap();await expect(page.locator('.ambient-visualizer')).toHaveAttribute('data-home-positioned','false');
+ control.failSave=true;await page.getByRole('button',{name:ro?'Gata':'Done',exact:true}).tap();await expect.poll(()=>control.failedLayoutWrites).toBe(1);
+ await expect(page.locator('.home-layout-toolbar [role=alert]')).toHaveText(ro?'Nu s-a salvat. Încearcă din nou.':'Not saved. Try again.');await expect(page.locator('[data-layout-editing=true]')).toBeVisible();expect(JSON.stringify(state.preferences.homePositions)).toBe(saved);
+ await page.getByRole('button',{name:ro?'Anulează':'Cancel',exact:true}).tap();await expect(page.locator('[data-layout-editing=true]')).toHaveCount(0);await expect(page.locator('.ambient-visualizer')).toHaveAttribute('data-home-positioned','true');expect(JSON.stringify(state.preferences.homePositions)).toBe(saved);
+ await page.screenshot({path:info.outputPath(`personalized-layout-recovery-${theme}.png`)});
 });
 
 test('missing saved station artwork is enriched only for the currently matching stream',async({page})=>{

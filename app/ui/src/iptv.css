@@ -64,7 +64,7 @@
 @media(prefers-reduced-motion:reduce){.app .iptv-live-controls{transition:none}}
 /* A fourth service fits without forcing a tiny touch target or a new scroll row. */
 .app .media-redesign .media-service-list{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
-.app .media-redesign .service-row{padding:9px;gap:8px}.app .media-redesign .service-row small{font-size:14px;line-height:1.25}.app .media-redesign .service-iptv{color:var(--accent-strong)}
+.app .media-redesign .service-row{padding:9px;gap:8px}.app .media-redesign .service-row small{font-size:14px;line-height:1.25}.app .media-redesign .service-iptv{background:var(--soft);color:var(--accent-strong)}
 
 .app .iptv-source small{display:block;margin-top:5px;color:var(--muted);font-size:14px}
 

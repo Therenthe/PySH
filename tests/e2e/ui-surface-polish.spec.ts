@@ -14,9 +14,12 @@ for(const theme of ['ink','night'] as const){
   const language=info.project.name==='touch-ro'?'ro':'en';await settingsFixture(page,language,theme);
   await page.locator('.main-nav button').nth(2).tap();await page.locator('.media-sections button').nth(1).tap();
   await expect(page.locator('.service-row')).toHaveCount(4);
-  const badges=await page.locator('.service-logo').evaluateAll(elements=>elements.map(el=>({background:getComputedStyle(el).backgroundColor,foreground:getComputedStyle(el).color})));
-  expect(badges[0].background).toBe('rgb(215, 62, 50)');expect(badges[2].background).toBe('rgb(42, 155, 88)');
-  expect(badges[0].foreground).toBe('rgb(255, 255, 255)');
+  await expect(page.locator('.service-panel>.muted')).toHaveText(language==='ro'?'TV rulează în PySH. Celelalte servicii deschid site-urile oficiale.':'Watch TV in PySH. Other services open their official websites.');
+  const soft=await page.locator('.service-iptv').evaluate(el=>{const sample=document.createElement('span');sample.style.backgroundColor='var(--soft)';el.append(sample);const value=getComputedStyle(sample).backgroundColor;sample.remove();return value;});
+  await expect(page.locator('.service-logo.service-iptv')).toHaveCSS('background-color',soft);
+  await expect(page.locator('.service-logo.service-youtube')).toHaveCSS('background-color','rgb(215, 62, 50)');
+  await expect(page.locator('.service-logo.service-spotify')).toHaveCSS('background-color','rgb(42, 155, 88)');
+  await expect(page.locator('.service-logo.service-youtube')).toHaveCSS('color','rgb(255, 255, 255)');
   await page.screenshot({path:info.outputPath('services.png')});
  });
 }

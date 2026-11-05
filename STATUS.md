@@ -1,5 +1,8 @@
 # PySH status
 
+R03 candidate: clarify the integrated TV entry and theme badge; align stale regression fixtures. R06 48/48 and R07 96/96 PASS. Installed R02 remains documented below until R03 activation is verified.
+
+
 ## IPTV installed and verified — 5 November 2026
 
 Media → Services → TV now provides the four requested M3U lists, eight requested

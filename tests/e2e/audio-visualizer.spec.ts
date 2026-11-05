@@ -26,7 +26,8 @@ for(const theme of ['ink','night'])for(const style of ['wave','bars','orbit','ri
   await expect(page.locator('.radio-track-name')).toHaveText('Artist · Song');
   await page.getByRole('button',{name:ro?'Postul următor':'Next station',exact:true}).tap();
   expect(actions.at(-1)).toEqual({path:'/api/play',body:{source:'radio',url:stations[1].url,title:'Radio Two'}});
-  await page.locator('.radio-filter-pills .favorites-filter').tap();await expect(page.locator('.radio-favorites .station-row')).toHaveCount(2);
+  const favorites=page.getByRole('group',{name:ro?'Biblioteca radio':'Radio library',exact:true}).getByRole('button',{name:ro?'Favorite':'Favorites',exact:true});
+  await favorites.tap();await expect(favorites).toHaveAttribute('aria-pressed','true');await expect(page.locator('.radio-favorites .station-row')).toHaveCount(2);
   await page.getByRole('button',{name:ro?'Fără sunet':'Mute',exact:true}).tap();await expect(page.locator('.radio-side .audio-visualizer svg')).toHaveCount(0);
   await page.getByRole('button',{name:ro?'Activează sunetul':'Unmute',exact:true}).tap();
   await expect(page.getByRole('button',{name:ro?'Fără sunet':'Mute',exact:true})).toBeVisible();
