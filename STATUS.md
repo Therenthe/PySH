@@ -1,5 +1,16 @@
 # PySH status
 
+IPTV R02 corrections, 5 November 2026: current/upcoming guide first, no placeholder category and one video/audio recording pair. R05 36UI and 15 native multi-rendition checks pass. R01 a300cbeda2ba installed; its real browser playback/MKV and independent service tests passed. R02 activation/retest pending.
+
+IPTV candidate, 5 November 2026: Media Services TV, four M3U sources, requested
+favorites, XMLTV with dated official PRO TV/Antena supplements, and independent
+MKV recording.903Python/46platform skip,108JavaScript;36IPTVUI, scoped Media
+regressions and44finalretests pass. Scoped visual review: ship.14isolated native
+FFmpeg checks pass after the seekable-output AAC fix. Installation and actual
+browser/channel playback remain OPEN. See docs/TV.md and
+docs/plans/iptv-2026-11-05.md. Full product acceptance remains OPEN.
+
+
 IPTV candidate, 5 November 2026: Media Services TV, four M3U sources, requested
 favorites, XMLTV with dated official PRO TV/Antena supplements, and independent
 MKV recording.903Python/46platform skip,108JavaScript;36IPTVUI, scoped Media

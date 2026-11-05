@@ -161,6 +161,8 @@ def test_daemon_starts_early_and_finalizes_at_padded_end(env, daemon):
     assert active['has_file'] and active['size'] > 0
     process = daemon.running[job['id']]['process']
     assert '-c' in process.command and process.command[process.command.index('-c') + 1] == 'copy'
+    assert '-map' not in process.command  # HLS master renditions use automatic single-stream selection.
+    assert '-sn' in process.command and '-dn' in process.command
     assert process.command[-2:] == ['matroska', 'fd:']
     assert process.output_seekable
     assert 'https://media.example/live.m3u8' not in process.command

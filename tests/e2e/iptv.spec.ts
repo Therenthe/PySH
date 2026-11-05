@@ -12,8 +12,8 @@ const job=(id:string,title:string,state:string,has_file=false):Job=>({id,title,s
 async function fixture(page:Page,ro:boolean,theme:string,{initialRecords=false,service=true,empty=false}={}){
  await page.clock.setFixedTime(NOW);
  const state:any={preferences:{language:ro?'ro':'en',theme,timezone:'Europe/Bucharest',setupComplete:true,navigationCollapsed:false,navigationAutoHide:false,screensaverMinutes:0,nightEnabled:false},network:{},bluetooth:{devices:[],prompts:[]},audio:{ready:true,available:true,volume:30,mute:false,outputs:[]},player:{state:'idle'},weather:{}};
- const channels=empty?[]:[{id:'tv_one',name:'PRO TV HD (1080p)',group:'România',favorite:true},{id:'tv_two',name:'Antena 1 (Romania)',group:'România',favorite:false},{id:'tv_three',name:'NBC Sports NOW (1080p)',group:'United States · Sports',favorite:true}];
- const programmes=[{id:'pg_current',title:'Jurnalul de seară',start:when(-20),end:when(10),description:'Descriere verificabilă a emisiunii curente.',source:guideSource},{id:'pg_next',title:'Documentar despre oraș',start:when(10),end:when(70),description:'Următoarea emisiune are un interval distinct.',source:guideSource}];
+ const channels=empty?[]:[{id:'tv_one',name:'PRO TV HD (1080p)',group:'România',favorite:true},{id:'tv_two',name:'Antena 1 (Romania)',group:'România',favorite:false},{id:'tv_three',name:'NBC Sports NOW (1080p)',group:'Undefined',favorite:true}];
+ const programmes=[{id:'pg_past',title:'Emisiune încheiată',start:when(-120),end:when(-60),description:'Nu trebuie afișată înaintea programului actual.',source:guideSource},{id:'pg_current',title:'Jurnalul de seară',start:when(-20),end:when(10),description:'Descriere verificabilă a emisiunii curente.',source:guideSource},{id:'pg_next',title:'Documentar despre oraș',start:when(10),end:when(70),description:'Următoarea emisiune are un interval distinct.',source:guideSource}];
  const catalogue:any={channels,sources:{playlists:[source],xmltv:[guideSource]},favorite_requests:[{name:'PokerGo',channel_id:null,status:'not_in_playlists'}],source_status:{},refreshing:false,guide_updated_at:when(-60)};
  let records:Job[]=initialRecords?[job('scheduled_one','Programare existentă','scheduled'),job('live_one','Emisiune în curs','recording'),job('saved_one','Înregistrare salvată','completed',true),{...job('failed_one','Înregistrare eșuată','failed'),error:'recorder_disk_full'}]:[];
  const calls:Call[]=[],idempotency=new Map<string,Job>();
@@ -34,13 +34,13 @@ async function fixture(page:Page,ro:boolean,theme:string,{initialRecords=false,s
    guideReads++;
    if(control.failGuide)return route.fulfill({status:503,json:{error:'iptv_source_unavailable'}});
    const id=decodeURIComponent(path.split('/').at(-1)!);
-   json={channel_id:id,matched_by:'identifier',programmes:id==='tv_three'?[]:programmes,current:id==='tv_three'?null:programmes[0],upcoming:id==='tv_three'?[]:[programmes[1]],stale:false,updated_at:when(0),errors:[]};
+   json={channel_id:id,matched_by:'identifier',programmes:id==='tv_three'?[]:programmes,current:id==='tv_three'?null:programmes.find(p=>p.id==='pg_current'),upcoming:id==='tv_three'?[]:programmes.filter(p=>p.id==='pg_next'),stale:false,updated_at:when(0),errors:[]};
   }else if(path==='/api/iptv/favorites'){
    const channel=channels.find(c=>c.id===body.channel_id)!;channel.favorite=body.favorite;json=catalogue;
   }else if(path==='/api/iptv/sources'){
    catalogue.sources[body.kind]=body.urls;json={saved:true};
   }else if(path==='/api/iptv/refresh'){
-   if(body.kind==='guide'&&control.refreshGuideTitle){programmes[0]={...programmes[0],title:'Ghid XMLTV actualizat'};catalogue.guide_updated_at=when(0);}
+   if(body.kind==='guide'&&control.refreshGuideTitle){programmes[1]={...programmes[1],title:'Ghid XMLTV actualizat'};catalogue.guide_updated_at=when(0);}
    json={accepted:true};
   }
   else if(path==='/api/iptv/recordings'&&method==='GET')json={items:records,service:{active:service,service_active:service}};
@@ -112,7 +112,7 @@ const row=(page:Page,title:string)=>page.locator('.iptv-recording').filter({has:
 for(const theme of ['ink','night']){
  test(`IPTV catalogue entry, current/next guide, local times and touch geometry ${theme}`,async({page},info)=>{
   const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro,theme);
-  await expect(page.locator('.iptv-guide h2')).toHaveText('PRO TV HD (1080p)');
+  await expect(page.locator('.iptv-guide h2')).toHaveText('PRO TV HD (1080p)');await expect(page.locator('.iptv-programmes')).not.toContainText('Emisiune încheiată');await expect(page.locator('.iptv-programmes article').first()).toHaveClass('current');await expect(page.locator('.iptv-channel').filter({hasText:'NBC Sports NOW'})).not.toContainText('Undefined');
   await expect(page.locator('.iptv-programmes .current')).toContainText((ro?'Acum · ':'Now · ')+'Jurnalul de seară');
   await expect(page.locator('.iptv-programmes .current')).toContainText('Descriere verificabilă a emisiunii curente.');
   await expect(page.locator('.iptv-programmes .current time')).toContainText('17:40');

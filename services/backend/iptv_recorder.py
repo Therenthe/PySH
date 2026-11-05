@@ -498,7 +498,9 @@ class RecorderDaemon:
                     '-format_whitelist', 'hls,mpegts,mov,aac,mp3,ac3,eac3,webvtt',
                     '-allowed_extensions', 'ALL', '-seg_format_options', 'enable_drefs=0:use_absolute_path=0',
                     *self._hls_options(), '-f', 'hls', '-i', source,
-                    '-map', '0:v?', '-map', '0:a?', '-sn', '-dn', '-c', 'copy',
+                    # Automatic selection keeps one highest-resolution video and
+                    # one audio stream, instead of copying every HLS rendition.
+                    '-sn', '-dn', '-c', 'copy',
                     # fd: keeps this owned regular descriptor seekable. pipe:
                     # forbids Matroska's deferred AAC header/trailer updates.
                     '-max_interleave_delta', '1000000', '-max_muxing_queue_size', '1024', '-f', 'matroska', 'fd:'],
