@@ -55,7 +55,7 @@ for(const theme of ['ink','night'] as const){
   expect(await page.locator('.media-items').evaluate(el=>getComputedStyle(el).scrollbarWidth)).toBe('none');
   await page.screenshot({path:info.outputPath(`media-library-${theme}.png`)});
   await page.locator('.media-item').filter({hasText:'Albums'}).tap();await expect(page.locator('.library-path b')).toHaveText('Albums');await expect(page.locator('.library-path b')).not.toContainText('/library');await expect(page.getByRole('button',{name:ro?'Dosarul anterior':'Up one level',exact:true})).toBeVisible();await page.getByRole('button',{name:ro?'Dosarul anterior':'Up one level',exact:true}).tap();expect(f.requested.at(-1)).toBe('/library');await expect(page.locator('.media-item')).toHaveCount(4);
-  await page.locator('.media-sections').getByRole('button',{name:ro?'Servicii':'Services',exact:true}).tap();await expect(page.locator('.service-row')).toHaveCount(3);await expect(page.locator('.media-items')).toHaveCount(0);await page.screenshot({path:info.outputPath(`media-services-${theme}.png`)});
+  await page.locator('.media-sections').getByRole('button',{name:ro?'Servicii':'Services',exact:true}).tap();await expect(page.locator('.service-row')).toHaveCount(4);await expect(page.locator('.media-items')).toHaveCount(0);await page.screenshot({path:info.outputPath(`media-services-${theme}.png`)});
   await page.locator('.service-row').filter({hasText:'Netflix'}).tap();await expect.poll(()=>f.mutations.length).toBe(1);expect(f.mutations[0].body).toMatchObject({service:'netflix'});
  });
 

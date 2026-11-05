@@ -4,9 +4,9 @@ set -euo pipefail
 project_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 test "$(uname -m)" = aarch64 || { echo 'Expected the arm64 target'; exit 1; }
 test -f "$project_root/requirements.lock"
-if ! command -v mpv >/dev/null; then
+if ! command -v mpv >/dev/null || ! command -v ffmpeg >/dev/null; then
   sudo apt-get update
-  sudo apt-get install -y --no-install-recommends mpv python3-venv
+  sudo apt-get install -y --no-install-recommends mpv ffmpeg python3-venv
 fi
 python3 -m venv "$project_root/.venv"
 "$project_root/.venv/bin/python" -m pip install --no-cache-dir -r "$project_root/requirements.lock"

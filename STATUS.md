@@ -1,5 +1,34 @@
 # PySH status
 
+## IPTV installed and verified — 5 November 2026
+
+Media → Services → TV now provides the four requested M3U lists, eight requested
+favorites, XMLTV with dated official PRO TV/Antena 1 supplements, and independent
+MKV recording. Installed runtime `558fa66b7e13`, code
+`dbaf22a9cf72adfccbab4a929efd37245050007c`; previous `1a9b625f7452` retained.
+
+R02 Linux Python 3.12/3.13: 949 tests and 11 subtests PASS; backend hashes are
+unchanged in R03. 108 JavaScript PASS; latest UI retests: 48 Radio/Home/badge,
+96 product/Media and 76 TV/Services cases PASS. Isolated Linux: 15 multi-rendition FFmpeg
+checks PASS. Installed existing-profile Chromium: 24 checks PASS, current-first
+guide, actual HLS and saved 1920×1080 MKV playback/delete confirmation. Independent
+service: 10 checks PASS with the entire Hub stopped, growing file, unchanged
+recorder PID, automatic end and exactly one H.264 video/AAC audio pair.
+
+226 runtime hashes/29 preferences and a separate PC backup verified; network and
+gateway preserved. Original preferences/audio/radio/watch restored, only owned
+test files/jobs removed, diagnostic ports closed. Independent scoped visual
+review: ship. Native EN/Night and synthetic pointer are distinguished from the
+EN/RO/theme fixture matrix and physical acceptance. Public streams can change;
+not every listed channel or codec has been certified. Full product acceptance
+remains OPEN. Complete CI is still pending; the earlier 1742/1814 run and all
+72 legacy-fixture failures/corrections are documented, not hidden or called green.
+
+[User guide](docs/TV.md) · [Plan](docs/plans/iptv-2026-11-05.md) ·
+[Evidence and limits](docs/evidence/iptv-2026-11-05.md)
+
+## Previously delivered UI baseline
+
 Installed runtimef0b140892a9e/codeeb899025. The approved N0/P5/P1/P2/P3/P4/scopedP7
 UI batch is delivered: Radio neon, subtle floating Blender Explore names, common
 commands, Radio library, Home arrangement assistance and real local Media details

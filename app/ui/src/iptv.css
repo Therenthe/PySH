@@ -1,0 +1,71 @@
+/* TV extends the existing Media palette; only the video owns the whole screen. */
+.app .iptv-page{height:100%;min-height:0;display:flex;flex-direction:column;gap:8px;padding:10px 14px;color:var(--ink);overflow:hidden}
+.app .iptv-page button,.app .iptv-live button{min-width:48px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px;border-radius:10px;border:1px solid var(--line-dark);background:var(--surface);color:var(--ink);font:600 15px/1.2 Manrope,sans-serif;touch-action:manipulation}
+.app .iptv-page button:disabled{opacity:.5}
+.app .iptv-page button[aria-pressed=true]{background:var(--soft);color:var(--accent-strong)}
+.app .iptv-page button.primary{background:var(--accent-strong);color:var(--paper)}
+.app .iptv-heading{display:flex;align-items:center;gap:14px;min-height:48px;flex-shrink:0}
+.app .iptv-heading h1{font-size:26px;line-height:1;margin:0;flex:1}
+.app .iptv-heading>span{font-size:14px;color:var(--muted)}
+.app .iptv-tabs{display:flex;gap:8px;flex-shrink:0}
+.app .iptv-tabs button{flex:1;border:0;border-radius:8px}
+.app .iptv-tabs button[aria-pressed=true]{box-shadow:inset 0 -3px var(--accent-strong)}
+.app .iptv-columns{flex:1;min-height:0;display:grid;grid-template-columns:minmax(190px,36%) minmax(0,1fr);gap:16px}
+.app .iptv-catalogue,.app .iptv-guide{display:flex;flex-direction:column;min-height:0;min-width:0}
+.app .iptv-filter{display:flex;gap:6px;margin-bottom:5px;flex-shrink:0}
+.app .iptv-filter button:first-child{flex:1}
+.app .iptv-channel-list,.app .iptv-programmes,.app .iptv-recordings,.app .iptv-sources,.app .iptv-editor-body{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;touch-action:pan-y;min-height:0}
+.app .iptv-channel-list::-webkit-scrollbar,.app .iptv-programmes::-webkit-scrollbar,.app .iptv-recordings::-webkit-scrollbar,.app .iptv-sources::-webkit-scrollbar{display:none}
+.app .iptv-channel-list .iptv-channel{width:100%;justify-content:flex-start;min-height:66px;padding:7px 8px;border:0;border-bottom:1px solid var(--line);border-radius:7px;text-align:left;background:transparent}
+.app .iptv-channel img,.app .iptv-monogram{width:36px;height:36px;object-fit:contain;flex-shrink:0;font-size:14px;display:grid;place-items:center}
+.app .iptv-channel>span:last-child{min-width:0;display:flex;flex-direction:column;gap:3px}
+.app .iptv-channel b{font-size:15px;line-height:1.3;overflow-wrap:anywhere}
+.app .iptv-channel small{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.app .iptv-guide>header{display:flex;align-items:center;gap:8px;min-height:48px;flex-shrink:0}
+.app .iptv-guide h2{font-size:19px;line-height:1.25;margin:0;flex:1;overflow-wrap:anywhere}
+.app .iptv-channel-actions{display:flex;gap:8px;margin:5px 0;flex-shrink:0}
+.app .iptv-channel-actions>button:first-child{flex:1}
+.app .iptv-guide-heading{display:flex;align-items:center;justify-content:space-between;min-height:48px;flex-shrink:0}
+.app .iptv-guide h3{margin:0;font-size:16px}
+.app .iptv-note{font-size:14px;line-height:1.4;color:var(--muted);margin:4px 0 8px}
+.app .iptv-programmes{flex:1}
+.app .iptv-programmes article{padding:10px 0 13px;border-top:1px solid var(--line);display:flex;flex-direction:column;align-items:flex-start;gap:7px}
+.app .iptv-programmes time{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.app .iptv-programmes article>b{font-size:16px;line-height:1.4}
+.app .iptv-programmes p{font-size:14px;line-height:1.45;margin:0}
+.app .iptv-programmes article.current>b{color:var(--accent-strong)}
+.app .iptv-error{display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.4;background:var(--surface);padding:4px 8px;border-radius:8px;flex-shrink:0}
+.app .iptv-error span{flex:1}.app .iptv-notice{font-size:14px;margin:0;color:var(--muted)}
+.app .iptv-query{margin:2px 0 7px;font-size:14px;overflow-wrap:anywhere}
+.app .iptv-missing{padding:10px 7px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:5px;font-size:14px;color:var(--muted)}
+.app .iptv-recordings,.app .iptv-sources{flex:1}
+.app .iptv-recording{padding:12px 0 15px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.app .iptv-recording h2{margin:0;font-size:18px;line-height:1.4}.app .iptv-recording p{margin:4px 0;font-size:14px;line-height:1.4}.app .iptv-recording b{font-size:14px}
+.app .iptv-record-actions{display:flex;gap:8px;flex-wrap:wrap}
+.app .iptv-source-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.app .iptv-source{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.4}
+.app .iptv-source>span{flex:1;min-width:0;overflow-wrap:anywhere}
+.app .iptv-empty{padding:24px 6px;max-width:500px}.app .iptv-empty h2{font-size:20px;line-height:1.35}.app .iptv-empty p{font-size:16px;line-height:1.5}
+.app .iptv-editor-scrim{position:fixed;inset:0;z-index:240;background:#0008;display:grid;place-items:center;padding:12px}
+.app .iptv-editor{display:flex;flex-direction:column;width:min(560px,100%);max-height:calc(100dvh - 24px);background:var(--paper);color:var(--ink);border-radius:16px;box-shadow:0 12px 40px #0005;padding:12px 18px;min-height:0}
+.app .iptv-editor>header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-shrink:0;margin-bottom:8px}.app .iptv-editor h2{font-size:21px;margin:0}
+.app .iptv-editor-body{flex:1}.app .iptv-editor-body>p{font-size:14px;margin:4px 0 10px}
+.app .iptv-time-edit,.app .iptv-stepper{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:15px}
+.app .iptv-time-edit>span,.app .iptv-stepper>span{flex:1;min-width:0}.app .iptv-time-edit b{display:block;font-size:14px;font-variant-numeric:tabular-nums;margin-top:4px}.app .iptv-stepper b{min-width:55px;text-align:center}
+.app .iptv-editor footer{padding-top:10px;flex-shrink:0}.app .iptv-editor footer button{width:100%}
+.app .iptv-delete-dialog{gap:16px}.app .iptv-delete-dialog p{margin:0;font-size:16px}.app .iptv-delete-dialog>div{display:flex;justify-content:flex-end;gap:10px}
+.app .iptv-live{position:fixed;inset:0;z-index:230;background:#000;color:#fff;display:flex;flex-direction:column}
+.app .iptv-live video{width:100%;height:100%;object-fit:contain}
+.app .iptv-live-controls{position:absolute;inset:auto 0 0;display:flex;align-items:center;gap:10px;padding:12px;background:#111e;transition:opacity 180ms ease,transform 180ms ease}
+.app .iptv-live-controls.concealed{opacity:0;transform:translateY(100%);pointer-events:none}
+.app .iptv-live-controls>b{flex:1;font-size:16px;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.app .iptv-live button{background:#25292c;color:#fff;border-color:#697177}
+.app .iptv-live-status{position:absolute;inset:25% 12% auto;text-align:center;padding:18px;background:#111e;border-radius:12px;font-size:16px;line-height:1.5}
+@media(prefers-reduced-motion:reduce){.app .iptv-live-controls{transition:none}}
+/* A fourth service fits without forcing a tiny touch target or a new scroll row. */
+.app .media-redesign .media-service-list{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.app .media-redesign .service-row{padding:9px;gap:8px}.app .media-redesign .service-row small{font-size:14px;line-height:1.25}.app .media-redesign .service-iptv{background:var(--soft);color:var(--accent-strong)}
+
+.app .iptv-source small{display:block;margin-top:5px;color:var(--muted);font-size:14px}
+
+.app .iptv-page button,.app .iptv-live button{-webkit-tap-highlight-color:transparent}

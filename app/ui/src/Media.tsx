@@ -3,18 +3,19 @@ import {formatMediaSize} from './formatMediaSize';
 import './media.css';
 import {ContinueWatching,MediaArtwork,mediaSubtitle,useMediaInspection} from './MediaLibraryDetails';
 import {mediaIdentity,type LocalMediaMetadata,type MediaRequest} from './localMediaApi';
+import {IPTV} from './IPTV';
 
 export type MediaItem={path:string;name:string;kind?:string;type?:string;is_dir?:boolean;mime?:string;size?:unknown;deletable?:boolean;delete_token?:string;media_identity?:string;metadata?:LocalMediaMetadata;artwork_available?:boolean;[key:string]:unknown};
 export type MediaListing={path?:string;parent?:string|null;items?:MediaItem[];error?:string;partial?:boolean};
 export type MediaProps={
- language:'en'|'ro';media:MediaListing;loading?:boolean;busy?:boolean;
+ language:'en'|'ro';timezone?:string;media:MediaListing;loading?:boolean;busy?:boolean;onPrepareTV?:()=>Promise<boolean>;
  localMediaPending?:boolean;externalMediaPending?:boolean;deletionPending?:boolean;
  localAudioError?:boolean;localAudioFilename?:string;localAudioErrorMessage?:string;audioReady:boolean;
  currentPath?:string;playerState?:string;deleteDisabledPaths?:string[];
  t:(key:string)=>string;icon:(name:string,size?:number)=>ReactNode;statusText:(error:string)=>string;
  onBrowse:(path?:string)=>void|Promise<unknown>;onSelect:(item:MediaItem,isVideo:boolean,resume?:boolean)=>void;
  onService:(id:string)=>void;onReplayCurrent:()=>void;onDelete?:(item:MediaItem)=>void;
- onSearch?:(initial:string)=>Promise<string|null>;request?:MediaRequest;historyRevision?:number;
+ onSearch?:(initial:string,title?:string)=>Promise<string|null>;request?:MediaRequest;historyRevision?:number;
 };
 export const isMediaDirectory=(item:MediaItem)=>Boolean(item.is_dir||item.type==='directory'||item.kind==='directory');
 const isVideo=(item:MediaItem)=>item.kind==='video'||item.mime?.startsWith('video/')||/\.(mp4|m4v|mkv|webm|mov)$/i.test(item.name);
@@ -22,7 +23,8 @@ const searchKey=(value:string)=>value.normalize('NFKD').replace(/[\u0300-\u036f]
 const basename=(path:string)=>path.split(/[\\/]/).filter(Boolean).at(-1)||'';
 
 /** Browsing and search stay local to the listing; all device mutations belong to App. */
-export function Media({language,media,loading=false,busy=false,localMediaPending=false,externalMediaPending=false,deletionPending=false,localAudioError=false,localAudioFilename='',localAudioErrorMessage='',audioReady,currentPath,playerState,deleteDisabledPaths=[],t,icon,statusText,onBrowse,onSelect,onService,onReplayCurrent,onDelete,onSearch,request,historyRevision=0}:MediaProps){
+export function Media({language,timezone='Europe/Bucharest',onPrepareTV,media,loading=false,busy=false,localMediaPending=false,externalMediaPending=false,deletionPending=false,localAudioError=false,localAudioFilename='',localAudioErrorMessage='',audioReady,currentPath,playerState,deleteDisabledPaths=[],t,icon,statusText,onBrowse,onSelect,onService,onReplayCurrent,onDelete,onSearch,request,historyRevision=0}:MediaProps){
+ const [tv,setTV]=useState(false);
  const ro=language==='ro',[section,setSection]=useState<'files'|'services'>('files'),[query,setQuery]=useState(''),[searchPending,setSearchPending]=useState(false),[browsing,setBrowsing]=useState(false),[disclosed,setDisclosed]=useState<string|null>(null),browseSerial=useRef(0),folderHeading=useRef<HTMLDivElement>(null),scroll=useRef<HTMLDivElement>(null);
  const pending=busy||localMediaPending||externalMediaPending||deletionPending;
  const items=media.items||[],matches=items.filter(item=>searchKey(item.name).includes(searchKey(query))),hasParent=Boolean(media.parent&&media.parent!==media.path);
@@ -31,6 +33,7 @@ export function Media({language,media,loading=false,busy=false,localMediaPending
  const search=async()=>{if(!onSearch||pending||searchPending)return;setSearchPending(true);try{const result=await onSearch(query);if(result!==null)setQuery(result.trim());}finally{setSearchPending(false);}};
  const deleteLabel=ro?'Șterge fișierul':'Delete file';
  const inspected=useMediaInspection(scroll,JSON.stringify([section,media.path,matches.map(item=>[item.path,item.media_identity])]),request);
+ if(tv&&request&&onSearch&&onPrepareTV)return <IPTV language={language} timezone={timezone} request={request} icon={icon} onBack={()=>setTV(false)} onSearch={(title,value)=>onSearch(value,title)} onPrepare={onPrepareTV} onRecording={item=>onSelect(item,true,false)}/>;
  return <div className="media-page media-redesign">
   <header className="media-heading"><h1 tabIndex={-1}>{t('media')}</h1><div className="media-sections" role="group" aria-label={ro?'Sursă media':'Media source'}>
    <button className={section==='files'?'selected':''} aria-pressed={section==='files'} onClick={()=>setSection('files')}>{icon('folder',20)}<span>{t('onDevice')}</span></button>
@@ -71,8 +74,8 @@ export function Media({language,media,loading=false,busy=false,localMediaPending
     }):loading||browsing?null:<div className="empty-state">{icon(query?'search':'folder',32)}<b>{query?(ro?'Niciun fișier găsit':'No matching files'):t('noFiles')}</b><span>{query?(ro?'Caută alt nume în acest dosar.':'Try another name in this folder.'):t('selectFile')}</span>{query&&<button className="outline" onClick={()=>setQuery('')}>{ro?'Șterge căutarea':'Clear search'}</button>}</div>}
    </div>
   </section>:<section className="service-panel" aria-label={t('services')} aria-busy={externalMediaPending}>
-   <p className="muted" role={externalMediaPending?'status':undefined}>{externalMediaPending?(ro?'Se deschide serviciul…':'Opening service…'):t('websiteOpens')}</p>
-   <div className="media-service-list">{['youtube','netflix','spotify'].map(id=><button className="service-row" key={id} disabled={pending} onClick={()=>onService(id)}><span className={`service-logo service-${id}`} aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none">{id==='youtube'?<path d="m9 6 10 6-10 6Z" fill="currentColor"/>:id==='spotify'?<g stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"><path d="M5 8c4-1.5 10-1 14 1M6 12c4-1 8-0.7 12 1M7 16c3-.7 6-.4 9 1"/></g>:<g fill="currentColor"><path d="M5 3h4v18H5zM15 3h4v18h-4z"/><path d="m5 3 4 0 10 18h-4Z"/></g>}</svg></span><span className="media-service-copy"><b>{t(id)}</b><small>{ro?'Deschide site-ul oficial':'Open official website'}</small></span><span className="service-arrow">{icon('next',22)}</span></button>)}</div>
+   <p className="muted" role={externalMediaPending?'status':undefined}>{externalMediaPending?(ro?'Se deschide serviciul…':'Opening service…'):(ro?'TV rulează în PySH. Celelalte servicii deschid site-urile oficiale.':'Watch TV in PySH. Other services open their official websites.')}</p>
+   <div className="media-service-list">{['iptv','youtube','netflix','spotify'].map(id=><button className="service-row" key={id} disabled={pending||(id==='iptv'&&(!request||!onPrepareTV))} onClick={()=>id==='iptv'?setTV(true):onService(id)}><span className={`service-logo service-${id}`} aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none">{id==='iptv'?<g stroke="currentColor" strokeWidth="1.7"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8M12 18v3m-2-13 5 3-5 3Z"/></g>:id==='youtube'?<path d="m9 6 10 6-10 6Z" fill="currentColor"/>:id==='spotify'?<g stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"><path d="M5 8c4-1.5 10-1 14 1M6 12c4-1 8-0.7 12 1M7 16c3-.7 6-.4 9 1"/></g>:<g fill="currentColor"><path d="M5 3h4v18H5zM15 3h4v18h-4z"/><path d="m5 3 4 0 10 18h-4Z"/></g>}</svg></span><span className="media-service-copy"><b>{id==='iptv'?'TV':t(id)}</b><small>{id==='iptv'?(ro?'Live, ghid și înregistrări':'Live, guide & recordings'):(ro?'Deschide site-ul oficial':'Open official website')}</small></span><span className="service-arrow">{icon('next',22)}</span></button>)}</div>
   </section>}
  </div>;
 }

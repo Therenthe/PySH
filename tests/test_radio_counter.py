@@ -55,6 +55,8 @@ def test_signal_only_after_successful_explicit_catalog_start(tmp_path,identifier
     hub.media_lock = asyncio.Lock()
     hub.power = SimpleNamespace(standby=False)
     hub.media_identity = None
+    hub.iptv_stream = SimpleNamespace(active=lambda: False)
+    hub.recording_in_use = AsyncMock(return_value=False)
     req=SimpleNamespace(app=SimpleNamespace(state=SimpleNamespace(hub=hub)))
     body=Play(source=source,url="https://radio.example.org/stream",path="fixture.wav",station_uuid=identifier)
     result=asyncio.run(play(req,body))

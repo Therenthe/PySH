@@ -40,7 +40,7 @@ def allowed(name):
     return (str(p) == name and not p.is_absolute() and '..' not in p.parts
             and '\\' not in name and '__pycache__' not in p.parts and not name.endswith('.pyc')
             and (name.startswith(('services/backend/', 'app/browser-extension/', 'dist/'))
-                 or name in {'requirements.lock', 'scripts/run-hub.py', 'scripts/install-session.sh',
+                 or name in {'os/systemd/pysh-recorder.service', 'scripts/install-recorder.py', 'requirements.lock', 'scripts/run-hub.py', 'scripts/install-session.sh',
                              'scripts/activate-release.sh', 'scripts/rollback.sh',
                              'scripts/probe-application.py', 'scripts/service-keyboard-host.py',
                              'services/remote/__init__.py', 'services/remote/__main__.py',

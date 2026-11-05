@@ -37,6 +37,10 @@ from .power import PowerController, RemotePresence
 from .artwork import Artwork
 from .remote_control import AndroidControl, RemoteError
 from .presentation import presentation_context
+from .iptv_catalog import IPTVLibrary, IPTVError
+from .iptv_stream import IPTVStream, IPTVStreamError
+from .iptv_recorder import RecorderStore, RecorderError
+from .iptv_api import router as iptv_router, refresh_loop as iptv_refresh_loop
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = Path(os.environ.get("PI_HUB_DATA", str(Path.home() / ".local/share/pi-smart-hub")))
@@ -210,6 +214,11 @@ class Hub:
         self.queue_index = -1
         self.media_lock = asyncio.Lock()
         self.local_media = LocalMedia(directory, self.content, self.media_lock)
+        self.iptv = IPTVLibrary(directory)
+        self.iptv_stream = IPTVStream(idle_timeout=120)
+        self._recorder = None
+        self._recorder_directory = directory
+        self.iptv_refreshing = set()
         self.media_identity = None
         self.started = datetime.now(timezone.utc).isoformat()
         self._playback_snapshot = {}
@@ -221,6 +230,24 @@ class Hub:
         self.android_control = AndroidControl(directory)
         self.artwork = Artwork()
         self.radio_artwork_stations = {}
+
+    @property
+    def recorder(self):
+        if self._recorder is None:
+            self._recorder = RecorderStore(self._recorder_directory)
+        return self._recorder
+
+    async def recording_in_use(self, path):
+        database = self._recorder_directory / 'iptv-recordings' / 'jobs.sqlite3'
+        if not database.exists():
+            return False
+        try:
+            return await media_thread(lambda: self.recorder.in_use(path))
+        except Exception:
+            # A damaged optional recorder must not disable unrelated local media.
+            if Path(path).is_relative_to(Path.home() / 'Videos' / 'MediaTool'):
+                raise ContentError('recording_unavailable')
+            return False
 
     def cache_playback(self, playback):
         self._playback_snapshot = dict(playback) if isinstance(playback, dict) else {}
@@ -342,6 +369,7 @@ class Hub:
     async def start(self):
         self.background(self.initialize_runtime())
         self.background(self.power.run())
+        self.background(iptv_refresh_loop(self))
 
     async def initialize_runtime(self):
         for operation in (self.device.initialize, self.player.start):
@@ -353,6 +381,7 @@ class Hub:
         self.background(self.weather_loop())
 
     async def close(self):
+        self.iptv_stream.close_current()
         await self.visualizer.close()
         tasks = list(self.tasks)
         for task in tasks:
@@ -384,6 +413,7 @@ async def lifespan(app):
 
 
 app = FastAPI(lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
+app.include_router(iptv_router)
 
 
 @app.middleware("http")
@@ -406,7 +436,7 @@ async def boundary(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "no-referrer"
     response.headers["X-Frame-Options"] = "DENY"
-    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"
     if request.url.path.startswith("/api/"):
         response.headers["Cache-Control"] = "no-store"
     return response
@@ -422,6 +452,9 @@ async def invalid_request(request, error):
 @app.exception_handler(DeviceError)
 @app.exception_handler(ContentError)
 @app.exception_handler(WatchError)
+@app.exception_handler(IPTVError)
+@app.exception_handler(IPTVStreamError)
+@app.exception_handler(RecorderError)
 @app.exception_handler(PlayerError)
 @app.exception_handler(ExternalError)
 async def integration_error(request, error):
@@ -688,7 +721,10 @@ def serialized_media(function):
 
 @app.post('/api/media/inspect')
 async def inspect_media(request: Request, body: MediaReference):
-    return await request.app.state.hub.local_media.inspect(body.path, body.media_identity)
+    hub = request.app.state.hub
+    if await hub.recording_in_use(body.path):
+        raise ContentError('media_in_use')
+    return await hub.local_media.inspect(body.path, body.media_identity)
 
 
 @app.get('/api/media/artwork')
@@ -717,10 +753,14 @@ async def clear_continue(request: Request, body: MediaReference):
 async def start_video(request: Request, body: VideoStart):
     hub = request.app.state.hub
     async with hub.media_lock:
+        if hub.iptv_stream.active():
+            raise ContentError('media_in_use')
         if hub.power.standby:
             raise ContentError('standby_active')
         if hub.service_mode:
             raise ContentError('service_mode')
+        if await hub.recording_in_use(body.path):
+            raise ContentError('media_in_use')
         playback = await hub.player.status()
         if playback.get('state') not in {'idle', 'ended', 'error'}:
             raise ContentError('media_in_use')
@@ -757,6 +797,8 @@ async def close_video(request: Request, session_id: str, body: VideoObservation 
 async def delete_media(request: Request, body: MediaDelete):
     async def complete_delete():
         hub = request.app.state.hub
+        if await hub.recording_in_use(body.path):
+            raise ContentError('media_in_use')
         playback = await hub.player.status()
         active = playback.get('kind') in {'audio', 'video', 'local'} and playback.get('state') in {'playing', 'paused', 'buffering', 'connecting'}
         source = playback.get('url', '')
@@ -780,6 +822,8 @@ async def delete_media(request: Request, body: MediaDelete):
 @serialized_media
 async def play(request: Request, body: Play):
     hub = request.app.state.hub
+    if hub.iptv_stream.active():
+        raise ContentError('media_in_use')
     if hub.power.standby:
         return JSONResponse({'error': 'standby_active'}, status_code=409)
     await hub.refresh_device()
@@ -787,6 +831,8 @@ async def play(request: Request, body: Play):
         return JSONResponse({"error": "no_audio_output"}, status_code=409)
     await hub.player.select_output(hub.snapshots["audio"]["output"])
     source = validate_stream_url(body.url) if body.source == "radio" else str(hub.content.resolve_media(body.path))
+    if body.source == "local" and await hub.recording_in_use(source):
+        raise ContentError("media_in_use")
     try:
         media_stat = Path(source).stat() if body.source == 'local' else None
     except OSError as exc:
@@ -817,6 +863,8 @@ async def play(request: Request, body: Play):
 @serialized_media
 async def player(request: Request, body: Transport):
     hub = request.app.state.hub
+    if hub.iptv_stream.active() and body.action not in {'pause', 'stop'}:
+        raise ContentError('media_in_use')
     if hub.power.standby and body.action not in {'pause', 'stop'}:
         return JSONResponse({'error': 'standby_active'}, status_code=409)
     hub.cache_playback({})
@@ -887,6 +935,8 @@ async def external_controls(request: Request):
 @serialized_media
 async def external(request: Request, body: External):
     hub = request.app.state.hub
+    if hub.iptv_stream.active():
+        raise ContentError('media_in_use')
     if hub.power.standby:
         return JSONResponse({'error': 'standby_active'}, status_code=409)
     executable = shutil.which("chromium")
@@ -940,6 +990,7 @@ async def preparation_style():
 @app.post("/api/exit")
 async def exit_hub(request: Request):
     hub = request.app.state.hub
+    hub.iptv_stream.close_current()
     if hub.appliance:
         # Do not leave media playing behind the recovery screen. If stopping a
         # running player fails, retain the normal UI so its controls stay usable.

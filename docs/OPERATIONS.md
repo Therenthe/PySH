@@ -63,6 +63,12 @@ Aceste verificări dovedesc integritatea și recuperarea procesului, nu acceptar
 
 ## Date Media locale
 
+În afara runtime-ului, backupul descris mai sus salvează numai inventarul
+`PROTECTED` din `scripts/appliance-release.py`: configurația labwc, host-ul tastaturii,
+`pysh.service` și cele două fișiere de preferințe. Nu este backupul întregului
+director de date: istoricul Media, datele TV și MKV-urile cer o copie privată
+separată.
+
 Progresul video este păstrat separat de release, în directorul privat de date
 `local-media/watch.json`. Include-l în backupul privat al datelor aplicației;
 conține căi locale și nu se publică în Git. Maximum40înregistrări sunt persistate,
@@ -73,12 +79,86 @@ Un volum deconectat ascunde temporar intrările; citirea nu șterge istoricul.
 
 Metadatele și miniaturile reale sunt un cache RAM limitat, regenerat la nevoie
 prin procesul mpv separat și limitat; lipsa lor păstrează numele și pictograma
-tipului de fișier. Nu sunt necesare ffmpeg/ffprobe, conturi sau un scanner nou.
+tipului de fișier. Acest cache Media nu necesită ffmpeg/ffprobe, conturi sau un
+scanner nou; recorderul TV are separat dependența FFmpeg de mai jos.
 La ieșire se salvează observația video și se închide sesiunea. În caz de eroare,
 utilizatorul poate reîncerca sau alege explicit revenirea fără salvare. Dacă hubul
 nu confirmă închiderea, ieșirea locală cere o alegere distinctă; curățarea remote
 rămâne neconfirmată până la expirarea/înlocuirea sesiunii. Expirarea logică este
 120s, cu eliberare fizică la următoarea accesare/curățare periodică.
+
+## TV, înregistrări și date private
+
+Utilizarea, sursele M3U/XMLTV și limitele sunt în [TV](TV.md). Recorderul necesită
+pachetul OS `ffmpeg` (care furnizează și `ffprobe`) din distribuția țintă;
+instalarea sa este o operație de dependențe separată de update-ul runtime.
+Definiția imaginii include acum această dependență, dar imaginea modificată nu
+a fost construită sau flash-uită. Proba Linux izolată cu FFmpeg real 7.1.5 a
+trecut 14 verificări după corectarea ieșirii MKV seekable pentru AAC; aceasta
+nu certifică redarea HLS/MKV în Chromium pe panou sau instalarea noului runtime.
+Starea candidatului și acceptarea completă, încă OPEN, se urmăresc în STATUS.
+
+După activarea unui release verificat care conține recorderul și unitatea,
+instalarea explicită pe appliance este:
+
+```sh
+sudo python3 /opt/pysh/current/scripts/install-recorder.py
+```
+
+Scriptul cere Linux/root, release versionat activ și markerul existent
+`/opt/pysh/runtime-source.json` cu build/hash-ul unității corespunzător. Nu
+fabrica markerul. Instalează `/etc/systemd/user/pysh-recorder.service` numai
+dacă lipsește; acceptă copia identică și refuză o unitate existentă diferită.
+Refuză actualizarea serviciului dacă baza are joburi `starting`, `recording`
+sau `stopping`. Apoi rulează daemon-reload și enable/start în managerul user
+`pysh`; nu restartează Hub și nu certifică pornirea după un reboot.
+[Detaliile unității](../os/systemd/README.md) includ verificarea read-only.
+
+Unitatea recorderului nu este `PartOf=pysh.service`. Închiderea UI sau restartul
+Hub nu oprește recorderul; dispozitivul trebuie să rămână pornit, nesuspendat,
+online și cu spațiu liber. Oprirea/restartul recorderului întrerupe joburile
+active, păstrează fișierele parțiale și marchează întreruperea. Joburile al
+căror interval a trecut sunt marcate ca ratate; nu se promite reluare continuă.
+
+Înainte de update/rollback care schimbă codul recorderului, așteaptă terminarea
+sau oprește și salvează explicit toate înregistrările active; verifică și
+programările apropiate. Oprește recorderul înainte de comutarea `current`, apoi
+repornește-l cu release-ul compatibil și verifică starea reală. Tool-ul
+`appliance-release.py` comută/repornește numai Hub; nu coordonează automat
+daemonul separat. Înainte de rollback la un release fără recorder, oprește și
+dezactivează `pysh-recorder.service`, pentru a nu porni cu un modul absent.
+O unitate schimbată cere migrare explicită: installerul refuză suprascrierea ei.
+
+`DATA` este `PI_HUB_DATA` dacă este configurat, altfel
+`~/.local/share/pi-smart-hub`; pe appliance implicit este
+`/home/pysh/.local/share/pi-smart-hub`. API și daemonul trebuie să folosească
+același director. Datele private sunt:
+
+- `DATA/iptv/config.json`: surse și favorite; `DATA/iptv/cache.json`: catalog,
+  ghid și starea ultimei actualizări, regenerabile din surse.
+- `DATA/iptv-recordings/jobs.sqlite3`: programări, stări și identități de
+  fișiere, cu SQLite WAL. Include URL-uri și titluri private.
+- `~/Videos/MediaTool`: MKV-uri, implicit `/home/pysh/Videos/MediaTool`.
+  Directorul de ieșire este reținut în SQLite; nu îl muta independent de bază.
+- `DATA/local-media/watch.json`: istoricul privat al vizionării locale.
+
+Păstrează copiile în afara repository-ului, cu acces privat și ownership-ul
+`pysh`. Pentru baza live folosește API-ul Python SQLite
+`source_connection.backup(destination_connection)` către un fișier nou privat,
+apoi verifică acea copie cu `PRAGMA integrity_check` și checksum pe PC separat.
+API-ul de backup produce o copie tranzacțional consistentă chiar cu daemonul
+activ. Nu copia independent `jobs.sqlite3`, `-wal` și `-shm` în timp ce sunt
+scrise și nu considera backupul runtime o copie a acestor date.
+
+Copiază separat configurația, istoricul și MKV-urile finalizate; un backup al
+bazei nu conține imaginile/audio din MKV și nu fixează un fișier încă în creștere.
+Pentru un set comun de restaurare, oprește și salvează joburile, oprește Hub și
+recorderul, apoi salvează baza prin API-ul SQLite și restul fișierelor. La
+restaurare păstrează mai întâi copia stării existente, ține ambii scriitori
+opriți și restaurează baza prin API-ul SQLite plus fișierele asociate în căile
+lor originale, cu aceleași permisiuni. Verifică integritatea și disponibilitatea
+MKV-urilor înainte de repornire; restaurarea bazei nu recuperează emisiuni
+pierdute. Proba completă backup/restaurare pe candidat rămâne necesară.
 
 ## Inventar și pregătire (desktop importat)
 

@@ -3,6 +3,7 @@ import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import { textLegibility } from './legibility';
 
 // Strict browser-only fixtures: no production adapter returns these states.
+const videoIdentity='m1_'+'a'.repeat(64);
 async function fixture(page: Page, language: 'en'|'ro', theme: 'ink'|'night', setupComplete = true) {
   const state: any = {
     appliance:false, serviceMode:false,
@@ -12,13 +13,30 @@ async function fixture(page: Page, language: 'en'|'ro', theme: 'ink'|'night', se
     audio: { available:true, ready:true, volume:25, mute:false, output:'test-speaker', outputs:[{id:'test-speaker',name:'Test speaker',description:'Bluetooth test output', bluetooth:true,active:true}] },
     player:{state:'idle'}, weather:{ available:true, current:{temperature_c:21,feels_like_c:20,weather_code:0}, daily:[{date:'2026-10-02',max_c:23,min_c:14},{date:'2026-10-03',max_c:22,min_c:15}],updated_at:'2026-10-02T12:00:00+03:00',attribution:'Open-Meteo' },
   };
-  const f = { state, unexpected:[] as string[], actions:[] as any[], radio:'populated', media:'populated', backendDown:false, radioQueries:[] as string[] };
+  const f = { state, unexpected:[] as string[], actions:[] as any[], radio:'populated', media:'populated', backendDown:false, radioQueries:[] as string[], videoSessions:[] as {method:string;path:string;body:any}[], videoOwner:null as string|null };
   await page.route('**/api/**', async route => {
     const req=route.request(), path=new URL(req.url()).pathname, method=req.method();
     if(f.backendDown && path==='/api/state') { await route.abort('failed'); return; }
     let json:any; let status=200; const body=method==='GET'?{}:req.postDataJSON();
     if(path==='/api/session' && method==='GET') json={token:'browser-test-only'};
     else if(path==='/api/state' && method==='GET') json=state;
+    else if(path==='/api/media/continue' && method==='GET') json={items:[]};
+    else if(path==='/api/media/inspect' && method==='POST') {
+      expect(body.media_identity).toBe(videoIdentity);json={state:'unavailable'};
+    }
+    else if(path==='/api/media/video-session' && method==='POST') {
+      expect(body).toEqual({path:expect.stringMatching(/^\/test\/.+\.(mp4|webm)$/),media_identity:videoIdentity,resume:false});
+      expect(f.videoOwner).toBeNull();
+      const session_id=String(f.videoSessions.filter(event=>event.method==='POST').length+1).padStart(32,'0');
+      f.videoOwner=session_id;f.videoSessions.push({method,path,body});
+      json={session_id,media_identity:videoIdentity,resume_position_s:0,stream_url:`/api/media/file?session_id=${session_id}`};
+    }
+    else if(path.startsWith('/api/media/video-session/') && ['PATCH','DELETE'].includes(method)) {
+      expect(path).toBe(`/api/media/video-session/${f.videoOwner}`);
+      if(body){expect(Number.isSafeInteger(body.sequence)&&body.sequence>0).toBe(true);if(!body.heartbeat){expect(Number.isFinite(body.position_s)&&body.position_s>=0).toBe(true);expect(Number.isFinite(body.duration_s)&&body.duration_s>0).toBe(true);expect(typeof body.ended).toBe('boolean');}}
+      f.videoSessions.push({method,path,body});if(method==='DELETE')f.videoOwner=null;
+      json={updated:true,closed:method==='DELETE'};
+    }
     else if(path==='/api/preferences' && method==='PATCH'){f.actions.push({path,body});Object.assign(state.preferences,body);json=state.preferences;}
     else if(path==='/api/radio' && method==='GET') {
       f.radioQueries.push(req.url());if(f.radio==='error'){json={stations:[],error:'radio_catalog_unavailable'};}
@@ -130,30 +148,31 @@ for(const theme of ['ink','night'] as const) {
   });
   test(`video handoff queues behind an in-flight radio play ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
-    await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Video test folder',items:[{name:'Test video.mp4',path:'/test/video.mp4',kind:'video'}]}}));
+    await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Video test folder',items:[{name:'Test video.mp4',path:'/test/video.mp4',kind:'video',media_identity:videoIdentity}]}}));
     await page.route('**/api/media/file?**',route=>route.fulfill({contentType:'video/mp4',body:'invalid decoder input'}));
     let release!:()=>void,playStarted=false,stopStarted=false;const gate=new Promise<void>(resolve=>release=resolve);
     await page.route('**/api/play',async route=>{playStarted=true;await gate;f.state.player={state:'playing',kind:'radio',url:'https://example.com/test.mp3',title:'Test station'};await route.fulfill({json:f.state.player});});
     await page.route('**/api/player',async route=>{expect(route.request().postDataJSON()).toEqual({action:'stop'});stopStarted=true;f.state.player={state:'idle',url:'',title:''};await route.fulfill({json:f.state.player});});
     await page.goto('/');await page.locator('.main-nav button').nth(1).tap();await page.locator('.station-row').first().getByRole('button').first().tap();await expect.poll(()=>playStarted).toBe(true);
-    await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).and(page.locator('.media-item')).tap();await page.waitForTimeout(300);expect(stopStarted).toBe(false);await expect(page.locator('.video-overlay')).toHaveCount(0);
-    release();await expect(page.locator('.video-overlay')).toBeVisible();expect(stopStarted).toBe(true);expect(f.state.player.state).toBe('idle');expect(f.unexpected).toEqual([]);
+    await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).and(page.locator('.media-item')).tap();await page.waitForTimeout(300);expect(stopStarted).toBe(false);expect(f.videoSessions).toEqual([]);await expect(page.locator('.video-overlay')).toHaveCount(0);
+    release();await expect(page.locator('.video-overlay')).toBeVisible();expect(stopStarted).toBe(true);expect(f.state.player.state).toBe('idle');expect(f.videoSessions.filter(event=>event.method==='POST')).toHaveLength(1);expect(f.unexpected).toEqual([]);
   });
   test(`local video waits for successful stop of other playback ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme);
-    await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Video test folder',items:[{name:'Test video.mp4',path:'/test/video.mp4',kind:'video'}]}}));
+    await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Video test folder',items:[{name:'Test video.mp4',path:'/test/video.mp4',kind:'video',media_identity:videoIdentity}]}}));
     await page.route('**/api/media/file?**',route=>route.fulfill({contentType:'video/mp4',body:'invalid decoder input'}));
     for(const kind of ['radio','audio','stale-idle']){
       // Idle can be the last polled snapshot while actual playback has already started.
       const originalState=kind==='stale-idle'?'idle':'playing';
       f.state.player={state:originalState,kind:kind==='stale-idle'?'radio':kind,url:kind==='stale-idle'?'':kind==='radio'?'https://example.com/radio':'/test/audio.mp3',title:'Existing playback'};
       await page.route('**/api/player',route=>route.fulfill({status:503,json:{error:'player_timeout'}}));
+      const opened=f.videoSessions.filter(event=>event.method==='POST').length;
       await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).and(page.locator('.media-item')).tap();
-      await expect(page.locator('.error-strip')).toBeVisible();await expect(page.locator('.video-overlay')).toHaveCount(0);expect(f.state.player.state).toBe(originalState);
+      await expect(page.locator('.error-strip')).toBeVisible();await expect(page.locator('.video-overlay')).toHaveCount(0);expect(f.state.player.state).toBe(originalState);expect(f.videoSessions.filter(event=>event.method==='POST')).toHaveLength(opened);
       let release!:()=>void,requested=false;const gate=new Promise<void>(resolve=>release=resolve);
       await page.route('**/api/player',async route=>{expect(route.request().postDataJSON()).toEqual({action:'stop'});requested=true;await gate;Object.assign(f.state.player,{state:'idle',url:'',title:''});await route.fulfill({json:{ok:true}});});
-      await page.getByRole('button',{name:'Test video.mp4',exact:false}).and(page.locator('.media-item')).tap();await expect.poll(()=>requested).toBe(true);await expect(page.locator('.video-overlay')).toHaveCount(0);
-      release();await expect(page.locator('.video-overlay')).toBeVisible();expect(f.state.player.state).toBe('idle');await page.locator('.video-back').tap();
+      await page.getByRole('button',{name:'Test video.mp4',exact:false}).and(page.locator('.media-item')).tap();await expect.poll(()=>requested).toBe(true);await expect(page.locator('.video-overlay')).toHaveCount(0);expect(f.videoSessions.filter(event=>event.method==='POST')).toHaveLength(opened);
+      release();await expect(page.locator('.video-overlay')).toBeVisible();expect(f.state.player.state).toBe('idle');expect(f.videoSessions.filter(event=>event.method==='POST')).toHaveLength(opened+1);await page.locator('.video-back').tap();await expect(page.locator('.video-overlay')).toHaveCount(0);expect(f.videoOwner).toBeNull();
     }
     expect(f.unexpected).toEqual([]);
   });
@@ -225,7 +244,7 @@ for(const theme of ['ink','night'] as const) {
       let frame=0;const draw=setInterval(()=>{ctx.fillStyle=frame++%2?'#4a7c6a':'#e5c257';ctx.fillRect(0,0,160,90);},80);
       recorder.start();await new Promise(resolve=>setTimeout(resolve,2400));recorder.stop();const blob=await done;clearInterval(draw);stream.getTracks().forEach(track=>track.stop());return Array.from(new Uint8Array(await blob.arrayBuffer()));
     });
-    await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Browser decoder fixture',items:[{name:'Real generated test.webm',path:'/test/real.webm',kind:'video'}]}}));
+    await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Browser decoder fixture',items:[{name:'Real generated test.webm',path:'/test/real.webm',kind:'video',media_identity:videoIdentity}]}}));
     await page.route('**/api/media/file?**',route=>{const range=route.request().headers().range?.match(/bytes=(\d+)-(\d*)/);const data=Buffer.from(bytes);if(!range)return route.fulfill({contentType:'video/webm',headers:{'Accept-Ranges':'bytes'},body:data});const start=Number(range[1]),end=Math.min(range[2]?Number(range[2]):data.length-1,data.length-1);return route.fulfill({status:206,contentType:'video/webm',headers:{'Accept-Ranges':'bytes','Content-Range':`bytes ${start}-${end}/${data.length}`},body:data.subarray(start,end+1)});});
     await page.locator('.main-nav button').nth(2).tap();await page.locator('.media-item').tap();
     // MediaRecorder WebM initially exposes infinite duration; a normal local seekable file has a finite duration.
@@ -255,7 +274,7 @@ for(const theme of ['ink','night'] as const) {
   test(`invalid local video keeps retry and return visible ${theme}`,async({page},info)=>{
     const ro=info.project.name==='touch-ro',f=await fixture(page,ro?'ro':'en',theme),defects:string[]=[];
     f.state.audio.ready=false;let attempts=0;
-    await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Test video folder',items:[{name:'Broken video.mp4',path:'/test/broken.mp4',kind:'video'}]}}));
+    await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Test video folder',items:[{name:'Broken video.mp4',path:'/test/broken.mp4',kind:'video',media_identity:videoIdentity}]}}));
     await page.route('**/api/media/file?**',route=>{attempts++;return route.fulfill({contentType:'video/mp4',body:'invalid video test content'});});
     await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.locator('.media-item').tap();
     await expect(page.locator('.video-error')).toBeVisible();await expect(page.locator('.video-error')).toContainText(ro?'Acest video nu a putut fi redat.':'This video could not be played.');await expect(page.locator('.video-error')).toContainText(ro?'Reîncearcă sau revino la bibliotecă':'Try again or return to the library');await expect(page.locator('.video-audio-warning')).toBeVisible();await capture(page,info,'invalid-video',defects);
@@ -405,13 +424,14 @@ for(const theme of ['ink','night'] as const){
   await page.addInitScript(()=>{
    const calls={play:0,pause:0,paused:true};(window as any).__videoCalls=calls;
    Object.defineProperty(HTMLMediaElement.prototype,'paused',{get:()=>calls.paused});
+   Object.defineProperty(HTMLMediaElement.prototype,'duration',{get:()=>120});
    HTMLMediaElement.prototype.play=function(){calls.play++;calls.paused=false;this.dispatchEvent(new Event('play'));this.dispatchEvent(new Event('playing'));return Promise.resolve();};
    HTMLMediaElement.prototype.pause=function(){calls.pause++;calls.paused=true;this.dispatchEvent(new Event('pause'));};
   });
-  await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Video folder',items:[{name:'Test video.mp4',path:'/test/video.mp4',kind:'video'}]}}));
+  await page.route('**/api/media?**',route=>route.fulfill({json:{path:'Video folder',items:[{name:'Test video.mp4',path:'/test/video.mp4',kind:'video',media_identity:videoIdentity}]}}));
   await page.route('**/api/media/file?**',route=>route.fulfill({contentType:'video/mp4',body:''}));
   await page.goto('/');await page.locator('.main-nav button').nth(2).tap();await page.getByRole('button',{name:'Test video.mp4',exact:false}).and(page.locator('.media-item')).tap();
-  const v=page.locator('video'),play=page.locator('.video-play');await v.dispatchEvent('canplay');await expect.poll(()=>page.evaluate(()=>(window as any).__videoCalls.play)).toBe(1);
+  const v=page.locator('video'),play=page.locator('.video-play');await v.dispatchEvent('loadedmetadata');await v.dispatchEvent('canplay');await expect.poll(()=>page.evaluate(()=>(window as any).__videoCalls.play)).toBe(1);
   f.state.audio.ready=false;await expect(play).toBeDisabled();await expect(page.locator('.video-state')).toHaveText(ro?'Audio deconectat. Video în pauză.':'Audio disconnected. Video paused.');
   await page.screenshot({path:info.outputPath('video-output-lost.png')});expect(await page.evaluate(()=>(window as any).__videoCalls.paused)).toBe(true);await v.dispatchEvent('canplay');expect(await page.evaluate(()=>(window as any).__videoCalls.play)).toBe(1);
   f.state.audio.ready=true;await expect(play).toBeEnabled();await expect(page.locator('.video-state')).toHaveText(ro?'Audio pregătit. Apasă Redă pentru a continua.':'Audio ready. Press Play to resume.');expect(await page.locator('.video-state,.video-play,.video-back').evaluateAll(elements=>elements.flatMap(el=>{const r=el.getBoundingClientRect();return r.left<0||r.top<0||r.right>800||r.bottom>480||el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1?[el.className]:[]}))).toEqual([]);await v.dispatchEvent('canplay');expect(await page.evaluate(()=>(window as any).__videoCalls.play)).toBe(1);

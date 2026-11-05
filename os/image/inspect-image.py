@@ -53,6 +53,7 @@ assert layout['files']['setup.sh'] == layout['setup_sha256']
 manifest = json.loads(Path('os/image/payload/manifest.json').read_text())
 for name, expected in manifest['files'].items():
     assert hashlib.sha256(read_root('/opt/pysh/current/'+name)).hexdigest() == expected, name
+assert read_root('/etc/systemd/user/pysh-recorder.service') == Path('os/systemd/pysh-recorder.service').read_bytes()
 for name in ['pysh.service']:
     assert read_root('/etc/systemd/user/'+name) == Path('os/image/assets', name).read_bytes()
 for name, installed in {
