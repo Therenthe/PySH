@@ -1,6 +1,6 @@
 # PySH status
 
-TV recovery R2 candidate88efb8ce5f6e: compact guide/fullscreen controls and bounded recovery, plus no-store entry and versioned kiosk URL. R1 installed files were correct but native browser showed old UI; HTTP index matchednewpackage,cacheheaderabsent. R2 has952Python/46platformskips/11subtests and11entry/launcher checksPASS, warm-profile fixturePASS. Existing113JS,20newTV,40+4TV,76shared,visual8+8 andkeyboard12+4 PASS; unchangedUIassets. R2 installation/native verification pending; acoustic testing excluded by user. See docs/evidence/tv-recovery-ux-2026-11-06.md.
+TV recovery and touchscreen UI installed and verified: runtime88efb8ce5f6e/code09162997ea1ac878bf77fa0c306c8fcc07bb4e82. Versioned kiosk URL/no-store and loaded script equality verified in existing profile.20nativechecksPASS: actual Antena1/PROTV1920x1080,27spause/resume,compact guide,controls,stop/focus,next/return guide.228runtimehashes/29preferences and PCbackup verified; previous retained; network/gateway preserved. Originalidle/preferences/history/volume restored;3servicesactive,0ownedconverters/tempdirs,debugclosed.952Python/46platformskips/11subtests,113JS,20newTV,40+4TVretets,76shared,independentvisual8+8/keyboard12+4 andnativevisualreviewPASS. Physicalaudio excluded byuser; all30fullproductcriteriaOPEN. Initialreportedblockage not reproduced; nativeR1staleUI and R2harnessfailure are retained honestly in evidence. See docs/plans/tv-recovery-ux-2026-11-06.md and docs/evidence/tv-recovery-ux-2026-11-06.md.
 
 
 ## Official Digi Sport1 installed —5November2026

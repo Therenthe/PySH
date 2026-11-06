@@ -11,8 +11,8 @@ Scop activ cerut de utilizator: (1) diagnostic și recuperare a stării inutiliz
 - [x] Controale SVG, schimbare canal și volum în fullscreen.
 - [x] Regresii EN/RO × Ink/Noapte; erori/pending/anulare/focus.
 - [x] Auditori independenți, remedieri și repetarea probelor afectate.
-- [ ] Publicare GitHub verificată, backup PC verificat, instalare reversibilă.
-- [ ] Verificare nativă pe noul candidat, restaurare și raport final.
+- [x] Publicare GitHub verificată, backup PC verificat, instalare reversibilă.
+- [x] Verificare nativă pe noul candidat, restaurare și raport final.
 
 ## Diagnostic observat
 
@@ -50,3 +50,13 @@ indexul nou, identic cu manifestul; lipsea no-store, iar kiosk folosea același 
 R2 `88efb8ce5f6e`: GET/HEAD pentru index nu mai răspund 304, kiosk folosește hashul
 indexului în URL. Nu se șterge cache/profilul și nu se resetează conturi.
 Cele 11 probe noi HTTP/launcher PASS; noua livrare și retestarea nativă rămân PENDING.
+
+## Încheiere
+
+R2 `88efb8ce5f6e` / cod GitHub `09162997ea1ac878bf77fa0c306c8fcc07bb4e82`
+instalat și verificat. 20 probe native PASS: index/URL/script curent, ghid,
+PRO TV și Antena 1 1920×1080, pauză27s, reluare, comenzi/revenire și schimbare
+canal cu ghid sincron. Cleanup și verificarea finală servicii/resurse PASS.
+Preferințe/istoric/volum/mute și starea inițială idle restaurate. Sunetul fizic
+nu a fost verificat la cererea utilizatorului. Cele două obiective sunt închise
+în acest domeniu; acceptarea completă a produsului rămâne OPEN.

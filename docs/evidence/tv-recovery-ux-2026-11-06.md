@@ -88,3 +88,49 @@ R2 regresie Python completă: 952 PASS, 46 skip de platformă, 11 subteste.
 Fixture Chromium cu profil persistent: rădăcina veche rămâne cache-uită fără
 cerere nouă; URL-ul versionat încarcă noul script, apoi no-store revalidează
 la reload și relansare în același profil. Nu s-a șters profilul sau cache-ul.
+
+## R2 instalat și verificat nativ
+
+Runtime `88efb8ce5f6e`, cod GitHub `09162997ea1ac878bf77fa0c306c8fcc07bb4e82`;
+precedent `fda00541134a` păstrat, iar release-urile mai vechi nu au fost șterse.
+Backup pe PC verificat prin checksum și citirea integrală, 228 hashuri runtime,
+29 preferințe, rețea/gateway păstrate. Fără modificări de pachete/OS/dependențe.
+
+20 probe native PASS, în profilul Chromium existent:
+
+- URL kiosk versionat; răspuns HTML no-store; scripturile efectiv încărcate
+  corespund indexului servit și pachetului instalat. Noua interfață este vizibilă.
+- Panou800×480, două emisiuni complete cu acțiuni48×48 în238px de ghid;
+  a treia începe mai jos. Detaliile se extind și se restrâng. Fără footer radio.
+- PRO TV1920×1080:65cadre, poziție în avans; pauză27s fără eroare falsă,
+  reluare cu233cadre totale și poziție din nou în avans.
+- Fullscreen800×480; retragere automată și reapariție la pointer; Stop revine
+  și restaurează focusul pe Play.
+- Antena11920×1080:41cadre cu progres real. Următorul canal schimbă deținerea
+  sesiunii și revine cu același canal selectat în ghid. Acest test nu declară
+  decodarea noului canal B1, ci comutarea/închiderea și coerența selecției.
+- Lipsa ieșirii audio este afișată, cu slider dezactivat; imaginea funcționează.
+  Volumul și mute au probe API/UI separate, nu certificare acustică fără boxă.
+
+Prima încercare R2 a avut o eroare de harness: APIRequestContext a încercat
+loopback-ul PC în locul Raspberry. Cererea a fost mutată în contextul paginii
+Raspberry; nu s-a schimbat produsul pentru acest eșec. Încercarea și restaurarea
+sunt păstrate separat; runda finală20/20 este cea acceptată.
+
+Cleanup final PASS: preferințe, istoric, volum/mute și starea inițială idle
+restaurate; numai fixture-ul propriu eliminat, ferestrele și diagnosticul închise.
+`audioRestored=false` este consemnat corect: ieșirea era deja indisponibilă,
+utilizatorul a cerut continuarea fără boxă. Nu s-a făcut asociere/reconectare BT.
+Verificare read-only ulterioară PASS: runtime/precedent corecte, trei servicii
+active, zero convertoare/directoare temporare proprii, porturile debug închise.
+
+Dovezile brute sunt în directoarele private `native-tv-recovery-r2-20261106`
+și auditurile independente asociate. Codul UI randat nativ este același din
+probele EN/RO × Ink/Noapte. Nu se acordă scor global sau acceptare fizică tactilă
+numai din pointerele sintetizate. Cele30 criterii complete rămân OPEN.
+
+Revizia vizuală independentă a capturilor native01–07 și a raportului proaspăt
+confirmă scoped PASS pe același runtime/cod. Observație minoră păstrată pentru
+următoarea rafinare: un canal fără programe poate afișa încă sufixul „Ghid salvat”
+în antet, deși corpul explică corect lipsa programului. Nu a blocat navigarea,
+redarea sau recuperarea; nu este prezentat ca ghid complet disponibil.
