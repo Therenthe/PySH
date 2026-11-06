@@ -5,7 +5,7 @@ function createPyshDeviceControls({context,onBusy,onPresentation,onPane}) {
    .drawer{width:min(736px,calc(100% - 24px));padding:12px;max-height:calc(100% - 8px);overflow:auto;scrollbar-width:none}.heading{height:48px;margin-bottom:6px}.title{font-size:22px;line-height:26px}.subtitle{line-height:18px}.identity svg{width:32px;height:32px}.actions{gap:8px;margin-bottom:6px}.action{min-height:48px;padding:0 8px;font-size:16px;line-height:20px;flex-direction:row;gap:10px}.action svg{width:22px;height:22px}.keyboard{height:48px;min-height:48px;width:100%;margin:0;justify-content:flex-start;padding:0 12px;background:var(--raised);color:var(--text)}.close{border-radius:12px;background:var(--raised);border:0}.status{margin:6px 0 0;padding:8px;min-height:48px;max-height:48px;overflow:auto;font-size:14px;line-height:16px}.drawer:has(>.status[style*="block"]) .device-feedback{display:none}
    .device-controls{display:flex;flex-direction:column;gap:6px}.device-settings{display:grid;grid-template-columns:1fr 1fr;gap:16px}.device-setting{height:62px;min-width:0}.device-setting label{display:flex;justify-content:space-between;align-items:center;height:14px;font-size:14px;line-height:14px;color:var(--muted)}.device-setting label b{font-weight:500}.device-setting>div{height:48px;display:flex;align-items:center;gap:8px}.device-setting input{appearance:auto;height:48px;min-width:0;width:100%;flex:1;margin:0;accent-color:var(--accent);touch-action:none}.device-button{all:initial;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:10px;min-height:48px;min-width:48px;padding:0 12px;border:0;border-radius:12px;background:var(--raised);color:var(--text);font:500 16px/20px system-ui;cursor:pointer;touch-action:manipulation}.device-button:disabled{opacity:.6;cursor:wait}.device-button:active:not(:disabled){transform:scale(.98)}.device-button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.device-mute[aria-pressed=true]{background:var(--accent);color:var(--accent-ink)}.device-mute{width:48px;padding:0;flex:none}.device-output{height:48px;width:100%;justify-content:flex-start;text-align:left}.device-output>span{flex:1;min-width:0}.device-output small{display:block;font-size:14px;line-height:17px;color:var(--muted)}.device-output b{display:block;font-size:16px;line-height:20px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.device-feedback{height:48px;display:flex;align-items:flex-start;gap:8px;font:14px/16px system-ui;color:var(--text)}.device-feedback>span{min-width:0;flex:1;max-height:48px;overflow:auto}.device-feedback button{width:48px;height:48px;padding:0;flex:none}.device-feedback[role=alert]{color:var(--error-text)}.device-feedback button[hidden],.device-feedback[hidden],.device-settings[hidden],.device-output[hidden],.device-output-pane[hidden]{display:none}.device-output-heading{display:flex;align-items:center;gap:12px;height:48px}.device-output-heading h3{margin:0;font:600 18px/22px system-ui}.device-output-list{display:flex;flex-direction:column;gap:8px;max-height:min(276px,calc(100vh - 204px));overflow:auto;scrollbar-width:none;margin-top:6px}.device-output-list button{justify-content:flex-start;flex:none;text-align:left;overflow-wrap:anywhere}.device-output-list button>span{flex:1}.device-output-list button[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--accent)}.device-controls input:focus-visible{outline:3px solid var(--focus);outline-offset:-3px}
    @media(prefers-reduced-motion:reduce){.device-button{transition:none}}`;
-  let ro=false,view=null,pending=false,loading=false,returning=false,failure=false,needsCheck=false,intent=null,sequence=0;
+  let ro=false,view=null,pending=false,loading=false,returning=false,failure=false,needsCheck=false,intent=null,sequence=0,adjustment=null,intentNeedsCommit=false;
   const text=()=>({unavailable:ro?'Indisponibil':'Unavailable',volume:ro?'Volum':'Volume',brightness:ro?'Luminozitate':'Brightness',screen:ro?'Luminozitate ecran':'Screen brightness',output:ro?'Ieșire audio':'Audio output',none:ro?'Nicio ieșire audio disponibilă':'No audio output available',mute:ro?'Fără sunet':'Mute',unmute:ro?'Activează sunetul':'Unmute',check:ro?'Verifică starea':'Check status',retry:ro?'Încearcă din nou':'Try again',back:ro?'Înapoi':'Back',applying:ro?'Se aplică…':'Applying…',loading:ro?'Se verifică starea…':'Checking status…',unverified:ro?'Rezultatul nu poate fi verificat. Verifică starea înainte de a reîncerca.':'Result could not be verified. Check status before trying again.',failed:ro?'Comenzile dispozitivului nu sunt disponibile.':'Device controls are unavailable.'});
   const icon=(button,path)=>{const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');const shape=document.createElementNS('http://www.w3.org/2000/svg','path');shape.setAttribute('d',path);svg.append(shape);button.append(svg);};
   const button=()=>{const element=document.createElement('button');element.className='device-button';return element;};
@@ -19,11 +19,13 @@ function createPyshDeviceControls({context,onBusy,onPresentation,onPane}) {
   function usable(value){return value&&['en','ro'].includes(value.language)&&['ink','night'].includes(value.theme)&&typeof value.busy==='boolean'&&value.audio&&Array.isArray(value.audio.outputs)&&value.brightness;}
   function matches(command,state){if(!command)return true;const key=command.action.slice(9);if(key==='brightness')return state.brightness.value===command.value;if(key==='output')return state.audio.outputs.some(item=>item.id===command.value&&item.active);return state.audio[key]===command.value;}
   function paint(){
-   const t=text(),blocked=pending||loading||returning||needsCheck||!!view?.busy,dragging=volume.pointer!==undefined||brightness.pointer!==undefined;
+   const t=text(),blocked=pending||loading||returning||needsCheck||!!view?.busy||!!adjustment,dragging=volume.pointer!==undefined||brightness.pointer!==undefined;
    volume.name.textContent=t.volume;brightness.name.textContent=t.brightness+(!view?.brightness.available?' · '+t.unavailable:'');volume.input.setAttribute('aria-label',t.volume);brightness.input.setAttribute('aria-label',t.screen);
-   volume.value.textContent=view?.audio.volume!==null&&view?.audio.volume!==undefined?`${view.audio.volume}%`:'—';brightness.value.textContent=view?.brightness.value!==null&&view?.brightness.value!==undefined?`${view.brightness.value}%`:'—';
-   if(!volume.input.hasPointerCapture?.(volume.pointer))volume.input.value=String(view?.audio.volume??0);if(!brightness.input.hasPointerCapture?.(brightness.pointer))brightness.input.value=String(view?.brightness.value??100);
-   volume.input.disabled=blocked||!view?.audio.ready||typeof view?.audio.volume!=='number';brightness.input.disabled=blocked||!view?.brightness.available;mute.disabled=blocked||dragging||!view?.audio.ready||typeof view?.audio.mute!=='boolean';mute.setAttribute('aria-pressed',String(!!view?.audio.mute));mute.querySelector('path').setAttribute('d',view?.audio.mute?'M4 10v4h4l5 4V6l-5 4zM17 9l5 6m0-6-5 6':'M4 10v4h4l5 4V6l-5 4zM16 9a5 5 0 0 1 0 6');mute.setAttribute('aria-label',view?.audio.mute?t.unmute:t.mute);
+   for(const [setting,value,available] of [[volume,view?.audio.volume,view?.audio.ready&&typeof view?.audio.volume==='number'],[brightness,view?.brightness.value,view?.brightness.available]]){
+    const own=adjustment?.setting===setting,current=own?adjustment.value:value;setting.value.textContent=typeof current==='number'?`${current}%`:'—';setting.input.value=String(current??(setting===volume?0:100));
+    setting.input.disabled=!available||loading||returning||needsCheck||!!view?.busy||blocked&&!own;
+   }
+   mute.disabled=blocked||dragging||!view?.audio.ready||typeof view?.audio.mute!=='boolean';mute.setAttribute('aria-pressed',String(!!view?.audio.mute));mute.querySelector('path').setAttribute('d',view?.audio.mute?'M4 10v4h4l5 4V6l-5 4zM17 9l5 6m0-6-5 6':'M4 10v4h4l5 4V6l-5 4zM16 9a5 5 0 0 1 0 6');mute.setAttribute('aria-label',view?.audio.mute?t.unmute:t.mute);
    output.disabled=blocked||dragging||!view?.audio.available;outputName.textContent=t.output;outputValue.textContent=view?.audio.outputs.find(item=>item.active)?.label||t.none;back.disabled=pending||returning;back.setAttribute('aria-label',t.back);outputTitle.textContent=t.output;
    for(const item of outputList.querySelectorAll('button'))item.disabled=blocked;
    notice.textContent=pending?t.applying:loading?t.loading:view?.busy?t.applying:failure?(intent&&needsCheck?t.unverified:t.failed):'';feedback.setAttribute('role',failure?'alert':'status');retry.hidden=!failure&&!view?.busy;retry.disabled=pending||loading||returning;retry.setAttribute('aria-label',needsCheck||!intent||view?.busy?t.check:t.retry);
@@ -38,31 +40,54 @@ function createPyshDeviceControls({context,onBusy,onPresentation,onPane}) {
   function send(message){return new Promise(resolve=>{let settled=false;const finish=result=>{if(settled)return;settled=true;clearTimeout(timer);resolve(result);};const timer=setTimeout(()=>finish({ok:false,error:'controls_unverified',uncertain:true}),12000);try{chrome.runtime.sendMessage(message,result=>finish(chrome.runtime.lastError?{ok:false,error:'controls_unverified',uncertain:true}:result));}catch{finish({ok:false,error:'controls_unavailable'});}});}
   function accept(value){view=value;ro=value.language==='ro';onPresentation(value);choices();}
   async function refresh(){
-   if(pending||returning)return;const own=++sequence;loading=true;paint();const result=await send({action:'controls-status'});if(own!==sequence||returning)return;loading=false;
-   if(result?.ok&&usable(result.controls)){accept(result.controls);needsCheck=!!view.busy;if(!view.busy){failure=!!intent&&!matches(intent,view);if(!failure)intent=null;}}else{failure=true;needsCheck=true;}
+   if(pending||adjustment||returning)return;const own=++sequence;loading=true;paint();const result=await send({action:'controls-status'});if(own!==sequence||returning)return;loading=false;
+   if(result?.ok&&usable(result.controls)){accept(result.controls);needsCheck=!!view.busy;if(!view.busy){failure=!!intent&&(intentNeedsCommit||!matches(intent,view));if(!failure)intent=null;}}else{failure=true;needsCheck=true;}
    paint();
   }
   async function change(action,value){
-   if(pending||loading||returning||needsCheck||view?.busy||volume.pointer!==undefined||brightness.pointer!==undefined)return;const own=++sequence;const focused=root.getRootNode().activeElement,focusedOutput=focused?.dataset?.output;intent={action,value};pending=true;failure=false;onBusy(true);paint();const result=await send(intent);if(own!==sequence||returning)return;
+   if(pending||adjustment||loading||returning||needsCheck||view?.busy||volume.pointer!==undefined||brightness.pointer!==undefined)return;const own=++sequence;const focused=root.getRootNode().activeElement,focusedOutput=focused?.dataset?.output;intent={action,value};intentNeedsCommit=false;pending=true;failure=false;onBusy(true);paint();const result=await send(intent);if(own!==sequence||returning)return;
    pending=false;onBusy(false);
    if(result?.ok&&usable(result.controls)){accept(result.controls);failure=false;needsCheck=!!view.busy;if(!view.busy)intent=null;}else{if(usable(result?.controls))accept(result.controls);failure=true;needsCheck=result?.definite!==true;}
    paint();
    requestAnimationFrame(()=>{const target=focusedOutput?[...outputList.querySelectorAll('button')].find(row=>row.dataset.output===focusedOutput):focused;if(target?.isConnected&&!target.disabled)target.focus();});
   }
+  function releasePointer(setting){const id=setting.pointer;setting.pointer=undefined;if(id!==undefined&&setting.input.hasPointerCapture?.(id))setting.input.releasePointerCapture(id);}
+  function stopAdjustment(result){
+   const current=adjustment;if(!current)return;clearTimeout(current.timer);releasePointer(current.setting);adjustment=null;pending=false;failure=true;needsCheck=result?.definite!==true;onBusy(false);paint();
+  }
+  async function flushAdjustment(){
+   const current=adjustment;if(!current||current.inFlight||returning||needsCheck)return;clearTimeout(current.timer);
+   if(!current.ending){if(current.sentValue===current.value)return;const delay=125-(Date.now()-current.sentAt);if(delay>0){current.timer=setTimeout(flushAdjustment,delay);return;}}
+   const command={action:current.action,value:current.value,persist:current.ending};current.inFlight=true;current.sentValue=current.value;current.sentAt=Date.now();pending=true;paint();
+   const result=await send(command);if(adjustment!==current||current.sequence!==sequence||returning)return;current.inFlight=false;pending=false;
+   if(!result?.ok||!usable(result.controls)){if(usable(result?.controls))accept(result.controls);stopAdjustment(result);return;}
+   accept(result.controls);if(view.busy){stopAdjustment({});return;}
+   if(command.persist){
+    if(!matches(command,view)){stopAdjustment({definite:true});return;}
+    clearTimeout(current.timer);adjustment=null;intent=null;intentNeedsCommit=false;failure=false;needsCheck=false;onBusy(false);paint();
+   }else{paint();void flushAdjustment();}
+  }
+  function beginAdjustment(setting,action,value,ending=false){
+   if(pending||adjustment||loading||returning||needsCheck||view?.busy||setting.input.disabled)return false;
+   adjustment={setting,action,value,ending,inFlight:false,sentValue:undefined,sentAt:-Infinity,timer:undefined,sequence:++sequence};intent={action,value};intentNeedsCommit=true;failure=false;onBusy(true);paint();void flushAdjustment();return true;
+  }
+  function finishAdjustment(setting,value){
+   if(adjustment?.setting!==setting||adjustment.ending)return;adjustment.value=value;adjustment.ending=true;intent={action:adjustment.action,value};releasePointer(setting);paint();void flushAdjustment();
+  }
   function slider(setting,action,min){
    const point=event=>{const rect=setting.input.getBoundingClientRect();return Math.max(min,Math.min(100,Math.round(min+(event.clientX-rect.left)/rect.width*(100-min))));};
-   setting.input.addEventListener('pointerdown',event=>{if(setting.input.disabled||event.button!==0||volume.pointer!==undefined||brightness.pointer!==undefined)return;event.preventDefault();setting.pointer=event.pointerId;setting.input.setPointerCapture(event.pointerId);setting.input.value=String(point(event));onBusy(true);});
-   setting.input.addEventListener('pointermove',event=>{if(setting.pointer===event.pointerId)setting.input.value=String(point(event));});
-   setting.input.addEventListener('pointerup',event=>{if(setting.pointer!==event.pointerId)return;const value=point(event);setting.pointer=undefined;setting.input.releasePointerCapture?.(event.pointerId);void change(action,value);});
-   const cancel=()=>{const id=setting.pointer;setting.pointer=undefined;if(id!==undefined&&setting.input.hasPointerCapture?.(id))setting.input.releasePointerCapture(id);onBusy(false);paint();};
+   setting.input.addEventListener('pointerdown',event=>{if(setting.input.disabled||event.button!==0||adjustment||volume.pointer!==undefined||brightness.pointer!==undefined)return;event.preventDefault();setting.pointer=event.pointerId;setting.input.setPointerCapture(event.pointerId);if(!beginAdjustment(setting,action,point(event)))releasePointer(setting);});
+   setting.input.addEventListener('pointermove',event=>{if(setting.pointer===event.pointerId&&adjustment?.setting===setting){adjustment.value=point(event);intent={action,value:adjustment.value};paint();void flushAdjustment();}});
+   setting.input.addEventListener('pointerup',event=>{if(setting.pointer!==event.pointerId)return;setting.ignoreChange=true;setTimeout(()=>{setting.ignoreChange=false;},0);finishAdjustment(setting,point(event));});
+   const cancel=()=>{if(setting.pointer!==undefined)finishAdjustment(setting,adjustment?.value??Number(setting.input.value));};
    setting.input.addEventListener('pointercancel',cancel);setting.input.addEventListener('lostpointercapture',()=>{if(setting.pointer!==undefined)cancel();});window.addEventListener('blur',cancel);
-   setting.input.addEventListener('change',()=>{if(setting.pointer===undefined&&!setting.input.disabled)void change(action,Number(setting.input.value));});
+   setting.input.addEventListener('change',()=>{if(setting.pointer===undefined&&!setting.input.disabled&&!setting.ignoreChange)beginAdjustment(setting,action,Number(setting.input.value),true);});
   }
   slider(volume,'controls-volume',0);slider(brightness,'controls-brightness',1);
   mute.addEventListener('click',()=>change('controls-mute',!view?.audio.mute));
   output.addEventListener('click',()=>{settings.hidden=output.hidden=true;context.style.display='none';outputPane.hidden=false;onPane(true);outputTitle.focus();});
   back.addEventListener('click',()=>{outputPane.hidden=true;settings.hidden=output.hidden=false;context.style.display='';onPane(false);output.focus();});
-  retry.addEventListener('click',()=>{if(needsCheck||!intent||view?.busy)void refresh();else void change(intent.action,intent.value);});
+  retry.addEventListener('click',()=>{if(needsCheck||!intent||view?.busy)void refresh();else if(intentNeedsCommit)beginAdjustment(intent.action==='controls-volume'?volume:brightness,intent.action,intent.value,true);else void change(intent.action,intent.value);});
   paint();
-  return {element:root,style,refresh,busy:()=>pending||volume.pointer!==undefined||brightness.pointer!==undefined,localize(language){ro=language;paint();},returning(value){returning=value;if(value){sequence++;loading=false;}paint();}};
+  return {element:root,style,refresh,busy:()=>pending||!!adjustment||volume.pointer!==undefined||brightness.pointer!==undefined,localize(language){ro=language;paint();},returning(value){const changed=returning!==value;returning=value;if(value&&changed){sequence++;loading=false;if(adjustment){clearTimeout(adjustment.timer);releasePointer(adjustment.setting);adjustment=null;failure=true;needsCheck=true;}pending=false;}paint();}};
 }

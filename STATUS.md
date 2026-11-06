@@ -1,5 +1,8 @@
 # PySH status
 
+Live volume/brightness candidate: immediate numeric drafts, bounded serial previews without preference writes, final persistence, stale-poll protection and explicit uncertain-write recovery in all app/external controls.983Python/46platformskips/11subtests,192JS,64TV,28newlive and80legacy/error checksPASS; final16retests and4pending-video-close checksPASS.Independentvisual/focus4x9 andexternal4contextsPASS. Worker1.4.2/scalars-v6. New runtime installation/native validation pending. See docs/plans/live-levels-2026-11-06.md and docs/evidence/live-levels-2026-11-06.md.
+
+
 TV recovery and touchscreen UI installed and verified: runtime88efb8ce5f6e/code09162997ea1ac878bf77fa0c306c8fcc07bb4e82. Versioned kiosk URL/no-store and loaded script equality verified in existing profile.20nativechecksPASS: actual Antena1/PROTV1920x1080,27spause/resume,compact guide,controls,stop/focus,next/return guide.228runtimehashes/29preferences and PCbackup verified; previous retained; network/gateway preserved. Originalidle/preferences/history/volume restored;3servicesactive,0ownedconverters/tempdirs,debugclosed.952Python/46platformskips/11subtests,113JS,20newTV,40+4TVretets,76shared,independentvisual8+8/keyboard12+4 andnativevisualreviewPASS. Physicalaudio excluded byuser; all30fullproductcriteriaOPEN. Initialreportedblockage not reproduced; nativeR1staleUI and R2harnessfailure are retained honestly in evidence. See docs/plans/tv-recovery-ux-2026-11-06.md and docs/evidence/tv-recovery-ux-2026-11-06.md.
 
 

@@ -21,14 +21,14 @@ export type RadioProps = {
   currentStation?: RadioStation | null; currentUrl?: string | null;
   stationName: string; trackTitle: string; playerState: string; playerKind?: string;
   pauses: boolean; canPlay: boolean; canStop: boolean; canPrevious: boolean; canNext: boolean; audioReady: boolean;
-  volume: number; muted: boolean; visualizer?: ReactNode;
+  volume: number; muted: boolean; visualizer?: ReactNode; volumePending?:boolean;volumeDisabled?:boolean;
   t: (key: string) => string; icon: (name: string, size?: number) => ReactNode;
   isFavorite: (station: RadioStation) => boolean; isStationPausing: (station: RadioStation) => boolean;
   onSearch: () => void; onCountry: () => void; onLanguage: () => void;
   onFavoritesFilter: () => void; onRetry: () => void;
   onPlayStation: (station: RadioStation) => void; onFavorite: (station: RadioStation) => void;
   onPlayPause: () => void; onStop: () => void; onPrevious: () => void; onNext: () => void;
-  onVolume: (value: number) => void; onMute: () => void;
+  onVolume: (value: number,persist:boolean) => unknown; onMute: () => void;
   onOpenAudio?: () => void; onClearFilters?: () => void;
 };
 
@@ -60,7 +60,7 @@ export function StationArtwork({ station, name, large = false }: { station?: Rad
 export function Radio(props: RadioProps) {
   const { language, stations, favorites, query, country, radioLanguage, favoritesOnly, loading, error, busy, favoriteBusy = false,
     currentStation, currentUrl, stationName, trackTitle, playerState, playerKind = 'radio', pauses, canPlay, canStop, canPrevious, canNext,
-    audioReady, volume, muted, visualizer, t, icon, isFavorite, isStationPausing,
+    audioReady, volume, muted, visualizer, volumePending=false,volumeDisabled=false, t, icon, isFavorite, isStationPausing,
     onSearch, onCountry, onLanguage, onFavoritesFilter, onRetry, onPlayStation, onFavorite,
     onPlayPause, onStop, onPrevious, onNext, onVolume, onMute, onOpenAudio, onClearFilters } = props;
   const ro = language === 'ro';
@@ -138,8 +138,7 @@ export function Radio(props: RadioProps) {
           </div>
           <div className="radio-volume">
             <button aria-label={muted ? t('unmute') : t('mute')} aria-pressed={muted} disabled={busy || !audioReady} onClick={onMute}>{muted ? <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4zM17 9l5 6m0-6-5 6"/></svg> : icon('speaker', 19)}</button>
-            <AudioVolume label={t('volume')} value={volume} disabled={busy || !audioReady} onChange={onVolume}/>
-            <small className="radio-volume-value">{Math.round(Number.isFinite(volume) ? Math.max(0, Math.min(100, volume)) : 0)}%</small>
+            <AudioVolume label={t('volume')} value={volume} pending={volumePending} disabled={volumeDisabled || !audioReady} onChange={onVolume}/>
           </div>
 
         </div>

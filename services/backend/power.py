@@ -144,6 +144,7 @@ class PowerController:
             # Write hardware first: failed writes must not persist a misleading slider.
             if not self.standby:
                 await self.backlight.set(percent)
+            self.error = None
 
     async def update_preferences(self, patch):
         async with self.lock:

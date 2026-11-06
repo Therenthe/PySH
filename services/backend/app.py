@@ -136,6 +136,18 @@ class Audio(StrictBody):
     volume: int | None = Field(default=None, ge=0, le=100)
     mute: bool | None = None
     output: str | None = Field(default=None, max_length=200)
+    persist: bool = Field(default=True, strict=True)
+
+    @model_validator(mode='after')
+    def volume_preview_only(self):
+        if not self.persist and (self.volume is None or self.mute is not None or self.output is not None):
+            raise ValueError('Only volume can be previewed')
+        return self
+
+
+class Brightness(StrictBody):
+    value: int = Field(ge=1, le=100, strict=True)
+    persist: bool = Field(default=True, strict=True)
 
 
 class Play(StrictBody):
@@ -288,13 +300,16 @@ class Hub:
     async def _refresh_device(self):
         results = await asyncio.gather(self.safe("network", self.device.network_status), self.safe("bluetooth", self.device.bluetooth_status), self.safe("audio", self.device.audio_status))
         self.snapshots = dict(zip(("network", "bluetooth", "audio"), results))
-        audio = self.snapshots["audio"]
+        await self._adopt_audio(self.snapshots["audio"])
+
+    async def _adopt_audio(self, audio, restore=True):
+        self.snapshots["audio"] = audio
         output = audio.get("output")
         outputs = audio.get("outputs", [])
         saved = self.store.value.audioOutput
         preferred = next((item for item in outputs if str(item.get("id")) == saved), None)
         restore_target = preferred or next((item for item in outputs if str(item.get("id")) == str(output) and item.get("bluetooth")), None)
-        if restore_target and self._audio_restored != str(restore_target["id"]):
+        if restore and restore_target and self._audio_restored != str(restore_target["id"]):
             try:
                 restored = await asyncio.wait_for(self.device.audio_set(output=restore_target["id"], volume=self.store.value.volume, mute=self.store.value.mute), timeout=8)
                 if restored.get("available") and not restored.get("error"):
@@ -526,6 +541,13 @@ async def power_set(request: Request, body: Standby):
     return await request.app.state.hub.power.change(body.standby)
 
 
+@app.post('/api/power/brightness')
+async def brightness_set(request: Request, body: Brightness):
+    controller = request.app.state.hub.power
+    await controller.brightness(body.value, persist=body.persist)
+    return await controller.snapshot()
+
+
 @app.post('/api/power/timer')
 async def power_timer(request: Request, body: SleepTimer):
     controller = request.app.state.hub.power
@@ -601,10 +623,21 @@ async def network_forget(request: Request, body: NetworkForget):
 @app.post("/api/audio")
 async def audio(request: Request, body: Audio):
     hub = request.app.state.hub
+    if not body.persist:
+        # Scalar previews share device ownership with polling and output changes.
+        # They observe actual audio only, without network scans or flash writes.
+        async with hub._device_lock:
+            await hub._adopt_audio(await hub.safe('audio', hub.device.audio_status))
+            if not hub.audio_selected:
+                raise DeviceError('no_audio_output')
+            result = await hub.device.audio_set(volume=body.volume)
+            if not result.get('error'):
+                await hub._adopt_audio(result, restore=False)
+            return result
     # Even concurrent state/signal requests cannot restart the old monitor while
     # output selection or volume/mute is still changing in WirePlumber.
-    async with hub.changing_audio():
-        result = await hub.device.audio_set(**body.model_dump(exclude_none=True))
+    async with hub._device_lock, hub.changing_audio():
+        result = await hub.device.audio_set(**body.model_dump(exclude_none=True, exclude={'persist'}))
         if not result.get("error"):
             patch = {}
             if body.volume is not None:
@@ -615,7 +648,7 @@ async def audio(request: Request, body: Audio):
                 patch["audioOutput"] = body.output
             if patch:
                 hub.store.update(patch)
-            await hub.refresh_device()
+            await hub._refresh_device()
     return result
 
 

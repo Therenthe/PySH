@@ -26,6 +26,8 @@ def snapshot(**extra):
 @pytest.mark.parametrize('message',[{'action':'controls-status'},
     {'action':'controls-volume','value':0},{'action':'controls-volume','value':100},
     {'action':'controls-mute','value':False},{'action':'controls-brightness','value':1},
+    {'action':'controls-volume','value':42,'persist':False},
+    {'action':'controls-brightness','value':61,'persist':True},
     {'action':'controls-output','value':'speaker'}])
 def test_only_typed_bounded_control_messages(host,message):
     assert host.read_message(framed(message))==message
@@ -38,6 +40,11 @@ def test_only_typed_bounded_control_messages(host,message):
     {'action':'controls-output','value':'speaker\x00bad'},
     {'action':'controls-output','value':'x'*201},
     {'action':'controls-volume','value':50,'url':'https://outside.invalid'},
+    {'action':'controls-volume','value':50,'persist':0},
+    {'action':'controls-brightness','value':50,'persist':'false'},
+    {'action':'controls-mute','value':True,'persist':False},
+    {'action':'controls-output','value':'speaker','persist':True},
+    {'action':'controls-status','persist':False},
     {'action':'controls-shell','value':'/bin/sh'}])
 def test_rejects_unsafe_or_ambiguous_messages(host,message):
     with pytest.raises(host.ProtocolError):host.read_message(framed(message))
@@ -83,7 +90,7 @@ def test_accepted_write_lost_readback_is_verified_without_replaying(host,monkeyp
     assert [entry for entry in calls if entry[2]!='GET']==[('/api/audio',{'volume':60},'POST')]
 
 
-def test_brightness_uses_only_fixed_preferences_field_and_requires_readback(host,monkeypatch):
+def test_brightness_uses_only_fixed_scalar_route_and_requires_readback(host,monkeypatch):
     calls=[]
     def owner(path,body=None,method='GET'):
         calls.append((path,body,method));value=snapshot()
@@ -91,7 +98,7 @@ def test_brightness_uses_only_fixed_preferences_field_and_requires_readback(host
         return value
     monkeypatch.setattr(host,'owner_json',owner)
     assert host.control('controls-brightness',25)['ok']
-    assert calls[1]==('/api/preferences',{'screenBrightness':25},'PATCH')
+    assert calls[1]==('/api/power/brightness',{'value':25,'persist':True},'POST')
 
 
 def test_owner_token_never_leaves_fixed_loopback_request(host,monkeypatch):
@@ -117,7 +124,34 @@ def test_integration_or_ambiguous_http_failure_requires_state_verification(host,
         return snapshot()
     monkeypatch.setattr(host,'owner_json',owner)
     assert host.control('controls-brightness',25)=={'ok':False,'error':'controls_unverified','uncertain':True}
-    assert writes==[{'screenBrightness':25}]
+    assert writes==[{'value':25,'persist':True}]
+
+
+@pytest.mark.parametrize('action,path,body',[
+    ('controls-volume','/api/audio',{'volume':64,'persist':False}),
+    ('controls-brightness','/api/power/brightness',{'value':64,'persist':False}),
+])
+def test_scalar_preview_reaches_only_fixed_endpoint_and_requires_actual_readback(host,monkeypatch,action,path,body):
+    calls=[]
+    def owner(target,payload=None,method='GET'):
+        calls.append((target,payload,method))
+        value=snapshot()
+        if len(calls)>2:
+            if action=='controls-volume':value['audio']['volume']=64
+            else:value['brightness']['value']=64
+        return value
+    monkeypatch.setattr(host,'owner_json',owner)
+    assert host.control(action,64,persist=False)['ok'] is True
+    assert calls==[('/api/external/controls',None,'GET'),(path,body,'POST'),('/api/external/controls',None,'GET')]
+
+
+def test_stdio_forwards_the_scalar_persistence_flag_without_changing_other_messages(host):
+    keyboard=Mock();keyboard.handle.return_value={'ok':True}
+    request=framed({'action':'controls-volume','value':64,'persist':False})
+    output=io.BytesIO()
+    assert host.serve(request,output,keyboard)==0
+    keyboard.handle.assert_called_once_with('controls-volume',64,False)
+    keyboard.close.assert_called_once()
 
 
 @pytest.mark.parametrize('status',[403,413,422])
