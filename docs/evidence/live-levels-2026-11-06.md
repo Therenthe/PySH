@@ -125,3 +125,30 @@ defect blocant în această probă; cele 30 criterii ale produsului complet răm
 Auditul vizual nativ independent R2 a inspectat numai zonele proprii ale meniului:
 procente ținute, focus tastatură, fără clipping/suprapuneri, Home la revenire;
 nicio regresie vizuală observată. Conținutul conturilor serviciilor a fost exclus.
+
+## Follow-up cu boxa pornită: radio și Antena 1
+
+Cererea utilizatorului: reconectare boxă, verificare sunet radio/TV și stare finală
+Antena 1 din favorite la15%. Runtime-ul și codul rămân cele de mai sus; nu s-au
+schimbat aplicația, profilurile, rețeaua sau serviciile. Boxa cunoscută, deja
+asociată, a fost reconectată prin API-ul existent și selectată ca ieșire Bluetooth.
+
+- România Actualități: mpv playing, semnal pe monitorul ieșirii selectate și
+  confirmare explicită a utilizatorului „Da, radioul se aude”.
+- Antena 1 din favorite: imagine fullscreen și Chromium audio running, legături
+  PipeWire active spre sinkul Bluetooth și semnal pe monitorul acelei ieșiri.
+  Utilizatorul confirmă „Da, Antena 1 se aude”.
+- S-au citit câte16000eșantioane din monitorul de redare numai în RAM, fără
+  microfon sau fișiere audio. Semnalul digital completează confirmarea auditivă;
+  nu o înlocuiește și nu este o măsurare acustică a volumului continuu.
+- Verificarea finală: volum real/salvat15%, mute=false, boxă conectată/selectată,
+  radio idle, trei servicii active, zero dispozitive sintetice rămase și porturi
+  debug închise. TV-ul a rămas pornit la cererea utilizatorului. Capturile arată
+  Antena 1 și controlul15%; toate artefactele brute rămân private în
+  `.runtime/speaker-tv-20261106/`.
+
+Prima încercare TV a rămas la Connecting, cu imagine neagră și fără nod audio
+Chromium. Ieșirea din player și redeschiderea aceluiași canal au restabilit imaginea
+și sunetul. Clasificare: eșec observat de pornire, cauză nedeterminată; nu există
+trasare HLS/decoder pentru a distinge fluxul extern de lifecycle-ul aplicației.
+Nu se declară remediată cauza. `TV-START-20261106` rămâne OPEN în planul UI.
