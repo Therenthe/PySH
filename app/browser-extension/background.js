@@ -178,7 +178,10 @@ function cancelOwnedKeyboard(windowId) {
 function controlMessage(message) {
   const keys = Object.keys(message);
   if (message.action === 'controls-status') return keys.length === 1;
-  if (!['controls-volume','controls-mute','controls-brightness','controls-output'].includes(message.action) || keys.length !== 2 || !Object.hasOwn(message,'value')) return false;
+  if (!['controls-volume','controls-mute','controls-brightness','controls-output'].includes(message.action) || !Object.hasOwn(message,'value')) return false;
+  const scalar=['controls-volume','controls-brightness'].includes(message.action);
+  if(keys.length!==2&&!(scalar&&keys.length===3&&Object.hasOwn(message,'persist')))return false;
+  if(Object.hasOwn(message,'persist')&&(!scalar||typeof message.persist!=='boolean'))return false;
   const value=message.value;
   if(message.action==='controls-mute') return typeof value==='boolean';
   if(message.action==='controls-output') return typeof value==='string'&&value.length>=1&&value.length<=200&&!/[\x00-\x1f\x7f]/.test(value);

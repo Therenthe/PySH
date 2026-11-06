@@ -43,7 +43,7 @@ async function fixture(page:Page,ro:boolean,theme:string,{initialRecords=false,s
   else if(path==='/api/media/continue')json={items:[]};
   else if(path==='/api/media/inspect')json={state:'unavailable'};
   else if(path==='/api/player'){state.player={state:'idle'};json=state.player;}
-  else if(path==='/api/audio'){Object.assign(state.audio,body);json=state.audio;}
+  else if(path==='/api/audio'){const{persist,...change}=body;Object.assign(state.audio,change);if(persist!==false&&body.volume!==undefined)state.preferences.volume=body.volume;json=state.audio;}
   else if(path==='/api/iptv')json=catalogue;
   else if(path.startsWith('/api/iptv/guide/')){
    guideReads++;
@@ -220,8 +220,8 @@ for(const theme of ['ink','night']){
   const bounds=await live.boundingBox();expect(bounds).toEqual({x:0,y:0,width:800,height:480});
   const slider=live.getByRole('slider',{name:ro?'Volum':'Volume',exact:true}),box=(await slider.boundingBox())!;
   await slider.tap({position:{x:box.width*.65,y:box.height/2}});
-  await expect.poll(()=>f.calls.filter(c=>c.path==='/api/audio').length).toBe(1);expect(f.calls.filter(c=>c.path==='/api/audio')[0].body).toEqual({volume:65});
-  await expect(slider).toHaveValue('65');await expect(live.locator('.iptv-volume-value')).toHaveText('65%');
+  await expect.poll(()=>f.calls.filter(c=>c.path==='/api/audio'&&c.body.persist===true).length).toBe(1);expect(f.calls.filter(c=>c.path==='/api/audio'&&c.body.persist===true)[0].body).toEqual({volume:65,persist:true});
+  await expect(slider).toHaveValue('65');await expect(live.locator('.audio-volume-value')).toHaveText('65%');
   await live.getByRole('button',{name:ro?'Fără sunet':'Mute',exact:true}).tap();await expect(live.getByRole('button',{name:ro?'Activează sunetul':'Unmute',exact:true})).toHaveAttribute('aria-pressed','true');
   expect(f.state.audio.mute).toBe(true);await snap(page,info,'recovery-07-fullscreen-shared-volume-mute-confirmed-fixture');
   await live.getByRole('button',{name:ro?'Activează sunetul':'Unmute',exact:true}).tap();await expect(live.getByRole('button',{name:ro?'Fără sunet':'Mute',exact:true})).toHaveAttribute('aria-pressed','false');
@@ -243,7 +243,7 @@ for(const theme of ['ink','night']){
   await page.mouse.move(box.x+box.width*.6,box.y+box.height/2);await page.mouse.down();
   await page.clock.runFor(6000);await expect(controls).not.toHaveClass(/concealed/);
   await snap(page,info,'recovery-08-held-volume-keeps-controls-visible-fixture');
-  await page.mouse.up();await expect.poll(()=>f.calls.filter(c=>c.path==='/api/audio').length).toBe(1);
+  expect(f.calls.some(c=>c.path==='/api/audio'&&c.body.persist===false)).toBe(true);await page.mouse.up();await expect.poll(()=>f.calls.filter(c=>c.path==='/api/audio'&&c.body.persist===true).length).toBe(1);
   await page.clock.runFor(5000);await expect(controls).toHaveClass(/concealed/);
   await live.locator('video').tap();await expect(controls).not.toHaveClass(/concealed/);
   await live.getByRole('button',{name:ro?'Înapoi la TV':'Back to TV',exact:true}).focus();await page.keyboard.press('Tab');

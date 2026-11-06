@@ -21,6 +21,24 @@ test('typed controls are accepted only from supported service main frames',async
  await tick();assert.equal(h.ports.length,0);
  const accepted=h.request({action:'controls-volume',value:50});assert.equal(accepted.keepAlive,true);await tick();assert.deepEqual(h.ports[0].sent,[{action:'controls-volume',value:50}]);h.ports[0].onMessage.emit({ok:true,controls:{busy:false}});await tick();assert.equal(accepted.replies[0].ok,true);
 });
+
+test('only scalar controls admit a strict persistence flag from owned service frames',async()=>{
+ const h=fixture();
+ for(const message of [
+  {action:'controls-volume',value:50,persist:0},
+  {action:'controls-brightness',value:50,persist:'false'},
+  {action:'controls-mute',value:true,persist:false},
+  {action:'controls-output',value:'speaker',persist:true},
+  {action:'controls-status',persist:false},
+  {action:'controls-volume',value:50,persist:false,url:'http://outside.invalid'},
+ ])assert.equal(h.request(message).keepAlive,undefined);
+ for(const from of [h.sender('https://www.netflix.com.evil.invalid/'),{...h.sender('https://www.netflix.com/'),frameId:1},{...h.sender('https://www.netflix.com/'),id:'foreign'}])assert.equal(h.request({action:'controls-volume',value:50,persist:false},from).keepAlive,undefined);
+ await tick();assert.equal(h.ports.length,0);
+ for(const message of [{action:'controls-volume',value:50,persist:false},{action:'controls-brightness',value:65,persist:true}]){
+  const accepted=h.request(message);assert.equal(accepted.keepAlive,true);await tick();
+  assert.deepEqual(h.ports.at(-1).sent.at(-1),message);h.ports.at(-1).onMessage.emit({ok:true,controls:{busy:false}});await tick();assert.equal(accepted.replies[0].ok,true);
+ }
+});
 test('Return cancels queued mutations and closes only after owned destination acknowledgment',async()=>{
  const h=fixture(),read=h.request({action:'controls-status'});await tick();
  const stale=h.request({action:'controls-mute',value:true}),returning=h.request({action:'return-home'});await tick();

@@ -58,7 +58,10 @@ def read_message(stream):
         if set(message) != {"action"}:
             raise ProtocolError("invalid_request")
     elif action in ("controls-volume", "controls-mute", "controls-brightness", "controls-output"):
-        if set(message) != {"action", "value"}:
+        scalar = action in ('controls-volume', 'controls-brightness')
+        if set(message) not in ({'action', 'value'}, {'action', 'value', 'persist'} if scalar else {'action', 'value'}):
+            raise ProtocolError("invalid_request")
+        if 'persist' in message and type(message['persist']) is not bool:
             raise ProtocolError("invalid_request")
         value = message["value"]
         if action == "controls-mute":
@@ -167,7 +170,7 @@ def controls_snapshot():
         "brightness": {"available": brightness.get("available") is True, "value": level}}
 
 
-def control(action, value=None):
+def control(action, value=None, persist=True):
     try:
         before = controls_snapshot()
     except (OSError, ValueError, KeyError, TypeError):
@@ -179,7 +182,7 @@ def control(action, value=None):
     if action == "controls-brightness":
         if not before["brightness"]["available"]:
             return {"ok": False, "error": "controls_unavailable", "definite": True, "controls": before}
-        path, body, method = "/api/preferences", {"screenBrightness": value}, "PATCH"
+        path, body, method = '/api/power/brightness', {'value': value, 'persist': persist}, 'POST'
     else:
         if not before["audio"]["available"]:
             return {"ok": False, "error": "controls_unavailable", "definite": True, "controls": before}
@@ -188,6 +191,8 @@ def control(action, value=None):
         if action == "controls-output" and value not in {item["id"] for item in before["audio"]["outputs"]}:
             return {"ok": False, "error": "output_unavailable", "definite": True, "controls": before}
         path, body, method = "/api/audio", {action.removeprefix("controls-"): value}, "POST"
+        if action == 'controls-volume' and not persist:
+            body['persist'] = False
     try:
         owner_json(path, body, method)
     except urllib.error.HTTPError as error:
@@ -216,9 +221,9 @@ class Keyboard:
     def available(self):
         return os.access(KEYBOARD, os.X_OK) and bool(os.environ.get("WAYLAND_DISPLAY"))
 
-    def handle(self, action, value=None):
+    def handle(self, action, value=None, persist=True):
         if action.startswith("controls-"):
-            return control(action, value)
+            return control(action, value, persist)
         if action in ("home", "radio", "media"):
             # Fixed loopback owner API, no page URLs, cookies or typed values.
             # A native message cannot choose another host, path or command.
@@ -285,7 +290,11 @@ def serve(input_stream, output_stream, keyboard):
                 return 1
             if message is None:
                 return 0
-            write_message(output_stream, keyboard.handle(message["action"], message["value"]) if "value" in message else keyboard.handle(message["action"]))
+            if 'persist' in message:
+                reply = keyboard.handle(message['action'], message['value'], message['persist'])
+            else:
+                reply = keyboard.handle(message['action'], message['value']) if 'value' in message else keyboard.handle(message['action'])
+            write_message(output_stream, reply)
     finally:
         keyboard.close()
 

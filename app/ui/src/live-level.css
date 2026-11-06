@@ -1,0 +1,3 @@
+.app .live-level{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.app .live-level>input{width:100%;min-width:0;flex:1}
+.app .audio-volume-value{font-size:14px;font-weight:600;line-height:1.3;font-variant-numeric:tabular-nums;min-width:42px;text-align:right;flex-shrink:0}

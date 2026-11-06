@@ -45,8 +45,8 @@ function background() {
 }
 
 test('manifest has stable public-key ID and only native messaging and documentation navigation permissions', () => {
-  assert.equal(manifest.version,'1.4.1');
-  assert.equal(manifest.background.service_worker,'background-digi-v5.js');
+  assert.equal(manifest.version,'1.4.2');
+  assert.equal(manifest.background.service_worker,'background-scalars-v6.js');
   assert.match(source(manifest.background.service_worker),/importScripts\('background.js'\)/);
   assert.match(extensionId, /^[a-p]{32}$/);
   assert.deepEqual(manifest.permissions, ['nativeMessaging','webNavigation']);

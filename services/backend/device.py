@@ -957,14 +957,16 @@ class Device:
             result["error"] = exc.code if isinstance(exc, DeviceError) else "unavailable" if isinstance(exc, (FileNotFoundError, OSError)) else "operation_failed"
         return result
 
-    async def audio_set(self, volume: int | None = None, mute: bool | None = None, output: str | None = None) -> dict[str, Any]:
+    async def audio_set(self, volume: int | None = None, mute: bool | None = None, output: str | None = None, *, observed: dict[str, Any] | None = None) -> dict[str, Any]:
         if volume is not None and (not isinstance(volume, int) or isinstance(volume, bool) or not 0 <= volume <= 100):
             raise DeviceError("invalid_argument")
         if mute is not None and not isinstance(mute, bool):
             raise DeviceError("invalid_argument")
         if output is not None and (not isinstance(output, str) or not output or len(output) > 256 or "\x00" in output):
             raise DeviceError("invalid_argument")
-        state = await self.audio_status()
+        # The Hub can reuse a fresh observation while it owns the device lock.
+        # Every write still ends with a new, authoritative hardware readback.
+        state = observed if observed is not None else await self.audio_status()
         if not state["available"]:
             raise DeviceError(state["error"] or "unavailable")
         selected = output if output is not None else state["output"]

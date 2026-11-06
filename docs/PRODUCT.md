@@ -41,6 +41,10 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 - YouTube și Netflix: acces din hub prin integrare permisă și funcțională pe dispozitiv. Dacă nu există o cale suportată care să redea conținutul în condițiile serviciului, produsul trebuie să explice limita și să ofere deschiderea în browserul/sistemul compatibil disponibil; butonul nu poate pretinde că redarea integrată funcționează.
 - Muzică: se alege un serviciu după verificarea eligibilității SDK/API, autentificării, licențelor și performanței pe platforma țintă. „Spotify sau alternativă” nu este un angajament că SDK-ul Spotify va fi disponibil.
 - Volum accesibil din interfață, cu feedback vizual și integrare verificată cu ieșirea audio activă.
+- Volumul și luminozitatea răspund în timpul glisării, cu procent vizibil imediat.
+  Preview-urile sunt serializate și nu scriu continuu preferințele pe SD; ultima
+  valoare se salvează la sfârșitul gestului. Starea incertă păstrează recuperare
+  explicită, fără a pretinde că un preview este o setare salvată.
 - Bluetooth în aplicație: scanare explicit pornită de utilizator, dispozitive din apropiere, asociere, conectare/deconectare, dispozitiv curent, uitare dispozitiv și mesaje clare pentru refuz, timeout sau indisponibilitate. Aplicația nu se asociază automat cu dispozitive necunoscute. Testul final de compatibilitate audio cere o boxă Bluetooth reală; disponibilitatea actuală a boxei trebuie reconfirmată înaintea testului.
 
 ### Configurare și setări

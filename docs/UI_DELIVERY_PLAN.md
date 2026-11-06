@@ -158,3 +158,12 @@ journeys are verified. Native10 unheld clips/25 transport checks and independent
 visual/usability/keyboard evidence are recorded in
 [evidence](evidence/city-atmosphere-2026-10-24.md). The57px handoff and prompt
 focus defects were reproduced and repaired; complete product acceptance stays OPEN.
+
+## TV-START-20261106 — pornire intermitentă, OPEN
+
+Pe runtime40e96fcc7f76, prima pornire Antena 1 a rămas Connecting/negru și fără
+stream audio Chromium; ieșirea și redeschiderea au pornit imaginea/sunetul.
+Bluetooth a rămas disponibil și funcțional, confirmat auditiv la radio și apoi TV.
+Cauza nu este stabilită; următorul pas este o trasare HLS/decoder/lifecycle la
+reproducere. Nu se confundă redeschiderea reușită cu remedierea cauzei.
+[Dovezi și limite](evidence/live-levels-2026-11-06.md).
