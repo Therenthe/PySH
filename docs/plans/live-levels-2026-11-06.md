@@ -11,9 +11,9 @@ fără a aștepta eliberarea sliderului. Toate suprafețele PySH și meniul exte
 - [x] Finalizare la cancel/blur/unmount, fără reluarea automată a scrierii incerte.
 - [x] Protocol scalar allowlisted, worker nou, păstrând profilurile și conturile.
 - [x] Regresii actualizate pentru noul contract, audit EN/RO × ambele teme.
-- [ ] Publicare și identitate verificată, backup separat pe PC, instalare reversibilă.
-- [ ] Probe native cu slider ținut apăsat, stare reală și persistență la eliberare.
-- [ ] Restaurare exactă și verificarea serviciilor/resurselor, raport final.
+- [x] Publicare și identitate verificată, backup separat pe PC, instalare reversibilă.
+- [x] Probe native cu slider ținut apăsat, stare reală și persistență la eliberare.
+- [x] Restaurare exactă și verificarea serviciilor/resurselor, raport final.
 
 ## Charter și limite
 
@@ -37,4 +37,14 @@ față de rezultate vechi. Salvarea și recuperarea incertă păstrează verific
 
 - [x] Test determinist: polling de rețea blocat, preview audio terminat înaintea lui.
 - [x] Readback real păstrat, fără copierea optimistă a valorii solicitate.
-- [ ] Repetarea probei native R2 și măsurarea răspunsului preview separat de player.
+- [x] Repetarea probei native R2 și măsurarea răspunsului preview separat de player.
+
+## Livrare verificată
+
+Runtime `40e96fcc7f76`, cod GitHub `c9ac5e2927f9c77a69f07a6d98d1e79bef01dbde`,
+precedent `9897df27e389` păstrat. 140 probe browser și 44 verificări native PASS.
+Preferințele, volumul/mute, istoricul și starea media inițială restaurate;
+rețeaua/gateway-ul păstrate, trei servicii active, diagnosticul închis și zero
+convertoare/directoare temporare proprii. Fără redare audio în probă și fără
+acceptare acustică; ieșirea era indisponibilă înainte. Acceptarea este delimitată
+la reglaje live, fără a închide criteriile globale ale produsului.
