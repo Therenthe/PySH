@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Own only our API and kiosk processes; recover crashes, respect explicit exit."""
 import ctypes
+import hashlib
 import os
 from pathlib import Path
 import signal
@@ -8,6 +9,12 @@ import subprocess
 import sys
 import time
 import urllib.request
+
+
+def kiosk_url(root):
+    # A new entry document must bypass an already-fresh cached kiosk page.
+    version = hashlib.sha256((root / "dist/index.html").read_bytes()).hexdigest()[:16]
+    return "http://127.0.0.1:8765/?ui=" + version
 
 def enable_child_reaping():
     """Adopt crashed workers' descendants so owned orphan processes are reaped."""
@@ -187,7 +194,7 @@ def main():
                 if browser is not None:
                     print(f"Kiosk exited code={browser.returncode}; restarting kiosk", file=sys.stderr, flush=True)
                 terminate(browser)
-                browser = start_owned(["chromium", "--ozone-platform=wayland", "--no-first-run", "--disable-features=Translate", "--noerrdialogs", "--disable-session-crashed-bubble", "--password-store=basic", "--kiosk", "--user-data-dir=" + str(DATA / "hub-browser"), "--app=http://127.0.0.1:8765"], env=environment, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                browser = start_owned(["chromium", "--ozone-platform=wayland", "--no-first-run", "--disable-features=Translate", "--noerrdialogs", "--disable-session-crashed-bubble", "--password-store=basic", "--kiosk", "--user-data-dir=" + str(DATA / "hub-browser"), "--app=" + kiosk_url(ROOT)], env=environment, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             time.sleep(1)
     finally:
         failures = []

@@ -62,3 +62,29 @@ Capturile brute, stările reale și operatorii rămân în directoare private
 `.runtime/`. Browserul fixture folosește date sintetice; un ceas media simulat
 verifică numai ramuri de control, nu decodare. Nicio probă mock nu se prezintă
 ca transmisie reală. Nu s-au schimbat rețeaua, OS-ul, sursele sau favoritele.
+
+## R1 instalat, respins de proba nativă; R2
+
+R1 `fda00541134a`, sursă `6afd5e0ff4be5afa45983d7e53ba12f19e59c56c`:
+backup PC verificat, 228 fișiere/29 preferințe, rețea/gateway păstrate și versiunea
+precedentă păstrată. Prima probă nativă a găsit însă vechiul TV. Nu este PASS:
+locatorul nou a lipsit deoarece pagina randată era veche, nu pentru că noul ghid
+ar fi fost validat. Captura și raportul FAIL sunt păstrate. Cleanup complet PASS.
+
+Comparația HTTP directă pe Pi: index servit și index instalat au același hash
+`091ddbaefbd958f75a6f0fb6e083621fa88c04a02dbfc867c48c273fac397a36`, cu noul
+script `index-nJPmrd8G.js`; Cache-Control absent. Codul StaticFiles permitea
+304, iar kiosk deschidea mereu același URL. Aceste probe indică o pagină veche
+păstrată de browser; profilurile nu sunt inspectate sau șterse.
+
+R2 `88efb8ce5f6e` servește explicit GET/HEAD `/` și `/index.html` cu no-store,
+inclusiv la antete condiționale; URL-ul kiosk folosește hashul conținutului HTML
+pentru a evita și cache-ul deja proaspăt. Asseturile cu hash își păstrează cache-ul.
+11 teste PASS: corp/antete/HEAD/query, ETag și IMS, fișier nou cu mărime/mtime
+identice, index lipsă și identitatea stabilă/schimbată a URL-ului. UI/CSS sunt
+identice cu R1 auditat; R2 schimbă backendul și lansatorul. Instalare R2 PENDING.
+
+R2 regresie Python completă: 952 PASS, 46 skip de platformă, 11 subteste.
+Fixture Chromium cu profil persistent: rădăcina veche rămâne cache-uită fără
+cerere nouă; URL-ul versionat încarcă noul script, apoi no-store revalidează
+la reload și relansare în același profil. Nu s-a șters profilul sau cache-ul.

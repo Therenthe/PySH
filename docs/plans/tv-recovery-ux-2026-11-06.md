@@ -42,3 +42,11 @@ a produsului rămâne OPEN. Dovezile brute rămân private în `.runtime/`.
 Runtime `fda00541134a`, 228 fișiere. Sursa și pachetul vor fi publicate și
 verificate înaintea instalării. Etapele de instalare și verificare nativă rămân
 PENDING până la dovezile lor.
+
+## R2 după proba nativă
+
+R1 instalat, dar proba nativă a respins UI vechi rămas în browser. API-ul servea
+indexul nou, identic cu manifestul; lipsea no-store, iar kiosk folosea același URL.
+R2 `88efb8ce5f6e`: GET/HEAD pentru index nu mai răspund 304, kiosk folosește hashul
+indexului în URL. Nu se șterge cache/profilul și nu se resetează conturi.
+Cele 11 probe noi HTTP/launcher PASS; noua livrare și retestarea nativă rămân PENDING.

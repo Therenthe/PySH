@@ -1025,5 +1025,15 @@ async def diagnostics(request: Request):
     return JSONResponse(payload, headers={"Content-Disposition": 'attachment; filename="pi-smart-hub-diagnostics.json"'})
 
 
+@app.api_route("/", methods=["GET", "HEAD"], include_in_schema=False)
+@app.api_route("/index.html", methods=["GET", "HEAD"], include_in_schema=False)
+async def frontend_entry():
+    entry = ROOT / "dist/index.html"
+    if not entry.is_file():
+        return JSONResponse({"error": "frontend_unavailable"}, status_code=503, headers={"Cache-Control": "no-store"})
+    # FileResponse avoids StaticFiles' conditional 304 for the release entry.
+    return FileResponse(entry, media_type="text/html", headers={"Cache-Control": "no-store"})
+
+
 if (ROOT / "dist").is_dir():
     app.mount("/", StaticFiles(directory=ROOT / "dist", html=True), name="frontend")
