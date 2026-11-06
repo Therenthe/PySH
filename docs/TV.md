@@ -15,6 +15,12 @@ ignoră majusculele și diacriticele. Selectarea unui rând arată ghidul; **Pri
 live** pornește imaginea pe întregul ecran. Steaua adaugă/elimină canalul din
 favorite. Un favorit care lipsește din liste este marcat explicit.
 
+TV are o singură bară pentru Canale, Înregistrări și Surse. Triunghiul de lângă
+numele canalului pornește vizionarea, cercul pregătește înregistrarea imediată,
+iar calendarul de lângă o emisiune programează înregistrarea ei. Atinge titlul
+emisiunii sau „Detalii” pentru descriere; o nouă atingere o restrânge. Ghidul
+păstrează loc pentru emisiunea curentă și următoarea, fără bara radioului.
+
 **Digi Sport 1 · Player oficial** din lista TV deschide pagina Digi în browserul
 protejat al PySH. Accesul este verificat de Digi, inclusiv rețeaua folosită;
 eventualul dialog de confidențialitate aparține site-ului. Trage din partea de
@@ -29,6 +35,16 @@ schimbarea rezoluției; pornirea poate dura câteva secunde. Decodarea depinde
 în continuare de codecurile Chromium instalate. DRM, SAMPLE-AES și DASH nu
 sunt decodate de acest player.
 La indisponibilitatea canalului, folosește Reîncearcă sau Înapoi.
+
+În fullscreen, atingerea imaginii arată comenzile: anterior, redare/pauză,
+următor și oprire. Schimbarea canalului folosește ordinea listei filtrate,
+închide sesiunea precedentă și păstrează înregistrările independente.
+Sliderul de volum și butonul de sunet modifică aceeași ieșire audio ca restul
+PySH. Lipsa ieșirii este afișată explicit; nu împiedică imaginea TV.
+Comenzile rămân vizibile în timpul reglării și al navigării cu tastatura.
+Repausul automat nu întrerupe vizionarea. Un flux fără progres video timp de
+aproximativ25secunde primește mesaj de recuperare, nu conectare fără sfârșit;
+pauza intenționată nu este tratată ca blocaj.
 
 ## Ghid TV și surse
 

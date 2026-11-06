@@ -1,5 +1,8 @@
 # PySH status
 
+TV recovery and touchscreen UI installed and verified: runtime88efb8ce5f6e/code09162997ea1ac878bf77fa0c306c8fcc07bb4e82. Versioned kiosk URL/no-store and loaded script equality verified in existing profile.20nativechecksPASS: actual Antena1/PROTV1920x1080,27spause/resume,compact guide,controls,stop/focus,next/return guide.228runtimehashes/29preferences and PCbackup verified; previous retained; network/gateway preserved. Originalidle/preferences/history/volume restored;3servicesactive,0ownedconverters/tempdirs,debugclosed.952Python/46platformskips/11subtests,113JS,20newTV,40+4TVretets,76shared,independentvisual8+8/keyboard12+4 andnativevisualreviewPASS. Physicalaudio excluded byuser; all30fullproductcriteriaOPEN. Initialreportedblockage not reproduced; nativeR1staleUI and R2harnessfailure are retained honestly in evidence. See docs/plans/tv-recovery-ux-2026-11-06.md and docs/evidence/tv-recovery-ux-2026-11-06.md.
+
+
 ## Official Digi Sport1 installed —5November2026
 
 TV now opens exact official DigiSport1 URL via protected owned browser and trusted Return. Runtimef6385c202893/code d0a3fe7dcb48b744a4badcc1a3bf71cf56763293,previous3ef6f627868a retained.228hashes/29preferences/separate PCbackup verified; network/gateway preserved.
