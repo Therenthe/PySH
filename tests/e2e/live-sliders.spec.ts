@@ -12,9 +12,9 @@ async function fixture(page:Page,ro:boolean,theme:string){
  const station={uuid:'11111111-1111-4111-8111-111111111111',name:'Fixture Radio',url:'https://example.org/radio'};
  const state:any={preferences:{language:ro?'ro':'en',theme,setupComplete:true,nightEnabled:false,screensaverMinutes:0,navigationCollapsed:false,navigationAutoHide:false,timezone:'Europe/Bucharest',screenBrightness:80,lastStation:station,favorites:[station]},network:{available:true,state:'connected'},bluetooth:{available:true,devices:[],prompts:[]},audio:{available:true,ready:true,volume:40,mute:false,output:'fixture',outputs:[{id:'fixture',description:'Fixture speaker',active:true}]},player:{kind:'radio',state:'playing',station_name:station.name,title:'Fixture song',url:station.url},weather:{},power:{standby:false,brightness:{available:true,value:80},timer:{remainingSeconds:0},daily:{enabled:false,time:'23:00'}}};
  const writes:Write[]=[],legacyBrightness:any[]=[],saved={volume:40,brightness:80},active={volume:0,brightness:0},maxActive={volume:0,brightness:0};
- const control={holdNext:{volume:false,brightness:false},loseNext:{volume:false,brightness:false},holdState:false,stateHeld:0,staleAudio:0,staleBrightness:0};
+ const control={holdNext:{volume:false,brightness:false},loseNext:{volume:false,brightness:false},holdState:false,holdAllStates:false,failStateReads:false,stateFailures:0,stateHeld:0,staleAudio:0,staleBrightness:0,audioReply:'normal' as 'normal'|'mismatch'|'unready'|'unavailable'};
  state.preferences.volume=40;
- const releaseWrite:Partial<Record<Kind,()=>void>>={};let releaseState=()=>{};
+ const releaseWrite:Partial<Record<Kind,()=>void>>={},stateReleases:(()=>void)[]=[];let releaseState=()=>{};
  const apply=async(kind:Kind,body:Write['body'])=>{
   writes.push({kind,body});active[kind]++;maxActive[kind]=Math.max(maxActive[kind],active[kind]);
   try{
@@ -31,10 +31,18 @@ async function fixture(page:Page,ro:boolean,theme:string){
   if(path==='/api/session')json={token:'live-slider-fixture'};
   else if(path==='/api/state'){
    json=clone(state);
-   if(control.holdState){control.holdState=false;control.stateHeld++;control.staleAudio=json.audio.volume;control.staleBrightness=json.power.brightness.value;await new Promise<void>(resolve=>releaseState=resolve);}
+   if(control.failStateReads){control.stateFailures++;return route.fulfill({status:503,json:{error:'backend_unavailable'}});}
+   if(control.holdAllStates){control.stateHeld++;await new Promise<void>(resolve=>stateReleases.push(resolve));}
+   else if(control.holdState){control.holdState=false;control.stateHeld++;control.staleAudio=json.audio.volume;control.staleBrightness=json.power.brightness.value;await new Promise<void>(resolve=>releaseState=resolve);}
   }
   else if(path==='/api/audio'&&method==='POST'){
-   if(typeof body.volume==='number'){json=await apply('volume',body);if(control.loseNext.volume){control.loseNext.volume=false;return route.abort('failed');}}else{Object.assign(state.audio,body);json=state.audio;}
+   if(typeof body.volume==='number'){
+    json=await apply('volume',body);
+    if(control.audioReply==='mismatch')json.volume=state.audio.volume=Math.max(0,body.volume-1);
+    if(control.audioReply==='unready')json.ready=state.audio.ready=false;
+    if(control.audioReply==='unavailable'){json.available=state.audio.available=false;json.ready=state.audio.ready=false;}
+    if(control.loseNext.volume){control.loseNext.volume=false;return route.abort('failed');}
+   }else{Object.assign(state.audio,body);json=state.audio;}
   }
   else if(path==='/api/power/brightness'&&method==='POST'){json=await apply('brightness',body);if(control.loseNext.brightness){control.loseNext.brightness=false;return route.abort('failed');}}
   else if(path==='/api/preferences'&&method==='PATCH'){
@@ -57,7 +65,7 @@ async function fixture(page:Page,ro:boolean,theme:string){
   await route.fulfill({json}).catch(()=>{});
  });
  await page.goto('/');await expect(page.locator('.topbar')).toBeVisible();
- return{state,writes,saved,maxActive,control,legacyBrightness,release:(kind:Kind)=>releaseWrite[kind]?.(),releaseState:()=>releaseState(),value:(kind:Kind)=>kind==='volume'?state.audio.volume:state.power.brightness.value};
+ return{state,writes,saved,maxActive,control,legacyBrightness,release:(kind:Kind)=>releaseWrite[kind]?.(),releaseState:()=>releaseState(),releaseAllStates:()=>{control.holdAllStates=false;control.failStateReads=false;for(const release of stateReleases.splice(0))release();},value:(kind:Kind)=>kind==='volume'?state.audio.volume:state.power.brightness.value};
 }
 const number=(slider:Locator)=>slider.locator('..').locator('.audio-volume-value');
 async function quick(page:Page,ro:boolean,kind:Kind){
@@ -175,4 +183,26 @@ for(const theme of ['ink','night'])for(const kind of ['volume','brightness'] as 
   await expect.poll(()=>f.writes.filter(w=>w.kind===kind).length).toBe(1);f.release(kind);await expect(page.locator('.quick-controls-dialog').getByRole('alert')).toBeVisible();
   await page.mouse.up();await page.clock.runFor(300);expect(f.value(kind)).toBe(target);expect(f.saved[kind]).toBe(kind==='volume'?40:80);expect(f.writes.filter(w=>w.kind===kind)).toHaveLength(1);expect(f.writes[0].body.persist).toBe(false);await snap(page,info,'16-held-failure-no-auto-save');
  }finally{f.release(kind);await page.mouse.up();}
+});
+
+for(const theme of ['ink','night'])for(const mode of ['delayed','unavailable'] as const)test(`Live volume previews bypass ${mode} unrelated state reads ${theme}`,async({page},info)=>{
+ const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro,theme),slider=await quick(page,ro,'volume');
+ if(mode==='delayed')f.control.holdAllStates=true;else f.control.failStateReads=true;
+ await expect.poll(()=>mode==='delayed'?f.control.stateHeld:f.control.stateFailures,{timeout:6000}).toBeGreaterThan(0);
+ await point(page,slider,.31,true);
+ try{
+  await expect.poll(()=>f.value('volume')).toBe(31);await expect.poll(()=>f.writes.filter(w=>w.kind==='volume'&&w.body.persist===false).length).toBe(1);await expect(slider).toBeEnabled();
+  const target=await point(page,slider,.78);await expect.poll(()=>f.value('volume')).toBe(target);await expect.poll(()=>f.writes.filter(w=>w.kind==='volume'&&w.body.persist===false).length).toBe(2);await expect(number(slider)).toHaveText(target+'%');expect(f.saved.volume).toBe(40);
+  await snap(page,info,'17-preview-independent-of-state-read');f.releaseAllStates();await page.mouse.up();await expect.poll(()=>f.saved.volume).toBe(target);expect(f.maxActive.volume).toBe(1);
+ }finally{f.releaseAllStates();await page.mouse.up();}
+});
+
+for(const theme of ['ink','night'])for(const reply of ['mismatch','unready','unavailable'] as const)test(`Live volume ${reply} actual readback stops queued unsent intent ${theme}`,async({page},info)=>{
+ const ro=info.project.name.endsWith('ro');await page.clock.install();const f=await fixture(page,ro,theme),slider=await quick(page,ro,'volume');f.control.holdNext.volume=true;f.control.audioReply=reply;
+ const first=await point(page,slider,.63,true);
+ try{
+  await expect.poll(()=>f.writes.filter(w=>w.kind==='volume').length).toBe(1);await point(page,slider,.83);await expect(number(slider)).toHaveText('83%');await page.mouse.up();f.release('volume');
+  await expect(page.locator('.quick-controls-dialog').getByRole('alert')).toBeVisible();await page.clock.runFor(300);expect(f.writes.filter(w=>w.kind==='volume')).toHaveLength(1);expect(f.writes[0].body.persist).toBe(false);expect(f.saved.volume).toBe(40);
+  expect(f.value('volume')).toBe(reply==='mismatch'?first-1:first);await snap(page,info,'18-invalid-actual-readback-no-auto-replay');
+ }finally{f.release('volume');await page.mouse.up();}
 });

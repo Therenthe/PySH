@@ -46,5 +46,38 @@ background-scalars-v6.js. Profilurile și conturile nu sunt resetate.
   începe parțial sub fold; derularea/focusul îl dezvăluie integral.
 
 TypeScript/build și verificarea structurii PASS. Fixture-urile nu sunt probe
-acustice sau de backlight. Publicarea, instalarea și proba nativă sunt PENDING.
+acustice sau de backlight. Publicarea, instalarea și proba nativă R2 sunt PENDING.
 Datele brute rămân private în `.runtime/`; acceptarea globală rămâne OPEN.
+
+## Prima probă nativă și corecția de latență
+
+R1 runtime `9897df27e389`, sursă `03dcb266f37e3d700adb6f8105246637895bb816`,
+a trecut 44 verificări: volum și backlight modificate înainte de pointerup,
+numeric corect, preferințe neschimbate în timpul glisării și salvate la final,
+comenzi rapide și meniul extern YouTube, worker1.4.2/scalars-v6 în profilul
+existent și revenire Acasă. Rețeaua, gateway-ul și preferințele au fost păstrate;
+backupul PC a fost verificat prin checksum și conținut lizibil. La final,
+preferințele/istoricul/volum-mute/starea media au fost restaurate, diagnosticul
+închis, trei servicii active și zero convertoare/directoare temporare proprii.
+Ieșirea era indisponibilă înaintea probei; a fost selectat temporar endpointul
+analog deja enumerat, fără redare, apoi restaurată configurația inițială.
+Aceasta nu reprezintă acceptare acustică sau dovada unei boxe conectate.
+
+Timpii R1 includeau mișcarea pointerului, citirea completă `/api/state` și
+așteptări IPC ale playerului. Nu sunt latențe de actuație sau măsurători p95.
+Inspecția a identificat totuși citiri audio duplicate și polling de rețea/BT
+ținând lockul audio. R2 reutilizează observația reală din aceeași secțiune
+critică, păstrează readbackul după scriere și scoate polling-ul regulat lent
+din lock. Generația refreshului explicit împiedică publicarea stării de rețea
+vechi. UI consumă răspunsul audio real al preview-ului, fără a aștepta playerul;
+commitul final și recuperarea incertă continuă verificarea completă.
+
+986 Python PASS/46skip/11subteste și 192 JS PASS după corecție; 155 teste Python
+focalizate includ o poartă de rețea blocată în timp ce preview-ul se termină,
+serializare și readback diferit de valoarea cerută. 140/140 probe browser R2 PASS:
+68 live, 48 recuperare audio și 24 panouri de comenzi, EN/RO × Ink/Noapte.
+Cele 20 probe suplimentare confirmă că GET-ul global întârziat/indisponibil nu
+blochează următorul preview, iar readbackul invalid oprește coada fără autosalvare.
+Nicio eroare de fixture în această rulare; sursa runtime a rămas identică.
+Proba nativă R2 rămâne
+necesară înainte de verdictul final; modificările nu sunt acceptate doar din teste.

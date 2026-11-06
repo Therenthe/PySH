@@ -221,6 +221,7 @@ class Hub:
         self.audio_selected = False
         self._audio_restored = None
         self._device_lock = asyncio.Lock()
+        self._device_refresh_generation = 0
         self._weather_generation = 0
         self.queue = []
         self.queue_index = -1
@@ -299,8 +300,20 @@ class Hub:
 
     async def _refresh_device(self):
         results = await asyncio.gather(self.safe("network", self.device.network_status), self.safe("bluetooth", self.device.bluetooth_status), self.safe("audio", self.device.audio_status))
+        self._device_refresh_generation += 1
         self.snapshots = dict(zip(("network", "bluetooth", "audio"), results))
         await self._adopt_audio(self.snapshots["audio"])
+
+    async def _poll_device(self):
+        generation = self._device_refresh_generation
+        network, bluetooth = await asyncio.gather(self.safe('network', self.device.network_status), self.safe('bluetooth', self.device.bluetooth_status))
+        async with self._device_lock:
+            # An explicit refresh may have published newer connection state.
+            if generation == self._device_refresh_generation:
+                self.snapshots.update(network=network, bluetooth=bluetooth)
+            # Sample audio only after acquiring ownership: never replay a value
+            # captured before a live adjustment completed.
+            await self._adopt_audio(await self.safe('audio', self.device.audio_status))
 
     async def _adopt_audio(self, audio, restore=True):
         self.snapshots["audio"] = audio
@@ -333,7 +346,7 @@ class Hub:
 
     async def monitor(self):
         while True:
-            await self.refresh_device()
+            await self._poll_device()
             async with self.media_lock:
                 await media_thread(self.local_media.watch.expire)
             await asyncio.sleep(2)
@@ -630,7 +643,7 @@ async def audio(request: Request, body: Audio):
             await hub._adopt_audio(await hub.safe('audio', hub.device.audio_status))
             if not hub.audio_selected:
                 raise DeviceError('no_audio_output')
-            result = await hub.device.audio_set(volume=body.volume)
+            result = await hub.device.audio_set(volume=body.volume, observed=hub.snapshots['audio'])
             if not result.get('error'):
                 await hub._adopt_audio(result, restore=False)
             return result

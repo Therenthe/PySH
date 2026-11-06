@@ -20,7 +20,7 @@ def scalar(tmp_path, monkeypatch):
     async def status():
         return deepcopy(current)
 
-    async def set_audio(**change):
+    async def set_audio(*, observed=None, **change):
         current.update(change)
         return deepcopy(current)
 
@@ -62,7 +62,7 @@ def test_volume_previews_apply_actual_level_without_flash_or_monitor_restart(sca
     hub.device.bluetooth_status.assert_not_awaited()
     hub.visualizer.close.assert_not_awaited()
     hub.player.command.assert_not_awaited()
-    assert all(call.kwargs.keys() == {'volume'} for call in hub.device.audio_set.await_args_list)
+    assert all(call.kwargs.keys() == {'volume', 'observed'} for call in hub.device.audio_set.await_args_list)
     final = client.post('/api/audio', headers=headers, json={'volume': 79})
     assert final.status_code == 200
     assert hub.store.value.volume == 79
@@ -140,7 +140,7 @@ def test_volume_preview_serializes_with_other_previews_and_device_poll(scalar):
         started, release = asyncio.Event(), asyncio.Event()
         count = 0
 
-        async def held(**change):
+        async def held(*, observed=None, **change):
             nonlocal count
             count += 1
             if count == 1:
@@ -166,3 +166,63 @@ def test_volume_preview_serializes_with_other_previews_and_device_poll(scalar):
 
     asyncio.run(scenario())
     writes.assert_not_called()
+
+
+def test_slow_network_poll_does_not_block_volume_and_adopts_fresh_audio(scalar):
+    hub, _, _, current, _, writes = scalar
+
+    async def scenario():
+        started, release = asyncio.Event(), asyncio.Event()
+
+        async def slow_network():
+            started.set()
+            await release.wait()
+            return {'state': 'connected'}
+
+        hub.device.network_status.side_effect = slow_network
+        poll = asyncio.create_task(hub._poll_device())
+        await started.wait()
+        assert not hub._device_lock.locked()
+        request = SimpleNamespace(app=SimpleNamespace(state=SimpleNamespace(hub=hub)))
+        # The network gate remains shut; completion cannot depend on its delay.
+        result = await asyncio.wait_for(audio(request, Audio(volume=57, persist=False)), timeout=.5)
+        assert result['volume'] == current['volume'] == 57
+        assert not poll.done()
+        hub.device.audio_status.assert_awaited_once()
+        hub.device.audio_set.assert_awaited_once_with(volume=57, observed=hub.device.audio_set.await_args.kwargs['observed'])
+        assert hub.device.audio_set.await_args.kwargs['observed']['volume'] == 30
+        release.set()
+        await poll
+        assert hub.snapshots['audio']['volume'] == 57
+        assert hub.snapshots['network']['state'] == 'connected'
+
+    asyncio.run(scenario())
+    writes.assert_not_called()
+
+
+def test_delayed_poll_cannot_overwrite_explicit_connection_refresh(scalar):
+    hub, _, _, _, _, _ = scalar
+
+    async def scenario():
+        started, release = asyncio.Event(), asyncio.Event()
+        first = True
+
+        async def network():
+            nonlocal first
+            if first:
+                first = False
+                started.set()
+                await release.wait()
+                return {'state': 'old'}
+            return {'state': 'new'}
+
+        hub.device.network_status.side_effect = network
+        poll = asyncio.create_task(hub._poll_device())
+        await started.wait()
+        await hub.refresh_device()
+        assert hub.snapshots['network']['state'] == 'new'
+        release.set()
+        await poll
+        assert hub.snapshots['network']['state'] == 'new'
+
+    asyncio.run(scenario())

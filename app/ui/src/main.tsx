@@ -420,7 +420,25 @@ function App(){
  const bluetoothOperation=async(operation:{path:string;body:any;label:string;phase?:'action'|'state'})=>{if(btLock.current||busy)return;btLock.current=true;setBtPending(operation.label);setBtFailure(null);let phase=operation.phase||'action';try{if(phase==='action')await request(operation.path,{method:'POST',body:JSON.stringify(operation.body)});phase='state';const epoch=audioStateEpoch.current,read=++stateReadSerial.current;const state=await request('/api/state');applySnapshot(state,read,epoch);}catch(e:any){setBtFailure({...operation,phase,error:e.message||'unknown'});}finally{btLock.current=false;setBtPending('');}};
  // Audio intent survives navigation/modal close. A confirmed POST followed by a failed
  // state read retries only the read, never a second mutation or inverse mute toggle.
- const audioOperation=async(operation:AudioOperation)=>{if(audioLock.current||busy)return null;audioLock.current=true;audioStateEpoch.current++;const body={...operation.body},stateOnly=operation.phase==='state';setAudioPending(operation.label);setAudioFailure(null);let phase=operation.phase||'action';try{if(phase==='action')await request('/api/audio',{method:'POST',body:JSON.stringify(body)});phase='state';const read=++stateReadSerial.current;const state=await request('/api/state');audioStateEpoch.current++;applySnapshot(state,read,audioStateEpoch.current,true);if(body.volume!==undefined&&(state.audio.volume!==body.volume||stateOnly&&body.persist!==false&&state.preferences?.volume!==body.volume)){setAudioFailure({body:{...body,persist:true},label:operation.label,phase:'action',error:'operation_failed'});return null;}return state.audio;}catch(e:any){if(e.definite!==true)phase='state';setAudioFailure({body:body.volume!==undefined?{...body,persist:true}:body,label:operation.label,phase,uncertain:e.definite!==true||operation.uncertain,error:e.message||'unknown'});return null;}finally{audioLock.current=false;setAudioPending('');}};
+ const audioOperation=async(operation:AudioOperation)=>{
+  if(audioLock.current||busy)return null;audioLock.current=true;audioStateEpoch.current++;
+  const body={...operation.body},stateOnly=operation.phase==='state';setAudioPending(operation.label);setAudioFailure(null);let phase=operation.phase||'action';
+  try{
+   if(phase==='action'){
+    const actual=await request('/api/audio',{method:'POST',body:JSON.stringify(body)});phase='state';
+    // A volume preview already returns a fresh hardware readback. Waiting for
+    // the unrelated player/network state here stalls the next live position.
+    if(body.persist===false){
+     audioStateEpoch.current++;
+     if(!actual?.available||!actual.ready||actual.volume!==body.volume){setAudioFailure({body:{...body,persist:true},label:operation.label,phase:'action',error:'operation_failed'});return null;}
+     setHub(old=>({...old,audio:actual}));return actual;
+    }
+   }
+   phase='state';const read=++stateReadSerial.current,state=await request('/api/state');audioStateEpoch.current++;applySnapshot(state,read,audioStateEpoch.current,true);
+   if(body.volume!==undefined&&(state.audio.volume!==body.volume||stateOnly&&body.persist!==false&&state.preferences?.volume!==body.volume)){setAudioFailure({body:{...body,persist:true},label:operation.label,phase:'action',error:'operation_failed'});return null;}return state.audio;
+  }catch(e:any){if(e.definite!==true)phase='state';setAudioFailure({body:body.volume!==undefined?{...body,persist:true}:body,label:operation.label,phase,uncertain:e.definite!==true||operation.uncertain,error:e.message||'unknown'});return null;}
+  finally{audioLock.current=false;setAudioPending('');}
+ };
  liveAudioWrite.current=(volume,persist)=>audioOperation({body:{volume,persist},label:`${t('volume')} · ${volume}%`});
  const audioAction=(body:AudioChange)=>{if(body.volume!==undefined)return volumeLevel.set(body.volume,body.persist??true);const output=hub.audio.outputs?.find((item:any)=>item.id===body.output);const label=body.output!==undefined?`${t('output')} · ${output?.description||output?.name||body.output}`:t(body.mute?'mute':'unmute');return audioOperation({body,label});};
  const brightnessOperation=async(value:number,persist=true,phase:'action'|'state'='action')=>{

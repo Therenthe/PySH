@@ -10,7 +10,7 @@ fără a aștepta eliberarea sliderului. Toate suprafețele PySH și meniul exte
 - [x] Preview fără scrieri de preferințe; valoare finală salvată la sfârșit.
 - [x] Finalizare la cancel/blur/unmount, fără reluarea automată a scrierii incerte.
 - [x] Protocol scalar allowlisted, worker nou, păstrând profilurile și conturile.
-- [ ] Regresii actualizate pentru noul contract, audit EN/RO × ambele teme.
+- [x] Regresii actualizate pentru noul contract, audit EN/RO × ambele teme.
 - [ ] Publicare și identitate verificată, backup separat pe PC, instalare reversibilă.
 - [ ] Probe native cu slider ținut apăsat, stare reală și persistență la eliberare.
 - [ ] Restaurare exactă și verificarea serviciilor/resurselor, raport final.
@@ -25,3 +25,16 @@ acustica sau backlightul real. Capturile și stările brute rămân private.
 Proba dispozitivului păstrează rețeaua, preferințele, istoricul și starea media.
 Un endpoint analog nu este dovadă că există boxe; volumul sistemului și verificarea
 auditivă sunt rezultate distincte. Acceptarea produsului complet rămâne OPEN.
+
+## Iterația R2: latența observată pe dispozitiv
+
+R1 a trecut 44 verificări native cu pointer/tastatură sintetizate, dar timpii
+observați includeau mișcarea pointerului și citirea completă a playerului.
+R2 elimină o scanare audio duplicată, folosește răspunsul hardware al preview-ului
+fără GET complet și mută polling-ul regulat de rețea/BT în afara lockului audio.
+Citirea audio rămâne serializată și proaspătă; refreshul explicit are prioritate
+față de rezultate vechi. Salvarea și recuperarea incertă păstrează verificările.
+
+- [x] Test determinist: polling de rețea blocat, preview audio terminat înaintea lui.
+- [x] Readback real păstrat, fără copierea optimistă a valorii solicitate.
+- [ ] Repetarea probei native R2 și măsurarea răspunsului preview separat de player.

@@ -289,3 +289,30 @@ def test_audio_set_only_changes_an_enumerated_output(monkeypatch):
         ]
 
     asyncio.run(run())
+
+
+def test_audio_set_reuses_internal_observation_but_always_reads_actual_result(monkeypatch):
+    from unittest.mock import AsyncMock
+    device = Device()
+    observed = {'available': True, 'volume': 20, 'mute': False, 'output': 'speaker',
+                'outputs': [{'id': 'speaker', 'wp_id': '41'}], 'error': None}
+    actual = {**observed, 'volume': 64}
+    status = AsyncMock(return_value=actual)
+    run_audio = AsyncMock(return_value='')
+    monkeypatch.setattr(device, 'audio_status', status)
+    monkeypatch.setattr(device, '_run_audio', run_audio)
+
+    async def scenario():
+        result = await device.audio_set(volume=65, observed=observed)
+        assert result['volume'] == 64  # Readback is never fabricated from intent.
+        status.assert_awaited_once()
+        run_audio.assert_awaited_once_with('wpctl', 'set-volume', '41', '0.65')
+        status.reset_mock()
+        await device.audio_set(volume=66)
+        assert status.await_count == 2
+        run_audio.reset_mock()
+        with pytest.raises(DeviceError, match='not_found'):
+            await device.audio_set(volume=67, observed={**observed, 'outputs': []})
+        run_audio.assert_not_awaited()
+
+    asyncio.run(scenario())

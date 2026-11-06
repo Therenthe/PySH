@@ -1,5 +1,8 @@
 # PySH status
 
+Live sliders R2 candidate: reuse actual preview audio readback, avoid waiting for player status on each preview, and keep regular network/Bluetooth polling outside the audio ownership lock. Final persistence and uncertain-operation recovery retained. See docs/plans/live-levels-2026-11-06.md and docs/evidence/live-levels-2026-11-06.md. New native verification pending.
+
+
 Live volume/brightness candidate: immediate numeric drafts, bounded serial previews without preference writes, final persistence, stale-poll protection and explicit uncertain-write recovery in all app/external controls.983Python/46platformskips/11subtests,192JS,64TV,28newlive and80legacy/error checksPASS; final16retests and4pending-video-close checksPASS.Independentvisual/focus4x9 andexternal4contextsPASS. Worker1.4.2/scalars-v6. New runtime installation/native validation pending. See docs/plans/live-levels-2026-11-06.md and docs/evidence/live-levels-2026-11-06.md.
 
 
