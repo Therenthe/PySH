@@ -5,6 +5,10 @@ import type {PowerState} from './PowerPanel';
 import './quick-controls.css';
 
 type Props={ro:boolean;audio:any;power?:PowerState;brightness:number;onBrightness:(value:number,persist:boolean)=>unknown;brightnessPending:boolean;brightnessFeedback:ReactNode;brightnessUnverified:boolean;busy:boolean;audioBusy:boolean;recovery:ReactNode;playback:ReactNode;icon:(name:string)=>ReactNode;request:(path:string,init?:RequestInit)=>Promise<any>;refresh:()=>Promise<unknown>;onAudio:(body:{volume?:number;mute?:boolean;output?:string;persist?:boolean})=>unknown;onClose:()=>void;onNavigate:(page:'home'|'radio'|'media')=>void;onSettings:()=>void;onStandby:()=>void;onNetwork:()=>void;onBluetooth:()=>void;networkLabel:string;bluetoothLabel:string};
+export type VideoExitOwner={title:string;close:()=>Promise<boolean>};
+export function VideoCommandButton({ro,disabled=false,onOpen}:{ro:boolean;disabled?:boolean;onOpen:()=>void}){
+ return <button className="outline video-command-button" aria-label={ro?'Comenzi rapide':'Quick controls'} disabled={disabled} onClick={onOpen}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="M3 6h9m5 0h4M3 12h3m5 0h10M3 18h12m5 0h1"/><circle cx="14.5" cy="6" r="2.5"/><circle cx="8.5" cy="12" r="2.5"/><circle cx="17.5" cy="18" r="2.5"/></svg></button>;
+}
 export function QuickControls(p:Props){
  const {ro}=p,[pane,setPane]=useState<'controls'|'outputs'>('controls');
  const blocked=p.busy||p.audioBusy||p.brightnessPending,dialog=useDialogFocus<HTMLElement>(p.onClose,blocked),close=useRef<HTMLButtonElement>(null),output=useRef<HTMLButtonElement>(null),outputTitle=useRef<HTMLHeadingElement>(null);
@@ -29,9 +33,11 @@ export function QuickControls(p:Props){
 }
 
 /** A small edge gesture has an existing48px toolbar-button alternative. */
-export function HubCommandPull({enabled,onOpen}:{enabled:boolean;onOpen:()=>void}){
+export function HubCommandPull({enabled,onOpen,video=false}:{enabled:boolean;onOpen:()=>void;video?:boolean}){
  const gesture=useRef<{id:number;x:number;y:number}|null>(null);
- const start=(event:PointerEvent<HTMLDivElement>)=>{if(!enabled||event.button!==0)return;gesture.current={id:event.pointerId,x:event.clientX,y:event.clientY};event.preventDefault();event.currentTarget.setPointerCapture(event.pointerId);};
+ useEffect(()=>{if(!enabled)return;const key=(event:KeyboardEvent)=>{if(!event.defaultPrevented&&!event.repeat&&event.altKey&&event.shiftKey&&event.key.toLowerCase()==='p'){event.preventDefault();onOpen();}};document.addEventListener('keydown',key);return()=>document.removeEventListener('keydown',key);},[enabled,onOpen]);
+ const start=(event:PointerEvent<HTMLDivElement>)=>{if(!enabled||event.button!==0||!event.isPrimary||gesture.current)return;gesture.current={id:event.pointerId,x:event.clientX,y:event.clientY};event.preventDefault();event.currentTarget.setPointerCapture(event.pointerId);};
  const move=(event:PointerEvent<HTMLDivElement>)=>{const start=gesture.current;if(!start||start.id!==event.pointerId)return;if(Math.abs(event.clientX-start.x)>36){gesture.current=null;return;}if(event.clientY-start.y>18){gesture.current=null;onOpen();}};
- return enabled?<div className="hub-command-pull" aria-hidden="true" onPointerDown={start} onPointerMove={move} onPointerUp={()=>gesture.current=null} onPointerCancel={()=>gesture.current=null}/>:null;
+ const end=(event:PointerEvent<HTMLDivElement>)=>{if(gesture.current?.id===event.pointerId)gesture.current=null;};
+ return enabled?<div className="hub-command-pull" data-video={video} aria-hidden="true" onPointerDown={start} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end}/>:null;
 }

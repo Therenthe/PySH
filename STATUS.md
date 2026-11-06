@@ -1,5 +1,8 @@
 # PySH status
 
+Video command drawer candidate: shared top-edge gesture and48pxHUDcontrol inTV/localvideo, existingQuickControls aboveplayer, actualvideo title, focus/Escapeownership and confirmedknown-sessioncleanup before navigation. Deviceinstallation/nativeacceptance pending. See docs/plans/video-command-drawer-2026-11-06.md and docs/evidence/video-command-drawer-2026-11-06.md. SeparateTV-START-20261106 remainsOPEN.
+
+
 Bluetooth audio follow-up,6November: saved speaker reconnected/selected; user explicitly confirmed audible radio and Antena1TV. Selected-output PCM and active Chromium-to-Bluetooth links verified. Requested finalstate: Antena1favorite fullscreen,actual/saved volume15%,unmuted,radioidle,3servicesactive,0temporarytouchdevices,debugclosed. Runtime40e96fcc7f76/code c9ac5e2927f9c77a69f07a6d98d1e79bef01dbde unchanged. InitialTVstart stayedConnecting/black withoutChromiumaudio; reopening restored playback. Causeunresolved,TV-START-20261106 remainsOPEN in docs/UI_DELIVERY_PLAN.md. Follow-up certifies audible playback at15%,not continuous-slider acoustic latency. Evidence: docs/evidence/live-levels-2026-11-06.md.
 
 

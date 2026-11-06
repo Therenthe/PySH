@@ -1,5 +1,6 @@
 import {AudioVolume} from './AudioVolume';
 import {LocalVideoSession,readVideoObservation} from './localMediaApi';
+import {HubCommandPull,VideoCommandButton} from './QuickControls';
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 
 function TouchRange({label,min=0,max,value,disabled=false,step=1,onCommit}:{label:string;min?:number;max:number;value:number;disabled?:boolean;step?:number;onCommit:(value:number)=>void}){
@@ -7,11 +8,11 @@ function TouchRange({label,min=0,max,value,disabled=false,step=1,onCommit}:{labe
  const point=(e:React.PointerEvent<HTMLInputElement>)=>{const box=e.currentTarget.getBoundingClientRect();return Math.round((min+Math.max(0,Math.min(1,(e.clientX-box.left)/box.width))*(max-min))/step)*step;};
  return <input type="range" aria-label={label} min={min} max={max} step={step} value={draft??value} disabled={disabled} onChange={e=>onCommit(Number(e.target.value))} onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);setDraft(point(e));}} onPointerMove={e=>{if(e.currentTarget.hasPointerCapture(e.pointerId))setDraft(point(e));}} onPointerUp={e=>{if(e.currentTarget.hasPointerCapture(e.pointerId)){e.currentTarget.releasePointerCapture(e.pointerId);const next=point(e);setDraft(null);onCommit(next);}}} onPointerCancel={()=>setDraft(null)}/>;
 }
-type Props = { item:{path:string;name:string}; session:LocalVideoSession; language:'en'|'ro'; t:(key:string)=>string; audio:{ready:boolean;volume:number;mute:boolean;output?:string;outputs?:{id:string;name?:string;description?:string;active?:boolean}[]}; audioPending?:boolean;audioDisabled?:boolean;audioFeedback?:ReactNode; onAudio:(change:{volume?:number;mute?:boolean;persist?:boolean})=>Promise<unknown>; closeError?:boolean;onReplay:()=>Promise<void>;onDiscard:(localOnly:boolean)=>Promise<boolean>;onClose:()=>Promise<boolean> };
+type Props = { item:{path:string;name:string}; session:LocalVideoSession; language:'en'|'ro'; t:(key:string)=>string; audio:{ready:boolean;volume:number;mute:boolean;output?:string;outputs?:{id:string;name?:string;description?:string;active?:boolean}[]}; audioPending?:boolean;audioDisabled?:boolean;audioFeedback?:ReactNode; commandsEnabled?:boolean;onOpenCommands?:()=>void;onAudio:(change:{volume?:number;mute?:boolean;persist?:boolean})=>Promise<unknown>; closeError?:boolean;onReplay:()=>Promise<void>;onDiscard:(localOnly:boolean)=>Promise<boolean>;onClose:()=>Promise<boolean> };
 const timestamp=(value:number)=>{const n=Math.max(0,Math.floor(value||0));return `${Math.floor(n/60)}:${String(n%60).padStart(2,'0')}`};
 
 // Chromium decodes the real approved local file; every control remains app-owned and touch-sized.
-export function LocalVideo({item,session,language,closeError=false,t,audio,audioPending=false,audioDisabled=false,audioFeedback,onAudio,onReplay,onDiscard,onClose}:Props){
+export function LocalVideo({item,session,language,closeError=false,t,audio,audioPending=false,audioDisabled=false,audioFeedback,commandsEnabled=true,onOpenCommands,onAudio,onReplay,onDiscard,onClose}:Props){
  const element=useRef<HTMLVideoElement>(null),initialPlay=useRef(false),completed=useRef(false),resumeReady=useRef(false),mounted=useRef(false);
  const [closing,setClosing]=useState(false),[saveFailed,setSaveFailed]=useState(false),[sessionExpired,setSessionExpired]=useState(false),[discardFailed,setDiscardFailed]=useState(false);
  const [audioInterrupted,setAudioInterrupted]=useState(false);
@@ -36,8 +37,10 @@ export function LocalVideo({item,session,language,closeError=false,t,audio,audio
  const close=async()=>{if(closing)return;setClosing(true);setSaveFailed(false);try{if(!await onClose())setSaveFailed(true);}catch{setSaveFailed(true);}finally{if(mounted.current)setClosing(false);}};
  const discard=async(localOnly=false)=>{if(closing)return;setClosing(true);setDiscardFailed(false);try{if(!await onDiscard(localOnly))setDiscardFailed(true);}catch{setDiscardFailed(true);}finally{if(mounted.current)setClosing(false);}};
  const output=audio.outputs?.find(item=>item.id===audio.output||item.active); 
+ const openCommands=()=>{if(!commandsEnabled||closing||session.unavailable)return;element.current?.closest('.video-overlay')?.querySelector<HTMLButtonElement>('.video-command-button')?.focus({preventScroll:true});onOpenCommands?.();};
  return <section className="video-overlay" aria-label={t('videos')}>
-  <header className="video-header"><button className="video-back outline" disabled={closing} onClick={()=>void close()}>{language==='ro'?'Înapoi la Media':'Back to Media'}</button><div className="video-title" title={item.name}>{item.name}</div></header>
+  {onOpenCommands&&<HubCommandPull video enabled={commandsEnabled&&!closing&&!session.unavailable} onOpen={openCommands}/>}
+  <header className="video-header"><button className="video-back outline" disabled={closing} onClick={()=>void close()}>{language==='ro'?'Înapoi la Media':'Back to Media'}</button><div className="video-title" title={item.name}>{item.name}</div>{onOpenCommands&&<VideoCommandButton ro={language==='ro'} disabled={!commandsEnabled||closing||session.unavailable} onOpen={openCommands}/>}</header>
   <div className="video-stage"><video ref={element} src={session.session.stream_url} disableRemotePlayback disablePictureInPicture playsInline aria-label={item.name} onLoadedMetadata={metadata} onDurationChange={metadata} onSeeked={seeked} onTimeUpdate={sync} onPlay={()=>{if(!audio.ready){element.current?.pause();setAudioInterrupted(true);}sync();}} onPause={()=>{sync();persist();}} onEnded={()=>{completed.current=true;sync();persist();}} onWaiting={()=>setState(s=>({...s,waiting:true}))} onPlaying={()=>{setFailed(false);setState(s=>({...s,waiting:false}));sync();}} onCanPlay={ready} onError={()=>setFailed(true)}/>
    {(failed||sessionExpired)&&<div className="video-error" role="alert"><h2>{sessionExpired?(language==='ro'?'Sesiunea video s-a închis.':'Video session closed.'):t('videoPlaybackFailed')}</h2><p>{sessionExpired?(language==='ro'?'Revino la Media pentru a redeschide fișierul.':'Return to Media to reopen this file.'):t('videoRecoveryHint')}</p>{!sessionExpired&&<button className="outline" disabled={session.unavailable} onClick={retry}>{t('retry')}</button>}</div>}
   </div>
