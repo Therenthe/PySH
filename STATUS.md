@@ -1,5 +1,8 @@
 # PySH status
 
+TV recovery and touchscreen UI candidate: bounded no-frame recovery, idle exclusion, compact guide and icon controls, fullscreen shared volume and channel switching.941Python/46platform skips/11subtests,113JS,20newUI,40+4TV retests,76sharedregressions,visual8+8 andkeyboard12+4 PASS. Initial installed-runtime recovery decoded Antena1/PROTV1080p; original blockage not reproduced after relaunch. New candidatefda00541134a installation/native verification pending. Audio acoustic probe excluded by user; full product acceptance remainsOPEN. See docs/plans/tv-recovery-ux-2026-11-06.md and docs/evidence/tv-recovery-ux-2026-11-06.md.
+
+
 ## Official Digi Sport1 installed —5November2026
 
 TV now opens exact official DigiSport1 URL via protected owned browser and trusted Return. Runtimef6385c202893/code d0a3fe7dcb48b744a4badcc1a3bf71cf56763293,previous3ef6f627868a retained.228hashes/29preferences/separate PCbackup verified; network/gateway preserved.

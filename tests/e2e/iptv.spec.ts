@@ -23,15 +23,15 @@ type Call={path:string;method:string;body:any};
 type Job={id:string;title:string;channel_name:string;channel_id?:string;start_at:string;end_at:string;before_minutes:number;after_minutes:number;state:string;has_file:boolean;error?:string};
 const job=(id:string,title:string,state:string,has_file=false):Job=>({id,title,state,has_file,channel_id:'tv_one',channel_name:'PRO TV HD (1080p)',start_at:when(30),end_at:when(90),before_minutes:0,after_minutes:0});
 
-async function fixture(page:Page,ro:boolean,theme:string,{initialRecords=false,service=true,empty=false}={}){
+async function fixture(page:Page,ro:boolean,theme:string,{initialRecords=false,service=true,empty=false,audioReady=true,screensaverMinutes=0}={}){
  await page.clock.setFixedTime(NOW);
- const state:any={preferences:{language:ro?'ro':'en',theme,timezone:'Europe/Bucharest',setupComplete:true,navigationCollapsed:false,navigationAutoHide:false,screensaverMinutes:0,nightEnabled:false},network:{},bluetooth:{devices:[],prompts:[]},audio:{ready:true,available:true,volume:30,mute:false,outputs:[]},player:{state:'idle'},weather:{}};
+ const state:any={preferences:{language:ro?'ro':'en',theme,timezone:'Europe/Bucharest',setupComplete:true,navigationCollapsed:false,navigationAutoHide:false,screensaverMinutes,nightEnabled:false},network:{},bluetooth:{devices:[],prompts:[]},audio:{ready:audioReady,available:true,volume:30,mute:false,outputs:[]},player:{state:'idle'},weather:{}};
  const channels=empty?[]:[{id:'tv_one',name:'PRO TV HD (1080p)',group:'România',favorite:true},{id:'tv_two',name:'Antena 1 (Romania)',group:'România',favorite:false},{id:'tv_three',name:'NBC Sports NOW (1080p)',group:'Undefined',favorite:true}];
  const programmes=[{id:'pg_past',title:'Emisiune încheiată',start:when(-120),end:when(-60),description:'Nu trebuie afișată înaintea programului actual.',source:guideSource},{id:'pg_current',title:'Jurnalul de seară',start:when(-20),end:when(10),description:'Descriere verificabilă a emisiunii curente.',source:guideSource},{id:'pg_next',title:'Documentar despre oraș',start:when(10),end:when(70),description:'Următoarea emisiune are un interval distinct.',source:guideSource}];
  const catalogue:any={channels,sources:{playlists:[source],xmltv:[guideSource]},favorite_requests:[{name:'PokerGo',channel_id:null,status:'not_in_playlists'}],source_status:{},refreshing:false,guide_updated_at:when(-60)};
  let records:Job[]=initialRecords?[job('scheduled_one','Programare existentă','scheduled'),job('live_one','Emisiune în curs','recording'),job('saved_one','Înregistrare salvată','completed',true),{...job('failed_one','Înregistrare eșuată','failed'),error:'recorder_disk_full'}]:[];
  const calls:Call[]=[],idempotency=new Map<string,Job>();
- const control={loseCreateAck:false,failView:true,holdView:false,failGuide:false,failCloseOnce:false,holdCloseOnce:false,refreshGuideTitle:false};
+ const control={loseCreateAck:false,failView:true,holdView:false,failGuide:false,failCloseOnce:false,holdCloseOnce:false,refreshGuideTitle:false,stallStream:false,manifestReads:0};
  let releaseView:()=>void=()=>{},releaseClose:()=>void=()=>{},viewerNumber=0,guideReads=0;
  await page.route('**/api/**',async route=>{
   const request=route.request(),url=new URL(request.url()),path=url.pathname,method=request.method(),body=request.postData()?request.postDataJSON():undefined;
@@ -43,6 +43,7 @@ async function fixture(page:Page,ro:boolean,theme:string,{initialRecords=false,s
   else if(path==='/api/media/continue')json={items:[]};
   else if(path==='/api/media/inspect')json={state:'unavailable'};
   else if(path==='/api/player'){state.player={state:'idle'};json=state.player;}
+  else if(path==='/api/audio'){Object.assign(state.audio,body);json=state.audio;}
   else if(path==='/api/iptv')json=catalogue;
   else if(path.startsWith('/api/iptv/guide/')){
    guideReads++;
@@ -83,7 +84,14 @@ async function fixture(page:Page,ro:boolean,theme:string,{initialRecords=false,s
    if(control.failCloseOnce){control.failCloseOnce=false;return route.fulfill({status:503,json:{error:'iptv_stream_unavailable'}});}
    json={closed:true};
   }
-  else if(path.startsWith('/api/iptv/stream/'))return route.fulfill({status:503,json:{error:'iptv_stream_unavailable'}});
+  else if(path.startsWith('/api/iptv/stream/')){
+   if(control.stallStream){
+    if(path.endsWith('/root')){control.manifestReads++;return route.fulfill({contentType:'application/vnd.apple.mpegurl',body:'#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:2\n#EXT-X-MEDIA-SEQUENCE:1\n#EXTINF:2,\nsegment.ts\n'});}
+    // Deliberately no segment response: valid manifest, no decoder progress.
+    await new Promise<void>(()=>{});return;
+   }
+   return route.fulfill({status:503,json:{error:'iptv_stream_unavailable'}});
+  }
   await route.fulfill({json}).catch(()=>{});
  });
  await page.goto('/');await page.locator('.main-nav button').nth(2).tap();
@@ -123,12 +131,138 @@ const sourcesTab=(page:Page,ro:boolean)=>page.locator('.iptv-tabs').getByRole('b
 const editor=(page:Page,ro:boolean)=>page.getByRole('dialog',{name:ro?'Programează înregistrarea':'Schedule recording',exact:true});
 const row=(page:Page,title:string)=>page.locator('.iptv-recording').filter({has:page.getByRole('heading',{name:title,exact:true})});
 
+// A media-element state double for control/lifecycle tests, never playback proof.
+// The stall test below uses the untouched browser element and a real HLS parser.
+async function syntheticTVClock(page:Page){
+ // Keep the media state double independent of HLS network retry exhaustion.
+ // The real parser and missing segments are exercised in the no-frame test.
+ await page.route('**/node_modules/.vite/deps/hls__js.js*',route=>route.fulfill({contentType:'application/javascript',body:`
+ export default class Hls {
+  static Events={ERROR:'error',MANIFEST_PARSED:'manifest'};static isSupported(){return true;}
+  events={};on(name,listener){this.events[name]=listener;}loadSource(){}
+  attachMedia(){queueMicrotask(()=>this.events.manifest?.());}destroy(){}
+ }`}));
+ await page.addInitScript(()=>{
+  const proto=HTMLMediaElement.prototype,states=new WeakMap<HTMLMediaElement,{paused:boolean;position:number;started:number}>();
+  const own=(v:HTMLMediaElement)=>v.closest('.iptv-live')!==null;
+  const state=(v:HTMLMediaElement)=>{let s=states.get(v);if(!s){s={paused:true,position:0,started:performance.now()};states.set(v,s);}return s;};
+  const position=(v:HTMLMediaElement)=>{const s=state(v);return s.position+(s.paused?0:(performance.now()-s.started)/1000);};
+  for(const name of ['paused','currentTime','readyState'] as const){
+   const native=Object.getOwnPropertyDescriptor(proto,name)!;
+   Object.defineProperty(proto,name,{configurable:true,get(){if(!own(this))return native.get!.call(this);return name==='paused'?state(this).paused:name==='readyState'?4:position(this);},...(name==='currentTime'?{set(value:number){if(!own(this))return native.set!.call(this,value);const s=state(this);s.position=value;s.started=performance.now();}}:{})});
+  }
+  const play=proto.play,pause=proto.pause;
+  const width=Object.getOwnPropertyDescriptor(HTMLVideoElement.prototype,'videoWidth')!;
+  Object.defineProperty(HTMLVideoElement.prototype,'videoWidth',{configurable:true,get(){return own(this)?1280:width.get!.call(this);}});
+  proto.play=function(){if(!own(this))return play.call(this);const s=state(this);s.started=performance.now();s.paused=false;this.dispatchEvent(new Event('play'));this.dispatchEvent(new Event('playing'));return Promise.resolve();};
+  proto.pause=function(){if(!own(this))return pause.call(this);const s=state(this);if(s.paused)return;s.position=position(this);s.paused=true;this.dispatchEvent(new Event('pause'));};
+ });
+}
+
+for(const theme of ['ink','night']){
+ test(`TV recovery no-frame deadline retries one owned session without a speaker ${theme}`,async({page},info)=>{
+  const ro=info.project.name.endsWith('ro');await page.clock.install({time:NOW});
+  const f=await fixture(page,ro,theme,{audioReady:false});f.control.failView=false;f.control.stallStream=true;
+  await page.getByRole('button',{name:ro?'Privește live':'Watch live',exact:true}).tap();
+  const live=page.getByRole('dialog',{name:'PRO TV HD (1080p)',exact:true});
+  await expect.poll(()=>f.control.manifestReads).toBeGreaterThan(0);await expect(live.locator('.iptv-live-status[role=status]')).toContainText(ro?'Se conectează':'Connecting');
+  await expect(live.locator('.iptv-live-caption>span')).toHaveText(ro?'Se conectează…':'Connecting…');
+  await expect(live.locator('.iptv-volume input')).toBeDisabled();await expect(live.locator('.iptv-volume-value')).toContainText(ro?'Nicio ieșire audio':'No audio output');
+  await snap(page,info,'recovery-01-valid-manifest-no-frames-no-speaker');
+  await page.clock.runFor(27000);
+  await expect(live.getByRole('alert')).toContainText(ro?'Sursa TV nu mai livrează imagine':'The TV source is not delivering video');
+  await expect(live.locator('.iptv-live-caption>span')).toHaveText(ro?'Problemă de redare':'Playback problem');
+  await snap(page,info,'recovery-02-bounded-actionable-no-frame-error');
+  const retry=live.getByRole('button',{name:ro?'Reîncearcă':'Retry',exact:true});
+  await retry.evaluate((button:HTMLButtonElement)=>{button.click();button.click();});
+  await expect.poll(()=>f.calls.filter(c=>c.path==='/api/iptv/view'&&c.method==='POST').length).toBe(2);
+  expect(f.calls.filter(c=>c.path==='/api/iptv/view/viewer_1'&&c.method==='DELETE')).toHaveLength(1);
+  expect(f.calls.findIndex(c=>c.path==='/api/iptv/view/viewer_1'&&c.method==='DELETE')).toBeLessThan(f.calls.findIndex(c=>c.path==='/api/iptv/view'&&c.method==='POST'&&f.calls.indexOf(c)>f.calls.findIndex(v=>v.path==='/api/iptv/view')));
+  await live.getByRole('button',{name:ro?'Înapoi la TV':'Back to TV',exact:true}).tap();await expect(live).toHaveCount(0);
+  await expect.poll(()=>f.calls.filter(c=>c.path==='/api/iptv/view/viewer_2'&&c.method==='DELETE').length).toBe(1);
+ });
+
+ test(`TV recovery intentional pause and progressing playback avoid false stall ${theme}`,async({page},info)=>{
+  const ro=info.project.name.endsWith('ro');await page.clock.install({time:NOW});await syntheticTVClock(page);
+  const f=await fixture(page,ro,theme);f.control.failView=false;f.control.stallStream=true;
+  await page.getByRole('button',{name:ro?'Privește live':'Watch live',exact:true}).tap();
+  const live=page.getByRole('dialog',{name:'PRO TV HD (1080p)',exact:true});
+  const pause=live.getByRole('button',{name:ro?'Pauză':'Pause',exact:true});await expect(pause).toBeEnabled();
+  await page.clock.runFor(27000);await expect(live.getByRole('alert')).toHaveCount(0);await expect(live.locator('video')).toHaveJSProperty('paused',false);
+  await live.locator('video').tap();await pause.tap();await expect(live.locator('video')).toHaveJSProperty('paused',true);
+  await page.clock.runFor(27000);await expect(live.getByRole('alert')).toHaveCount(0);await snap(page,info,'recovery-03-intentional-pause-survives-deadline-fixture');
+  await expect(live.locator('.iptv-live-caption>span')).toHaveText(ro?'În pauză':'Paused');
+  await live.getByRole('button',{name:ro?'Redă':'Play',exact:true}).tap();await expect(live.locator('video')).toHaveJSProperty('paused',false);
+  await expect(live.locator('.iptv-live-caption>span')).toHaveText(ro?'În direct':'Live');
+  await page.clock.runFor(27000);await expect(live.getByRole('alert')).toHaveCount(0);
+  await live.locator('video').evaluate(v=>v.dispatchEvent(new Event('ended')));
+  await expect(live.getByRole('alert')).toContainText(ro?'Sursa TV nu mai livrează imagine':'The TV source is not delivering video');
+  await snap(page,info,'recovery-04-ended-live-stream-is-actionable-fixture');
+ });
+
+ test(`TV recovery viewer excludes idle screensaver and releases it on close ${theme}`,async({page},info)=>{
+  const ro=info.project.name.endsWith('ro');await page.clock.install({time:NOW});await syntheticTVClock(page);
+  const f=await fixture(page,ro,theme,{screensaverMinutes:1});f.control.failView=false;f.control.stallStream=true;
+  await page.getByRole('button',{name:ro?'Privește live':'Watch live',exact:true}).tap();
+  const live=page.getByRole('dialog',{name:'PRO TV HD (1080p)',exact:true});await expect(live.getByRole('button',{name:ro?'Pauză':'Pause',exact:true})).toBeEnabled();
+  await page.clock.runFor(65000);await expect(page.locator('.pysh-screensaver')).toHaveCount(0);await expect(live.getByRole('alert')).toHaveCount(0);
+  await snap(page,info,'recovery-05-viewer-keeps-idle-screen-away-fixture');
+  await live.locator('video').tap();await live.getByRole('button',{name:ro?'Înapoi la TV':'Back to TV',exact:true}).tap();await expect(live).toHaveCount(0);
+  await page.clock.runFor(61000);await expect(page.locator('.pysh-screensaver')).toBeVisible();
+  await snap(page,info,'recovery-06-idle-policy-resumes-after-close');
+ });
+
+ test(`TV recovery fullscreen volume and mute use shared confirmed audio state ${theme}`,async({page},info)=>{
+  const ro=info.project.name.endsWith('ro');await page.clock.install({time:NOW});await syntheticTVClock(page);
+  const f=await fixture(page,ro,theme);f.control.failView=false;f.control.stallStream=true;
+  await page.getByRole('button',{name:ro?'Privește live':'Watch live',exact:true}).tap();
+  const live=page.getByRole('dialog',{name:'PRO TV HD (1080p)',exact:true});await expect(live.getByRole('button',{name:ro?'Pauză':'Pause',exact:true})).toBeEnabled();
+  const bounds=await live.boundingBox();expect(bounds).toEqual({x:0,y:0,width:800,height:480});
+  const slider=live.getByRole('slider',{name:ro?'Volum':'Volume',exact:true}),box=(await slider.boundingBox())!;
+  await slider.tap({position:{x:box.width*.65,y:box.height/2}});
+  await expect.poll(()=>f.calls.filter(c=>c.path==='/api/audio').length).toBe(1);expect(f.calls.filter(c=>c.path==='/api/audio')[0].body).toEqual({volume:65});
+  await expect(slider).toHaveValue('65');await expect(live.locator('.iptv-volume-value')).toHaveText('65%');
+  await live.getByRole('button',{name:ro?'Fără sunet':'Mute',exact:true}).tap();await expect(live.getByRole('button',{name:ro?'Activează sunetul':'Unmute',exact:true})).toHaveAttribute('aria-pressed','true');
+  expect(f.state.audio.mute).toBe(true);await snap(page,info,'recovery-07-fullscreen-shared-volume-mute-confirmed-fixture');
+  await live.getByRole('button',{name:ro?'Activează sunetul':'Unmute',exact:true}).tap();await expect(live.getByRole('button',{name:ro?'Fără sunet':'Mute',exact:true})).toHaveAttribute('aria-pressed','false');
+  await live.getByRole('button',{name:ro?'Canalul următor':'Next channel',exact:true}).tap();
+  await expect(page.getByRole('dialog',{name:'NBC Sports NOW (1080p)',exact:true})).toBeVisible();
+  const close=f.calls.findIndex(c=>c.path==='/api/iptv/view/viewer_1'&&c.method==='DELETE');
+  const next=f.calls.findIndex(c=>c.path==='/api/iptv/view'&&c.method==='POST'&&c.body.channel_id==='tv_three');expect(close).toBeGreaterThanOrEqual(0);expect(next).toBeGreaterThan(close);
+  await page.getByRole('button',{name:ro?'Oprește TV':'Stop TV',exact:true}).tap();await expect(page.locator('.iptv-live')).toHaveCount(0);
+  await expect(page.locator('.iptv-guide h2')).toHaveText('NBC Sports NOW (1080p)');
+  await expect(page.locator('.iptv-channel').filter({hasText:'NBC Sports NOW'})).toHaveAttribute('aria-pressed','true');
+ });
+
+ test(`TV recovery fullscreen controls persist during volume drag and keyboard use ${theme}`,async({page},info)=>{
+  const ro=info.project.name.endsWith('ro');await page.clock.install({time:NOW});await syntheticTVClock(page);
+  const f=await fixture(page,ro,theme);f.control.failView=false;f.control.stallStream=true;
+  await page.getByRole('button',{name:ro?'Privește live':'Watch live',exact:true}).tap();
+  const live=page.getByRole('dialog',{name:'PRO TV HD (1080p)',exact:true});await expect(live.getByRole('button',{name:ro?'Pauză':'Pause',exact:true})).toBeEnabled();
+  const controls=live.locator('.iptv-live-controls'),slider=live.getByRole('slider',{name:ro?'Volum':'Volume',exact:true}),box=(await slider.boundingBox())!;
+  await page.mouse.move(box.x+box.width*.6,box.y+box.height/2);await page.mouse.down();
+  await page.clock.runFor(6000);await expect(controls).not.toHaveClass(/concealed/);
+  await snap(page,info,'recovery-08-held-volume-keeps-controls-visible-fixture');
+  await page.mouse.up();await expect.poll(()=>f.calls.filter(c=>c.path==='/api/audio').length).toBe(1);
+  await page.clock.runFor(5000);await expect(controls).toHaveClass(/concealed/);
+  await live.locator('video').tap();await expect(controls).not.toHaveClass(/concealed/);
+  await live.getByRole('button',{name:ro?'Înapoi la TV':'Back to TV',exact:true}).focus();await page.keyboard.press('Tab');
+  expect(await page.evaluate(()=>!!document.activeElement?.closest('.iptv-live-controls'))).toBe(true);
+  await page.clock.runFor(6000);await expect(controls).not.toHaveClass(/concealed/);
+  await snap(page,info,'recovery-09-keyboard-focus-keeps-controls-visible-fixture');
+  await live.locator('video').tap();await page.clock.runFor(5000);await expect(controls).toHaveClass(/concealed/);
+ });
+}
+
 for(const theme of ['ink','night']){
  test(`IPTV catalogue entry, current/next guide, local times and touch geometry ${theme}`,async({page},info)=>{
   const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro,theme);
   await expect(page.locator('.iptv-guide h2')).toHaveText('PRO TV HD (1080p)');await expect(page.locator('.iptv-programmes')).not.toContainText('Emisiune încheiată');await expect(page.locator('.iptv-programmes article').first()).toHaveClass('current');await expect(page.locator('.iptv-channel').filter({hasText:'NBC Sports NOW'})).not.toContainText('Undefined');
   await expect(page.locator('.iptv-programmes .current')).toContainText((ro?'Acum · ':'Now · ')+'Jurnalul de seară');
-  await expect(page.locator('.iptv-programmes .current')).toContainText('Descriere verificabilă a emisiunii curente.');
+  const currentDetails=page.locator('.iptv-programmes .current .iptv-programme-details');
+  await expect(currentDetails).toHaveAttribute('aria-expanded','false');
+  await currentDetails.tap();await expect(page.locator('.iptv-programmes .current')).toContainText('Descriere verificabilă a emisiunii curente.');
+  await currentDetails.tap();await expect(currentDetails).toHaveAttribute('aria-expanded','false');
   await expect(page.locator('.iptv-programmes .current time')).toContainText('17:40');
   await expect(page.locator('.iptv-programmes .current time')).toContainText('18:10');
   await expect(page.locator('.iptv-programmes article').nth(1)).toContainText('Documentar despre oraș');
@@ -154,7 +288,7 @@ for(const theme of ['ink','night']){
 
  test(`IPTV guide schedule supports padding and safe idempotent save retry ${theme}`,async({page},info)=>{
   const ro=info.project.name.endsWith('ro'),f=await fixture(page,ro,theme);
-  const next=page.locator('.iptv-programmes article').nth(1);await next.getByRole('button',{name:ro?'Programează':'Schedule',exact:true}).tap();
+  const next=page.locator('.iptv-programmes article').nth(1);await next.getByRole('button',{name:(ro?'Programează':'Schedule')+' Documentar despre oraș',exact:true}).tap();
   const dialog=editor(page,ro);await expect(dialog).toBeVisible();await expect(dialog).toContainText('Documentar despre oraș');
   await expect(dialog.getByRole('button',{name:(ro?'Înainte':'Before')+' −1',exact:true})).toBeDisabled();
   for(let i=0;i<2;i++)await dialog.getByRole('button',{name:(ro?'Înainte':'Before')+' +1',exact:true}).tap();
@@ -178,7 +312,7 @@ for(const theme of ['ink','night']){
   const write=f.calls.find(c=>c.path==='/api/iptv/recordings'&&c.method==='POST')!;expect(write.body.programme_id).toBeUndefined();expect(write.body.start_at).toBe(when(0));expect(write.body.end_at).toBe(when(60));
   await page.unroute('**/api/**');await fixture(page,ro,theme,{service:false});
   await expect(page.locator('.iptv-channel-actions').getByRole('button',{name:ro?'Înregistrează':'Record',exact:true})).toBeDisabled();
-  await expect(page.locator('.iptv-programmes').getByRole('button',{name:ro?'Programează':'Schedule',exact:true}).first()).toBeDisabled();
+  await expect(page.locator('.iptv-programmes .iptv-programme-record').first()).toBeDisabled();
   await recordsTab(page,ro).tap();await expect(page.locator('.iptv-recordings')).toContainText(ro?'Serviciu inactiv':'Service inactive');await snap(page,info,'06-recorder-unavailable');
  });
 
