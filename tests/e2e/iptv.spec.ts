@@ -377,7 +377,7 @@ for(const theme of ['ink','night']){
   await expect(live.locator('.iptv-live-status[role=alert]').filter({hasText:ro?'Fluxul nu răspunde':'The stream is unavailable'})).toBeVisible();
   const back=live.getByRole('button',{name:ro?'Înapoi la TV':'Back to TV',exact:true});await back.tap();
   await expect.poll(()=>f.calls.filter(c=>c.path==='/api/iptv/view/viewer_1'&&c.method==='DELETE').length).toBe(1);
-  const transport=live.locator('.iptv-live-controls button').nth(1),mute=live.getByRole('button',{name:ro?'Fără sunet':'Mute',exact:true});
+  const transport=live.locator('.iptv-live-transport button').nth(1),mute=live.getByRole('button',{name:ro?'Fără sunet':'Mute',exact:true});
   await expect(back).toBeDisabled();await expect(transport).toBeDisabled();await expect(mute).toBeDisabled();await expect(live.locator('video')).toHaveJSProperty('paused',true);
   await transport.evaluate((button:HTMLButtonElement)=>button.click());await mute.evaluate((button:HTMLButtonElement)=>button.click());
   await expect(live.locator('video')).toHaveJSProperty('paused',true);await expect(live.locator('video')).toHaveJSProperty('muted',false);await expect(live).toHaveAttribute('aria-busy','true');await expect(live.getByRole('status')).toContainText(ro?'Se închide TV':'Closing TV');await snap(page,info,'12a-viewer-close-pending-blocks-play-and-mute');f.releaseClose();

@@ -33,3 +33,10 @@
 .app .command-sheet .command-setting button[aria-pressed=true]{background:var(--command-accent);color:var(--command-accent-ink)}
 
 .app .command-sheet .command-context>button{margin-left:8px;position:relative}.app .command-sheet .command-context>button:before{content:"";position:absolute;left:-9px;top:8px;bottom:8px;width:1px;background:var(--command-line)}
+
+.app[data-video-active=true]>.command-scrim,.app[data-video-active=true]>.modal-scrim{z-index:250}
+.app[data-video-active=true]>.keyboard-scrim{z-index:260}
+.app .hub-command-pull[data-video=true]{z-index:2}
+.app .hub-command-pull[data-video=true]:after{background:#fff;opacity:.8;box-shadow:0 1px 2px #000}
+.app .video-command-button{width:48px;height:48px;min-width:48px;flex:0 0 48px;display:grid;place-items:center;padding:0}
+.app .video-command-context>span{font-size:14px;color:var(--command-muted);flex:none}

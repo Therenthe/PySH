@@ -41,6 +41,10 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 - YouTube și Netflix: acces din hub prin integrare permisă și funcțională pe dispozitiv. Dacă nu există o cale suportată care să redea conținutul în condițiile serviciului, produsul trebuie să explice limita și să ofere deschiderea în browserul/sistemul compatibil disponibil; butonul nu poate pretinde că redarea integrată funcționează.
 - Muzică: se alege un serviciu după verificarea eligibilității SDK/API, autentificării, licențelor și performanței pe platforma țintă. „Spotify sau alternativă” nu este un angajament că SDK-ul Spotify va fi disponibil.
 - Volum accesibil din interfață, cu feedback vizual și integrare verificată cu ieșirea audio activă.
+- În TV fullscreen și video local, meniul de comenzi rapide se deschide prin
+  tragerea mânerului de sus sau butonul tactil al playerului. Reglajele nu
+  întrerup redarea; închiderea meniului revine în player. Navigarea închide
+  controlat sesiunea cunoscută și păstrează recuperarea vizibilă dacă eșuează.
 - Volumul și luminozitatea răspund în timpul glisării, cu procent vizibil imediat.
   Preview-urile sunt serializate și nu scriu continuu preferințele pe SD; ultima
   valoare se salvează la sfârșitul gestului. Starea incertă păstrează recuperare
