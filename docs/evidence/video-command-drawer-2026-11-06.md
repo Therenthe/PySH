@@ -41,7 +41,53 @@ Un selector vechi de test a fost restrâns la bara transportului pentru a contin
 să verifice Play, după adăugarea butonului Quick. Nu a fost eliminată verificarea.
 Auditul vizual a separat rotunjirea subpixel, captura în timpul animației și un
 helper de test schimbat de defectele produsului; artefactele private păstrează
-încercările. Publicarea, instalarea și proba nativă sunt PENDING.
+încercările. Instalarea și probele native sunt consemnate mai jos.
+
+## Instalat și verificat pe Raspberry
+
+Runtime `6314da69ecce`, sursă GitHub
+`479361d0af8dc7d64d139122150ace6de2564d17`, precedent `40e96fcc7f76` păstrat.
+863bloburi/moduri sursă neexcluse coincid cu GitHub;229hashuri runtime și29preferințe
+verificate la activare. Backup separat pe PC verificat prin checksum și citirea
+conținutului. Rețeaua/gateway-ul și profilurile au fost păstrate.
+[PR19](https://github.com/Therenthe/PySH/pull/19).
+
+Proba folosește sesiunea normală Chromium, 800×480, EN/Noapte, fără browser
+diagnostic sau conturi accesate. Atingeri sintetizate printr-un dispozitiv Linux
+temporar, eliminat după fiecare gest; calibrarea existentă nu a fost modificată.
+
+| Scenariu | Observat pe dispozitiv | Dovezi private în `native/` |
+|---|---|---|
+| Tragere peste TV | Quick Controls deasupra Antena1, titlu corect, imagine și legături audio Chromium→Bluetooth active | `pull-1793998337514383900`, `diagnose-1793998423480447100` |
+| Reglaje TV cu atingere ținută | Volum9% cu preferință7% și backlight12% cu preferință10% înainte de ridicare; apoi salvare9/12 și restaurare7/10 | `drag-volume-1793998379123699800`, `drag-brightness-1793998384000755000` |
+| Închidere/retragere TV | Închiderea meniului păstrează imaginea Live/HUD; redeschidere prin gest; Media revine la ghidul Antena1 | `touch-1793998427314897300`, `pull-1793998431330487200`, `touch-1793998434770681000` |
+| Video local real | Clip VP8 propriu320×180,240s, fără audio; Chromium avansează de la0:00.58 la1:12.33, iar starea rămâne Playing după folosirea meniului | `touch-1793998487145189400`, `touch-1793998558794674000` |
+| Meniu și reglaje locale | Gestul și butonul48px deschid meniul cu numele real; același preview hardware9/12, persistență la ridicare și restaurare7/10 | `pull-1793998490746863300`, `drag-volume-1793998550632833800`, `drag-brightness-1793998553327245200`, `touch-1793998561991426100` |
+| Acasă și cleanup local | Revenire Acasă, închidere sesiune, fișier propriu validat prin hash și șters prin Media API; eliminată numai intrarea lui din istoric | `touch-1793998565533175400`, `fixture-clean-1793998566700078400` |
+
+O secvență de revenire TV a întâlnit modul ambiental Acasă și nu activase meniul
+lateral la prima atingere. Verificarea finală a respins starea fără audio TV;
+captura arăta Acasă, nu playerul. Clasificare: premisă greșită a automatizării,
+corectată prin atingere de wake și navigare observată pas cu pas. Nu s-a modificat
+codul și nu este confundată cu TV-START-20261106.
+
+Restaurarea finală este confirmată de `verify-final-1793998821350359800` și
+`signal-1793998824882189200`: Antena1fullscreen cu imagine, ieșire Bluetooth
+conectată/selectată și semnal digital, luminozitate reală/salvată10%, volum
+real/salvat7% (valoarea găsită înaintea probei), fără mute; radio idle. Nivelul7%
+era deja salvat înaintea activării/probei și nu a fost suprascris cu indicația
+istorică15%. Trei servicii active, precedent păstrat, zero dispozitive touch,
+fișiere/istoric de test, directoare transport ori porturi debug rămase.
+
+Auditul nativ vizual independent confirmă contextul TV/local, valorile ținute,
+straturile, progresul și revenirea. Capturile brute rămân private. Proba locală
+este video-only; nu declară acceptare acustică nouă. Confirmarea auditivă anterioară
+a boxei/radio/TV rămâne separată, iar semnalul actual a fost citit numai din
+monitorul de redare, în RAM, fără microfon sau fișier audio.
+
+Rezultat scoped PASS. Matricea completă EN/RO×teme, tastatura și erorile injectate
+au fost verificate în browser; proba nativă nu înlocuiește gestul fizic pe panou,
+testul de stabilitate lung sau acceptarea globală a produsului.
 
 ## Limite și stare
 
