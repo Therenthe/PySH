@@ -13,7 +13,14 @@ Orange TV Go în Media → Servicii, cu autentificare pe site-ul oficial.
 - [x] R2: meniu accesibil cu tastatura deschisă (TVS-AUTH-VIS-02).
 - [x] R3 nativ: câmpul activ vizibil după micșorarea ferestrei (TVS-AUTH-03).
 - [x] Probă nativă: siglă, Digi → Canale, Orange/login/tastatură/revenire.
-- [ ] Cont Orange real: autentificare și redare din abonament; utilizatorul introduce datele pe dispozitiv.
+- [x] Cont Orange real: utilizator autentificat; membrul existent selectat cu acord.
+- [ ] Orange playback: FAIL W813 pe Prima Sport 1 și 2, pista video; retry nu rezolvă.
+- [x] Diagnostic închis; setările păstrate, trei servicii active, revenire în Media.
+
+Utilizatorul confirmă că Prima Sport 1 funcționează cu același cont pe alt
+dispozitiv. Compatibilitatea redării pe Raspberry rămâne de rezolvat; nu este
+demonstrată o cauză precisă sau o remediere.
+[Dovezi W813](../evidence/orange-w813-2026-11-07.md).
 
 Charter: navigarea este o comandă permisă, nu URL arbitrar; închiderea ferestrei
 externe se confirmă. Conturile și profilul existent rămân intacte. Nu se citesc

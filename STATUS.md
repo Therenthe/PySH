@@ -1,5 +1,8 @@
 # PySH status
 
+Orange authenticated playback follow-up: runtime96764525dbc5/source42ac4d908b9285e72d43155e0182f7a5bc940290 unchanged. Existing member selection authorized; Prima Sport1 and2 reproduce fatal video NO_PLAYABLE_REPRESENTATION/W813 with zero decoded frames. User confirms Prima Sport1 works with same account on another device. Official Chromium Widevine update reports4.10.3112.0 Up-to-date. Precise cause and supported compatibility remedy remain OPEN; no successful playback or app fix claimed. Temporary loopback diagnosis cleaned, settings/account preserved,3services active; normal Media Services available. See docs/evidence/orange-w813-2026-11-07.md.
+
+
 Digi and Orange TV Go installed: runtime96764525dbc5 / code42ac4d908b9285e72d43155e0182f7a5bc940290; previous917de2f7f36e retained. Official Digi mark and acknowledged Channels return verified on the final runtime. Orange TV Go under Media Services, official login keyboard and Media return, focused blank email/password visible above the actual keyboard. Independent native visual review passed. 991Python/46platformskips/11subtests,199JS,176initial and70final browser cases passed. 233runtime hashes/29preferences, separate PC backup checksum and readable contents verified; network/gateway preserved. 3services active,0temporary touch devices,no debug ports opened. Existing account profile retained; no credentials entered. Final pointer actions stopped after unrelated interactive changes; newer preferences not overwritten. Scoped integration controls PASS; real Orange account login/subscription playback and all30fullproductcriteria remainOPEN. See docs/plans/tv-services-2026-11-07.md and docs/evidence/tv-services-2026-11-07.md.
 
 
