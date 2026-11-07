@@ -1,5 +1,8 @@
 # PySH status
 
+Orange native follow-up: Prima Sport1 still fails without extensions. Hash-verified passive inspection found 3video representations with supported codecs and all3marked undecipherable. User confirms same-account playback on Windows and Android. Official signed Google Chrome157 ARM64 was prepared side by side with a separate profile; keyboard/native viewport and Radio return passed trial readiness. After user login Prima Sport1 still raised W813/fatalvideo NO_PLAYABLE_REPRESENTATION,0decodedframes across8observations. Both account profiles retained; diagnostic browser/tunnel closed; existing runtime96764525dbc5/code42ac4d908b9285e72d43155e0182f7a5bc940290 remains unchanged. Chrome is not selected for production; its DevTools-loaded extension is temporary. Official RaspberryPi Firefox candidate evaluation is underway, no playback success or delivered fix claimed. See docs/evidence/orange-w813-2026-11-07.md.
+
+
 Orange authenticated playback follow-up: runtime96764525dbc5/source42ac4d908b9285e72d43155e0182f7a5bc940290 unchanged. Existing member selection authorized; Prima Sport1 and2 reproduce fatal video NO_PLAYABLE_REPRESENTATION/W813 with zero decoded frames. User confirms Prima Sport1 works with same account on another device. Official Chromium Widevine update reports4.10.3112.0 Up-to-date. Precise cause and supported compatibility remedy remain OPEN; no successful playback or app fix claimed. Temporary loopback diagnosis cleaned, settings/account preserved,3services active; normal Media Services available. See docs/evidence/orange-w813-2026-11-07.md.
 
 

@@ -22,6 +22,21 @@ dispozitiv. Compatibilitatea redării pe Raspberry rămâne de rezolvat; nu este
 demonstrată o cauză precisă sau o remediere.
 [Dovezi W813](../evidence/orange-w813-2026-11-07.md).
 
+### Compatibilitate Orange pe Raspberry
+
+- [x] Prima Sport 1 reproduce W813 și fără extensii; identificare vizuală și audit separat.
+- [x] Observație scalară: trei variante cu codec acceptat, toate marcate nedecodabile.
+- [x] Comparație raportată de utilizator: același cont funcționează pe Windows și Android.
+- [x] Chrome oficial ARM64 157 verificat prin index Google semnat, pregătit separat.
+- [x] Profil separat: tastatură nativă, micșorare pagină și revenire Radio verificate.
+- [x] Utilizator autentificat în Chrome; proba Prima Sport 1 executată: FAIL W813, zero cadre.
+- [ ] Evaluare Firefox optimizat Raspberry Pi din sursele oficiale.
+- [ ] După o probă reală de succes: integrare persistentă suportată, sursă publicată și retestare prin PySH.
+
+Proba Chrome nu înlocuiește Chromium și nu importă sesiunea existentă. Extensia
+încărcată prin DevTools este temporară. Chrome 157 nu a rezolvat redarea; nu este
+ales ca browser de producție pe baza acestei probe.
+
 Charter: navigarea este o comandă permisă, nu URL arbitrar; închiderea ferestrei
 externe se confirmă. Conturile și profilul existent rămân intacte. Nu se citesc
 câmpuri de autentificare sau cookie-uri. Nicio reconfigurare de rețea/audio/OS.
