@@ -24,7 +24,7 @@ păstrează loc pentru emisiunea curentă și următoarea, fără bara radioului
 **Digi Sport 1 · Player oficial** din lista TV deschide pagina Digi în browserul
 protejat al PySH. Accesul este verificat de Digi, inclusiv rețeaua folosită;
 eventualul dialog de confidențialitate aparține site-ului. Trage din partea de
-sus pentru comenzile PySH și revenire. Acesta este playerul oficial cu Widevine,
+sus pentru comenzile PySH; **Canale** revine direct la lista TV. Acesta este playerul oficial cu Widevine,
 nu un flux M3U: comenzile de înregistrare IPTV nu se aplică acestei intrări.
 
 Controalele video se retrag după câteva secunde; o atingere le readuce. **Înapoi
@@ -106,3 +106,15 @@ ultim moment ale postului pot necesita ajustare manuală.
 Disponibilitatea, calitatea și permisiunea de utilizare depind de sursele
 canalelor. Un canal prezent într-o listă nu dovedește că fluxul este accesibil
 din rețeaua curentă sau că are ghid complet.
+
+## Orange TV Go
+
+Deschide **Media → Servicii → Orange TV Go**. PySH deschide site-ul oficial
+Orange în browserul de servicii, cu profilul existent. Alege pictograma de cont
+din dreapta sus, apoi **Sign in / Autentifică-te**. Completează datele direct pe
+ecranul Raspberry; parola nu se trimite în chat sau către PySH.
+
+Formularul oficial poate folosi pagina Orange `/accounts/login-user`.
+Meniul PySH de sus oferă tastatura și revenirea în Media și pe acea pagină.
+Canalele disponibile și drepturile de vizionare depind de contul și abonamentul
+Orange. Acest acces web nu instalează un APK Android și nu înlocuiește contul.

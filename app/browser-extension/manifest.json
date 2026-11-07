@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Pi Smart Hub \u2014 Return",
-  "version": "1.4.2",
+  "version": "1.4.5",
   "description": "Private PySH device controls, keyboard and acknowledged return. No account data is collected.",
   "background": {
-    "service_worker": "background-scalars-v6.js"
+    "service_worker": "background-tv-services-v8.js"
   },
   "content_scripts": [
     {
@@ -13,7 +13,10 @@
         "https://*.netflix.com/*",
         "https://*.spotify.com/*",
         "https://accounts.google.com/*",
-        "https://www.digisport.ro/live/digisport-1*"
+        "https://www.digisport.ro/live/digisport-1*",
+        "https://tvgo.orange.ro/*",
+        "https://tvgo-ro.orange.ro/*",
+        "https://www.orange.ro/accounts/login-user*"
       ],
       "js": [
         "command-controls.js",

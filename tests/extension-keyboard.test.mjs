@@ -45,14 +45,15 @@ function background() {
 }
 
 test('manifest has stable public-key ID and only native messaging and documentation navigation permissions', () => {
-  assert.equal(manifest.version,'1.4.2');
-  assert.equal(manifest.background.service_worker,'background-scalars-v6.js');
+  assert.equal(manifest.version,'1.4.5');
+  assert.equal(manifest.background.service_worker,'background-tv-services-v8.js');
   assert.match(source(manifest.background.service_worker),/importScripts\('background.js'\)/);
   assert.match(extensionId, /^[a-p]{32}$/);
   assert.deepEqual(manifest.permissions, ['nativeMessaging','webNavigation']);
   assert.deepEqual(manifest.content_scripts[0].matches, [
     'https://*.youtube.com/*', 'https://*.netflix.com/*', 'https://*.spotify.com/*',
-    'https://accounts.google.com/*', 'https://www.digisport.ro/live/digisport-1*']);
+    'https://accounts.google.com/*', 'https://www.digisport.ro/live/digisport-1*',
+    'https://tvgo.orange.ro/*', 'https://tvgo-ro.orange.ro/*', 'https://www.orange.ro/accounts/login-user*']);
   assert.deepEqual(manifest.content_scripts[0].css, ['immersive.css']);
   const host = JSON.parse(readFileSync(new URL('../os/image/assets/org.pysh.keyboard.json', import.meta.url), 'utf8'));
   assert.equal(host.name, 'org.pysh.keyboard');

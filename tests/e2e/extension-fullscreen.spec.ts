@@ -58,7 +58,7 @@ test('drawer leaves service profile usable, opens by downward gesture, closes wi
  await page.touchscreen.tap(768,32);expect(await page.evaluate(()=>(window as any).fixtureState.profileClicks)).toBe(1);
  await page.evaluate(()=>{const handle=(window as any).fixtureShadow.querySelector('.handle');handle.dispatchEvent(new PointerEvent('pointerdown',{pointerId:9,clientY:3,bubbles:true}));handle.dispatchEvent(new PointerEvent('pointermove',{pointerId:9,clientY:50,bubbles:true}));});
  await expect.poll(()=>drawerVisible(page)).toBe(true);
- const boxes=await page.evaluate(()=>[...(window as any).fixtureShadow.querySelectorAll('button.action,.close')].map((element:any)=>{const r=element.getBoundingClientRect();return{width:r.width,height:r.height,bottom:r.bottom,text:element.textContent};}));
+ const boxes=await page.evaluate(()=>[...(window as any).fixtureShadow.querySelectorAll('button.action,.close')].filter((element:any)=>element.getClientRects().length).map((element:any)=>{const r=element.getBoundingClientRect();return{width:r.width,height:r.height,bottom:r.bottom,text:element.textContent};}));
  for(const box of boxes){expect(box.width).toBeGreaterThanOrEqual(48);expect(box.height).toBeGreaterThanOrEqual(48);expect(box.bottom).toBeLessThanOrEqual(480);}
  await expect.poll(()=>page.evaluate(()=>getComputedStyle((window as any).fixtureShadow.querySelector('.drawer')).opacity)).toBe('1');
  await page.screenshot({path:`.runtime/drawer-${info.project.name}.png`});

@@ -48,6 +48,37 @@ test('Return cancels queued mutations and closes only after owned destination ac
  h.ports[0].onMessage.emit({ok:true});await tick();assert.deepEqual(h.removed,[7]);assert.deepEqual(returning.replies,[{ok:true}]);
 });
 
+test('Digi Channels return waits for the fixed TV owner acknowledgement before closing',async()=>{
+ const h=fixture(),request=h.request({action:'return-tv'},h.sender('https://www.digisport.ro/live/digisport-1'));
+ assert.equal(request.keepAlive,true);await tick();assert.deepEqual(h.ports[0].sent,[{action:'tv'}]);assert.deepEqual(h.removed,[]);
+ h.ports[0].onMessage.emit({ok:false,error:'return_unavailable'});await tick();assert.deepEqual(h.removed,[]);assert.equal(request.replies[0].ok,false);
+ const retry=h.request({action:'return-tv'},h.sender('https://www.digisport.ro/live/digisport-1'));await tick();assert.deepEqual(h.ports[0].sent,[{action:'tv'},{action:'tv'}]);
+ h.ports[0].onMessage.emit({ok:true});await tick();assert.deepEqual(h.removed,[7]);assert.deepEqual(retry.replies,[{ok:true}]);
+});
+
+test('Orange device controls accept only the exact official HTTPS service hosts',async()=>{
+ for(const url of ['https://tvgo.orange.ro/','https://tvgo.orange.ro/login','https://tvgo-ro.orange.ro/']){
+  const h=fixture(),accepted=h.request({action:'controls-volume',value:6,persist:false},h.sender(url));assert.equal(accepted.keepAlive,true);await tick();
+  assert.deepEqual(h.ports[0].sent,[{action:'controls-volume',value:6,persist:false}]);h.ports[0].onMessage.emit({ok:true});await tick();assert.equal(accepted.replies[0].ok,true);
+ }
+ for(const url of ['http://tvgo.orange.ro/','https://tvgo.orange.ro.evil.invalid/','https://other.orange.ro/','https://evil.tvgo.orange.ro/','https://tvgo-ro.orange.ro.evil.invalid/']){
+  const h=fixture();assert.equal(h.request({action:'controls-volume',value:6},h.sender(url)).keepAlive,undefined);assert.equal(h.request({action:'return-tv'},h.sender(url)).keepAlive,undefined);await tick();assert.equal(h.ports.length,0);assert.deepEqual(h.removed,[]);
+ }
+});
+
+test('exact Orange login admits keyboard and return but never device controls',async()=>{
+ for(const url of ['https://www.orange.ro/accounts/login-user','https://www.orange.ro/accounts/login-user?client=public-fixture']){
+  const h=fixture(),from=h.sender(url);
+  for(const message of [{action:'controls-status'},{action:'controls-volume',value:7},{action:'controls-brightness',value:10}])assert.equal(h.request(message,from).keepAlive,undefined);
+  const status=h.request({action:'status'},from);assert.equal(status.keepAlive,true);await tick();assert.deepEqual(h.ports[0].sent,[{action:'status'}]);h.ports[0].onMessage.emit({ok:true});await tick();assert.equal(status.replies[0].ok,true);
+  const show=h.request({action:'show'},from);assert.equal(show.keepAlive,true);await tick();assert.deepEqual(h.ports[0].sent.at(-1),{action:'show'});h.ports[0].onMessage.emit({ok:true});await tick();assert.equal(show.replies[0].ok,true);
+  const returning=h.request({action:'return-media'},from);await tick();assert.deepEqual(h.ports[0].sent.at(-1),{action:'media'});assert.deepEqual(h.removed,[]);h.ports[0].onMessage.emit({ok:true});await tick();assert.deepEqual(h.removed,[7]);assert.equal(returning.replies[0].ok,true);
+ }
+ for(const url of ['http://www.orange.ro/accounts/login-user','https://www.orange.ro.evil.invalid/accounts/login-user','https://orange.ro/accounts/login-user','https://other.orange.ro/accounts/login-user','https://www.orange.ro/accounts/login-user-extra','https://www.orange.ro/accounts/login-user/','https://www.orange.ro/elsewhere']){
+  const h=fixture(),from=h.sender(url);for(const action of ['status','show','hide','return-media','controls-status'])assert.equal(h.request({action},from).keepAlive,undefined);await tick();assert.equal(h.ports.length,0);assert.deepEqual(h.removed,[]);
+ }
+});
+
 test('a Return retry shares the operation queued behind a ten-second controls timeout',async()=>{
  const h=fixture(),read=h.request({action:'controls-status'});await tick();
  const first=h.request({action:'return-home'}),retry=h.request({action:'return-home'});

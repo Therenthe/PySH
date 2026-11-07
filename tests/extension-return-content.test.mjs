@@ -8,8 +8,8 @@ import vm from 'node:vm';
 const directory=new URL('../app/browser-extension/',import.meta.url);
 const source=name=>readFileSync(new URL(name,directory),'utf8');
 const copy=value=>JSON.parse(JSON.stringify(value));
-function content(surface,language='en',lateStatus=false){
- const sent=[],calls=[],nodes=[],listeners=new Map(),windowListeners=new Map(),timers=new Map(),ids=new Map();let timerId=0,throwReturn=false;
+function content(surface,language='en',lateStatus=false,url='https://open-meteo.com/en/licence',deviceFactory){
+ const sent=[],calls=[],nodes=[],listeners=new Map(),windowListeners=new Map(),timers=new Map(),ids=new Map(),frames=new Map();let timerId=0,frameId=0,throwReturn=false;
  function element(tag){
   const e={tag,tagName:tag.toUpperCase(),nodeType:1,children:[],style:{},events:new Map(),
    append(...children){for(const child of children){if(child.parentElement)child.parentElement.children=child.parentElement.children.filter(n=>n!==child);this.children.push(child);child.parentElement=this;}},
@@ -23,16 +23,16 @@ function content(surface,language='en',lateStatus=false){
  const document={documentElement:element('html'),createElement:element,activeElement:null,addEventListener:(name,fn)=>listeners.set(name,fn),getElementById:id=>ids.get(id)};
  if(surface==='recovery'){for(const id of ['title','message','return']){const e=element(id==='return'?'button':id==='title'?'h1':'p');ids.set(id,e);document.documentElement.append(e);}}
  const chrome={runtime:{sendMessage(message,callback){sent.push(copy(message));calls.push({message:copy(message),callback});if(message.action.startsWith('return')&&throwReturn){throwReturn=false;throw new Error('Synthetic transport failure');}if(message.action==='status'&&!lateStatus)callback({ok:true,language});}}};
- const window={innerWidth:800,addEventListener:(name,fn)=>windowListeners.set(name,fn)};
- const location={href:'https://open-meteo.com/en/licence',assign:()=>{throw new Error('No navigation expected');}};
+ const window={innerWidth:800,addEventListener:(name,fn)=>windowListeners.set(name,fn),requestAnimationFrame:fn=>{frames.set(++frameId,fn);return frameId;},cancelAnimationFrame:id=>frames.delete(id)};
+ const location={href:url,assign:()=>{throw new Error('No navigation expected');}};
  const filename={service:'return.js',documentation:'documentation.js',recovery:'documentation-return.js'}[surface];
- vm.runInNewContext(source(filename),{document,chrome,window,location,URL,setTimeout:(fn,ms)=>{timers.set(++timerId,{fn,ms});return timerId;},clearTimeout:id=>timers.delete(id)});
+ vm.runInNewContext(source(filename),{document,chrome,window,location,URL,createPyshDeviceControls:deviceFactory,setTimeout:(fn,ms)=>{timers.set(++timerId,{fn,ms});return timerId;},clearTimeout:id=>timers.delete(id)});
  const back=surface==='recovery'?ids.get('return'):nodes.find(n=>n.tag==='button'&&(surface==='service'?n.textContent===(language==='ro'?'Acasă':'Home'):n.textContent.includes('PySH')));
  const feedback=nodes.find(n=>n.role==='status');
  const click=node=>node.events.get('click')({preventDefault(){},stopPropagation(){},stopImmediatePropagation(){}});
  function runTimers(maxDelay){for(const[id,timer]of[...timers])if(timer.ms<=maxDelay&&timers.has(id)){timers.delete(id);timer.fn();}}
  function reply(call,result,lastError=false){if(lastError)chrome.runtime.lastError={message:'Synthetic forbidden raw error'};try{call.callback(result);}finally{delete chrome.runtime.lastError;}}
- return{surface,language,back,feedback,nodes,sent,calls,timers,chrome,click,runTimers,reply,returns:()=>calls.filter(c=>c.message.action.startsWith('return')),failNextReturn:()=>{throwReturn=true;}};
+ return{surface,language,back,feedback,nodes,sent,calls,timers,chrome,click,runTimers,reply,document,element,listeners,windowListeners,frames,runFrames(){for(const[id,fn]of[...frames])if(frames.delete(id))fn();},returns:()=>calls.filter(c=>c.message.action.startsWith('return')),failNextReturn:()=>{throwReturn=true;}};
 }
 function pending(h){assert.equal(h.back.disabled,true);assert.equal(h.back['aria-busy'],'true');assert.equal(h.back.textContent,h.language==='ro'?'Se revine…':'Returning…');}
 function failure(h){assert.equal(h.back.disabled,false);assert.equal(h.back['aria-busy'],'false');assert.equal(h.back.textContent,h.language==='ro'?'Reîncearcă revenirea':'Retry return');assert.equal(h.feedback.textContent,h.language==='ro'?'Revenirea la PySH nu a reușit. Reîncearcă.':'Could not return to PySH. Try again.');if(h.surface==='recovery')assert.equal(h.feedback.hidden,false);else assert.equal(h.feedback.style.display,'block');assert.ok(!h.feedback.textContent.includes('Synthetic forbidden'));}
@@ -55,4 +55,27 @@ for(const language of ['en','ro'])test(`service ${language} delayed initial cont
  h.click(reveal);const fresh=h.calls.filter(c=>c.message.action==='status').at(-1);assert.notEqual(fresh,initial);
  h.reply(fresh,{ok:true,language,theme:'night'});const host=h.nodes.find(n=>n.tag==='pi-hub-return');assert.equal(host['data-theme'],'night');
  h.reply(initial,{ok:true,language:language==='en'?'ro':'en',theme:'ink'});assert.equal(host['data-theme'],'night');assert.equal(h.back.textContent,language==='ro'?'Acasă':'Home');
+});
+
+for(const language of ['en','ro'])test(`Orange authentication ${language} uses keyboard and acknowledged return without device controls`,()=>{
+ const h=content('service',language,false,'https://www.orange.ro/accounts/login-user?client=public-fixture',()=>{throw Error('Authentication must not create device controls');});
+ const subtitle=h.nodes.find(n=>n.className==='subtitle');assert.ok(subtitle.textContent.startsWith('Orange TV Go · '));
+ const keyboard=h.nodes.find(n=>n.tag==='button'&&n.textContent===(language==='ro'?'Tastatură':'Keyboard'));
+ h.click(keyboard);assert.deepEqual(h.sent.at(-1),{action:'show'});h.reply(h.calls.at(-1),{ok:true});
+ const media=h.nodes.find(n=>n.tag==='button'&&n.textContent==='Media');h.click(media);assert.deepEqual(h.returns().at(-1).message,{action:'return-media'});assert.equal(media.disabled,true);h.reply(h.returns().at(-1),{ok:false});assert.equal(media.disabled,false);h.click(media);h.reply(h.returns().at(-1),{ok:true});
+ assert.equal(h.sent.some(message=>message.action.startsWith('controls-')),false);
+});
+
+test('Orange auth keeps only the active editable field visible after focus and keyboard resize without reading input',()=>{
+ const h=content('service','en',false,'https://www.orange.ro/accounts/login-user'),field=h.element('input'),scrolls=[];field.type='email';field.scrollIntoView=options=>scrolls.push(copy(options));Object.defineProperty(field,'value',{get(){throw Error('Never inspect credentials');}});
+ h.document.activeElement=field;h.listeners.get('focusin')({target:field});assert.equal(scrolls.length,0);assert.equal(h.frames.size,1);
+ h.windowListeners.get('resize')();h.windowListeners.get('resize')();assert.equal(h.frames.size,1);h.runFrames();assert.deepEqual(scrolls,[{block:'center',inline:'nearest',behavior:'instant'}]);
+ field.type='password';h.windowListeners.get('resize')();h.runFrames();assert.equal(scrolls.length,2);
+ h.windowListeners.get('resize')();h.document.activeElement=null;h.runFrames();assert.equal(scrolls.length,2);
+ h.document.activeElement=field;h.windowListeners.get('resize')();field.disabled=true;h.runFrames();assert.equal(scrolls.length,2);
+ field.disabled=false;field.readOnly=true;h.windowListeners.get('resize')();assert.equal(h.frames.size,0);
+});
+
+test('streaming pages do not receive the Orange auth resize scrolling behavior',()=>{
+ const h=content('service','en',false,'https://tvgo.orange.ro/'),field=h.element('input');field.type='email';field.scrollIntoView=()=>{throw Error('Do not alter other service layouts');};h.document.activeElement=field;h.listeners.get('focusin')({target:field});assert.equal(h.frames.size,0);assert.equal(h.windowListeners.has('resize'),false);
 });

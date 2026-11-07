@@ -89,3 +89,5 @@
 .app .video-progress-error>span{flex:1 1 240px}
 .app .video-progress-recovery-actions{display:flex;gap:8px;flex-wrap:wrap}
 .app .video-progress-recovery-actions button{min-height:48px;max-width:230px;white-space:normal}
+
+.app .media-redesign .service-orangetv{background:#f16e00;color:#fff}

@@ -38,6 +38,10 @@ Acesta este contractul de produs pentru planificare și evaluare. Nu afirmă că
 
 - Radio: listă de posturi configurabilă, redare/opriere, metadate când fluxul le oferă, stări de încărcare și erori inteligibile.
 - Player local: navigare în directoarele media aprobate, liste și controale play/pauză, anterior/următor, căutare dacă formatul o permite, progres și volum. Formatele acceptate se publică după validare pe Pi.
+- Digi Sport oficial păstrează sigla reală în lista TV; meniul tras de sus oferă
+  revenire directă la Canale, pe lângă Acasă/Radio/Media. Orange TV Go este în
+  Media → Servicii și deschide site-ul oficial în profilul extern existent;
+  autentificarea și drepturile de vizionare aparțin contului Orange.
 - YouTube și Netflix: acces din hub prin integrare permisă și funcțională pe dispozitiv. Dacă nu există o cale suportată care să redea conținutul în condițiile serviciului, produsul trebuie să explice limita și să ofere deschiderea în browserul/sistemul compatibil disponibil; butonul nu poate pretinde că redarea integrată funcționează.
 - Muzică: se alege un serviciu după verificarea eligibilității SDK/API, autentificării, licențelor și performanței pe platforma țintă. „Spotify sau alternativă” nu este un angajament că SDK-ul Spotify va fi disponibil.
 - Volum accesibil din interfață, cu feedback vizual și integrare verificată cu ieșirea audio activă.

@@ -1,0 +1,36 @@
+import {test,expect,type Page,type TestInfo} from '@playwright/test';
+import {readFileSync,mkdirSync} from 'node:fs';
+
+// Geometry-only public auth fixture. Never enters or reads credentials.
+const evidence='.runtime/tv-services-auth-fields-uat-20261107';mkdirSync(evidence,{recursive:true});
+const address='https://www.orange.ro/accounts/login-user';
+async function capture(page:Page,info:TestInfo,name:string){await page.screenshot({path:`${evidence}/${info.project.name}-${name}.png`,animations:'disabled'});}
+async function fieldGeometry(page:Page,id:string){return page.evaluate(id=>{const node=document.getElementById(id)!,r=node.getBoundingClientRect();return{top:r.top,bottom:r.bottom,height:r.height,viewport:innerHeight,hit:r.top>=0&&r.bottom<=innerHeight&&node.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)),active:document.activeElement===node};},id);}
+async function visibleField(page:Page,id:string){await expect.poll(async()=>{const field=await fieldGeometry(page,id);return field.active&&field.top>=0&&field.bottom<=field.viewport&&field.hit;}).toBe(true);}
+async function fixture(page:Page,ro:boolean,theme:string){
+ const manifest=JSON.parse(readFileSync(new URL('../../app/browser-extension/manifest.json',import.meta.url),'utf8')),script=manifest.content_scripts.find((entry:any)=>entry.matches.includes('https://www.orange.ro/accounts/login-user*'));expect(script).toBeTruthy();
+ await page.route('**/*',route=>route.fulfill({contentType:'text/html',body:`<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;height:100%;font:16px system-ui;background:${theme==='night'?'#131d25':'#f3f2ef'};color:${theme==='night'?'#f4f8fa':'#15251e'}}.auth-page{height:100vh;overflow-y:auto;overscroll-behavior:contain}.auth-form{position:relative;width:430px;height:720px;margin:30px auto 0;background:${theme==='night'?'#20303a':'white'};border-radius:8px}.brand{position:absolute;left:28px;top:25px;background:#f16e00;color:white;padding:18px 8px}h1{position:absolute;left:28px;top:125px;font-size:28px;line-height:1.1;margin:0}label{position:absolute;left:28px}input{position:absolute;left:28px;width:374px;height:50px;box-sizing:border-box;border:1px solid #73877c;border-radius:8px;background:${theme==='night'?'#12201c':'white'};color:inherit;font:16px system-ui;padding:12px}#email-label{top:219px}#email{top:248px}#password-label{top:294px}#password{top:323px}.note{position:absolute;top:410px;left:28px;right:28px;line-height:1.5}</style></head><body><div class="auth-page"><main class="auth-form"><b class="brand">Orange</b><h1>${ro?'Accesează<br>contul existent':'Access your<br>existing account'}</h1><label id="email-label" for="email">${ro?'Adresă e-mail':'Email address'}</label><input id="email" type="email" autocomplete="off"><label id="password-label" for="password">${ro?'Parolă':'Password'}</label><input id="password" type="password" autocomplete="off"><p class="note">Owned layout fixture. No account server or credentials are used.</p></main></div></body></html>`}));
+ await page.goto(address);
+ await page.evaluate(({language,theme})=>{
+  const state={actions:[]as string[],valueReads:0,valueAttributeReads:0,automationReads:0,scrolls:[]as {id:string;block?:string}[]};(window as any).authFieldsFixture=state;
+  (window as any).chrome={runtime:{sendMessage(message:{action:string},callback?:Function){state.actions.push(message.action);callback?.({ok:true,language,theme});}}};
+  const value=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value')!,attribute=Element.prototype.getAttribute,scroll=Element.prototype.scrollIntoView;
+  const pyshRead=()=>/pysh-auth-(?:return|command-controls)\.js/.test(new Error().stack||'');
+  // Playwright tracing also reads blank input values; attribute only PySH script reads.
+  Object.defineProperty(HTMLInputElement.prototype,'value',{...value,get(){if(this.id==='email'||this.id==='password'){if(pyshRead())state.valueReads++;else state.automationReads++;}return value.get!.call(this);}});
+  Element.prototype.getAttribute=function(name){if(this instanceof HTMLInputElement&&(this.id==='email'||this.id==='password')&&name.toLowerCase()==='value'){if(pyshRead())state.valueAttributeReads++;else state.automationReads++;}return attribute.call(this,name);};
+  Element.prototype.scrollIntoView=function(options){if(this instanceof HTMLInputElement&&(this.id==='email'||this.id==='password'))state.scrolls.push({id:this.id,block:typeof options==='object'?options.block:undefined});return scroll.call(this,options);};
+ },{language:ro?'ro':'en',theme});
+ for(const file of script.js)await page.addScriptTag({content:readFileSync(new URL('../../app/browser-extension/'+file,import.meta.url),'utf8')+'\n//# sourceURL=pysh-auth-'+file});
+}
+
+for(const theme of ['ink','night'])test(`Orange long auth form ${theme}: focused fields remain usable after keyboard resize without reading values`,async({page},info)=>{
+ const ro=info.project.name.endsWith('ro');await fixture(page,ro,theme);
+ const emailBefore=await fieldGeometry(page,'email'),passwordBefore=await fieldGeometry(page,'password');expect(emailBefore.top).toBe(278);expect(passwordBefore.top).toBe(353);await capture(page,info,theme+'-01-realistic-form-geometry');
+ await page.locator('#email').tap();await expect.poll(()=>page.evaluate(()=>(window as any).authFieldsFixture.actions.at(-1))).toBe('show');await page.setViewportSize({width:800,height:240});await visibleField(page,'email');await capture(page,info,theme+'-02-email-visible-over-keyboard');
+ const scrollBefore=await page.locator('.auth-page').evaluate(node=>node.scrollTop),touch=await page.context().newCDPSession(page);await touch.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:650,y:210}]});for(const y of [195,180,165,150,130,110,90]){await page.waitForTimeout(40);await touch.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:650,y}]});}await touch.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await touch.detach();await expect.poll(()=>page.locator('.auth-page').evaluate(node=>node.scrollTop)).toBeGreaterThan(scrollBefore);await capture(page,info,theme+'-03-manual-form-scroll');
+ const password=await fieldGeometry(page,'password');expect(password.top).toBeGreaterThanOrEqual(0);expect(password.bottom).toBeLessThanOrEqual(240);expect(password.hit).toBe(true);await page.locator('#password').tap();await visibleField(page,'password');await capture(page,info,theme+'-04-password-visible-over-keyboard');
+ await page.setViewportSize({width:800,height:480});await visibleField(page,'password');await capture(page,info,theme+'-05-password-after-viewport-restoration');
+ const privacy=await page.evaluate(()=>{const state=(window as any).authFieldsFixture;return{valueReads:state.valueReads,valueAttributeReads:state.valueAttributeReads,scrolls:state.scrolls};});expect(privacy.valueReads).toBe(0);expect(privacy.valueAttributeReads).toBe(0);expect(privacy.scrolls.some((row:any)=>row.id==='email'&&row.block==='center')).toBe(true);expect(privacy.scrolls.some((row:any)=>row.id==='password'&&row.block==='center')).toBe(true);
+ await page.locator('#password').evaluate((node:HTMLInputElement)=>node.blur());await expect.poll(()=>page.evaluate(()=>(window as any).authFieldsFixture.actions.at(-1))).toBe('hide');
+});

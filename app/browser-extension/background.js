@@ -25,12 +25,18 @@ function forgetPort(port) {
 function digiURL(url) {
   return url.protocol === 'https:' && url.hostname === 'www.digisport.ro' && url.pathname === '/live/digisport-1';
 }
+function orangeURL(url) {
+  return url.protocol === 'https:' && ['tvgo.orange.ro', 'tvgo-ro.orange.ro'].includes(url.hostname);
+}
+function orangeAuthURL(url) {
+  return url.protocol === 'https:' && url.hostname === 'www.orange.ro' && url.pathname === '/accounts/login-user';
+}
 function allowed(sender) {
   if (!sender || sender.id !== chrome.runtime.id || sender.frameId !== 0 ||
       !Number.isInteger(sender.tab?.windowId) || sender.tab.windowId < 0) return false;
   try {
     const url = new URL(sender.url);
-    return digiURL(url) || documentationURL(url.href) || documentationRecoveryURL(url.href) || url.protocol === 'https:' && ['youtube.com', 'netflix.com', 'spotify.com'].some(
+    return digiURL(url) || orangeURL(url) || orangeAuthURL(url) || documentationURL(url.href) || documentationRecoveryURL(url.href) || url.protocol === 'https:' && ['youtube.com', 'netflix.com', 'spotify.com'].some(
       domain => url.hostname === domain || url.hostname.endsWith(`.${domain}`)
     ) || url.protocol === 'https:' && url.hostname === 'accounts.google.com';
   } catch { return false; }
@@ -188,7 +194,7 @@ function controlMessage(message) {
   return Number.isInteger(value)&&value>=(message.action==='controls-brightness'?1:0)&&value<=100;
 }
 function streamingSender(sender) {
-  try { const url=new URL(sender.url);return digiURL(url)||url.protocol==='https:'&&['youtube.com','netflix.com','spotify.com'].some(domain=>url.hostname===domain||url.hostname.endsWith('.'+domain)); }
+  try { const url=new URL(sender.url);return digiURL(url)||orangeURL(url)||url.protocol==='https:'&&['youtube.com','netflix.com','spotify.com'].some(domain=>url.hostname===domain||url.hostname.endsWith('.'+domain)); }
   catch { return false; }
 }
 chrome.runtime.onMessage.addListener((message, sender, respond) => {
@@ -202,7 +208,7 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
     return true;
   }
   if (Object.keys(message).length !== 1 || !Object.hasOwn(message,'action')) return;
-  if (['return', 'return-home', 'return-radio', 'return-media'].includes(message.action)) {
+  if (['return', 'return-home', 'return-radio', 'return-media', 'return-tv'].includes(message.action)) {
     returnToHub(message.action.slice(7), sender.tab.windowId).then(respond).catch(() => respond({ ok: false, error: 'return_unavailable' }));
     return true;
   } else if (['status', 'show', 'hide'].includes(message.action)) {

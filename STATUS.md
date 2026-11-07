@@ -1,5 +1,26 @@
 # PySH status
 
+## Orange: control DRM reușit, redarea Orange rămâne blocată
+
+Firefox 159 Raspberry Pi cu Widevine Google 4.10.3112 nemodificat redă controlul
+criptat Sintel: 2,9→15,5 secunde, 68→371 cadre. Modulul încărcat este verificat.
+În aceeași configurație, Kanal D marcat Free în Orange dă W813 în cinci observații,
+zero cadre. Utilizatorul raportase aceeași eroare la un videoclip gratuit și
+login Firefox care dispare; autentificarea Firefox nu este certificată.
+Problema Orange nu este remediată și nu se deduce cauza politicii DRM.
+Probe închise, port închis, trei servicii active, preferințe păstrate; captura
+finală arată playerul TV PySH. Nicio înlocuire a browserului de producție.
+[Dovezi și limite](docs/evidence/orange-w813-2026-11-07.md).
+
+Orange native follow-up: Prima Sport1 still fails without extensions. Hash-verified passive inspection found 3video representations with supported codecs and all3marked undecipherable. User confirms same-account playback on Windows and Android. Official signed Google Chrome157 ARM64 was prepared side by side with a separate profile; keyboard/native viewport and Radio return passed trial readiness. After user login Prima Sport1 still raised W813/fatalvideo NO_PLAYABLE_REPRESENTATION,0decodedframes across8observations. Both account profiles retained; diagnostic browser/tunnel closed; existing runtime96764525dbc5/code42ac4d908b9285e72d43155e0182f7a5bc940290 remains unchanged. Chrome is not selected for production; its DevTools-loaded extension is temporary. Official RaspberryPi Firefox candidate evaluation is underway, no playback success or delivered fix claimed. See docs/evidence/orange-w813-2026-11-07.md.
+
+
+Orange authenticated playback follow-up: runtime96764525dbc5/source42ac4d908b9285e72d43155e0182f7a5bc940290 unchanged. Existing member selection authorized; Prima Sport1 and2 reproduce fatal video NO_PLAYABLE_REPRESENTATION/W813 with zero decoded frames. User confirms Prima Sport1 works with same account on another device. Official Chromium Widevine update reports4.10.3112.0 Up-to-date. Precise cause and supported compatibility remedy remain OPEN; no successful playback or app fix claimed. Temporary loopback diagnosis cleaned, settings/account preserved,3services active; normal Media Services available. See docs/evidence/orange-w813-2026-11-07.md.
+
+
+Digi and Orange TV Go installed: runtime96764525dbc5 / code42ac4d908b9285e72d43155e0182f7a5bc940290; previous917de2f7f36e retained. Official Digi mark and acknowledged Channels return verified on the final runtime. Orange TV Go under Media Services, official login keyboard and Media return, focused blank email/password visible above the actual keyboard. Independent native visual review passed. 991Python/46platformskips/11subtests,199JS,176initial and70final browser cases passed. 233runtime hashes/29preferences, separate PC backup checksum and readable contents verified; network/gateway preserved. 3services active,0temporary touch devices,no debug ports opened. Existing account profile retained; no credentials entered. Final pointer actions stopped after unrelated interactive changes; newer preferences not overwritten. Scoped integration controls PASS; real Orange account login/subscription playback and all30fullproductcriteria remainOPEN. See docs/plans/tv-services-2026-11-07.md and docs/evidence/tv-services-2026-11-07.md.
+
+
 Video command drawer installed: runtime6314da69ecce/code479361d0af8dc7d64d139122150ace6de2564d17; previous40e96fcc7f76 retained. Topedgepull,48pxHUDbutton andAltShiftP inTV/localvideo; existingQuickControls layeredaboveplayer withactualtitle. Scopedfocus/Escapeandknown-sessionnavigationcleanup; prolongedTVHUDtimerdefect corrected.986Python/46platformskips/11subtests,192JS,final68browsercasesPASS; independentvisual/focus8+8andaffectedtimer4retestsPASS. Native ENnight800x480: actualAntena1 andVP8localvideo, menus/heldhardwarepreviews/persistence/dismiss/HUDbutton/MediaandHome verified; independentnativevisualPASS. 229runtimehashes/29preferences andPCbackup verified; network/gateway preserved. Ownfixture/historyremoved;3servicesactive,0temporarytouchdevices/transportdirs,debugclosed. FinalAntena1Bluetooth,brightness10%,preprobevolume restored. Nativeinput synthesized,notphysicalgesturecertification; knowninitialpendingTVsession retainslatecleanup; separateTV-START-20261106 andall30fullproductcriteriaOPEN. See docs/plans/video-command-drawer-2026-11-06.md and docs/evidence/video-command-drawer-2026-11-06.md.
 
 
