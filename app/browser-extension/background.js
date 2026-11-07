@@ -28,12 +28,15 @@ function digiURL(url) {
 function orangeURL(url) {
   return url.protocol === 'https:' && ['tvgo.orange.ro', 'tvgo-ro.orange.ro'].includes(url.hostname);
 }
+function orangeAuthURL(url) {
+  return url.protocol === 'https:' && url.hostname === 'www.orange.ro' && url.pathname === '/accounts/login-user';
+}
 function allowed(sender) {
   if (!sender || sender.id !== chrome.runtime.id || sender.frameId !== 0 ||
       !Number.isInteger(sender.tab?.windowId) || sender.tab.windowId < 0) return false;
   try {
     const url = new URL(sender.url);
-    return digiURL(url) || orangeURL(url) || documentationURL(url.href) || documentationRecoveryURL(url.href) || url.protocol === 'https:' && ['youtube.com', 'netflix.com', 'spotify.com'].some(
+    return digiURL(url) || orangeURL(url) || orangeAuthURL(url) || documentationURL(url.href) || documentationRecoveryURL(url.href) || url.protocol === 'https:' && ['youtube.com', 'netflix.com', 'spotify.com'].some(
       domain => url.hostname === domain || url.hostname.endsWith(`.${domain}`)
     ) || url.protocol === 'https:' && url.hostname === 'accounts.google.com';
   } catch { return false; }

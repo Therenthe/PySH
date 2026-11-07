@@ -2,7 +2,7 @@ import {test,expect,type Page,type TestInfo} from '@playwright/test';
 import {readFileSync,mkdirSync} from 'node:fs';
 
 // Owned API/service fixtures verify PySH UI behaviour, never subscription/DRM playback.
-const evidence='.runtime/tv-services-uat-20261107';mkdirSync(evidence,{recursive:true});
+const evidence=process.env.PYSH_TV_SERVICES_EVIDENCE||'.runtime/tv-services-uat-20261107';mkdirSync(evidence,{recursive:true});
 const copy=<T,>(value:T):T=>JSON.parse(JSON.stringify(value));
 async function capture(page:Page,info:TestInfo,name:string){await page.screenshot({path:`${evidence}/${info.project.name}-${name}.png`,animations:'disabled'});}
 async function fixture(page:Page,ro:boolean,theme:string,old=false){

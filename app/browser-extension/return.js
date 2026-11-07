@@ -53,8 +53,8 @@
   if(document.createElementNS){const mark=document.createElementNS('http://www.w3.org/2000/svg','svg');mark.setAttribute('viewBox','0 0 40 40');mark.setAttribute('aria-hidden','true');const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d','M5 18 20 6l15 12v16H5ZM13 28v-7m7 7V16m7 12v-5');mark.append(path);identity.prepend(mark);}
   label(close,'','m6 6 12 12M18 6 6 18');
   let ro = false, keyboardShown = false, retractTimer, blurTimer, revealAfterFullscreen = false;
-  let service='', digi=false;
-  try{const url=new URL(location.href),hostname=url.hostname;digi=hostname==='www.digisport.ro'&&url.pathname==='/live/digisport-1';service=hostname==='accounts.google.com'?'Google':[['www.digisport.ro','Digi Sport 1'],['tvgo.orange.ro','Orange TV Go'],['tvgo-ro.orange.ro','Orange TV Go'],['youtube.com','YouTube'],['netflix.com','Netflix'],['spotify.com','Spotify']].find(([domain])=>hostname===domain||hostname.endsWith('.'+domain))?.[1]||'';}catch{}
+  let service='', digi=false, orangeAuth=false;
+  try{const url=new URL(location.href),hostname=url.hostname;digi=hostname==='www.digisport.ro'&&url.pathname==='/live/digisport-1';orangeAuth=url.protocol==='https:'&&hostname==='www.orange.ro'&&url.pathname==='/accounts/login-user';service=orangeAuth?'Orange TV Go':hostname==='accounts.google.com'?'Google':[['www.digisport.ro','Digi Sport 1'],['tvgo.orange.ro','Orange TV Go'],['tvgo-ro.orange.ro','Orange TV Go'],['youtube.com','YouTube'],['netflix.com','Netflix'],['spotify.com','Spotify']].find(([domain])=>hostname===domain||hostname.endsWith('.'+domain))?.[1]||'';}catch{}
   channels.hidden=!digi;
   if(digi)actions.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';
   let contextRequest=0, deviceControls;
@@ -168,10 +168,10 @@
   controls.addEventListener('pointerdown',()=>{keyboardNavigation=false;expose();});
   controls.addEventListener('focusin',()=>{if(keyboardNavigation)clearTimeout(retractTimer);});
   controls.addEventListener('focusout',()=>{clearTimeout(retractTimer);retractTimer=setTimeout(retract,8000);});
-  if(typeof createPyshDeviceControls==='function'){
+  if(typeof createPyshDeviceControls==='function'&&!orangeAuth){
     deviceControls=createPyshDeviceControls({context:keyboard,onBusy:()=>{localize();if(controls.style.display!=='none')expose();},onPresentation:value=>{ro=value.language==='ro';host.setAttribute('data-theme',value.theme);localize();},onPane:open=>{actions.style.display=open?'none':'grid';}});
     actions.append(back,radio,media,channels);controls.append(heading,actions,deviceControls.element,hint,message);styles.textContent+=deviceControls.style.textContent;
-  }else{actions.append(back,radio,media,channels,keyboard);controls.append(heading,actions,hint,message);}
+  }else{if(orangeAuth)styles.textContent+='.drawer{max-height:calc(100% - 8px);overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain}';actions.append(back,radio,media,channels,keyboard);controls.append(heading,actions,hint,message);}
   document.addEventListener('focusin',event=>{if(controls.style.display!=='none'&&event.target!==host)close.focus?.({preventScroll:true});},true);
   shadow.append(styles,shade,controls,reveal);
   function editable(element) {

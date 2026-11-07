@@ -66,6 +66,19 @@ test('Orange device controls accept only the exact official HTTPS service hosts'
  }
 });
 
+test('exact Orange login admits keyboard and return but never device controls',async()=>{
+ for(const url of ['https://www.orange.ro/accounts/login-user','https://www.orange.ro/accounts/login-user?client=public-fixture']){
+  const h=fixture(),from=h.sender(url);
+  for(const message of [{action:'controls-status'},{action:'controls-volume',value:7},{action:'controls-brightness',value:10}])assert.equal(h.request(message,from).keepAlive,undefined);
+  const status=h.request({action:'status'},from);assert.equal(status.keepAlive,true);await tick();assert.deepEqual(h.ports[0].sent,[{action:'status'}]);h.ports[0].onMessage.emit({ok:true});await tick();assert.equal(status.replies[0].ok,true);
+  const show=h.request({action:'show'},from);assert.equal(show.keepAlive,true);await tick();assert.deepEqual(h.ports[0].sent.at(-1),{action:'show'});h.ports[0].onMessage.emit({ok:true});await tick();assert.equal(show.replies[0].ok,true);
+  const returning=h.request({action:'return-media'},from);await tick();assert.deepEqual(h.ports[0].sent.at(-1),{action:'media'});assert.deepEqual(h.removed,[]);h.ports[0].onMessage.emit({ok:true});await tick();assert.deepEqual(h.removed,[7]);assert.equal(returning.replies[0].ok,true);
+ }
+ for(const url of ['http://www.orange.ro/accounts/login-user','https://www.orange.ro.evil.invalid/accounts/login-user','https://orange.ro/accounts/login-user','https://other.orange.ro/accounts/login-user','https://www.orange.ro/accounts/login-user-extra','https://www.orange.ro/accounts/login-user/','https://www.orange.ro/elsewhere']){
+  const h=fixture(),from=h.sender(url);for(const action of ['status','show','hide','return-media','controls-status'])assert.equal(h.request({action},from).keepAlive,undefined);await tick();assert.equal(h.ports.length,0);assert.deepEqual(h.removed,[]);
+ }
+});
+
 test('a Return retry shares the operation queued behind a ten-second controls timeout',async()=>{
  const h=fixture(),read=h.request({action:'controls-status'});await tick();
  const first=h.request({action:'return-home'}),retry=h.request({action:'return-home'});

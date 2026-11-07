@@ -8,7 +8,7 @@ import vm from 'node:vm';
 const directory=new URL('../app/browser-extension/',import.meta.url);
 const source=name=>readFileSync(new URL(name,directory),'utf8');
 const copy=value=>JSON.parse(JSON.stringify(value));
-function content(surface,language='en',lateStatus=false){
+function content(surface,language='en',lateStatus=false,url='https://open-meteo.com/en/licence',deviceFactory){
  const sent=[],calls=[],nodes=[],listeners=new Map(),windowListeners=new Map(),timers=new Map(),ids=new Map();let timerId=0,throwReturn=false;
  function element(tag){
   const e={tag,tagName:tag.toUpperCase(),nodeType:1,children:[],style:{},events:new Map(),
@@ -24,9 +24,9 @@ function content(surface,language='en',lateStatus=false){
  if(surface==='recovery'){for(const id of ['title','message','return']){const e=element(id==='return'?'button':id==='title'?'h1':'p');ids.set(id,e);document.documentElement.append(e);}}
  const chrome={runtime:{sendMessage(message,callback){sent.push(copy(message));calls.push({message:copy(message),callback});if(message.action.startsWith('return')&&throwReturn){throwReturn=false;throw new Error('Synthetic transport failure');}if(message.action==='status'&&!lateStatus)callback({ok:true,language});}}};
  const window={innerWidth:800,addEventListener:(name,fn)=>windowListeners.set(name,fn)};
- const location={href:'https://open-meteo.com/en/licence',assign:()=>{throw new Error('No navigation expected');}};
+ const location={href:url,assign:()=>{throw new Error('No navigation expected');}};
  const filename={service:'return.js',documentation:'documentation.js',recovery:'documentation-return.js'}[surface];
- vm.runInNewContext(source(filename),{document,chrome,window,location,URL,setTimeout:(fn,ms)=>{timers.set(++timerId,{fn,ms});return timerId;},clearTimeout:id=>timers.delete(id)});
+ vm.runInNewContext(source(filename),{document,chrome,window,location,URL,createPyshDeviceControls:deviceFactory,setTimeout:(fn,ms)=>{timers.set(++timerId,{fn,ms});return timerId;},clearTimeout:id=>timers.delete(id)});
  const back=surface==='recovery'?ids.get('return'):nodes.find(n=>n.tag==='button'&&(surface==='service'?n.textContent===(language==='ro'?'Acasă':'Home'):n.textContent.includes('PySH')));
  const feedback=nodes.find(n=>n.role==='status');
  const click=node=>node.events.get('click')({preventDefault(){},stopPropagation(){},stopImmediatePropagation(){}});
@@ -55,4 +55,13 @@ for(const language of ['en','ro'])test(`service ${language} delayed initial cont
  h.click(reveal);const fresh=h.calls.filter(c=>c.message.action==='status').at(-1);assert.notEqual(fresh,initial);
  h.reply(fresh,{ok:true,language,theme:'night'});const host=h.nodes.find(n=>n.tag==='pi-hub-return');assert.equal(host['data-theme'],'night');
  h.reply(initial,{ok:true,language:language==='en'?'ro':'en',theme:'ink'});assert.equal(host['data-theme'],'night');assert.equal(h.back.textContent,language==='ro'?'Acasă':'Home');
+});
+
+for(const language of ['en','ro'])test(`Orange authentication ${language} uses keyboard and acknowledged return without device controls`,()=>{
+ const h=content('service',language,false,'https://www.orange.ro/accounts/login-user?client=public-fixture',()=>{throw Error('Authentication must not create device controls');});
+ const subtitle=h.nodes.find(n=>n.className==='subtitle');assert.ok(subtitle.textContent.startsWith('Orange TV Go · '));
+ const keyboard=h.nodes.find(n=>n.tag==='button'&&n.textContent===(language==='ro'?'Tastatură':'Keyboard'));
+ h.click(keyboard);assert.deepEqual(h.sent.at(-1),{action:'show'});h.reply(h.calls.at(-1),{ok:true});
+ const media=h.nodes.find(n=>n.tag==='button'&&n.textContent==='Media');h.click(media);assert.deepEqual(h.returns().at(-1).message,{action:'return-media'});assert.equal(media.disabled,true);h.reply(h.returns().at(-1),{ok:false});assert.equal(media.disabled,false);h.click(media);h.reply(h.returns().at(-1),{ok:true});
+ assert.equal(h.sent.some(message=>message.action.startsWith('controls-')),false);
 });
