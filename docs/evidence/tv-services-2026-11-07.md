@@ -102,3 +102,29 @@ Final70browser cases passed:4long-form field,4auth menu/short viewport,
 24service and38extension regression cases.17source pins remained unchanged.
 Owned fixtures observed zero PySH reads of auth values. Native R3 verification
 remains pending.
+
+## Native R3, final integration result
+
+Runtime `96764525dbc5`, code `42ac4d908b9285e72d43155e0182f7a5bc940290`,
+previous `917de2f7f36e` retained.233runtime hashes/29preferences verified on
+activation;872source blobs matched GitHub. PC backup checksum and readable
+contents verified. Network/gateway preserved,3services active, no diagnostic
+ports opened and no temporary input devices left.
+
+On this final candidate: Digi real mark and topedge→Channels passed. Orange
+homepage, official login handle, native keyboard, focused blank email field,
+wvkbd Tab→blank password field, and auth pull→Media with keyboard cleanup all
+passed. Both fields and labels were fully visible above the actual240px
+keyboard; independent native screenshot review passed. No credentials entered.
+Version1.4.5 uses the unchanged v8 worker; the existing profile was preserved.
+
+At the final attempted login reopening, unrelated page and brightness changes
+appeared between planned taps. Automated pointer actions were stopped and the
+user was asked about concurrent device use; the newer preference was not
+overwritten. This does not invalidate earlier observed login/control outcomes,
+but the final page is not claimed to be the login form. Raw state stays private.
+
+Scoped integration controls PASS. Actual Orange account login, subscription
+entitlement, video/audio playback remain OPEN pending the user's own account.
+Browser fixtures, synthetic/native input and screenshots do not certify
+physical touch feel or full product acceptance; all30globalcriteria remainOPEN.

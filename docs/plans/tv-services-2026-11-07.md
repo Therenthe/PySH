@@ -11,8 +11,9 @@ Orange TV Go în Media → Servicii, cu autentificare pe site-ul oficial.
 - [x] R1 nativ: siglă Digi și revenire Canale; Orange Acasă.
 - [x] R2: tastatură/revenire pe pagina oficială de login Orange (TVS-AUTH-01).
 - [x] R2: meniu accesibil cu tastatura deschisă (TVS-AUTH-VIS-02).
-- [ ] R3 nativ: câmpul activ vizibil după micșorarea ferestrei (TVS-AUTH-03).
-- [ ] Probă nativă: siglă, Digi → Canale, Orange/login/tastatură/revenire.
+- [x] R3 nativ: câmpul activ vizibil după micșorarea ferestrei (TVS-AUTH-03).
+- [x] Probă nativă: siglă, Digi → Canale, Orange/login/tastatură/revenire.
+- [ ] Cont Orange real: autentificare și redare din abonament; utilizatorul introduce datele pe dispozitiv.
 
 Charter: navigarea este o comandă permisă, nu URL arbitrar; închiderea ferestrei
 externe se confirmă. Conturile și profilul existent rămân intacte. Nu se citesc
