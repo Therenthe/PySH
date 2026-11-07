@@ -79,3 +79,26 @@ final fixtures use a paced gesture. This is retained as a harness-timing
 limitation, not counted as a successful zero-duration gesture. Two old tests
 now exclude the intentionally hidden Channels button from target geometry;
 the obsolete larger-Home-width assertion was removed without relaxing48px.
+
+## Native R2 and focused-field correction
+
+Runtime `917de2f7f36e`, code `ead54c134a94c835a7120e6b7a9c38783f227417`:233hashes
+and29preferences/backupPC verified, previous18f88045b294 retained. DigiChannels
+return passed again. Orange homepage/login now has the handle; focusing the
+empty email input opens the actual native keyboard. Pull→Media while the
+keyboard is open closes the owned browser and hides the keyboard. Worker1.4.4
+and existing profile were exercised without any entered credentials.
+
+TVS-AUTH-03, major: the real240px viewport left the focused email field at278px,
+below the visible page. R3 adds auth-only active-field scrolling on focus/resize;
+it observes field type/geometry only and does not read content.
+Native R3 verification remains pending.
+
+R3 source checks:199JavaScript passed; backend is unchanged from991Python
+passing source, TypeScript/structure and targeted detector passed. Version1.4.5
+retains unchanged v8 worker. Auth field visibility uses a guarded animation
+frame after focus/resize, and ignores noneditable or replaced active elements.
+Final70browser cases passed:4long-form field,4auth menu/short viewport,
+24service and38extension regression cases.17source pins remained unchanged.
+Owned fixtures observed zero PySH reads of auth values. Native R3 verification
+remains pending.

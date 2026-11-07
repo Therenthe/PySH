@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Pi Smart Hub \u2014 Return",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "Private PySH device controls, keyboard and acknowledged return. No account data is collected.",
   "background": {
     "service_worker": "background-tv-services-v8.js"

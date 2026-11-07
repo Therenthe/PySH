@@ -9,7 +9,9 @@ Orange TV Go în Media → Servicii, cu autentificare pe site-ul oficial.
 - [x] Regresii și audit complementar EN/RO × Ink/Noapte, 800×480.
 - [x] R1 publicat/verificat, backup PC și instalare reversibilă.
 - [x] R1 nativ: siglă Digi și revenire Canale; Orange Acasă.
-- [ ] R2: tastatură/revenire pe pagina oficială de login Orange (TVS-AUTH-01).
+- [x] R2: tastatură/revenire pe pagina oficială de login Orange (TVS-AUTH-01).
+- [x] R2: meniu accesibil cu tastatura deschisă (TVS-AUTH-VIS-02).
+- [ ] R3 nativ: câmpul activ vizibil după micșorarea ferestrei (TVS-AUTH-03).
 - [ ] Probă nativă: siglă, Digi → Canale, Orange/login/tastatură/revenire.
 
 Charter: navigarea este o comandă permisă, nu URL arbitrar; închiderea ferestrei

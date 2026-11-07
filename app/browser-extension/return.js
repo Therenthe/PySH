@@ -179,10 +179,21 @@
     if (element.isContentEditable || element.tagName === 'TEXTAREA') return true;
     return element.tagName === 'INPUT' && ['text', 'email', 'password', 'search', 'tel', 'url', 'number'].includes(element.type);
   }
+  let authScrollFrame;
+  function keepAuthFieldVisible() {
+    if(!orangeAuth)return;
+    if(authScrollFrame!==undefined)window.cancelAnimationFrame(authScrollFrame);
+    const field=document.activeElement;
+    if(!editable(field))return;
+    // The Wayland keyboard resizes the page after focus; wait for its layout.
+    authScrollFrame=window.requestAnimationFrame(()=>{authScrollFrame=undefined;if(document.activeElement===field&&editable(field))field.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});});
+  }
+  if(orangeAuth)window.addEventListener('resize',keepAuthFieldVisible);
   document.addEventListener('focusin', event => {
     clearTimeout(blurTimer);
     if(event.target===host)return;
     keyboardAction(editable(event.target));
+    keepAuthFieldVisible();
   }, true);
   document.addEventListener('focusout', () => {
     clearTimeout(blurTimer);

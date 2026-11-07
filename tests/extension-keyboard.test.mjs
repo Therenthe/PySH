@@ -45,7 +45,7 @@ function background() {
 }
 
 test('manifest has stable public-key ID and only native messaging and documentation navigation permissions', () => {
-  assert.equal(manifest.version,'1.4.4');
+  assert.equal(manifest.version,'1.4.5');
   assert.equal(manifest.background.service_worker,'background-tv-services-v8.js');
   assert.match(source(manifest.background.service_worker),/importScripts\('background.js'\)/);
   assert.match(extensionId, /^[a-p]{32}$/);
