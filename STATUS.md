@@ -1,5 +1,17 @@
 # PySH status
 
+## Orange: control DRM reușit, redarea Orange rămâne blocată
+
+Firefox 159 Raspberry Pi cu Widevine Google 4.10.3112 nemodificat redă controlul
+criptat Sintel: 2,9→15,5 secunde, 68→371 cadre. Modulul încărcat este verificat.
+În aceeași configurație, Kanal D marcat Free în Orange dă W813 în cinci observații,
+zero cadre. Utilizatorul raportase aceeași eroare la un videoclip gratuit și
+login Firefox care dispare; autentificarea Firefox nu este certificată.
+Problema Orange nu este remediată și nu se deduce cauza politicii DRM.
+Probe închise, port închis, trei servicii active, preferințe păstrate; captura
+finală arată playerul TV PySH. Nicio înlocuire a browserului de producție.
+[Dovezi și limite](docs/evidence/orange-w813-2026-11-07.md).
+
 Orange native follow-up: Prima Sport1 still fails without extensions. Hash-verified passive inspection found 3video representations with supported codecs and all3marked undecipherable. User confirms same-account playback on Windows and Android. Official signed Google Chrome157 ARM64 was prepared side by side with a separate profile; keyboard/native viewport and Radio return passed trial readiness. After user login Prima Sport1 still raised W813/fatalvideo NO_PLAYABLE_REPRESENTATION,0decodedframes across8observations. Both account profiles retained; diagnostic browser/tunnel closed; existing runtime96764525dbc5/code42ac4d908b9285e72d43155e0182f7a5bc940290 remains unchanged. Chrome is not selected for production; its DevTools-loaded extension is temporary. Official RaspberryPi Firefox candidate evaluation is underway, no playback success or delivered fix claimed. See docs/evidence/orange-w813-2026-11-07.md.
 
 

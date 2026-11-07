@@ -30,7 +30,12 @@ demonstrată o cauză precisă sau o remediere.
 - [x] Chrome oficial ARM64 157 verificat prin index Google semnat, pregătit separat.
 - [x] Profil separat: tastatură nativă, micșorare pagină și revenire Radio verificate.
 - [x] Utilizator autentificat în Chrome; proba Prima Sport 1 executată: FAIL W813, zero cadre.
-- [ ] Evaluare Firefox optimizat Raspberry Pi din sursele oficiale.
+- [x] Firefox 159 oficial Raspberry Pi, pregătit separat; EME disponibil.
+- [x] Utilizator: loginul Firefox dispare, iar videoclipul gratuit dă W813; nu se pretinde autentificare Firefox.
+- [x] Control Widevine nativ cu modulul Google nemodificat 4.10.3112: imagine criptată în progres, 68→371 cadre.
+- [x] Aceeași configurație Firefox: Kanal D marcat Free în Orange dă W813, cinci observații cu zero cadre.
+- [x] Probe închise, port/tunel închis, preferințe păstrate; revenire vizuală la playerul TV PySH.
+- [ ] Blocaj de compatibilitate Orange/Linux ARM de rezolvat printr-o cale suportată ori un răspuns tehnic al furnizorului; cauza exactă rămâne nedemonstrată.
 - [ ] După o probă reală de succes: integrare persistentă suportată, sursă publicată și retestare prin PySH.
 
 Proba Chrome nu înlocuiește Chromium și nu importă sesiunea existentă. Extensia
