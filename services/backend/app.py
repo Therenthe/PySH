@@ -174,11 +174,11 @@ class Documentation(StrictBody):
 
 
 class External(StrictBody):
-    service: Literal["youtube", "netflix", "spotify", "digisport"]
+    service: Literal["youtube", "netflix", "spotify", "digisport", "orangetv"]
 
 
 class ExternalNavigation(StrictBody):
-    target: Literal["home", "radio", "media"]
+    target: Literal["home", "radio", "media", "tv"]
 
 
 class PreparationJob(StrictBody):

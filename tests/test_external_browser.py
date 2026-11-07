@@ -90,7 +90,7 @@ def test_direct_youtube_and_browser_ownership(tmp_path, launches):
     asyncio.run(scenario())
 
 
-@pytest.mark.parametrize('service,url', [('netflix','https://www.netflix.com'), ('digisport','https://www.digisport.ro/live/digisport-1')])
+@pytest.mark.parametrize('service,url', [('netflix','https://www.netflix.com'), ('digisport','https://www.digisport.ro/live/digisport-1'), ('orangetv','https://tvgo.orange.ro/')])
 def test_ready_requires_actual_probe_not_component(tmp_path, launches, service, url):
     async def scenario():
         browser = manager(tmp_path)

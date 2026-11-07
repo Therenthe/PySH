@@ -28,7 +28,7 @@ for(const theme of ['ink','night'])for(const first of ['local','local-audio','ex
  const firstControl=first==='external'?page.locator('.service-row').filter({hasText:'Netflix'}):page.locator('.media-item').nth(first==='local'?0:1);
  await firstControl.evaluate((button:HTMLButtonElement)=>{button.click();button.click();});
  await expect.poll(()=>pending).toBe(true);
- await services();await expect(page.locator('.service-row')).toHaveCount(4);
+ await services();await expect(page.locator('.service-row')).toHaveCount(5);
  if(first==='external'){await expect(page.locator('.service-panel')).toHaveAttribute('aria-busy','true');await expect(page.getByRole('status').filter({hasText:ro?'Se deschide serviciul…':'Opening service…'})).toBeVisible();}
  for(const control of await page.locator('.service-row').all()){await expect(control).toBeDisabled();await control.evaluate((button:HTMLButtonElement)=>button.click());}
  await files();await expect(page.locator('.media-item')).toHaveCount(2);

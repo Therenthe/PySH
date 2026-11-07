@@ -26,7 +26,7 @@ def frame(body):
     return struct.pack("<I", len(payload)) + payload
 
 
-@pytest.mark.parametrize("action", ["status", "show", "hide", "home", "radio", "media"])
+@pytest.mark.parametrize("action", ["status", "show", "hide", "home", "radio", "media", "tv"])
 def test_allowed_actions(host, action):
     assert host.read_message(io.BytesIO(frame({"action": action}))) == {"action": action}
     assert host.read_message(io.BytesIO()) is None
@@ -192,7 +192,7 @@ def test_disconnect_reaps_real_child(host, monkeypatch, tmp_path):
         os.kill(child.pid, 0)
 
 
-@pytest.mark.parametrize('target',['home','radio','media'])
+@pytest.mark.parametrize('target',['home','radio','media','tv'])
 def test_destination_bridge_uses_only_fixed_loopback_owner_api(host, monkeypatch, target):
     from unittest.mock import MagicMock
     opener=Mock()

@@ -1,5 +1,8 @@
 # PySH status
 
+Digi and OrangeTVGo candidate18f88045b294: official locallystoredDigi brand, explicit acknowledgedChannelsreturn fromexternalDigi andofficialOrangeTVGo underMediaServices. Nativeinstallationpending.991Python/46platformskips/11subtests,194JS,TypeScript/build/structurePASS; complementarybrowserandvisualchecks in docs/evidence/tv-services-2026-11-07.md. Subscriptionplaybackrequiresuseraccount; all30globalproductcriteriaOPEN.
+
+
 Video command drawer installed: runtime6314da69ecce/code479361d0af8dc7d64d139122150ace6de2564d17; previous40e96fcc7f76 retained. Topedgepull,48pxHUDbutton andAltShiftP inTV/localvideo; existingQuickControls layeredaboveplayer withactualtitle. Scopedfocus/Escapeandknown-sessionnavigationcleanup; prolongedTVHUDtimerdefect corrected.986Python/46platformskips/11subtests,192JS,final68browsercasesPASS; independentvisual/focus8+8andaffectedtimer4retestsPASS. Native ENnight800x480: actualAntena1 andVP8localvideo, menus/heldhardwarepreviews/persistence/dismiss/HUDbutton/MediaandHome verified; independentnativevisualPASS. 229runtimehashes/29preferences andPCbackup verified; network/gateway preserved. Ownfixture/historyremoved;3servicesactive,0temporarytouchdevices/transportdirs,debugclosed. FinalAntena1Bluetooth,brightness10%,preprobevolume restored. Nativeinput synthesized,notphysicalgesturecertification; knowninitialpendingTVsession retainslatecleanup; separateTV-START-20261106 andall30fullproductcriteriaOPEN. See docs/plans/video-command-drawer-2026-11-06.md and docs/evidence/video-command-drawer-2026-11-06.md.
 
 

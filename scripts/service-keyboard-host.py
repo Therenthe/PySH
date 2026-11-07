@@ -54,7 +54,7 @@ def read_message(stream):
     if not isinstance(message, dict) or not isinstance(message.get("action"), str):
         raise ProtocolError("invalid_request")
     action = message["action"]
-    if action in ("status", "show", "hide", "home", "radio", "media", "controls-status"):
+    if action in ("status", "show", "hide", "home", "radio", "media", "tv", "controls-status"):
         if set(message) != {"action"}:
             raise ProtocolError("invalid_request")
     elif action in ("controls-volume", "controls-mute", "controls-brightness", "controls-output"):
@@ -224,7 +224,7 @@ class Keyboard:
     def handle(self, action, value=None, persist=True):
         if action.startswith("controls-"):
             return control(action, value, persist)
-        if action in ("home", "radio", "media"):
+        if action in ("home", "radio", "media", "tv"):
             # Fixed loopback owner API, no page URLs, cookies or typed values.
             # A native message cannot choose another host, path or command.
             try:

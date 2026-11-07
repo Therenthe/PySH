@@ -12,7 +12,7 @@
     .heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}.identity{display:flex;align-items:center;gap:12px}.identity svg{width:38px;height:38px;stroke:var(--accent);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.title{display:block;font-size:24px;font-weight:650;line-height:1.2;letter-spacing:-.025em}.subtitle{display:block;margin-top:3px;color:var(--muted);font-size:14px;line-height:1.3}
     .actions{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:12px}
     .action{all:initial;box-sizing:border-box;min-height:104px;padding:16px 12px;border:0;border-radius:16px;background:var(--raised);color:var(--text);font:600 17px/1.3 system-ui,sans-serif;text-align:center;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:center;gap:12px;flex-direction:column;transition:background .16s ease,transform .16s ease}
-    .action:first-child{background:var(--accent);color:var(--accent-ink)}.action:hover{background:var(--hover)}.action:first-child:hover{background:var(--accent-hover)}.action:active{transform:scale(.97)}.action:disabled{opacity:.65;cursor:wait;transform:none}
+    .action[hidden]{display:none}.action:first-child{background:var(--accent);color:var(--accent-ink)}.action:hover{background:var(--hover)}.action:first-child:hover{background:var(--accent-hover)}.action:active{transform:scale(.97)}.action:disabled{opacity:.65;cursor:wait;transform:none}
     .action svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
     .keyboard{grid-column:1/-1;min-height:48px;margin-top:4px;padding:8px 0;flex-direction:row;justify-content:flex-start;gap:10px;border-radius:10px;background:transparent;font-size:15px;color:var(--muted)}.keyboard svg{width:22px;height:22px}.keyboard:hover{background:var(--raised)}.keyboard[aria-pressed=true]{color:var(--accent)}
     .close{all:initial;box-sizing:border-box;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--text);cursor:pointer;touch-action:manipulation;transition:background .16s ease}.close:hover,.close:active{background:var(--raised)}.close svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -41,6 +41,7 @@
   const back=document.createElement('button');back.className='action';
   const radio=document.createElement('button');radio.className='action';
   const media=document.createElement('button');media.className='action';
+  const channels=document.createElement('button');channels.className='action channels';channels.hidden=true;
   const reveal=document.createElement('button');reveal.className='handle';reveal.setAttribute('aria-expanded','false');reveal.setAttribute('aria-keyshortcuts','Alt+Shift+P');
   const hint=document.createElement('span');hint.style.display='none';
   const message=document.createElement('span');message.className='status';message.style.display='none';message.setAttribute('role','status');
@@ -52,8 +53,10 @@
   if(document.createElementNS){const mark=document.createElementNS('http://www.w3.org/2000/svg','svg');mark.setAttribute('viewBox','0 0 40 40');mark.setAttribute('aria-hidden','true');const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d','M5 18 20 6l15 12v16H5ZM13 28v-7m7 7V16m7 12v-5');mark.append(path);identity.prepend(mark);}
   label(close,'','m6 6 12 12M18 6 6 18');
   let ro = false, keyboardShown = false, retractTimer, blurTimer, revealAfterFullscreen = false;
-  let service='';
-  try{const hostname=new URL(location.href).hostname;service=hostname==='accounts.google.com'?'Google':[['www.digisport.ro','Digi Sport 1'],['youtube.com','YouTube'],['netflix.com','Netflix'],['spotify.com','Spotify']].find(([domain])=>hostname===domain||hostname.endsWith('.'+domain))?.[1]||'';}catch{}
+  let service='', digi=false;
+  try{const url=new URL(location.href),hostname=url.hostname;digi=hostname==='www.digisport.ro'&&url.pathname==='/live/digisport-1';service=hostname==='accounts.google.com'?'Google':[['www.digisport.ro','Digi Sport 1'],['tvgo.orange.ro','Orange TV Go'],['tvgo-ro.orange.ro','Orange TV Go'],['youtube.com','YouTube'],['netflix.com','Netflix'],['spotify.com','Spotify']].find(([domain])=>hostname===domain||hostname.endsWith('.'+domain))?.[1]||'';}catch{}
+  channels.hidden=!digi;
+  if(digi)actions.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';
   let contextRequest=0, deviceControls;
   let previousFocus;
   const isolated=new Map();
@@ -98,9 +101,10 @@
     back.setAttribute('aria-busy', String(returnPending));
     subtitle.textContent=[service,ro?'Alege unde continui':'Choose where to continue'].filter(Boolean).join(' · ');
     label(back, returnPending ? (ro ? 'Se revine…' : 'Returning…') : returnFailed ? (ro ? 'Reîncearcă revenirea' : 'Retry return') : (ro ? 'Acasă' : 'Home'), 'M3 10 12 3l9 7v11h-6v-7H9v7H3Z');
-    radio.disabled=media.disabled=returnPending||!!deviceControls?.busy();
+    radio.disabled=media.disabled=channels.disabled=returnPending||!!deviceControls?.busy();
     label(radio,'Radio','M3 8h18v13H3ZM4 8 19 3M7 12h10M7 16h2m6 0h2');
     label(media,'Media','M3 5h18v16H3Zm6 4 7 4-7 4Z');
+    label(channels,ro?'Canale':'Channels','M2 4h20v14H2Zm6 18h8m-4-4v4M6 8h4m-4 5h4m4-5h4m-4 5h4');
     close.setAttribute('aria-label',ro?'Închide comenzile PySH':'Close PySH controls');
     back.title = back.textContent;
     if (returnFailed) message.textContent = ro ? 'Revenirea la PySH nu a reușit. Reîncearcă.' : 'Could not return to PySH. Try again.';
@@ -140,11 +144,12 @@
       }
     });
   }
-  for (const button of [keyboard, back, radio, media]) button.addEventListener('pointerdown', event => event.preventDefault());
+  for (const button of [keyboard, back, radio, media, channels]) button.addEventListener('pointerdown', event => event.preventDefault());
   keyboard.addEventListener('click', () => keyboardAction(!keyboardShown, true));
   back.addEventListener('click', () => { requestReturn(); expose(); });
   radio.addEventListener('click',()=>{requestReturn('radio');expose();});
   media.addEventListener('click',()=>{requestReturn('media');expose();});
+  channels.addEventListener('click',()=>{requestReturn('tv');expose();});
   reveal.addEventListener('click',()=>{expose();close.focus?.();});
   close.addEventListener('click',()=>{retract(true);if(!returnPending)reveal.focus?.();});
   shade.addEventListener('click',()=>{retract(true);if(!returnPending)reveal.focus?.();});
@@ -158,15 +163,15 @@
     keyboardNavigation=true;clearTimeout(retractTimer);
     event.stopImmediatePropagation();
     if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();retract(true);reveal.focus?.();}
-    if(event.key==='Tab'){event.stopImmediatePropagation();const order=controls.querySelectorAll?[...controls.querySelectorAll('button:not(:disabled),input:not(:disabled)')].filter(element=>element.getClientRects().length):[close,back,radio,media,keyboard].filter(button=>!button.disabled);const index=order.indexOf(shadow.activeElement);const next=(index+(event.shiftKey?-1:1)+order.length)%order.length;event.preventDefault();order[next].focus?.();}
+    if(event.key==='Tab'){event.stopImmediatePropagation();const order=controls.querySelectorAll?[...controls.querySelectorAll('button:not(:disabled),input:not(:disabled)')].filter(element=>element.getClientRects().length):[close,back,radio,media,channels,keyboard].filter(button=>!button.disabled&&!button.hidden);const index=order.indexOf(shadow.activeElement);const next=(index+(event.shiftKey?-1:1)+order.length)%order.length;event.preventDefault();order[next].focus?.();}
   },true);
   controls.addEventListener('pointerdown',()=>{keyboardNavigation=false;expose();});
   controls.addEventListener('focusin',()=>{if(keyboardNavigation)clearTimeout(retractTimer);});
   controls.addEventListener('focusout',()=>{clearTimeout(retractTimer);retractTimer=setTimeout(retract,8000);});
   if(typeof createPyshDeviceControls==='function'){
     deviceControls=createPyshDeviceControls({context:keyboard,onBusy:()=>{localize();if(controls.style.display!=='none')expose();},onPresentation:value=>{ro=value.language==='ro';host.setAttribute('data-theme',value.theme);localize();},onPane:open=>{actions.style.display=open?'none':'grid';}});
-    actions.append(back,radio,media);controls.append(heading,actions,deviceControls.element,hint,message);styles.textContent+=deviceControls.style.textContent;
-  }else{actions.append(back,radio,media,keyboard);controls.append(heading,actions,hint,message);}
+    actions.append(back,radio,media,channels);controls.append(heading,actions,deviceControls.element,hint,message);styles.textContent+=deviceControls.style.textContent;
+  }else{actions.append(back,radio,media,channels,keyboard);controls.append(heading,actions,hint,message);}
   document.addEventListener('focusin',event=>{if(controls.style.display!=='none'&&event.target!==host)close.focus?.({preventScroll:true});},true);
   shadow.append(styles,shade,controls,reveal);
   function editable(element) {

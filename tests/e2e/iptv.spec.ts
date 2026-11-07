@@ -96,7 +96,7 @@ async function fixture(page:Page,ro:boolean,theme:string,{initialRecords=false,s
  });
  await page.goto('/');await page.locator('.main-nav button').nth(2).tap();
  await page.locator('.media-sections').getByRole('button',{name:ro?'Servicii':'Services',exact:true}).tap();
- await expect(page.locator('.service-row')).toHaveCount(4);
+ await expect(page.locator('.service-row')).toHaveCount(5);
  await page.locator('.service-row').filter({hasText:ro?'Live, ghid și înregistrări':'Live, guide & recordings'}).tap();
  await expect(page.getByRole('region',{name:ro?'Televiziune IPTV':'IPTV television'})).toBeVisible();
  await expect(page.locator('.iptv-channel')).toHaveCount(empty?0:2);

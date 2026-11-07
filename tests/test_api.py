@@ -46,7 +46,7 @@ def test_session_and_preference_roundtrip(client):
     assert client.get('/api/state').json()['preferences']['language'] == 'en'
 
 
-@pytest.mark.parametrize('target', ['home', 'radio', 'media'])
+@pytest.mark.parametrize('target', ['home', 'radio', 'media', 'tv'])
 def test_external_navigation_is_fixed_destination_with_owner_protection(client, target):
     assert client.post('/api/external/navigation', json={'target': target}).status_code == 403
     headers={'X-Hub-Token': app.state.hub.token}
@@ -115,17 +115,18 @@ def test_preparation_report_strict_boolean_and_extra_data_redacted(client):
     handler.assert_not_awaited()
 
 
-def test_external_launch_reports_preparation_instead_of_opened(client, monkeypatch):
+@pytest.mark.parametrize('service', ['netflix', 'orangetv'])
+def test_external_launch_reports_preparation_instead_of_opened(client, monkeypatch, service):
     import services.backend.app as backend
     monkeypatch.setattr(backend.sys,'platform','linux')
     monkeypatch.setattr(backend.shutil,'which',lambda _: '/usr/bin/chromium')
     app.state.hub.store.update({'language':'en','theme':'night'})
-    handler=AsyncMock(return_value={'opened':False,'preparing':True,'jobId':'fixture','service':'netflix'})
+    handler=AsyncMock(return_value={'opened':False,'preparing':True,'jobId':'fixture','service':service})
     app.state.hub.external=SimpleNamespace(start=handler)
     app.state.hub.player.pause_for_external=AsyncMock(return_value={'state':'paused'})
-    response=client.post('/api/external',headers={'X-Hub-Token':app.state.hub.token},json={'service':'netflix'})
+    response=client.post('/api/external',headers={'X-Hub-Token':app.state.hub.token},json={'service':service})
     assert response.status_code == 202 and response.json()['opened'] is False
-    handler.assert_awaited_once_with('netflix','/usr/bin/chromium','en','night')
+    handler.assert_awaited_once_with(service,'/usr/bin/chromium','en','night')
     app.state.hub.player.pause_for_external.assert_awaited_once_with()
 
 
